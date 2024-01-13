@@ -13,11 +13,10 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api, origins=['http://localhost:3000'], \
     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], \
-    supports_credentials=True)
-
-
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_arima():
+    supports_credentials=True
+)
+@api.route('/white-noise', methods=['POST', 'GET'])
+def handle_white_noise():
 
     f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/api/data/AIR_Q_TU_Graz/output_chunk_1.json')
     data = json.load(f)
@@ -25,10 +24,7 @@ def handle_arima():
     data_serie = [x["health"] for x in data]
     print(data_serie[0])
     result = Analysis.detect_white_noise(data_serie)
-    print(result)
 
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
+    response_body = { "result": result }
 
-    return jsonify(response_body), 200
+    return json.dumps(response_body), 200

@@ -6,7 +6,7 @@ import { formatUnixToDate, formatNumber } from "../../../utils/formatters";
 import LineChart from "../LineChart";
 import SparkLineChart from "../LineChart/SparkLineChart";
 import { TTimeseriesData } from "../../../types";
-import { useSmallestTimeUnit, useTimeseriesMinMaxValues } from "./hooks";
+import { useSmallestTimeUnit, useTimeseriesMinMaxValues, useWhiteNoise } from "./hooks";
 import {  TDataProperty, TLineChartSerie } from "front/js/types";
 
 const constructLineChartDataFromTs = (
@@ -49,6 +49,8 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
   };
 
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
+
+  useWhiteNoise()
 
   if ( !mainChartData) return null;
   
