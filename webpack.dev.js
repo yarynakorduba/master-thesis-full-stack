@@ -8,7 +8,7 @@ const common = require('./webpack.common.js');
 
 const port = 3000;
 let publicUrl = `ws://localhost:${port}/ws`;
-console.log("HERE")
+
 //only for github
 if(process.env.GITPOD_WORKSPACE_URL){
   const [schema, host] = process.env.GITPOD_WORKSPACE_URL.split('://');
