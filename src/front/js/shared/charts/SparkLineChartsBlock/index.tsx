@@ -6,7 +6,7 @@ import { formatUnixToDate, formatNumber } from "../../../utils/formatters";
 import LineChart from "../LineChart";
 import SparkLineChart from "../LineChart/SparkLineChart";
 import { TTimeseriesData } from "../../../types";
-import { useTimeseriesMinMaxValues } from "./hooks";
+import { useSmallestTimeUnit, useTimeseriesMinMaxValues } from "./hooks";
 import {  TDataProperty, TLineChartSerie } from "front/js/types";
 
 const constructLineChartDataFromTs = (
@@ -27,21 +27,6 @@ const constructLineChartDataFromTs = (
     : undefined;
 };
 
-const constructLineChartDataFromARIMAResult = (xValues, interval: number, start: number) => {
-  return xValues
-    ? {
-        id: "ARIMA",
-        label: "ARIMA",
-        color: "blue",
-        datapoints: map(xValues, (datum, index: number) => ({
-          valueX: start + (index + 1) * interval,
-          valueY: datum,
-        })).sort((a, b) => (b.valueX - a.valueX ? 1 : -1)),
-      }
-    : undefined;
-};
-
-
 
 type TProps = {
   readonly valueProperties: TDataProperty[];
@@ -50,18 +35,7 @@ type TProps = {
 } & any;
 const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, predictedData }: TProps) => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-
-
-  const lastTs = timeseriesData && timeProperty?.value && timeseriesData[timeseriesData.length - 1][timeProperty.value];
-
-  const time = lastTs ? lastTs - timeseriesData[timeseriesData.length - 2][timeProperty.value] : undefined;
-  if (timeseriesData && timeProperty) {
-    console.log("LAST--- > ", timeseriesData[1], lastTs, time, timeseriesData[0][timeProperty.value]);
-  }
-  const predictedChartData =
-    time && lastTs && predictedData[0]
-      ? constructLineChartDataFromARIMAResult(predictedData[0], time, lastTs)
-      : undefined;
+  const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
 
   const firstProp = valueProperties?.[0];
   useEffect(() => {
@@ -70,7 +44,6 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
 
   const mainChartData = constructLineChartDataFromTs(selectedProp, timeProperty, timeseriesData);
 
-  console.log("AAA!!!@@## -- > ", [mainChartData, predictedChartData]);
   const handleSparklineClick = (chartProp) => () => {
     setSelectedProp(chartProp);
   };
