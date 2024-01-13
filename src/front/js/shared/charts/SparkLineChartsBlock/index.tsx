@@ -1,29 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { map, maxBy, minBy } from "lodash";
+import { map } from "lodash";
 
 import { Content } from "../../../pages/App/styles";
 import { formatUnixToDate, formatNumber } from "../../../utils/formatters";
 import LineChart from "../LineChart";
 import SparkLineChart from "../LineChart/SparkLineChart";
 import { TTimeseriesData } from "../../../types";
-
-type TDataProperty = {
-  readonly value: number;
-  readonly label: string;
-};
+import { useTimeseriesMinMaxValues } from "./hooks";
+import {  TDataProperty, TLineChartSerie } from "front/js/types";
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
   timeProperty: TDataProperty | undefined,
   data: TTimeseriesData,
-) => {
+): TLineChartSerie | undefined => {
   return valueProperty?.value && timeProperty?.value
     ? {
         id: "timeseries",
         label: valueProperty.label || "",
         color: "red",
         datapoints: map(data, (datum) => ({
-          valueX: datum[timeProperty?.value],
+          valueX: datum[timeProperty?.value] as number,
           valueY: +datum[valueProperty.value],
         })),
       }
@@ -44,8 +41,7 @@ const constructLineChartDataFromARIMAResult = (xValues, interval: number, start:
     : undefined;
 };
 
-const getMaxValue = (data) => maxBy(data, "valueY");
-const getMinValue = (data) => minBy(data, "valueY");
+
 
 type TProps = {
   readonly valueProperties: TDataProperty[];
@@ -54,6 +50,7 @@ type TProps = {
 } & any;
 const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, predictedData }: TProps) => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+
 
   const lastTs = timeseriesData && timeProperty?.value && timeseriesData[timeseriesData.length - 1][timeProperty.value];
 
@@ -72,17 +69,19 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
   }, [firstProp]);
 
   const mainChartData = constructLineChartDataFromTs(selectedProp, timeProperty, timeseriesData);
-  // const maxValue = getMaxValue(mainChartData?.[0]?.datapoints || []);
-  // const minValue = getMinValue(mainChartData?.[0]?.datapoints || []);
+
   console.log("AAA!!!@@## -- > ", [mainChartData, predictedChartData]);
   const handleSparklineClick = (chartProp) => () => {
     setSelectedProp(chartProp);
   };
-  if ( !mainChartData) {
-    return null;
-  }
+
+  const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
+
+  if ( !mainChartData) return null;
+  
   return (
     <Content>
+      <div>
       <LineChart
         heading={selectedProp?.label || ""}
         data={[mainChartData]}
@@ -92,7 +91,9 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
         formatYScale={formatNumber}
         height={250}
         padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
-      />
+        />
+        <p>Min: {min?.valueY}, Max: {max?.valueY}</p>
+      </div>
       <div>
         {map(valueProperties, (prop) => {
           const chartData = [constructLineChartDataFromTs(prop, timeProperty, timeseriesData)];
