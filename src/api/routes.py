@@ -17,14 +17,8 @@ CORS(api, origins=['http://localhost:3000'], \
 )
 @api.route('/white-noise', methods=['POST', 'GET'])
 def handle_white_noise():
-
-    f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/api/data/AIR_Q_TU_Graz/output_chunk_1.json')
-    data = json.load(f)
-
-    data_serie = [x["health"] for x in data]
-    print(data_serie[0])
+    requestBody = request.get_json()
+    data_serie = requestBody["data"]
     result = Analysis.detect_white_noise(data_serie)
 
-    response_body = { "result": result }
-
-    return json.dumps(response_body), 200
+    return json.dumps(result), 200

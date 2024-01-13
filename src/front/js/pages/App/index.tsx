@@ -23,9 +23,9 @@ const App = () => {
       const sorted = timeseriesData.sort((a, b) => {
         return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
       });
-      const sliced: any = slice(sorted, 0, 300);
-      console.log("SORTED >>> ", sliced, timeseriesData);
-      setSortedTSData(sliced);
+      // const sliced: any = slice(sorted, 0, 300);
+      console.log("SORTED >>> ", sorted);
+      setSortedTSData(sorted);
     }
   }, [timeProperty, timeseriesData]);
 

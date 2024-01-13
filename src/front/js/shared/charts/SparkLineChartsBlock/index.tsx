@@ -33,7 +33,7 @@ type TProps = {
   readonly timeProperty: TDataProperty;
   readonly timeseriesData: TTimeseriesData;
 } & any;
-const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, predictedData }: TProps) => {
+const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }: TProps) => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
 
@@ -50,7 +50,8 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
 
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
 
-  useWhiteNoise()
+  const whiteNoiseTestResult = useWhiteNoise(timeseriesData, selectedProp);
+  console.log("!!! >>> ", whiteNoiseTestResult)
 
   if ( !mainChartData) return null;
   
@@ -67,7 +68,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData, p
         height={250}
         padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
         />
-        <p>Min: {min?.valueY}, Max: {max?.valueY}</p>
+        <p>Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY}, Is data white noise? {whiteNoiseTestResult?.isWhiteNoise ? "yes" : "no"}</p>
       </div>
       <div>
         {map(valueProperties, (prop) => {

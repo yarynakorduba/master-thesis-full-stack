@@ -1,6 +1,6 @@
-import { maxBy, minBy } from "lodash";
+import { map, maxBy, minBy } from "lodash";
+import { useCallback, useEffect, useState } from "react";
 import { TDataProperty, TLineChartDatapoint } from "front/js/types";
-import { useCallback, useEffect } from "react";
 
 
 export const useTimeseriesMinMaxValues = (chartData: TLineChartDatapoint[]): [TLineChartDatapoint | undefined, TLineChartDatapoint | undefined] => {
@@ -15,13 +15,27 @@ export const useSmallestTimeUnit = (timeseriesData, timeProperty: TDataProperty)
     return [time, lastTs];
 }
 
-export const useWhiteNoise = () => {
-    const fetchIsWhiteNoise = useCallback(async () => {
-        const result = await fetch(`${process.env.BACKEND_URL}/api/white-noise`);
+export const useWhiteNoise = (timeseriesData, selectedProp): any => {
+
+    const [whiteNoiseTestResult, setWhiteNoiseTestResult] = useState(undefined);
+    
+    const fetchIsWhiteNoise = useCallback(async (data) => {
+        const result = await fetch(`${process.env.BACKEND_URL}/api/white-noise`, {
+            method: "POST",
+            body: JSON.stringify({ data }),
+            headers: {
+                'Content-type':'application/json', 
+            }
+        });
         const resultJSON = await result.json();
-        console.log("-----!!!", resultJSON)
+        setWhiteNoiseTestResult(resultJSON);
       }, [])
       useEffect(() => {
-        fetchIsWhiteNoise();
-    }, [fetchIsWhiteNoise])
+        const dataForAnalysis = selectedProp?.value ? map(timeseriesData, datum => datum[selectedProp.value]): undefined;
+        if (dataForAnalysis) {
+            fetchIsWhiteNoise(dataForAnalysis);
+        }
+    }, [fetchIsWhiteNoise, selectedProp, timeseriesData]);
+
+    return whiteNoiseTestResult;
 }
