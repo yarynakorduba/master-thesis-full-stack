@@ -12,14 +12,18 @@ const App = () => {
   const [sortedTSData, setSortedTSData] = useState<any>([]);
   const [predictedData, setPredictedData] = useState<any>([]);
 
-  const valueProperties = useMemo(
-    (): TDataProperty[] => [{ value: 'oxygen', label: 'oxygen' }],
-    []
-  ); //useWatch({ control: methods.control, name: "prop" });
-  const timeProperty = useMemo(
-    (): TDataProperty => ({ value: 'timestamp', label: 'timestamp' }),
-    []
-  ); //useWatch({ control: methods.control, name: "timeProperty" });
+  const valueProperties = useWatch({ control: methods.control, name: 'prop' });
+  //  useMemo(
+  //   (): TDataProperty[] => [{ value: 'oxygen', label: 'oxygen' }],
+  //   []
+  // );
+  //useWatch({ control: methods.control, name: "prop" });
+  const timeProperty = useWatch({ control: methods.control, name: 'timeProperty' });
+  // useMemo(
+  //   (): TDataProperty => ({ value: 'timestamp', label: 'timestamp' }),
+  //   []
+  // );
+  //useWatch({ control: methods.control, name: "timeProperty" });
 
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {

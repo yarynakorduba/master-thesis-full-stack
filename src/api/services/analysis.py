@@ -8,6 +8,6 @@ class Analysis():
         # The default maximum lag is often determined based on the size of the data.
         # lags = None
         # print(data)
-        result = diag.acorr_ljungbox(data, boxpierce=True, lags=100, model_df=0, period=None, return_df=None)
+        result = diag.acorr_ljungbox(data, boxpierce=True, model_df=0, period=None, return_df=None)
         print(result)
-        # return {"isWhiteNoise": bool(result.loc[lags, "lb_pvalue"] >= SIGNIFICANT_P)}
+        return {"isWhiteNoise": bool(result.iloc[-1, 1] >= SIGNIFICANT_P)}

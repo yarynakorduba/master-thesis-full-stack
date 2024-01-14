@@ -23,16 +23,12 @@ export const useSmallestTimeUnit = (timeseriesData, timeProperty: TDataProperty)
   return [time, lastTs];
 };
 
-type TWhiteNoiseResult = { readonly isWhiteNoise: boolean };
+type TWhiteNoiseResult = { readonly whiteNoiseResult: any; readonly isWhiteNoiseLoading: boolean };
 export const useWhiteNoise = (
   timeseriesData: TTimeseriesData,
   selectedProp: TDataProperty | undefined
-): TWhiteNoiseResult | undefined => {
-  const {
-    data: whiteNoiseTestResult,
-    isLoading: isWhiteNoiseLoading,
-    fetch: handleFetchIsWhiteNoise
-  } = useFetch(fetchIsWhiteNoise);
+): TWhiteNoiseResult => {
+  const { data: result, isLoading, fetch: handleFetchIsWhiteNoise } = useFetch(fetchIsWhiteNoise);
 
   useEffect(() => {
     const dataForAnalysis = selectedProp?.value
@@ -44,5 +40,5 @@ export const useWhiteNoise = (
     }
   }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
 
-  return whiteNoiseTestResult;
+  return { whiteNoiseResult: result, isWhiteNoiseLoading: isLoading };
 };

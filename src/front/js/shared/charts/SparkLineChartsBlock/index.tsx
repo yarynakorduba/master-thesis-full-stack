@@ -59,7 +59,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
 
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
 
-  const whiteNoiseTestResult = useWhiteNoise(timeseriesData, selectedProp);
+  const { isWhiteNoiseLoading, whiteNoiseResult } = useWhiteNoise(timeseriesData, selectedProp);
 
   if (!mainChartData) return null;
 
@@ -78,7 +78,11 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
         />
         <DataInfo>
           Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
-          Is data white noise? {whiteNoiseTestResult?.isWhiteNoise ? 'yes' : 'no'}
+          {isWhiteNoiseLoading ? (
+            'Loading'
+          ) : (
+            <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
+          )}
         </DataInfo>
       </div>
       <div>

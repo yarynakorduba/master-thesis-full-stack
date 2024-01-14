@@ -9,12 +9,12 @@ export const useFetch = (fetchRequest) => {
       setIsLoading(true);
       const result = await fetchRequest(d);
       const resultJSON = await result.json();
+      setData(resultJSON);
       setIsLoading(false);
-      setData(result.data);
       return { status: 'SUCCESS', data: resultJSON };
     } catch (e) {
-      setIsLoading(false);
       setData(undefined);
+      setIsLoading(false);
       return { status: 'FAILURE', data: null, error: e };
     }
   }, []);
