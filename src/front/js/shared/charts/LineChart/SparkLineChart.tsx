@@ -1,13 +1,13 @@
-import React, { useCallback, useMemo } from "react";
-import { AxisLeft } from "@visx/axis";
-import { Group } from "@visx/group";
-import { LinePath } from "@visx/shape";
-import { ParentSize } from "@visx/responsive";
-import { flatMap, flow, isNil, uniq } from "lodash";
+import React, { useCallback, useMemo } from 'react';
+import { AxisLeft } from '@visx/axis';
+import { Group } from '@visx/group';
+import { LinePath } from '@visx/shape';
+import { ParentSize } from '@visx/responsive';
+import { flatMap, flow, isNil, uniq } from 'lodash';
 
-import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from "./utils";
-import { ChartVariant, AxisVariant } from "../ChartOverlays/hooks";
-import { ChartWrapper, SparkLineChartHeading } from "./styles";
+import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
+import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
+import { ChartWrapper, SparkLineChartHeading } from './styles';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -15,7 +15,10 @@ const CHART_TOP_PADDING = 16;
 const CHART_RIGHT_PADDING = 32;
 
 const getUniqueFlatValues = (prop, data): number[] =>
-  flow((d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])), uniq)(data);
+  flow(
+    (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
+    uniq
+  )(data);
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -30,12 +33,13 @@ const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, pad
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
-  const cleanHeight = useMemo(() => height - padding.top - padding.bottom, [height, padding.bottom, padding.top]);
+  const cleanHeight = useMemo(
+    () => height - padding.top - padding.bottom,
+    [height, padding.bottom, padding.top]
+  );
 
-  const xValues = getUniqueFlatValues("valueX", data);
-  const yValues = getUniqueFlatValues("valueY", data);
-
-  console.log("VALUES --- > ", xValues, yValues);
+  const xValues = getUniqueFlatValues('valueX', data);
+  const yValues = getUniqueFlatValues('valueY', data);
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
@@ -45,14 +49,14 @@ const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, pad
       const getX = (lineDatum) => {
         const x = xScale(lineDatum?.valueX);
         const offset = 0;
-        return x + offset;
+        return Number(x) + offset;
       };
 
       const getY = (lineDatum) => {
         const y = yScale(lineDatum?.valueY);
         const offset = 0;
 
-        return y + offset;
+        return Number(y) + offset;
       };
       return (
         <LinePath
@@ -65,7 +69,7 @@ const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, pad
         />
       );
     },
-    [xScale, yScale],
+    [xScale, yScale]
   );
 
   return (
@@ -75,11 +79,11 @@ const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, pad
         <svg width={width} height={height}>
           <Group left={padding.left} top={padding.top}>
             <AxisLeft
-              scale={yScale}
+              scale={yScale as any}
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatYScale)}
-              tickLabelProps={getAxisTickLabelProps(AxisVariant.left, "0.5rem") as any}
+              tickLabelProps={getAxisTickLabelProps(AxisVariant.left, '0.5rem') as any}
               numTicks={2}
             />
             {data?.map(renderLine)}
@@ -104,9 +108,9 @@ export default function ResponsiveLineChart({
     top: CHART_TOP_PADDING,
     bottom: CHART_BOTTOM_PADDING,
     left: CHART_LEFT_PADDING,
-    right: CHART_RIGHT_PADDING,
+    right: CHART_RIGHT_PADDING
   },
-  onClick,
+  onClick
 }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -123,7 +127,7 @@ export default function ResponsiveLineChart({
         onClick={onClick}
       />
     ),
-    [data, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding, onClick],
+    [data, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding, onClick]
   );
 
   const renderResponsiveChart = useCallback(
@@ -133,7 +137,7 @@ export default function ResponsiveLineChart({
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
-    [renderChart, width, height],
+    [renderChart, width, height]
   );
 
   if (!isResponsive) return renderChart(width, 400);
@@ -142,7 +146,7 @@ export default function ResponsiveLineChart({
       parentSizeStyles={{
         maxHeight: height,
         maxWidth: width,
-        height,
+        height
       }}
       onClick={onClick}
     >

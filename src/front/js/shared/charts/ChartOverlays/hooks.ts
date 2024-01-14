@@ -1,16 +1,16 @@
-import { localPoint } from "@visx/event";
-import { isNil } from "lodash";
-import React, { useState, useCallback, useEffect } from "react";
+import { localPoint } from '@visx/event';
+import { isNil } from 'lodash';
+import React, { useState, useCallback, useEffect } from 'react';
 
 export enum ChartVariant {
-  vertical = "vertical",
-  horizontal = "horizontal",
+  vertical = 'vertical',
+  horizontal = 'horizontal'
 }
 
 export enum AxisVariant {
-  left = "left",
-  bottom = "bottom",
-  right = "right",
+  left = 'left',
+  bottom = 'bottom',
+  right = 'right'
 }
 
 export type TSeries = {
@@ -34,14 +34,14 @@ export function useClosestPoints(event, xScale, yScale, series: TSeries[] = [], 
     const points = pointGroup?.points ?? [];
     const point = {
       color,
-      data,
+      data
     };
     return {
       ...accum,
       [pointGroupId]: {
         ...pointGroup,
-        points: [...points, point],
-      },
+        points: [...points, point]
+      }
     };
   }, []);
 
@@ -52,7 +52,7 @@ export function useClosestPoints(event, xScale, yScale, series: TSeries[] = [], 
     }
 
     const targetName = event?.target?.localName;
-    if (targetName !== "path" && targetName !== "rect") return;
+    if (targetName !== 'path' && targetName !== 'rect') return;
 
     const { y, x } = localPoint(event) || { x: 0, y: 0 };
     let points;
@@ -65,7 +65,7 @@ export function useClosestPoints(event, xScale, yScale, series: TSeries[] = [], 
       const data = datapoints.find((datum) => datum.valueX === xValue);
       if (isNil(data)) return accum;
 
-      let yVal = data?.valueY;
+      const yVal = data?.valueY;
       const yCoordinate = yScale(yVal);
       if (isNil(yCoordinate)) return accum;
       return addPoint(accum, color, data, xCoordinate, yCoordinate);

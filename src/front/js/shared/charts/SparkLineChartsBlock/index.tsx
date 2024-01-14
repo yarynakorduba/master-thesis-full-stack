@@ -1,46 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { map } from "lodash";
+import React, { useEffect, useState } from 'react';
+import { map } from 'lodash';
 
-import { Content } from "../../../pages/App/styles";
-import { formatUnixToDate, formatNumber } from "../../../utils/formatters";
-import LineChart from "../LineChart";
-import SparkLineChart from "../LineChart/SparkLineChart";
-import { TTimeseriesData } from "../../../types";
-import { useSmallestTimeUnit, useTimeseriesMinMaxValues, useWhiteNoise } from "./hooks";
-import {  TDataProperty, TLineChartSerie } from "front/js/types";
+import { Content } from '../../../pages/App/styles';
+import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
+import LineChart from '../LineChart';
+import SparkLineChart from '../LineChart/SparkLineChart';
+import { TTimeseriesData } from '../../../types';
+import { useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
+import { TDataProperty, TLineChartSerie } from 'front/js/types';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
   timeProperty: TDataProperty | undefined,
-  data: TTimeseriesData,
+  data: TTimeseriesData
 ): TLineChartSerie | undefined => {
   return valueProperty?.value && timeProperty?.value
     ? {
-        id: "timeseries",
-        label: valueProperty.label || "",
-        color: "red",
+        id: 'timeseries',
+        label: valueProperty.label || '',
+        color: 'red',
         datapoints: map(data, (datum) => ({
           valueX: datum[timeProperty?.value] as number,
-          valueY: +datum[valueProperty.value],
-        })),
+          valueY: +datum[valueProperty.value]
+        }))
       }
     : undefined;
 };
-
 
 type TProps = {
   readonly valueProperties: TDataProperty[];
   readonly timeProperty: TDataProperty;
   readonly timeseriesData: TTimeseriesData;
-} & any;
+  readonly predictedData: TTimeseriesData;
+};
 const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }: TProps) => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-  const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
+  // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
 
-  const firstProp = valueProperties?.[0];
   useEffect(() => {
+    const firstProp = valueProperties?.[0];
     if (firstProp) setSelectedProp(firstProp);
-  }, [firstProp]);
+  }, [valueProperties?.[0]?.value]);
 
   const mainChartData = constructLineChartDataFromTs(selectedProp, timeProperty, timeseriesData);
 
@@ -51,31 +51,33 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
 
   const whiteNoiseTestResult = useWhiteNoise(timeseriesData, selectedProp);
-  console.log("!!! >>> ", whiteNoiseTestResult)
 
-  if ( !mainChartData) return null;
-  
+  if (!mainChartData) return null;
+
   return (
     <Content>
       <div>
-      <LineChart
-        heading={selectedProp?.label || ""}
-        data={[mainChartData]}
-        numXAxisTicks={5}
-        numYAxisTicks={5}
-        formatXScale={formatUnixToDate}
-        formatYScale={formatNumber}
-        height={250}
-        padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
+        <LineChart
+          heading={selectedProp?.label || ''}
+          data={[mainChartData]}
+          numXAxisTicks={5}
+          numYAxisTicks={5}
+          formatXScale={formatUnixToDate}
+          formatYScale={formatNumber}
+          height={250}
+          padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
         />
-        <p>Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY}, Is data white noise? {whiteNoiseTestResult?.isWhiteNoise ? "yes" : "no"}</p>
+        <p>
+          Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
+          Is data white noise? {whiteNoiseTestResult?.isWhiteNoise ? 'yes' : 'no'}
+        </p>
       </div>
       <div>
         {map(valueProperties, (prop) => {
           const chartData = [constructLineChartDataFromTs(prop, timeProperty, timeseriesData)];
           return (
             <SparkLineChart
-              heading={prop?.label || ""}
+              heading={prop?.label || ''}
               data={chartData}
               formatYScale={formatNumber}
               height={90}

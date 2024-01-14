@@ -1,25 +1,29 @@
-import React, { useCallback, useMemo } from "react";
-import { AxisLeft, AxisBottom } from "@visx/axis";
-import { GridColumns, GridRows } from "@visx/grid";
-import { Group } from "@visx/group";
-import { LinePath } from "@visx/shape";
-import { ParentSize } from "@visx/responsive";
-import { flatMap, flow, isNil, uniq } from "lodash";
+import React, { useCallback, useMemo } from 'react';
+import { AxisLeft, AxisBottom } from '@visx/axis';
+import { GridColumns, GridRows } from '@visx/grid';
+import { Group } from '@visx/group';
+import { LinePath } from '@visx/shape';
+import { ParentSize } from '@visx/responsive';
+import { flatMap, flow, isNil, uniq } from 'lodash';
 
-import ChartOverlays from "../ChartOverlays";
-import ChartTooltips from "../ChartTooltips";
-import { useTooltipConfigs } from "./hooks";
-import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from "./utils";
-import { ChartVariant, AxisVariant } from "../ChartOverlays/hooks";
-import { ChartHeading, ChartWrapper } from "./styles";
+import ChartOverlays from '../ChartOverlays';
+import ChartTooltips from '../ChartTooltips';
+import { useTooltipConfigs } from './hooks';
+import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
+import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
+import { ChartHeading, ChartWrapper } from './styles';
+import { TLineChartData } from 'front/js/types';
 
 const CHART_X_PADDING = 40;
 const CHART_Y_PADDING = 30;
 
-const GRAY = "#E1E5EA";
+const GRAY = '#E1E5EA';
 
 const getUniqueFlatValues = (prop, data): number[] =>
-  flow((d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])), uniq)(data);
+  flow(
+    (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
+    uniq
+  )(data);
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -27,7 +31,23 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TProps = {} & any;
+type TProps = {
+  readonly width?: number;
+  readonly height?: number;
+  readonly heading?: string;
+  readonly variant?: ChartVariant;
+  readonly data: TLineChartData;
+  readonly formatXScale: (value: number) => string | number;
+  readonly formatYScale: (value: number) => string | number;
+  readonly numXAxisTicks?: number;
+  readonly numYAxisTicks?: number;
+  readonly padding: {
+    readonly top: number;
+    readonly left: number;
+    readonly bottom: number;
+    readonly right: number;
+  };
+};
 
 const LineChart = ({
   width = 900,
@@ -39,23 +59,26 @@ const LineChart = ({
   formatYScale,
   numXAxisTicks = 8, // approximate
   numYAxisTicks = 8,
-  padding,
+  padding
 }: TProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
-  const cleanHeight = useMemo(() => height - padding.top - padding.bottom, [height, padding.bottom, padding.top]);
+  const cleanHeight = useMemo(
+    () => height - padding.top - padding.bottom,
+    [height, padding.bottom, padding.top]
+  );
 
   const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
 
-  const xValues = getUniqueFlatValues("valueX", data);
-  const yValues = getUniqueFlatValues("valueY", data);
+  const xValues = getUniqueFlatValues('valueX', data);
+  const yValues = getUniqueFlatValues('valueY', data);
 
-  const xTickWidth = useMemo(
-    () => (isVertical ? cleanWidth / xValues.length : cleanWidth / numXAxisTicks),
-    [cleanWidth, isVertical, numXAxisTicks, xValues.length],
-  );
+  // const xTickWidth = useMemo(
+  //   () => (isVertical ? cleanWidth / xValues.length : cleanWidth / numXAxisTicks),
+  //   [cleanWidth, isVertical, numXAxisTicks, xValues.length]
+  // );
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
@@ -65,14 +88,14 @@ const LineChart = ({
       const getX = (lineDatum) => {
         const x = xScale(lineDatum?.valueX);
         const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
-        return x + offset;
+        return Number(x) + offset;
       };
 
       const getY = (lineDatum) => {
         const y = yScale(lineDatum?.valueY);
         const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
 
-        return y + offset;
+        return Number(y) + offset;
       };
       return (
         <LinePath
@@ -85,19 +108,20 @@ const LineChart = ({
         />
       );
     },
-    [xScale, yScale],
+    [xScale, yScale]
   );
 
-  const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } = useTooltipConfigs(
-    padding.left,
-    padding.top,
-    cleanHeight,
-    variant,
-    xScale,
-    yScale,
-    formatXScale,
-    formatYScale,
-  );
+  const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } =
+    useTooltipConfigs(
+      padding.left,
+      padding.top,
+      cleanHeight,
+      variant,
+      xScale,
+      yScale,
+      formatXScale,
+      formatYScale
+    );
 
   return (
     <>
@@ -106,13 +130,23 @@ const LineChart = ({
         <svg width={width} height={height} ref={containerRef}>
           <Group left={padding.left} top={padding.top}>
             {variant === ChartVariant.vertical ? (
-              <GridRows scale={yScale} width={cleanWidth} height={cleanHeight} stroke={GRAY} />
+              <GridRows
+                scale={yScale as any}
+                width={cleanWidth}
+                height={cleanHeight}
+                stroke={GRAY}
+              />
             ) : (
-              <GridColumns scale={xScale} width={cleanWidth} height={cleanHeight} stroke={GRAY} />
+              <GridColumns
+                scale={xScale as any}
+                width={cleanWidth}
+                height={cleanHeight}
+                stroke={GRAY}
+              />
             )}
             <AxisBottom
               top={cleanHeight}
-              scale={xScale}
+              scale={xScale as any}
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatXScale)}
@@ -120,7 +154,7 @@ const LineChart = ({
               numTicks={numXAxisTicks}
             />
             <AxisLeft
-              scale={yScale}
+              scale={yScale as any}
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatYScale)}
@@ -162,9 +196,9 @@ export default function ResponsiveLineChart({
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
     left: CHART_X_PADDING,
-    right: CHART_X_PADDING,
-  },
-}) {
+    right: CHART_X_PADDING
+  }
+}: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
       <LineChart
@@ -180,7 +214,7 @@ export default function ResponsiveLineChart({
         padding={padding}
       />
     ),
-    [data, formatXScale, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding],
+    [data, formatXScale, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding]
   );
 
   const renderResponsiveChart = useCallback(
@@ -190,11 +224,13 @@ export default function ResponsiveLineChart({
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
-    [renderChart, width, height],
+    [renderChart, width, height]
   );
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ maxHeight: height, maxWidth: width, height }}>{renderResponsiveChart}</ParentSize>
+    <ParentSize parentSizeStyles={{ maxHeight: height, maxWidth: width, height }}>
+      {renderResponsiveChart}
+    </ParentSize>
   );
 }

@@ -83,3 +83,4 @@ __pycache__/
 
 
 src/api/data/*
+src/**/test.json

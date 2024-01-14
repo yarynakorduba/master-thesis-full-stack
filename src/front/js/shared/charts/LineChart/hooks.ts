@@ -1,6 +1,6 @@
-import { useTooltipInPortal } from "@visx/tooltip";
-import { isNil } from "lodash";
-import React, { useState, useCallback } from "react";
+import { useTooltipInPortal } from '@visx/tooltip';
+import { isNil } from 'lodash';
+import { useState, useCallback } from 'react';
 
 export const useTooltipConfigs = (
   xPadding,
@@ -10,7 +10,7 @@ export const useTooltipConfigs = (
   xScale,
   yScale,
   formatXScale,
-  formatYScale,
+  formatYScale
 ) => {
   const [pointTooltip, setPointTooltip] = useState<any>();
   const [xTooltip, setXTooltip] = useState<any>();
@@ -18,14 +18,14 @@ export const useTooltipConfigs = (
 
   const { containerRef, containerBounds } = useTooltipInPortal({
     scroll: true,
-    detectBounds: true,
+    detectBounds: true
   });
 
   const handleMouseLeave = (event, pointGroup) => {
     const noTooltipData = {
       tooltipLeft: undefined,
       tooltipTop: undefined,
-      tooltipData: undefined,
+      tooltipData: undefined
     };
 
     if (pointGroup) setPointTooltip(noTooltipData);
@@ -43,12 +43,12 @@ export const useTooltipConfigs = (
 
   const handleHover = useCallback(
     (event, pointGroup) => {
-      const top = "clientY" in event ? event.clientY : 0;
-      const left = "clientX" in event ? event.clientX : 0;
+      const top = 'clientY' in event ? event.clientY : 0;
+      const left = 'clientX' in event ? event.clientX : 0;
       setPointTooltip({
         tooltipLeft: left - containerBounds.left,
         tooltipTop: top - containerBounds.top,
-        tooltipData: pointGroup?.points,
+        tooltipData: pointGroup?.points
       });
       setYTooltip({
         tooltipLeft: xPadding,
@@ -57,8 +57,8 @@ export const useTooltipConfigs = (
           yScale,
           true,
           formatYScale,
-          top > yPadding + containerBounds.top ? top - yPadding - containerBounds.top : 0,
-        ),
+          top > yPadding + containerBounds.top ? top - yPadding - containerBounds.top : 0
+        )
       });
       setXTooltip({
         tooltipLeft: left - containerBounds.left,
@@ -67,11 +67,21 @@ export const useTooltipConfigs = (
           xScale,
           true,
           formatXScale,
-          left > xPadding + containerBounds.left ? left - xPadding - containerBounds.left : 0,
-        ),
+          left > xPadding + containerBounds.left ? left - xPadding - containerBounds.left : 0
+        )
       });
     },
-    [containerBounds, xPadding, getAxisTooltipData, yScale, formatYScale, yPadding, chartHeight, xScale, formatXScale],
+    [
+      containerBounds,
+      xPadding,
+      getAxisTooltipData,
+      yScale,
+      formatYScale,
+      yPadding,
+      chartHeight,
+      xScale,
+      formatXScale
+    ]
   );
 
   return {
@@ -80,6 +90,6 @@ export const useTooltipConfigs = (
     yTooltip,
     handleHover,
     handleMouseLeave,
-    containerRef,
+    containerRef
   };
 };
