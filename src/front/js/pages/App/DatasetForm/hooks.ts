@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { TTimeseriesData } from '../../../types';
 
 export const useParseDataset = (file: File, setTimeseriesData: (data: TTimeseriesData) => void) => {

@@ -30,17 +30,17 @@ const App = () => {
     }
   }, [timeProperty, timeseriesData]);
 
-  const handleGetArimaResults = async (ts) => {
-    // const results = await getARIMAResults(ts);
-    // setPredictedData(results);
-  };
+  // const handleGetArimaResults = async (ts) => {
+  //   const results = await getARIMAResults(ts);
+  //   setPredictedData(results);
+  // };
 
-  useEffect(() => {
-    if (valueProperties?.[0]?.value && sortedTSData.length) {
-      const ts = sortedTSData.map((d) => Number(d[valueProperties[0]?.value]));
-      handleGetArimaResults(ts);
-    }
-  }, [sortedTSData, valueProperties]);
+  // useEffect(() => {
+  //   if (valueProperties?.[0]?.value && sortedTSData.length) {
+  //     const ts = sortedTSData.map((d) => Number(d[valueProperties[0]?.value]));
+  //     handleGetArimaResults(ts);
+  //   }
+  // }, [sortedTSData, valueProperties]);
 
   return (
     <AppPage>

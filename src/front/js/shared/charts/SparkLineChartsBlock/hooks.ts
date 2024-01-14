@@ -1,6 +1,8 @@
 import { map, maxBy, minBy } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
+import { fetchIsWhiteNoise } from '../../../apiCalls/analysis';
+import { useFetch } from '../../../hooks/fetch';
 
 export const useTimeseriesMinMaxValues = (
   chartData: TLineChartDatapoint[]
@@ -21,48 +23,26 @@ export const useSmallestTimeUnit = (timeseriesData, timeProperty: TDataProperty)
   return [time, lastTs];
 };
 
-export const fetchIsWhiteNoise = (data) => async () => {
-  const result = await fetch(`${process.env.BACKEND_URL}/api/white-noise`, {
-    method: 'POST',
-    body: JSON.stringify({ data }),
-    headers: {
-      'Content-type': 'application/json'
-    }
-  });
-
-  return result;
-};
-
-export const handleFetch = async (fetchRequest) => {
-  try {
-    const result = await fetchRequest();
-    const resultJSON = await result.json();
-    return { status: 'SUCCESS', data: resultJSON };
-  } catch (e) {
-    return { status: 'FAILURE', data: null, error: e };
-  }
-};
-
 type TWhiteNoiseResult = { readonly isWhiteNoise: boolean };
 export const useWhiteNoise = (
   timeseriesData: TTimeseriesData,
   selectedProp: TDataProperty | undefined
 ): TWhiteNoiseResult | undefined => {
-  const [whiteNoiseTestResult, setWhiteNoiseTestResult] = useState(undefined);
-
-  const fetchIsWhiteNoise = useCallback(async (data) => {
-    // const result = await handleFetch(fetchIsWhiteNoise(data));
-    // setWhiteNoiseTestResult(result.data);
-  }, []);
+  const {
+    data: whiteNoiseTestResult,
+    isLoading: isWhiteNoiseLoading,
+    fetch: handleFetchIsWhiteNoise
+  } = useFetch(fetchIsWhiteNoise);
 
   useEffect(() => {
     const dataForAnalysis = selectedProp?.value
       ? map(timeseriesData, (datum) => datum[selectedProp.value])
       : undefined;
     if (dataForAnalysis) {
-      fetchIsWhiteNoise(dataForAnalysis);
+      console.log('AAA');
+      handleFetchIsWhiteNoise(dataForAnalysis);
     }
-  }, [selectedProp?.value]);
+  }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
 
   return whiteNoiseTestResult;
 };

@@ -42,7 +42,6 @@ function TooltipDatumIndicator({ color }) {
 }
 
 export default function ChartTooltips({ pointTooltip, xTooltip, yTooltip }) {
-  // console.log("===pointTooltip=> ", pointTooltip);
   const renderPointTooltipText = useCallback(
     () =>
       map(pointTooltip?.tooltipData, (point) => (

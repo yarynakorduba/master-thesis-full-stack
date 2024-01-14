@@ -37,11 +37,11 @@ type TProps = {
 const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }: TProps) => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
+  const firstProp = valueProperties?.[0];
 
   useEffect(() => {
-    const firstProp = valueProperties?.[0];
     if (firstProp) setSelectedProp(firstProp);
-  }, [valueProperties?.[0]?.value]);
+  }, [firstProp]);
 
   const mainChartData = constructLineChartDataFromTs(selectedProp, timeProperty, timeseriesData);
 
