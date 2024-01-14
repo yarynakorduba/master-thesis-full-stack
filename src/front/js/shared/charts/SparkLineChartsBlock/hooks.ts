@@ -35,7 +35,6 @@ export const useWhiteNoise = (
       ? map(timeseriesData, (datum) => datum[selectedProp.value])
       : undefined;
     if (dataForAnalysis) {
-      console.log('AAA');
       handleFetchIsWhiteNoise(dataForAnalysis);
     }
   }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
