@@ -8,6 +8,7 @@ import SparkLineChart from '../LineChart/SparkLineChart';
 import { TTimeseriesData } from '../../../types';
 import { useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
 import { TDataProperty, TLineChartSerie } from 'front/js/types';
+import { DataInfo } from './styles';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
@@ -67,10 +68,10 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           height={250}
           padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
         />
-        <p>
+        <DataInfo>
           Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
           Is data white noise? {whiteNoiseTestResult?.isWhiteNoise ? 'yes' : 'no'}
-        </p>
+        </DataInfo>
       </div>
       <div>
         {map(valueProperties, (prop) => {
