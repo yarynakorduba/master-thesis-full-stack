@@ -12,7 +12,7 @@ export const AppPage = styled.div`
 export const Sidebar = styled.div`
   grid-column: 1;
   grid-row: 1;
-  border-right: 1px solid #ebeff3;
+  border-right: 1px solid ${(props) => props.theme.lightGray};
   padding: 0.75rem;
 `;
 

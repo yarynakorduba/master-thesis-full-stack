@@ -10,8 +10,8 @@ export const Dropzone = styled.div`
   border-width: 2px;
   border-radius: 2px;
   border-style: dashed;
-  background-color: #ebeff3;
-  border-color: #3948a4;
+  background-color: ${(props) => props.theme.lightGray};
+  border-color: ${(props) => props.theme.accent};
   outline: none;
   transition: border 0.24s ease-in-out;
 

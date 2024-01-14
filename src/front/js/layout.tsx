@@ -1,11 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+
 import ScrollToTop from './component/scrollToTop';
-
 import injectContext from './store/appContext';
-
 import { Navbar } from './component/Navbar/Navbar';
 import App from './pages/App';
+import { theme } from '../styles/theme';
+import GlobalStyle from '../styles/index';
 
 //create your first component
 const Layout = () => {
@@ -14,17 +16,20 @@ const Layout = () => {
   const basename = process.env.BASENAME || '';
 
   return (
-    <div>
-      <BrowserRouter basename={basename}>
-        <ScrollToTop>
-          <Navbar />
-          <Routes>
-            <Route element={<App />} path="/" />
-            <Route element={<h1>Not found!</h1>} />
-          </Routes>
-        </ScrollToTop>
-      </BrowserRouter>
-    </div>
+    <ThemeProvider theme={theme}>
+      <GlobalStyle />
+      <div>
+        <BrowserRouter basename={basename}>
+          <ScrollToTop>
+            <Navbar />
+            <Routes>
+              <Route element={<App />} path="/" />
+              <Route element={<h1>Not found!</h1>} />
+            </Routes>
+          </ScrollToTop>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   );
 };
 

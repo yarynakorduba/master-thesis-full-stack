@@ -5,7 +5,7 @@ export const NavContainer = styled.nav`
   display: flex;
   align-items: center;
   padding: 0 1rem;
-  background: #ebeff3;
+  background: ${(props) => props.theme.lightGray};
 `;
 
 export const NavHeader = styled.h1`

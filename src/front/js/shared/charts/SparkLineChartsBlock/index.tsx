@@ -9,17 +9,19 @@ import { TTimeseriesData } from '../../../types';
 import { useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
 import { TDataProperty, TLineChartSerie } from 'front/js/types';
 import { DataInfo } from './styles';
+import { useTheme } from 'styled-components';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
   timeProperty: TDataProperty | undefined,
-  data: TTimeseriesData
+  data: TTimeseriesData,
+  lineColor: string
 ): TLineChartSerie | undefined => {
   return valueProperty?.value && timeProperty?.value
     ? {
         id: 'timeseries',
         label: valueProperty.label || '',
-        color: 'red',
+        color: lineColor,
         datapoints: map(data, (datum) => ({
           valueX: datum[timeProperty?.value] as number,
           valueY: +datum[valueProperty.value]
@@ -43,7 +45,13 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     if (firstProp) setSelectedProp(firstProp);
   }, [firstProp]);
 
-  const mainChartData = constructLineChartDataFromTs(selectedProp, timeProperty, timeseriesData);
+  const theme = useTheme();
+  const mainChartData = constructLineChartDataFromTs(
+    selectedProp,
+    timeProperty,
+    timeseriesData,
+    theme.chartBlue
+  );
 
   const handleSparklineClick = (chartProp) => () => {
     setSelectedProp(chartProp);
@@ -75,7 +83,9 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       </div>
       <div>
         {map(valueProperties, (prop) => {
-          const chartData = [constructLineChartDataFromTs(prop, timeProperty, timeseriesData)];
+          const chartData = [
+            constructLineChartDataFromTs(prop, timeProperty, timeseriesData, theme.chartBlue)
+          ];
           return (
             <SparkLineChart
               heading={prop?.label || ''}
