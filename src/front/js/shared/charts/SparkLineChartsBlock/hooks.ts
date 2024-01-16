@@ -1,7 +1,7 @@
 import { map, maxBy, minBy } from 'lodash';
 import { useEffect } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
-import { fetchIsWhiteNoise } from '../../../apiCalls/analysis';
+import { fetchDataStationarityTest, fetchIsWhiteNoise } from '../../../apiCalls/analysis';
 import { useFetch } from '../../../hooks/fetch';
 
 export const useTimeseriesMinMaxValues = (
@@ -40,4 +40,26 @@ export const useWhiteNoise = (
   }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
 
   return { whiteNoiseResult: result, isWhiteNoiseLoading: isLoading };
+};
+
+export const useDataStationarityTest = (
+  timeseriesData: TTimeseriesData,
+  selectedProp: TDataProperty | undefined
+) => {
+  const {
+    data: result,
+    isLoading,
+    fetch: handleFetchDataStationarityTest
+  } = useFetch(fetchDataStationarityTest);
+
+  useEffect(() => {
+    const dataForAnalysis = selectedProp?.value
+      ? map(timeseriesData, (datum) => datum[selectedProp.value])
+      : undefined;
+    if (dataForAnalysis) {
+      handleFetchDataStationarityTest(dataForAnalysis);
+    }
+  }, [selectedProp?.value, handleFetchDataStationarityTest, timeseriesData]);
+
+  return { stationarityTestResult: result, isStationarityTestLoading: isLoading };
 };

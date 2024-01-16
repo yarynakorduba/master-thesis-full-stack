@@ -6,7 +6,7 @@ import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
 import { TTimeseriesData } from '../../../types';
-import { useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
+import { useDataStationarityTest, useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
 import { TDataProperty, TLineChartSerie } from 'front/js/types';
 import { DataInfo } from './styles';
 import { useTheme } from 'styled-components';
@@ -60,6 +60,16 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
 
   const { isWhiteNoiseLoading, whiteNoiseResult } = useWhiteNoise(timeseriesData, selectedProp);
+  const { isStationarityTestLoading, stationarityTestResult } = useDataStationarityTest(
+    timeseriesData,
+    selectedProp
+  );
+
+  console.log(
+    '====isStationarityTestLoading====>>> ',
+    isStationarityTestLoading,
+    stationarityTestResult
+  );
 
   if (!mainChartData) return null;
 

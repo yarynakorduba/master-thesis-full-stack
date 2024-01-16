@@ -15,10 +15,19 @@ CORS(api, origins=['http://localhost:3000'], \
     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], \
     supports_credentials=True
 )
-@api.route('/white-noise', methods=['POST', 'GET'])
-def handle_white_noise():
+@api.route('/white-noise', methods=['POST'])
+def test_white_noise():
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    result = Analysis.detect_white_noise(data_serie)
+    result = Analysis.test_white_noise(data_serie)
+
+    return json.dumps(result), 200
+
+
+@api.route('/stationarity-test', methods=['POST'])
+def test_stationarity():
+    requestBody = request.get_json()
+    data_serie = requestBody["data"]
+    result = Analysis.test_stationarity(data_serie)
 
     return json.dumps(result), 200

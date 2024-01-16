@@ -30,7 +30,7 @@ const App = () => {
       const sorted = timeseriesData.sort((a, b) => {
         return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
       });
-      setSortedTSData(sorted);
+      setSortedTSData(sorted.slice(0, 300));
     }
   }, [timeProperty, timeseriesData]);
 
