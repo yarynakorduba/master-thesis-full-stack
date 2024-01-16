@@ -89,9 +89,14 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
         <DataInfo>
           Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
           {isWhiteNoiseLoading ? (
-            'Loading'
+            ''
           ) : (
             <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
+          )}
+          {isWhiteNoiseLoading ? (
+            ''
+          ) : (
+            <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>
           )}
         </DataInfo>
       </div>
