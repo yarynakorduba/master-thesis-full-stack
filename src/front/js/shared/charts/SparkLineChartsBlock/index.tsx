@@ -6,7 +6,12 @@ import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
 import { TTimeseriesData } from '../../../types';
-import { useDataStationarityTest, useTimeseriesMinMaxValues, useWhiteNoise } from './hooks';
+import {
+  useDataCausalityTest,
+  useDataStationarityTest,
+  useTimeseriesMinMaxValues,
+  useWhiteNoise
+} from './hooks';
 import { TDataProperty, TLineChartSerie } from 'front/js/types';
 import { DataInfo } from './styles';
 import { useTheme } from 'styled-components';
@@ -40,7 +45,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];
-
+  console.log('`value prOPS --- >>> ', valueProperties);
   useEffect(() => {
     if (firstProp) setSelectedProp(firstProp);
   }, [firstProp]);
@@ -64,12 +69,12 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     timeseriesData,
     selectedProp
   );
-
-  console.log(
-    '====isStationarityTestLoading====>>> ',
-    isStationarityTestLoading,
-    stationarityTestResult
+  const { isCausalityTestLoading, causalityTestResult } = useDataCausalityTest(
+    timeseriesData,
+    valueProperties
   );
+
+  console.log('====isStationarityTestLoading====>>> ', isCausalityTestLoading, causalityTestResult);
 
   if (!mainChartData) return null;
 
@@ -93,7 +98,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           ) : (
             <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
           )}
-          {isWhiteNoiseLoading ? (
+          {isStationarityTestLoading ? (
             ''
           ) : (
             <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>

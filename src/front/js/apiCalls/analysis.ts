@@ -17,3 +17,13 @@ export const fetchDataStationarityTest = async (data) => {
     }
   });
 };
+
+export const fetchGrangerDataCausalityTest = async (data) => {
+  return fetch(`${process.env.BACKEND_URL}/api/granger-causality-test`, {
+    method: 'POST',
+    body: JSON.stringify({ data }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+};

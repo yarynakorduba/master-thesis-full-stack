@@ -1,7 +1,11 @@
-import { map, maxBy, minBy } from 'lodash';
+import { keys, map, maxBy, minBy } from 'lodash';
 import { useEffect } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
-import { fetchDataStationarityTest, fetchIsWhiteNoise } from '../../../apiCalls/analysis';
+import {
+  fetchDataStationarityTest,
+  fetchGrangerDataCausalityTest,
+  fetchIsWhiteNoise
+} from '../../../apiCalls/analysis';
 import { useFetch } from '../../../hooks/fetch';
 
 export const useTimeseriesMinMaxValues = (
@@ -62,4 +66,32 @@ export const useDataStationarityTest = (
   }, [selectedProp?.value, handleFetchDataStationarityTest, timeseriesData]);
 
   return { stationarityTestResult: result, isStationarityTestLoading: isLoading };
+};
+
+export const useDataCausalityTest = (
+  timeseriesData: TTimeseriesData,
+  selectedProps: TDataProperty[]
+) => {
+  const {
+    data: result,
+    isLoading,
+    fetch: handleFetchGrangerDataCausalityTest
+  } = useFetch(fetchGrangerDataCausalityTest);
+
+  useEffect(() => {
+    console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
+    if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
+      const dataForAnalysis = map(timeseriesData, (datum) => [
+        datum[selectedProps[0].value],
+        datum[selectedProps[1].value]
+      ]);
+
+      if (dataForAnalysis) {
+        console.log('aAAAAA --- >>> ');
+        handleFetchGrangerDataCausalityTest(dataForAnalysis);
+      }
+    }
+  }, [selectedProps, handleFetchGrangerDataCausalityTest, timeseriesData]);
+
+  return { causalityTestResult: result, isCausalityTestLoading: isLoading };
 };
