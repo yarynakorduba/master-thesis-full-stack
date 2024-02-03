@@ -8,7 +8,7 @@ import Loader from '../../Loader';
 type TProps = {
   readonly isVisible: boolean;
   readonly stationarityTestResult;
-  readonly selectedProp;
+  readonly propertiesToTest;
   readonly timeseriesData;
   readonly handleFetchDataStationarityTest;
   readonly isStationarityTestLoading: boolean;
@@ -17,8 +17,6 @@ type TProps = {
 const StationarityTest = ({
   isVisible,
   stationarityTestResult,
-  selectedProp,
-  timeseriesData,
   handleFetchDataStationarityTest,
   isStationarityTestLoading
 }: TProps) => {
@@ -29,28 +27,16 @@ const StationarityTest = ({
       <Question>Is the data stationary?</Question>
       <Test>
         <ButtonContainer>
-          {isStationarityTestLoading ? (
-            <Loader />
-          ) : (
-            <Button
-              onClick={() => {
-                const dataForAnalysis = selectedProp?.value
-                  ? map(timeseriesData, (datum) => datum[selectedProp.value])
-                  : undefined;
-                if (dataForAnalysis) {
-                  handleFetchDataStationarityTest(dataForAnalysis);
-                }
-              }}
-            >
-              Run stationarity test
-            </Button>
+          {isStationarityTestLoading && <Loader />}
+          {!stationarityTestResult && !isStationarityTestLoading && (
+            <Button onClick={handleFetchDataStationarityTest}>Run stationarity test</Button>
           )}
         </ButtonContainer>
         <div>
           {stationarityTestResult &&
-            ((stationarityTestResult as any)?.isStationary
-              ? 'The data is stationary'
-              : 'The data is not stationary')}
+            map(stationarityTestResult, (val, propName) => {
+              return `${propName} data ${val.isStationary ? 'are stationary' : 'are not stationary'}`;
+            }).join('; ')}
         </div>
       </Test>
     </Step>

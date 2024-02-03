@@ -1,5 +1,5 @@
 import { map, maxBy, minBy, reduce } from 'lodash';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
 import {
   fetchDataStationarityTest,
@@ -35,18 +35,37 @@ type TWhiteNoiseResult = {
 };
 export const useWhiteNoise = (
   timeseriesData: TTimeseriesData,
-  selectedProp: TDataProperty | undefined
+  valueProperties: TDataProperty[] | undefined
 ): TWhiteNoiseResult => {
-  const { data: result, isLoading, fetch: handleFetchIsWhiteNoise } = useFetch(fetchIsWhiteNoise);
+  const [result, setResult] = useState<object>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetch = useCallback(() => {
-    const dataForAnalysis = selectedProp?.value
-      ? map(timeseriesData, (datum) => datum[selectedProp.value])
-      : undefined;
-    if (dataForAnalysis) {
-      handleFetchIsWhiteNoise(dataForAnalysis);
-    }
-  }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
+  const { fetch: handleFetchIsWhiteNoise } = useFetch(fetchIsWhiteNoise);
+
+  const handleFetch = useCallback(async () => {
+    if (!valueProperties?.length) return;
+
+    setIsLoading(true);
+    const responses = await Promise.all(
+      map(valueProperties, async (selectedProp) => {
+        const dataForAnalysis = selectedProp?.value
+          ? map(timeseriesData, (datum) => datum[selectedProp.value])
+          : undefined;
+        if (dataForAnalysis) {
+          return handleFetchIsWhiteNoise(dataForAnalysis);
+        }
+      })
+    );
+    const newResult = reduce(
+      responses,
+      (accum, response, index) => {
+        return { ...accum, [valueProperties?.[index]?.value]: response?.data };
+      },
+      result || {}
+    );
+    setResult(newResult);
+    setIsLoading(false);
+  }, [valueProperties, handleFetchIsWhiteNoise, timeseriesData]);
 
   return {
     whiteNoiseResult: result,
@@ -57,27 +76,40 @@ export const useWhiteNoise = (
 
 export const useDataStationarityTest = (
   timeseriesData: TTimeseriesData,
-  selectedProp: TDataProperty | undefined
+  valueProperties: TDataProperty[] | undefined
 ) => {
-  const {
-    data: result,
-    isLoading,
-    fetch: handleFetchDataStationarityTest
-  } = useFetch(fetchDataStationarityTest);
+  const [result, setResult] = useState<object>();
+  const [isLoading, setIsLoading] = useState(false);
+  const { fetch: handleFetchDataStationarityTest } = useFetch(fetchDataStationarityTest);
 
-  // useEffect(() => {
-  //   const dataForAnalysis = selectedProp?.value
-  //     ? map(timeseriesData, (datum) => datum[selectedProp.value])
-  //     : undefined;
-  //   if (dataForAnalysis) {
-  //     handleFetchDataStationarityTest(dataForAnalysis);
-  //   }
-  // }, [selectedProp?.value, handleFetchDataStationarityTest, timeseriesData]);
+  const handleFetch = useCallback(async () => {
+    if (!valueProperties?.length) return;
+    setIsLoading(true);
+    const responses = await Promise.all(
+      map(valueProperties, async (selectedProp) => {
+        const dataForAnalysis = selectedProp?.value
+          ? map(timeseriesData, (datum) => datum[selectedProp.value])
+          : undefined;
+        if (dataForAnalysis) {
+          return await handleFetchDataStationarityTest(dataForAnalysis);
+        }
+      })
+    );
+    const newResult = reduce(
+      responses,
+      (accum, response, index) => {
+        return { ...accum, [valueProperties?.[index]?.value]: response?.data };
+      },
+      result || {}
+    );
+    setResult(newResult);
+    setIsLoading(false);
+  }, [valueProperties, handleFetchDataStationarityTest, timeseriesData]);
 
   return {
     stationarityTestResult: result,
     isStationarityTestLoading: isLoading,
-    handleFetchDataStationarityTest
+    handleFetchDataStationarityTest: handleFetch
   };
 };
 
@@ -119,7 +151,7 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
     console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
     const selectedProp1 = selectedProps?.[0]?.value;
     const selectedProp2 = selectedProps?.[1]?.value;
-
+    console.log({ timeseriesData });
     const dataForAnalysis = reduce(
       timeseriesData,
       (accum, datum) => ({

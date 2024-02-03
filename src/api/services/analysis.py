@@ -49,8 +49,9 @@ class Analysis():
                            for i in data.keys()},
                        orient='index')
         print(df_input)
+        print("-----")
         df_input.index = pd.to_datetime(df_input.index, unit = 'ms')
-        print("SMTH")
+        print(df_input)
         # pd.Timestamp((np.fromstring(i, dtype=np.uint16)), unit="ms")
         # df_diff = df_train.diff().dropna()
         scaler = StandardScaler()
@@ -70,23 +71,15 @@ class Analysis():
         cutoff_index = int(df_scaled.shape[0] * 0.9)
         df_train = df_scaled.iloc[:cutoff_index]
         df_test = df_scaled.iloc[cutoff_index:]
-        print(df_scaled)
+
         # Define function for inverting data transformation
         def df_inv_transformation(df_processed, df, scaler):
             # Invert StandardScaler transformation
             df_diff = pd.DataFrame(scaler.inverse_transform(df_processed), 
                                         columns=df_processed.columns, 
                                         index=df_processed.index)
-            print("------------------------")
-            print(df_diff.index[0])
-            print(df.index[0])
-            print(str(pd.to_datetime(df.index[0], unit='ms')))
-            print("---CUM SUM ---")
-            print(df_diff.cumsum())
-
-
             # Invert differenting
-            df_original = df_diff.cumsum() + df[df.index.apply(lambda x: pd.Timestamp(x, unit="ms")) < df_diff.index[0]].iloc[-1]    
+            df_original = df_diff.cumsum() + df[df.index < df_diff.index[0]].iloc[-1]    
             return df_original
         
         model = VAR(df_train)
@@ -103,12 +96,9 @@ class Analysis():
         # Forecast next two weeks
         horizon = 12
         forecast = results.forecast(df_train.values[-lag_order:], steps=horizon)
-        print("AAAAAAAAA")
-        print(forecast)
-        print(df_train.iloc[-1:].index)
+
         # idx = pd.date_range('2015-01-01', periods=horizon, freq='MS')
-        idx = pd.date_range(pd.to_datetime(df_train.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='MS')
-        print(idx)
+        idx = pd.date_range(pd.to_datetime(df_train.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='120s')
         # Convert to dataframe
         df_forecast = pd.DataFrame(forecast, 
                            columns=df_scaled.columns, 
@@ -117,4 +107,6 @@ class Analysis():
         print(df_forecast)
         # # Invert the transformations to bring it back to the original scale
         df_forecast_original = df_inv_transformation(df_forecast, df_input, scaler)
+        print("ORIGINAL!!!")
+        print(df_forecast_original)
         return df_forecast_original.to_json()

@@ -19,9 +19,8 @@ const CausalityTest = ({
       <Question>Do selected variables have a causal relautionship?</Question>
       <Test>
         <ButtonContainer>
-          {isCausalityTestLoading ? (
-            <Loader />
-          ) : (
+          {isCausalityTestLoading && <Loader />}
+          {!isCausalityTestLoading && !causalityTestResult && (
             <Button onClick={handleFetchGrangerDataCausalityTest}>Run the causality test</Button>
           )}
         </ButtonContainer>

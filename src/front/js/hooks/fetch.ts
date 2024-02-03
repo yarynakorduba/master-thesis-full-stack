@@ -4,7 +4,7 @@ export const useFetch = (fetchRequest) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(undefined);
 
-  const handleFetch = useCallback(async (d) => {
+  const handleFetch = useCallback(async (d): Promise<any> => {
     try {
       setIsLoading(true);
       const result = await fetchRequest(d);

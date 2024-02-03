@@ -34,7 +34,9 @@ const constructLineChartDataFromTs = (
         datapoints: map(data, (datum) => ({
           valueX: datum[timeProperty?.value] as number,
           valueY: +datum[valueProperty.value]
-        }))
+        })).sort((a, b) => {
+          return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
+        })
       }
     : undefined;
 };
@@ -46,6 +48,8 @@ type TProps = {
   readonly predictedData: TTimeseriesData;
 };
 const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }: TProps) => {
+  const theme = useTheme();
+
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];
@@ -54,17 +58,15 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     if (firstProp) setSelectedProp(firstProp);
   }, [firstProp]);
 
-  const theme = useTheme();
-
   const handleSparklineClick = (chartProp) => () => {
     setSelectedProp(chartProp);
   };
 
   const { isStationarityTestLoading, stationarityTestResult, handleFetchDataStationarityTest } =
-    useDataStationarityTest(timeseriesData, selectedProp);
+    useDataStationarityTest(timeseriesData, valueProperties);
   const { isWhiteNoiseLoading, whiteNoiseResult, handleFetchIsWhiteNoise } = useWhiteNoise(
     timeseriesData,
-    selectedProp
+    valueProperties
   );
   const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
     useDataCausalityTest(timeseriesData, valueProperties);
@@ -74,12 +76,14 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     valueProperties
   );
 
-  const mappedVarTestResult = selectedProp?.value
-    ? map(varTestResult?.[selectedProp?.value] as any, (value, index) => ({
+  const mappedVarTestResult =
+    (selectedProp?.value &&
+      map(varTestResult?.[selectedProp?.value] as any, (value, index) => ({
         timestamp: +index,
         [selectedProp?.value]: value
-      }))
-    : [] || [];
+      }))) ||
+    [];
+
   const predictedData = constructLineChartDataFromTs(
     selectedProp,
     timeProperty,
@@ -94,7 +98,8 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   );
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
   const chartData = predictedData ? [mainChartData, predictedData] : [mainChartData];
-  if (!mainChartData) return null;
+  console.log('>>> ', chartData);
+  if (!mainChartData || !predictedData) return null;
 
   return (
     <Content>
@@ -146,7 +151,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
         <StationarityTest
           isVisible
           stationarityTestResult={stationarityTestResult}
-          selectedProp={selectedProp}
+          propertiesToTest={valueProperties}
           timeseriesData={timeseriesData}
           handleFetchDataStationarityTest={handleFetchDataStationarityTest}
           isStationarityTestLoading={isStationarityTestLoading}

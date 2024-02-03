@@ -1,4 +1,6 @@
 import React from 'react';
+import { map } from 'lodash';
+
 import { Button } from '../../../pages/App/DatasetForm/styles';
 import { Step, StepName, Question, Test, ButtonContainer } from './styles';
 import Loader from '../../Loader';
@@ -23,17 +25,16 @@ const WhiteNoiseTest = ({
       <Question>Is the data a white noise?</Question>
       <Test>
         <ButtonContainer>
-          {isWhiteNoiseLoading ? (
-            <Loader />
-          ) : (
+          {isWhiteNoiseLoading && <Loader />}
+          {!whiteNoiseResult && !isWhiteNoiseLoading && (
             <Button onClick={handleFetchIsWhiteNoise}>Run white-noise test</Button>
           )}
         </ButtonContainer>
         <div>
           {whiteNoiseResult &&
-            (whiteNoiseResult?.isWhiteNoise
-              ? 'The data is a white noise'
-              : 'The data is not a white noise')}
+            map(whiteNoiseResult, (val, propName) => {
+              return `${propName} data ${val.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
+            }).join('; ')}
         </div>
       </Test>
     </Step>

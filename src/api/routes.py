@@ -45,17 +45,17 @@ def test_grander_causality():
 
 @api.route('/test-var', methods=['POST'])
 def test_var():
-    # requestBody = request.get_json()
-    # data_serie = requestBody["data"]
+    requestBody = request.get_json()
+    data_serie = requestBody["data"]
 
 
     # Opening JSON file
-    f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/front/js/pages/App/test.json')
+    # f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/front/js/pages/App/test.json')
     
     # returns JSON object as 
     # a dictionary
-    data_serie = json.load(f)
+    # data_serie = json.load(f)
     # print(data_serie)
 
-    result = Analysis().test_var(data_serie[0])
+    result = Analysis().test_var(data_serie)
     return result, 200

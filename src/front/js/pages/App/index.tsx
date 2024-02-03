@@ -37,8 +37,9 @@ const App = () => {
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {
       const sorted = timeseriesData.sort((a, b) => {
-        return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
+        return a[timeProperty.value] - b[timeProperty.value] ? -1 : 1;
       });
+      console.log('SORTED!!! --- > ', sorted.slice(0, 3000));
       setSortedTSData(sorted.slice(0, 300));
     }
   }, [timeProperty, timeseriesData]);
