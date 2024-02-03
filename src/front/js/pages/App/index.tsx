@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
-import { AppPage, Sidebar } from './styles';
+import { AppPage, Sidebar, Content } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from './test.json';
 import { TDataProperty } from 'front/js/types';
@@ -12,25 +12,34 @@ const App = () => {
   const [sortedTSData, setSortedTSData] = useState<any>([]);
   const [predictedData, setPredictedData] = useState<any>([]);
 
-  const valueProperties = useWatch({ control: methods.control, name: 'prop' });
-  //  useMemo(
-  //   (): TDataProperty[] => [{ value: 'oxygen', label: 'oxygen' }],
-  //   []
-  // );
-  //useWatch({ control: methods.control, name: "prop" });
-  const timeProperty = useWatch({ control: methods.control, name: 'timeProperty' });
-  // useMemo(
-  //   (): TDataProperty => ({ value: 'timestamp', label: 'timestamp' }),
-  //   []
-  // );
-  //useWatch({ control: methods.control, name: "timeProperty" });
+  const valueProperties = useMemo(
+    (): TDataProperty[] => [
+      { value: 'oxygen', label: 'oxygen' },
+      { value: 'health', label: 'health' }
+    ],
+    []
+  );
+  const timeProperty = useMemo(() => ({ value: 'timestamp', label: 'timestamp' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
+
+  // const valueProperties = useWatch({ control: methods.control, name: 'prop' });
+  // //  useMemo(
+  // //   (): TDataProperty[] => [{ value: 'oxygen', label: 'oxygen' }],
+  // //   []
+  // // );
+  // //useWatch({ control: methods.control, name: "prop" });
+  // const timeProperty = useWatch({ control: methods.control, name: 'timeProperty' });
+  // // useMemo(
+  // //   (): TDataProperty => ({ value: 'timestamp', label: 'timestamp' }),
+  // //   []
+  // // );
+  // //useWatch({ control: methods.control, name: "timeProperty" });
 
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {
       const sorted = timeseriesData.sort((a, b) => {
         return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
       });
-      setSortedTSData(sorted.slice(0, 30000));
+      setSortedTSData(sorted.slice(0, 300));
     }
   }, [timeProperty, timeseriesData]);
 
@@ -53,6 +62,7 @@ const App = () => {
           <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
         </FormProvider>
       </Sidebar>
+      {/* <Content> */}
       {sortedTSData?.length ? (
         <SparkLineChartsBlock
           valueProperties={valueProperties}
@@ -61,6 +71,7 @@ const App = () => {
           predictedData={predictedData}
         />
       ) : null}
+      {/* </Content> */}
     </AppPage>
   );
 };

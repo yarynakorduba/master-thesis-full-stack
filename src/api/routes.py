@@ -7,6 +7,8 @@ from api.utils import generate_sitemap, APIException
 from api.services.analysis import Analysis
 from flask_cors import CORS
 import json
+ 
+
 
 api = Blueprint('api', __name__)
 
@@ -19,7 +21,8 @@ CORS(api, origins=['http://localhost:3000'], \
 def test_white_noise():
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    result = Analysis.test_white_noise(data_serie)
+
+    result = Analysis().test_white_noise(data_serie)
 
     return json.dumps(result), 200
 
@@ -28,7 +31,7 @@ def test_white_noise():
 def test_stationarity():
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    result = Analysis.test_stationarity(data_serie)
+    result = Analysis().test_stationarity(data_serie)
 
     return json.dumps(result), 200
 
@@ -36,5 +39,23 @@ def test_stationarity():
 def test_grander_causality():
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    result = Analysis.test_granger_causality(data_serie)
-    return json.dumps(result), 200
+    result = Analysis().test_granger_causality(data_serie)
+    return result, 200
+
+
+@api.route('/test-var', methods=['POST'])
+def test_var():
+    # requestBody = request.get_json()
+    # data_serie = requestBody["data"]
+
+
+    # Opening JSON file
+    f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/front/js/pages/App/test.json')
+    
+    # returns JSON object as 
+    # a dictionary
+    data_serie = json.load(f)
+    # print(data_serie)
+
+    result = Analysis().test_var(data_serie[0])
+    return result, 200

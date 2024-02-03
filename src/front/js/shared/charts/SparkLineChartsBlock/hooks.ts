@@ -1,10 +1,11 @@
-import { keys, map, maxBy, minBy } from 'lodash';
-import { useEffect } from 'react';
+import { map, maxBy, minBy, reduce } from 'lodash';
+import { useCallback } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
 import {
   fetchDataStationarityTest,
   fetchGrangerDataCausalityTest,
-  fetchIsWhiteNoise
+  fetchIsWhiteNoise,
+  fetchVARTest
 } from '../../../apiCalls/analysis';
 import { useFetch } from '../../../hooks/fetch';
 
@@ -27,14 +28,18 @@ export const useSmallestTimeUnit = (timeseriesData, timeProperty: TDataProperty)
   return [time, lastTs];
 };
 
-type TWhiteNoiseResult = { readonly whiteNoiseResult: any; readonly isWhiteNoiseLoading: boolean };
+type TWhiteNoiseResult = {
+  readonly whiteNoiseResult: any;
+  readonly isWhiteNoiseLoading: boolean;
+  readonly handleFetchIsWhiteNoise: any;
+};
 export const useWhiteNoise = (
   timeseriesData: TTimeseriesData,
   selectedProp: TDataProperty | undefined
 ): TWhiteNoiseResult => {
   const { data: result, isLoading, fetch: handleFetchIsWhiteNoise } = useFetch(fetchIsWhiteNoise);
 
-  useEffect(() => {
+  const handleFetch = useCallback(() => {
     const dataForAnalysis = selectedProp?.value
       ? map(timeseriesData, (datum) => datum[selectedProp.value])
       : undefined;
@@ -43,7 +48,11 @@ export const useWhiteNoise = (
     }
   }, [selectedProp?.value, handleFetchIsWhiteNoise, timeseriesData]);
 
-  return { whiteNoiseResult: result, isWhiteNoiseLoading: isLoading };
+  return {
+    whiteNoiseResult: result,
+    isWhiteNoiseLoading: isLoading,
+    handleFetchIsWhiteNoise: handleFetch
+  };
 };
 
 export const useDataStationarityTest = (
@@ -56,16 +65,20 @@ export const useDataStationarityTest = (
     fetch: handleFetchDataStationarityTest
   } = useFetch(fetchDataStationarityTest);
 
-  useEffect(() => {
-    const dataForAnalysis = selectedProp?.value
-      ? map(timeseriesData, (datum) => datum[selectedProp.value])
-      : undefined;
-    if (dataForAnalysis) {
-      handleFetchDataStationarityTest(dataForAnalysis);
-    }
-  }, [selectedProp?.value, handleFetchDataStationarityTest, timeseriesData]);
+  // useEffect(() => {
+  //   const dataForAnalysis = selectedProp?.value
+  //     ? map(timeseriesData, (datum) => datum[selectedProp.value])
+  //     : undefined;
+  //   if (dataForAnalysis) {
+  //     handleFetchDataStationarityTest(dataForAnalysis);
+  //   }
+  // }, [selectedProp?.value, handleFetchDataStationarityTest, timeseriesData]);
 
-  return { stationarityTestResult: result, isStationarityTestLoading: isLoading };
+  return {
+    stationarityTestResult: result,
+    isStationarityTestLoading: isLoading,
+    handleFetchDataStationarityTest
+  };
 };
 
 export const useDataCausalityTest = (
@@ -78,7 +91,7 @@ export const useDataCausalityTest = (
     fetch: handleFetchGrangerDataCausalityTest
   } = useFetch(fetchGrangerDataCausalityTest);
 
-  useEffect(() => {
+  const handleFetch = useCallback(() => {
     console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
     if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
       const dataForAnalysis = map(timeseriesData, (datum) => [
@@ -87,11 +100,42 @@ export const useDataCausalityTest = (
       ]);
 
       if (dataForAnalysis) {
-        console.log('aAAAAA --- >>> ');
         handleFetchGrangerDataCausalityTest(dataForAnalysis);
       }
     }
   }, [selectedProps, handleFetchGrangerDataCausalityTest, timeseriesData]);
 
-  return { causalityTestResult: result, isCausalityTestLoading: isLoading };
+  return {
+    causalityTestResult: result,
+    isCausalityTestLoading: isLoading,
+    handleFetchGrangerDataCausalityTest: handleFetch
+  };
+};
+
+export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TDataProperty[]) => {
+  const { data: result, isLoading, fetch: fetchData } = useFetch(fetchVARTest);
+
+  const handleFetchVARTest = useCallback(() => {
+    console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
+    const selectedProp1 = selectedProps?.[0]?.value;
+    const selectedProp2 = selectedProps?.[1]?.value;
+
+    const dataForAnalysis = reduce(
+      timeseriesData,
+      (accum, datum) => ({
+        ...accum,
+        [datum.timestamp]: {
+          [selectedProp1]: datum[selectedProp1],
+          [selectedProp2]: datum[selectedProp2]
+        }
+      }),
+      {}
+    );
+
+    if (dataForAnalysis) {
+      fetchData(dataForAnalysis);
+    }
+  }, [selectedProps, timeseriesData, fetchData]);
+
+  return { varTestResult: result, isVARTestLoading: isLoading, handleFetchVARTest };
 };

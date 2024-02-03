@@ -27,3 +27,13 @@ export const fetchGrangerDataCausalityTest = async (data) => {
     }
   });
 };
+
+export const fetchVARTest = async (data) => {
+  return fetch(`${process.env.BACKEND_URL}/api/test-var`, {
+    method: 'POST',
+    body: JSON.stringify({ data }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+};

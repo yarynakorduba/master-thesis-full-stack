@@ -80,7 +80,9 @@ database.database
 database.db
 diagram.png
 __pycache__/
-
+src/sandbox/
 
 src/api/data/*
 src/**/test.json
+
+sandbox/*

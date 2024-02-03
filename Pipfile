@@ -19,6 +19,9 @@ cloudinary = "*"
 flask-admin = "*"
 typing-extensions = "*"
 statsmodels = "*"
+matplotlib = "*"
+pandas = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.10"

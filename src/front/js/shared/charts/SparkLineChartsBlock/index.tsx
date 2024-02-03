@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { map } from 'lodash';
+import { useTheme } from 'styled-components';
 
-import { Content } from '../../../pages/App/styles';
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
@@ -10,11 +10,15 @@ import {
   useDataCausalityTest,
   useDataStationarityTest,
   useTimeseriesMinMaxValues,
+  useVARTest,
   useWhiteNoise
 } from './hooks';
-import { TDataProperty, TLineChartSerie } from 'front/js/types';
-import { DataInfo } from './styles';
-import { useTheme } from 'styled-components';
+import { TDataProperty, TLineChartSerie } from '../../../types';
+import { Content, Subtitle, Analysis } from './styles';
+import StationarityTest from './StationarityTest';
+import CausalityTest from './CausalityTest';
+import WhiteNoiseTest from './WhiteNoiseTest';
+import Prediction from './Prediction';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
@@ -24,7 +28,7 @@ const constructLineChartDataFromTs = (
 ): TLineChartSerie | undefined => {
   return valueProperty?.value && timeProperty?.value
     ? {
-        id: 'timeseries',
+        id: `${valueProperty.label}-${data.length}`,
         label: valueProperty.label || '',
         color: lineColor,
         datapoints: map(data, (datum) => ({
@@ -45,37 +49,51 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];
-  console.log('`value prOPS --- >>> ', valueProperties);
+
   useEffect(() => {
     if (firstProp) setSelectedProp(firstProp);
   }, [firstProp]);
 
   const theme = useTheme();
+
+  const handleSparklineClick = (chartProp) => () => {
+    setSelectedProp(chartProp);
+  };
+
+  const { isStationarityTestLoading, stationarityTestResult, handleFetchDataStationarityTest } =
+    useDataStationarityTest(timeseriesData, selectedProp);
+  const { isWhiteNoiseLoading, whiteNoiseResult, handleFetchIsWhiteNoise } = useWhiteNoise(
+    timeseriesData,
+    selectedProp
+  );
+  const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
+    useDataCausalityTest(timeseriesData, valueProperties);
+
+  const { isVARTestLoading, varTestResult, handleFetchVARTest } = useVARTest(
+    timeseriesData,
+    valueProperties
+  );
+
+  const mappedVarTestResult = selectedProp?.value
+    ? map(varTestResult?.[selectedProp?.value] as any, (value, index) => ({
+        timestamp: +index,
+        [selectedProp?.value]: value
+      }))
+    : [] || [];
+  const predictedData = constructLineChartDataFromTs(
+    selectedProp,
+    timeProperty,
+    mappedVarTestResult,
+    theme.contrastBlue
+  );
   const mainChartData = constructLineChartDataFromTs(
     selectedProp,
     timeProperty,
     timeseriesData,
     theme.chartBlue
   );
-
-  const handleSparklineClick = (chartProp) => () => {
-    setSelectedProp(chartProp);
-  };
-
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
-
-  const { isWhiteNoiseLoading, whiteNoiseResult } = useWhiteNoise(timeseriesData, selectedProp);
-  const { isStationarityTestLoading, stationarityTestResult } = useDataStationarityTest(
-    timeseriesData,
-    selectedProp
-  );
-  const { isCausalityTestLoading, causalityTestResult } = useDataCausalityTest(
-    timeseriesData,
-    valueProperties
-  );
-
-  console.log('====isStationarityTestLoading====>>> ', isCausalityTestLoading, causalityTestResult);
-
+  const chartData = predictedData ? [mainChartData, predictedData] : [mainChartData];
   if (!mainChartData) return null;
 
   return (
@@ -83,7 +101,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       <div>
         <LineChart
           heading={selectedProp?.label || ''}
-          data={[mainChartData]}
+          data={chartData as any}
           numXAxisTicks={5}
           numYAxisTicks={5}
           formatXScale={formatUnixToDate}
@@ -91,7 +109,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           height={250}
           padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
         />
-        <DataInfo>
+        {/* <DataInfo>
           Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
           {isWhiteNoiseLoading ? (
             ''
@@ -103,7 +121,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           ) : (
             <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>
           )}
-        </DataInfo>
+        </DataInfo> */}
       </div>
       <div>
         {map(valueProperties, (prop) => {
@@ -122,6 +140,36 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           );
         })}
       </div>
+      <Analysis>
+        <h5>Predict the future datapoints</h5>
+        <Subtitle>To make a prediction, we need to know a few characteristics of the data</Subtitle>
+        <StationarityTest
+          isVisible
+          stationarityTestResult={stationarityTestResult}
+          selectedProp={selectedProp}
+          timeseriesData={timeseriesData}
+          handleFetchDataStationarityTest={handleFetchDataStationarityTest}
+          isStationarityTestLoading={isStationarityTestLoading}
+        />
+        <WhiteNoiseTest
+          isVisible={!!stationarityTestResult}
+          whiteNoiseResult={whiteNoiseResult}
+          isWhiteNoiseLoading={isWhiteNoiseLoading}
+          handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
+        />
+        <CausalityTest
+          isVisible={!!whiteNoiseResult}
+          causalityTestResult={causalityTestResult}
+          isCausalityTestLoading={isCausalityTestLoading}
+          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+        />
+        <Prediction
+          isVisible={!!causalityTestResult}
+          varTestResult={varTestResult}
+          isVARTestLoading={isVARTestLoading}
+          handleFetchVARTest={handleFetchVARTest}
+        />
+      </Analysis>
     </Content>
   );
 };
