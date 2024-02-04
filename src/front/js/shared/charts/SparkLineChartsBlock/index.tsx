@@ -14,7 +14,7 @@ import {
   useWhiteNoise
 } from './hooks';
 import { TDataProperty, TLineChartSerie } from '../../../types';
-import { Content, Subtitle, Analysis } from './styles';
+import { Content, Subtitle, Analysis, LineChartContainer } from './styles';
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
@@ -98,12 +98,12 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   );
   const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
   const chartData = predictedData ? [mainChartData, predictedData] : [mainChartData];
-  console.log('>>> ', chartData);
+  console.log('>>> ', mainChartData, predictedData);
   if (!mainChartData || !predictedData) return null;
 
   return (
     <Content>
-      <div>
+      <LineChartContainer>
         <LineChart
           heading={selectedProp?.label || ''}
           data={chartData as any}
@@ -114,37 +114,25 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           height={250}
           padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
         />
-        {/* <DataInfo>
-          Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
-          {isWhiteNoiseLoading ? (
-            ''
-          ) : (
-            <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
-          )}
-          {isStationarityTestLoading ? (
-            ''
-          ) : (
-            <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>
-          )}
-        </DataInfo> */}
-      </div>
-      <div>
-        {map(valueProperties, (prop) => {
-          const chartData = [
-            constructLineChartDataFromTs(prop, timeProperty, timeseriesData, theme.chartBlue)
-          ];
-          return (
-            <SparkLineChart
-              heading={prop?.label || ''}
-              data={chartData}
-              formatYScale={formatNumber}
-              height={90}
-              width={300}
-              onClick={handleSparklineClick(prop)}
-            />
-          );
-        })}
-      </div>
+        <div>
+          {map(valueProperties, (prop) => {
+            const chartData = [
+              constructLineChartDataFromTs(prop, timeProperty, timeseriesData, theme.chartBlue)
+            ];
+            return (
+              <SparkLineChart
+                heading={prop?.label || ''}
+                data={chartData}
+                formatYScale={formatNumber}
+                height={90}
+                width={300}
+                onClick={handleSparklineClick(prop)}
+              />
+            );
+          })}
+        </div>
+      </LineChartContainer>
+
       <Analysis>
         <h5>Predict the future datapoints</h5>
         <Subtitle>To make a prediction, we need to know a few characteristics of the data</Subtitle>
@@ -180,3 +168,17 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
 };
 
 export default SparkLineChartsBlock;
+
+/* <DataInfo>
+          Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
+          {isWhiteNoiseLoading ? (
+            ''
+          ) : (
+            <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
+          )}
+          {isStationarityTestLoading ? (
+            ''
+          ) : (
+            <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>
+          )}
+        </DataInfo> */

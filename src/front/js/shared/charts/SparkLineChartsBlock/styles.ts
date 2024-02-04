@@ -8,8 +8,13 @@ export const Content = styled.div`
   grid-column: 2;
   grid-row: 1;
   display: grid;
-  grid-template-columns: 4fr 1fr 4fr;
+  grid-template-columns: 4fr 4fr;
   padding: 0.75rem;
+`;
+
+export const LineChartContainer = styled.div`
+  display: grid;
+  grid-template-columns: 5fr 2fr;
 `;
 
 export const Step = styled.div`

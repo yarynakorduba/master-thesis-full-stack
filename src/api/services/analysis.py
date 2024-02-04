@@ -3,7 +3,6 @@ from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.vector_ar.var_model import VAR
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 SIGNIFICANT_P = 0.05
@@ -78,6 +77,12 @@ class Analysis():
             df_diff = pd.DataFrame(scaler.inverse_transform(df_processed), 
                                         columns=df_processed.columns, 
                                         index=df_processed.index)
+            print("AAAAAAAAA!@#$%^&######################")
+            print(df)
+            print("---")
+            print(df_processed)
+            print("$$$$$", df_diff)
+            print(df[df.index < df_diff.index[0]])
             # Invert differenting
             df_original = df_diff.cumsum() + df[df.index < df_diff.index[0]].iloc[-1]    
             return df_original
@@ -88,25 +93,42 @@ class Analysis():
 
         print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
         # Fit the model after selecting the lag order
-        lag_order = optimal_lags.selected_orders['bic']
+        lag_order = optimal_lags.selected_orders['aic']
         results = model.fit(lag_order)
 
         # Estimate the model (VAR) and show summary
         print(df_train.values[-lag_order:])
         # Forecast next two weeks
-        horizon = 12
-        forecast = results.forecast(df_train.values[-lag_order:], steps=horizon)
+        horizon = 100
+        def run_forecast(df_to_run_forecast_on, df_original):
+            forecast = results.forecast(df_to_run_forecast_on.values[-lag_order:], steps=horizon)
 
-        # idx = pd.date_range('2015-01-01', periods=horizon, freq='MS')
-        idx = pd.date_range(pd.to_datetime(df_train.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='120s')
-        # Convert to dataframe
-        df_forecast = pd.DataFrame(forecast, 
-                           columns=df_scaled.columns, 
-                           index=idx)
-        print("~DF DORECASR!!!!")
-        print(df_forecast)
-        # # Invert the transformations to bring it back to the original scale
-        df_forecast_original = df_inv_transformation(df_forecast, df_input, scaler)
-        print("ORIGINAL!!!")
-        print(df_forecast_original)
-        return df_forecast_original.to_json()
+            # idx = pd.date_range('2015-01-01', periods=horizon, freq='MS')
+            idx = pd.date_range(pd.to_datetime(df_to_run_forecast_on.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='120s')
+            # Convert to dataframe
+            df_forecast = pd.DataFrame(forecast, 
+                            columns=df_to_run_forecast_on.columns, 
+                            index=idx)
+            print("~DF DORECASR!!!!")
+            print(df_forecast)
+            print("--------------ORIGINAL!!!")
+
+            # # Invert the transformations to bring it back to the original scale
+            df_forecast_original = df_inv_transformation(df_forecast, df_original, scaler)
+            print("ORIGINAL!!!")
+            print(df_forecast_original)
+            return df_forecast_original
+        
+        df_forecast_on_train_data = run_forecast(df_train, df_input)
+        print("0-- TRAIN --- 0 ")
+        print(df_forecast_on_train_data)
+
+        df_forecast_test_data = run_forecast(df_test, df_input)
+        print("0-- TEST --- 0 ")
+        print(df_forecast_test_data)
+
+        df_forecast_future_data = run_forecast(df_scaled, df_input)
+        print("0-- df_forecast_future_data --- 0 ")
+        print(df_forecast_future_data)
+
+        return df_forecast_future_data.to_json()
