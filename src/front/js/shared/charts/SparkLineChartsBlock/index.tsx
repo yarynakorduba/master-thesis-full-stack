@@ -95,7 +95,6 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       mappedVarTestResult,
       theme.contrastBlue
     );
-    console.log('####', predictedData, mappedVarTestResult);
     const mainChartData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
