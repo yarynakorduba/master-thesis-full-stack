@@ -70,16 +70,16 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
         )}
         rules={{ required: true }}
       />
-      {(fields as any).map((f, index) => (
+      {fields.map((f, index) => (
         <Controller
           name={`prop[${index}]`}
+          key={`prop[${index}]`}
           control={control}
           render={(valueProperties) => (
             <Select
               {...valueProperties.field}
-              options={filteredSelectOptions as any}
+              options={filteredSelectOptions}
               onChange={(v) => {
-                console.log(v);
                 valueProperties.field.onChange(v);
               }}
               placeholder="Select variable"

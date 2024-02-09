@@ -3,11 +3,13 @@ import { AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
-import { flatMap, flow, isNil, uniq } from 'lodash';
+import { flatMap, flow, isNil, noop, uniq } from 'lodash';
 
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, SparkLineChartHeading } from './styles';
+import { TLineChartData } from 'front/js/types';
+import { TPadding } from '../types';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -26,9 +28,34 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TProps = {} & any;
+type TAxisFormatter<Input = string | number, Output = string> = (value: Input) => Output;
 
-const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, padding }: TProps) => {
+type TProps = {
+  readonly data: TLineChartData;
+  readonly heading: string;
+  readonly width?: number;
+  readonly height?: number;
+  readonly formatXScale?: TAxisFormatter;
+  readonly formatYScale?: TAxisFormatter;
+  readonly padding?: TPadding;
+  readonly variant?: ChartVariant;
+  readonly onClick?: () => void;
+};
+
+const LineChart = ({
+  width = 900,
+  height = 200,
+  heading,
+  data,
+  formatYScale,
+  padding = {
+    top: CHART_TOP_PADDING,
+    bottom: CHART_BOTTOM_PADDING,
+    left: CHART_LEFT_PADDING,
+    right: CHART_RIGHT_PADDING
+  },
+  onClick = noop
+}: TProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
@@ -101,9 +128,6 @@ export default function ResponsiveLineChart({
   variant = ChartVariant.vertical,
   data,
   formatYScale,
-  numXAxisTicks = 2, // approximate
-  numYAxisTicks = 2, // approximate
-  isResponsive = true,
   padding = {
     top: CHART_TOP_PADDING,
     bottom: CHART_BOTTOM_PADDING,
@@ -111,7 +135,7 @@ export default function ResponsiveLineChart({
     right: CHART_RIGHT_PADDING
   },
   onClick
-}) {
+}: TProps) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
       <LineChart
@@ -121,13 +145,11 @@ export default function ResponsiveLineChart({
         variant={variant}
         data={data}
         formatYScale={formatYScale}
-        numXAxisTicks={numXAxisTicks} // approximate
-        numYAxisTicks={numYAxisTicks}
         padding={padding}
         onClick={onClick}
       />
     ),
-    [data, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding, onClick]
+    [data, formatYScale, heading, variant, padding, onClick]
   );
 
   const renderResponsiveChart = useCallback(
@@ -140,7 +162,6 @@ export default function ResponsiveLineChart({
     [renderChart, width, height]
   );
 
-  if (!isResponsive) return renderChart(width, 400);
   return (
     <ParentSize
       parentSizeStyles={{

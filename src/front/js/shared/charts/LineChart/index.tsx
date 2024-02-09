@@ -4,7 +4,7 @@ import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
-import { flatMap, flow, isNil, uniq } from 'lodash';
+import { flatMap, flow, isNil, noop, uniq } from 'lodash';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
@@ -14,6 +14,7 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartHeading, ChartWrapper } from './styles';
 import { TLineChartData } from 'front/js/types';
 import Legend, { TChartLegendLabel } from '../Legend';
+import { TPadding } from '../types';
 
 const CHART_X_PADDING = 40;
 const CHART_Y_PADDING = 30;
@@ -42,12 +43,8 @@ type TProps = {
   readonly formatYScale: (value: number) => string | number;
   readonly numXAxisTicks?: number;
   readonly numYAxisTicks?: number;
-  readonly padding: {
-    readonly top: number;
-    readonly left: number;
-    readonly bottom: number;
-    readonly right: number;
-  };
+  readonly padding?: TPadding;
+  readonly onClick?: () => void;
 };
 
 const LineChart = ({
@@ -60,7 +57,12 @@ const LineChart = ({
   formatYScale,
   numXAxisTicks = 8, // approximate
   numYAxisTicks = 8,
-  padding
+  padding = {
+    top: CHART_Y_PADDING,
+    bottom: CHART_Y_PADDING,
+    left: CHART_X_PADDING,
+    right: CHART_X_PADDING
+  }
 }: TProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
@@ -71,7 +73,7 @@ const LineChart = ({
     [height, padding.bottom, padding.top]
   );
 
-  const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
+  // const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
 
   const xValues = getUniqueFlatValues('valueX', data);
   const yValues = getUniqueFlatValues('valueY', data);
@@ -212,7 +214,8 @@ export default function ResponsiveLineChart({
     bottom: CHART_Y_PADDING,
     left: CHART_X_PADDING,
     right: CHART_X_PADDING
-  }
+  },
+  onClick = noop
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -224,6 +227,7 @@ export default function ResponsiveLineChart({
         data={data}
         formatXScale={formatXScale}
         formatYScale={formatYScale}
+        onClick={onClick}
         numXAxisTicks={numXAxisTicks} // approximate
         numYAxisTicks={numYAxisTicks}
         padding={padding}

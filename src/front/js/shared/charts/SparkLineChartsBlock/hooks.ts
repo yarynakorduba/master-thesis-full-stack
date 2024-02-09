@@ -28,16 +28,18 @@ export const useSmallestTimeUnit = (timeseriesData, timeProperty: TDataProperty)
   return [time, lastTs];
 };
 
-type TWhiteNoiseResult = {
-  readonly whiteNoiseResult: any;
+type TWhiteNoiseResponse = { readonly isWhiteNoise: boolean };
+type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
+type TWhiteNoiseInfo = {
+  readonly whiteNoiseResult: TWhiteNoiseResult;
   readonly isWhiteNoiseLoading: boolean;
-  readonly handleFetchIsWhiteNoise: any;
+  readonly handleFetchIsWhiteNoise: () => Promise<void>;
 };
 export const useWhiteNoise = (
   timeseriesData: TTimeseriesData,
   valueProperties: TDataProperty[] | undefined
-): TWhiteNoiseResult => {
-  const [result, setResult] = useState<object>();
+): TWhiteNoiseInfo => {
+  const [result, setResult] = useState<TWhiteNoiseResult>();
   const [isLoading, setIsLoading] = useState(false);
 
   const { fetch: handleFetchIsWhiteNoise } = useFetch(fetchIsWhiteNoise);
@@ -61,11 +63,12 @@ export const useWhiteNoise = (
       (accum, response, index) => {
         return { ...accum, [valueProperties?.[index]?.value]: response?.data };
       },
-      result || {}
+      result || ({} as TWhiteNoiseResult)
     );
     setResult(newResult);
     setIsLoading(false);
-  }, [valueProperties, handleFetchIsWhiteNoise, timeseriesData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valueProperties, timeseriesData, handleFetchIsWhiteNoise]);
 
   return {
     whiteNoiseResult: result,
@@ -74,12 +77,19 @@ export const useWhiteNoise = (
   };
 };
 
+type TStationarityResponse = { readonly stationarity: number[]; readonly isStationary: boolean };
+type TStationarityResult = { [key: string]: TStationarityResponse } | undefined;
+type TStationarityInfo = {
+  readonly stationarityTestResult: TStationarityResult;
+  readonly isStationarityTestLoading: boolean;
+  readonly handleFetchDataStationarityTest: () => Promise<void>;
+};
 export const useDataStationarityTest = (
   timeseriesData: TTimeseriesData,
   valueProperties: TDataProperty[] | undefined
-) => {
-  const [result, setResult] = useState<object | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
+): TStationarityInfo => {
+  const [result, setResult] = useState<TStationarityResult>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { fetch: handleFetchDataStationarityTest } = useFetch(fetchDataStationarityTest);
 
   useEffect(() => {
