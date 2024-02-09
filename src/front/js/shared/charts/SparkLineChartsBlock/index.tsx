@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { cloneDeep, map } from 'lodash';
+import { map } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -116,18 +116,16 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
   return (
     <Content>
       <LineChartContainer>
-        {chartData && (
-          <LineChart
-            heading={selectedProp?.label || ''}
-            data={chartData as any}
-            numXAxisTicks={5}
-            numYAxisTicks={5}
-            formatXScale={formatUnixToDate}
-            formatYScale={formatNumber}
-            height={250}
-            padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
-          />
-        )}
+        <LineChart
+          heading={selectedProp?.label || ''}
+          data={chartData || []}
+          numXAxisTicks={5}
+          numYAxisTicks={5}
+          formatXScale={formatUnixToDate}
+          formatYScale={formatNumber}
+          height={250}
+          padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
+        />
         <div>
           {map(valueProperties, (prop) => {
             const chartData = [
