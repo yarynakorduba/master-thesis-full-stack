@@ -1,10 +1,10 @@
-import React, { useCallback, useState, useMemo } from "react";
-import { Group } from "@visx/group";
-import { Line, Bar } from "@visx/shape";
-import { localPoint } from "@visx/event";
-import { noop, map } from "lodash";
+import React, { useCallback, useState, useMemo } from 'react';
+import { Group } from '@visx/group';
+import { Line, Bar } from '@visx/shape';
+import { localPoint } from '@visx/event';
+import { noop, map } from 'lodash';
 
-import { useClosestPoints } from "./hooks";
+import { useClosestPoints } from './hooks';
 
 export default function ChartOverlays({
   height,
@@ -15,7 +15,7 @@ export default function ChartOverlays({
   offsetLeft = 0,
   offsetTop = 0,
   onHover = noop,
-  onMouseLeave = noop,
+  onMouseLeave = noop
 }) {
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
@@ -24,7 +24,7 @@ export default function ChartOverlays({
   }>();
   const isLocationDefined = useMemo(
     () => (pointerCoords?.y ?? false) && (pointerCoords?.x ?? false),
-    [pointerCoords?.x, pointerCoords?.y],
+    [pointerCoords?.x, pointerCoords?.y]
   );
 
   const closestPoints = useClosestPoints(mouseEvent, xScale, yScale, dataSeries, offsetLeft);
@@ -32,17 +32,17 @@ export default function ChartOverlays({
     (pointGroup) => (event) => {
       const { x, y } = localPoint(event.target, event) || {
         x: undefined,
-        y: undefined,
+        y: undefined
       };
       setPointerCoords({
         x: x ? x - offsetLeft : 0,
-        y: y ? y - offsetTop : 0,
+        y: y ? y - offsetTop : 0
       });
 
       setMouseEvent(event);
       onHover(event, pointGroup);
     },
-    [onHover, offsetLeft, offsetTop],
+    [onHover, offsetLeft, offsetTop]
   );
 
   const handleMouseLeave = useCallback(
@@ -50,13 +50,13 @@ export default function ChartOverlays({
       if (!pointGroup) {
         setPointerCoords({
           x: undefined,
-          y: undefined,
+          y: undefined
         });
       }
       setMouseEvent(event);
       onMouseLeave(event, pointGroup);
     },
-    [onMouseLeave],
+    [onMouseLeave]
   );
 
   const renderDataPointIndicators = useCallback(
@@ -78,7 +78,7 @@ export default function ChartOverlays({
               onMouseEnter={hover}
               onMouseMove={hover}
               onMouseLeave={leave}
-              fill={"gray"}
+              fill={'gray'}
             />
             <circle
               key={`c2-${pX}-${pY}`}
@@ -89,7 +89,7 @@ export default function ChartOverlays({
               onMouseEnter={hover}
               onMouseMove={hover}
               onMouseLeave={leave}
-              fill={"white"}
+              fill={'white'}
             />
             <circle
               key={`c3-${pX}-${pY}`}
@@ -105,7 +105,7 @@ export default function ChartOverlays({
           </>
         );
       }),
-    [closestPoints, handleHover, handleMouseLeave],
+    [closestPoints, handleHover, handleMouseLeave]
   );
 
   return (
@@ -123,7 +123,7 @@ export default function ChartOverlays({
           <Line
             from={{ x: pointerCoords?.x, y: 0 }}
             to={{ x: pointerCoords?.x, y: height }}
-            stroke={"red"}
+            stroke={'red'}
             strokeWidth={1}
             pointerEvents="none"
             strokeDasharray="3,6"
@@ -131,7 +131,7 @@ export default function ChartOverlays({
           <Line
             from={{ x: 0, y: pointerCoords?.y }}
             to={{ x: width, y: pointerCoords?.y }}
-            stroke={"red"}
+            stroke={'red'}
             strokeWidth={1}
             pointerEvents="none"
             strokeDasharray="3,6"

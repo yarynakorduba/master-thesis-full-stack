@@ -1,9 +1,9 @@
-import { format } from "date-fns";
-import { isNumber } from "lodash";
+import { format } from 'date-fns';
+import { isNumber } from 'lodash';
 
 export const formatUnixToDate = (d) => {
   if (isNumber(d)) {
-    return format(new Date(d), "dd/MM/yyyy");
+    return format(new Date(d), 'dd/MM/yyyy');
   }
   return d;
 };
@@ -14,17 +14,17 @@ export const formatNumber = (d: number): string => {
   const TRILLION = 1000 * BILLION;
 
   if (d >= TRILLION) {
-    return `${Math.round(d / TRILLION)}T`;
+    return `${d / TRILLION}T`;
   }
   if (d >= BILLION) {
-    return `${Math.round(d / BILLION)}B`;
+    return `${d / BILLION}B`;
   }
   if (d >= MILLION) {
     // one million
-    return `${Math.round(d / MILLION)}MM`;
+    return `${d / MILLION}MM`;
   }
   if (d >= 1000) {
-    return `${Math.round(d / 1000)}K`;
+    return `${d / 1000}K`;
   }
-  return `${Math.round(d)}`;
+  return `${d}`;
 };
