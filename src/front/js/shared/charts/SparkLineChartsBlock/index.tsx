@@ -1,18 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
 import { TTimeseriesData } from '../../../types';
-import {
-  useDataCausalityTest,
-  useDataStationarityTest,
-  useTimeseriesMinMaxValues,
-  useVARTest,
-  useWhiteNoise
-} from './hooks';
+import { useDataCausalityTest, useDataStationarityTest, useVARTest, useWhiteNoise } from './hooks';
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { Content, Subtitle, Analysis, LineChartContainer } from './styles';
 import StationarityTest from './StationarityTest';
@@ -24,12 +18,13 @@ const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
   timeProperty: TDataProperty | undefined,
   data: TTimeseriesData,
-  lineColor: string
+  lineColor: string,
+  label: string = ''
 ): TLineChartSerie | undefined => {
   return valueProperty?.value && timeProperty?.value
     ? {
-        id: `${valueProperty.label}-${data.length}`,
-        label: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
+        id: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
+        label,
         color: lineColor,
         datapoints: map(data, (datum) => ({
           valueX: datum[timeProperty?.value] as number,
@@ -93,16 +88,18 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       selectedProp,
       timeProperty,
       mappedVarTestResult,
-      theme.contrastBlue
+      theme.contrastBlue,
+      `${selectedProp?.label} prediction`
     );
     const mainChartData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
       timeseriesData,
-      theme.chartBlue
+      theme.chartBlue,
+      selectedProp?.label
     );
-    if (!mainChartData) return null;
-    return predictedData ? [mainChartData, predictedData] : [mainChartData];
+    if (isEmpty(mainChartData?.datapoints)) return null;
+    return !isEmpty(predictedData?.datapoints) ? [mainChartData, predictedData] : [mainChartData];
   }, [
     selectedProp,
     timeProperty,
@@ -117,7 +114,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       <LineChartContainer>
         <LineChart
           heading={selectedProp?.label || ''}
-          data={chartData || []}
+          data={(chartData as any) || []}
           numXAxisTicks={5}
           numYAxisTicks={5}
           formatXScale={formatUnixToDate}
@@ -128,7 +125,13 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
         <div>
           {map(valueProperties, (prop) => {
             const chartData = [
-              constructLineChartDataFromTs(prop, timeProperty, timeseriesData, theme.chartBlue)
+              constructLineChartDataFromTs(
+                prop,
+                timeProperty,
+                timeseriesData,
+                theme.chartBlue,
+                prop.label
+              )
             ];
             return (
               <SparkLineChart
@@ -179,17 +182,3 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
 };
 
 export default SparkLineChartsBlock;
-
-/* <DataInfo>
-          Datapoints: {mainChartData?.datapoints?.length}, Min: {min?.valueY}, Max: {max?.valueY},
-          {isWhiteNoiseLoading ? (
-            ''
-          ) : (
-            <> Is data white noise? {whiteNoiseResult?.isWhiteNoise ? 'yes' : 'no'}</>
-          )}
-          {isStationarityTestLoading ? (
-            ''
-          ) : (
-            <> Is data stationary? {(stationarityTestResult as any)?.isStationary ? 'yes' : 'no'}</>
-          )}
-        </DataInfo> */

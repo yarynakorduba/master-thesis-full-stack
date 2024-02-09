@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
@@ -13,6 +13,7 @@ import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartHeading, ChartWrapper } from './styles';
 import { TLineChartData } from 'front/js/types';
+import Legend, { TChartLegendLabel } from '../Legend';
 
 const CHART_X_PADDING = 40;
 const CHART_Y_PADDING = 30;
@@ -80,6 +81,19 @@ const LineChart = ({
   //   [cleanWidth, isVertical, numXAxisTicks, xValues.length]
   // );
 
+  const legendLabels = useMemo(() => {
+    return (
+      data?.map(
+        ({ label, color }): TChartLegendLabel => ({
+          label,
+          color,
+          width: 20,
+          height: 4
+        })
+      ) || []
+    );
+  }, [data]);
+
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
 
@@ -99,7 +113,7 @@ const LineChart = ({
       };
       return (
         <LinePath
-          key={lineData?.label}
+          key={lineData?.id}
           data={lineData?.datapoints}
           x={getX}
           y={getY}
@@ -175,6 +189,7 @@ const LineChart = ({
             onMouseLeave={handleMouseLeave}
           />
         </svg>
+        {legendLabels.length > 1 ? <Legend items={legendLabels} maxWidth={width} /> : null}
         <ChartTooltips pointTooltip={pointTooltip} xTooltip={xTooltip} yTooltip={yTooltip} />
       </ChartWrapper>
     </>
