@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { map } from 'lodash';
+import React, { useEffect, useMemo, useState } from 'react';
+import { cloneDeep, map } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -29,7 +29,7 @@ const constructLineChartDataFromTs = (
   return valueProperty?.value && timeProperty?.value
     ? {
         id: `${valueProperty.label}-${data.length}`,
-        label: valueProperty.label || '',
+        label: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
         color: lineColor,
         datapoints: map(data, (datum) => ({
           valueX: datum[timeProperty?.value] as number,
@@ -76,44 +76,58 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     valueProperties
   );
 
-  const mappedVarTestResult =
-    (selectedProp?.value &&
-      map(varTestResult?.[selectedProp?.value] as any, (value, index) => ({
-        timestamp: +index,
-        [selectedProp?.value]: value
-      }))) ||
-    [];
+  const mappedVarTestResult = useMemo(
+    () =>
+      (selectedProp?.value &&
+        map(varTestResult?.[selectedProp?.value] as any, (value, index) => ({
+          timestamp: +index,
+          [selectedProp?.value]: value
+        }))) ||
+      [],
+    [selectedProp?.value, varTestResult]
+  );
 
-  const predictedData = constructLineChartDataFromTs(
+  // const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
+  const chartData = useMemo(() => {
+    const predictedData = constructLineChartDataFromTs(
+      selectedProp,
+      timeProperty,
+      mappedVarTestResult,
+      theme.contrastBlue
+    );
+    console.log('####', predictedData, mappedVarTestResult);
+    const mainChartData = constructLineChartDataFromTs(
+      selectedProp,
+      timeProperty,
+      timeseriesData,
+      theme.chartBlue
+    );
+    if (!mainChartData) return null;
+    return predictedData ? [mainChartData, predictedData] : [mainChartData];
+  }, [
     selectedProp,
     timeProperty,
     mappedVarTestResult,
-    theme.contrastBlue
-  );
-  const mainChartData = constructLineChartDataFromTs(
-    selectedProp,
-    timeProperty,
-    timeseriesData,
-    theme.chartBlue
-  );
-  const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
-  const chartData = predictedData ? [mainChartData, predictedData] : [mainChartData];
-  console.log('>>> ', mainChartData, predictedData);
-  if (!mainChartData || !predictedData) return null;
+    theme.contrastBlue,
+    theme.chartBlue,
+    timeseriesData
+  ]);
 
   return (
     <Content>
       <LineChartContainer>
-        <LineChart
-          heading={selectedProp?.label || ''}
-          data={chartData as any}
-          numXAxisTicks={5}
-          numYAxisTicks={5}
-          formatXScale={formatUnixToDate}
-          formatYScale={formatNumber}
-          height={250}
-          padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
-        />
+        {chartData && (
+          <LineChart
+            heading={selectedProp?.label || ''}
+            data={chartData as any}
+            numXAxisTicks={5}
+            numYAxisTicks={5}
+            formatXScale={formatUnixToDate}
+            formatYScale={formatNumber}
+            height={250}
+            padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
+          />
+        )}
         <div>
           {map(valueProperties, (prop) => {
             const chartData = [

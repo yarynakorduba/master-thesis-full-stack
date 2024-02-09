@@ -21,6 +21,7 @@
     "indent": "off",
     "react/jsx-indent": "off",
     "react/jsx-indent-props": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "comma-dangle": [
       1,
       {

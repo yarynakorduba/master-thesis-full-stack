@@ -38,8 +38,8 @@ const LineChart = ({ width = 900, height = 200, heading, data, formatYScale, pad
     [height, padding.bottom, padding.top]
   );
 
-  const xValues = getUniqueFlatValues('valueX', data);
-  const yValues = getUniqueFlatValues('valueY', data);
+  const xValues = useMemo(() => getUniqueFlatValues('valueX', data), [data]);
+  const yValues = useMemo(() => getUniqueFlatValues('valueY', data as any) as any, [data]);
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';

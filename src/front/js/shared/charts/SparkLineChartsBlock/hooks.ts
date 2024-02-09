@@ -1,5 +1,5 @@
 import { map, maxBy, minBy, reduce } from 'lodash';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
 import {
   fetchDataStationarityTest,
@@ -78,9 +78,13 @@ export const useDataStationarityTest = (
   timeseriesData: TTimeseriesData,
   valueProperties: TDataProperty[] | undefined
 ) => {
-  const [result, setResult] = useState<object>();
+  const [result, setResult] = useState<object | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const { fetch: handleFetchDataStationarityTest } = useFetch(fetchDataStationarityTest);
+
+  useEffect(() => {
+    setResult(undefined);
+  }, [valueProperties, timeseriesData]);
 
   const handleFetch = useCallback(async () => {
     if (!valueProperties?.length) return;
@@ -104,7 +108,7 @@ export const useDataStationarityTest = (
     );
     setResult(newResult);
     setIsLoading(false);
-  }, [valueProperties, handleFetchDataStationarityTest, timeseriesData]);
+  }, [valueProperties, result, timeseriesData, handleFetchDataStationarityTest]);
 
   return {
     stationarityTestResult: result,
@@ -148,13 +152,13 @@ export const useDataCausalityTest = (
 };
 
 export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TDataProperty[]) => {
-  const { data: result, isLoading, fetch: fetchData } = useFetch(fetchVARTest);
+  const { fetch: fetchData } = useFetch(fetchVARTest);
+  const [result, setResult] = useState<object | undefined>();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetchVARTest = useCallback(() => {
-    console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
+  const handleFetchVARTest = useCallback(async () => {
     const selectedProp1 = selectedProps?.[0]?.value;
     const selectedProp2 = selectedProps?.[1]?.value;
-    console.log({ timeseriesData });
     const dataForAnalysis = reduce(
       timeseriesData,
       (accum, datum) => ({
@@ -168,7 +172,8 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
     );
 
     if (dataForAnalysis) {
-      fetchData(dataForAnalysis);
+      const newResult = await fetchData(dataForAnalysis);
+      setResult(newResult?.data);
     }
   }, [selectedProps, timeseriesData, fetchData]);
 
