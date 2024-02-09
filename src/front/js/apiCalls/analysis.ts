@@ -18,10 +18,10 @@ export const fetchDataStationarityTest = async (data) => {
   });
 };
 
-export const fetchGrangerDataCausalityTest = async (data) => {
+export const fetchGrangerDataCausalityTest = async (data, dataKeys) => {
   return fetch(`${process.env.BACKEND_URL}/api/granger-causality-test`, {
     method: 'POST',
-    body: JSON.stringify({ data }),
+    body: JSON.stringify({ data, dataKeys }),
     headers: {
       'Content-type': 'application/json'
     }

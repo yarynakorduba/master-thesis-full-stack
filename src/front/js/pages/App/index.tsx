@@ -63,7 +63,6 @@ const App = () => {
           <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
         </FormProvider>
       </Sidebar>
-      {/* <Content> */}
       {sortedTSData?.length ? (
         <SparkLineChartsBlock
           valueProperties={valueProperties}
@@ -72,7 +71,6 @@ const App = () => {
           predictedData={predictedData}
         />
       ) : null}
-      {/* </Content> */}
     </AppPage>
   );
 };

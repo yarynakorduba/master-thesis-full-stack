@@ -38,8 +38,11 @@ def test_stationarity():
 @api.route('/granger-causality-test', methods=['POST'])
 def test_grander_causality():
     requestBody = request.get_json()
+    print(requestBody)
     data_serie = requestBody["data"]
-    result = Analysis().test_granger_causality(data_serie)
+    data_keys = requestBody["dataKeys"]
+    print(data_keys)
+    result = Analysis().test_granger_causality(data_serie, data_keys)
     return result, 200
 
 

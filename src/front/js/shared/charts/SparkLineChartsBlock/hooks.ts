@@ -132,7 +132,10 @@ export const useDataCausalityTest = (
       ]);
 
       if (dataForAnalysis) {
-        handleFetchGrangerDataCausalityTest(dataForAnalysis);
+        handleFetchGrangerDataCausalityTest(dataForAnalysis, [
+          selectedProps[0].value,
+          selectedProps[1].value
+        ]);
       }
     }
   }, [selectedProps, handleFetchGrangerDataCausalityTest, timeseriesData]);

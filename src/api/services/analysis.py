@@ -34,25 +34,30 @@ class Analysis():
         
         return { "stationarity": result, "isStationary": isStationary }
     
-    def test_granger_causality(self, data):
+    def test_granger_causality(self, data, dataKeys):
         maxlag = 24
+        data_opposite_direction = [[x[1], x[0]] for x in data]
+        # The data for testing whether the time series in the second column Granger
+        # causes the time series in the first column
         result = grangercausalitytests(data, maxlag=[maxlag])
-        return { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P }
+        result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[maxlag])
+        # flip
+        return [
+                { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "dataKeys": dataKeys }, \
+                { "isCausal": (result_opposite_direction[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "dataKeys": [dataKeys[1], dataKeys[0]] } \
+            ]
 
 
     def test_var(self, data):
-        print("KEYS")
         for i in data.keys():
             print(i)
         df_input = pd.DataFrame.from_dict({(i): data[i] 
                            for i in data.keys()},
                        orient='index')
         print(df_input)
-        print("-----")
         df_input.index = pd.to_datetime(df_input.index, unit = 'ms')
         print(df_input)
-        # pd.Timestamp((np.fromstring(i, dtype=np.uint16)), unit="ms")
-        # df_diff = df_train.diff().dropna()
+
         scaler = StandardScaler()
         # Define function for data transformation
         def df_test_transformation(df, scaler):
@@ -77,9 +82,7 @@ class Analysis():
             df_diff = pd.DataFrame(scaler.inverse_transform(df_processed), 
                                         columns=df_processed.columns, 
                                         index=df_processed.index)
-            print("AAAAAAAAA!@#$%^&######################")
             print(df)
-            print("---")
             print(df_processed)
             print("$$$$$", df_diff)
             print(df[df.index < df_diff.index[0]])

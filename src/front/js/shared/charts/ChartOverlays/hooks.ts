@@ -1,6 +1,6 @@
 import { localPoint } from '@visx/event';
 import { isNil } from 'lodash';
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 export enum ChartVariant {
   vertical = 'vertical',
