@@ -17,11 +17,10 @@ const Prediction = ({ isVisible, varTestResult, isVARTestLoading, handleFetchVAR
       <Question>What is the prediction for the future?</Question>
       <Test>
         <ButtonContainer>
-          {isVARTestLoading ? (
-            <Loader />
-          ) : (
+          {isVARTestLoading ? <Loader /> : null}{' '}
+          {(!varTestResult && !varTestResult) || true ? (
             <Button onClick={handleFetchVARTest}>Run the prediction model</Button>
-          )}
+          ) : null}
         </ButtonContainer>
         <div>
           {varTestResult && (varTestResult ? 'Predicted' : 'Could not predict the future data')}

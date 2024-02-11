@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from api.services.analysis import Analysis
+from api.services.predict import Predict
 from flask_cors import CORS
 import json
  
@@ -38,7 +39,7 @@ def test_stationarity():
 @api.route('/granger-causality-test', methods=['POST'])
 def test_grander_causality():
     requestBody = request.get_json()
-    print(requestBody)
+    # print(requestBody)
     data_serie = requestBody["data"]
     data_keys = requestBody["dataKeys"]
     print(data_keys)
@@ -60,5 +61,5 @@ def test_var():
     # data_serie = json.load(f)
     # print(data_serie)
 
-    result = Analysis().test_var(data_serie)
+    result = Predict().test_var(data_serie)
     return result, 200
