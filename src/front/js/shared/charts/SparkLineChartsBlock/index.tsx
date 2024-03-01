@@ -94,7 +94,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     const mainChartData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
-      timeseriesData,
+      timeseriesData, //.slice(12000),
       theme.chartBlue,
       selectedProp?.label
     );
@@ -169,7 +169,8 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
         />
         <Prediction
-          isVisible={!!causalityTestResult}
+          // isVisible={!!causalityTestResult}
+          isVisible={true}
           varTestResult={varTestResult}
           isVARTestLoading={isVARTestLoading}
           handleFetchVARTest={handleFetchVARTest}

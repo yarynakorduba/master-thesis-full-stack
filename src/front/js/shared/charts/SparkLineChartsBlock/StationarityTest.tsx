@@ -35,7 +35,7 @@ const StationarityTest = ({
         <div>
           {stationarityTestResult &&
             map(stationarityTestResult, (val, propName) => {
-              return `${propName} data ${val.isStationary ? 'are stationary' : 'are not stationary'}`;
+              return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
             }).join('; ')}
         </div>
       </Test>

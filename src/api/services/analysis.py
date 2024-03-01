@@ -17,14 +17,15 @@ class Analysis():
         result = diag.acorr_ljungbox(data, boxpierce=True, model_df=0, period=None, return_df=None)
         return { "isWhiteNoise": bool(result.iloc[-1, 1] >= SIGNIFICANT_P) }
     
-    def test_stationarity(self, data):
+    def test_stationarity(self, data, maxlag=10):
+        print(data.shape)
         # AIC - autolag parameter which automates
         # the selection of the lag length based on information criteria
         # and penalises complex models.
 
         # ct - ct: It stands for "constant and trend."
         # The regression model includes both a constant (intercept) and a linear trend term.
-        result = adfuller(data, autolag='AIC', regression='ct')
+        result = adfuller(data, maxlag=maxlag, regression='ct')
         isStationary = False
         if (result[0] < result[4]["1%"] and result[0] < result[4]["5%"] and result[0] < result[4]["10%"]\
             and result[1] < SIGNIFICANT_P):

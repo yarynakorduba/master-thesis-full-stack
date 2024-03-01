@@ -48,7 +48,7 @@ type TProps = {
 };
 
 const LineChart = ({
-  width = 900,
+  width = 2000,
   height = 460,
   heading,
   variant = ChartVariant.vertical,
@@ -199,7 +199,7 @@ const LineChart = ({
 };
 
 export default function ResponsiveLineChart({
-  width = 900,
+  width = 2000,
   height = 460,
   heading,
   variant = ChartVariant.vertical,
