@@ -49,6 +49,7 @@ def test_grander_causality():
 
 @api.route('/test-var', methods=['POST'])
 def test_var():
+    print("hEREkfjnkdfjvnkfdjvn!!!")
     requestBody = request.get_json()
     data_serie = requestBody["data"]
 

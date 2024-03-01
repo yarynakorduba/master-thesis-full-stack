@@ -52,36 +52,37 @@ class Predict:
             df_diff = df_diff.diff().dropna()
         if not is_stationary:
             raise Exception(f"Differenced {max_diff_order} times and still non-stationary")
-        return df_diff, diff_order, is_stationary
+        return df_diff, diff_order
 
     def df_test_transformation(self, df, scaler):
         
-        df_diff, diff_order = self.convert_data_to_stationary(df)
-
+        # df_diff, diff_order = self.convert_data_to_stationary(df)
+        df_diff = df
         # Scale data using the previously defined scaler
-        df_scaled = pd.DataFrame(scaler.fit_transform(df_diff), 
+        df_scaled = pd.DataFrame(scaler.fit_transform(df_diff.copy()), 
                             columns=df_diff.columns, 
                             index=df_diff.index)
         
-        return df_scaled, diff_order
+        return df_scaled, 0 #diff_order
     
     def df_inv_transformation(self, pred, df_original, scaler):
         forecast = pred.copy()
-        df_diff = pd.DataFrame(scaler.inverse_transform(forecast), 
+        df_diff = pd.DataFrame(scaler.inverse_transform(forecast, copy=True), 
                         columns=forecast.columns, 
                         index=forecast.index)
-        columns = df_original.columns
-        for col in columns:
-            df_diff[str(col)] = df_original[col][df_original.index < pred.index[0]].iloc[-1] + \
-                df_diff[str(col)+"_pred"].cumsum()
+        # columns = df_original.columns
+        # for col in columns:
+        #     df_diff[str(col)] = df_original[col][df_original.index < pred.index[0]].iloc[-1] + \
+        #         df_diff[str(col)].cumsum()
         return df_diff
     
     def test_var(self, data):
         print("here")
-        df_input = pd.DataFrame.from_dict({(i): data[i] 
-                           for i in data.keys()},
-                       orient='index')
-        df_input.index = pd.to_datetime(df_input.index, unit = 'ms')
+        df_input = pd.DataFrame.from_records(data, columns=['timestamp', 'oxygen', 'co2'])
+
+        df_input.index = pd.to_datetime(df_input['timestamp'], unit = 'ms')
+        df_input = df_input.drop(columns=['timestamp'])
+        print(df_input.head())
         # Is this ts unique? (check with pandas)
         scaler = StandardScaler()
 
@@ -97,19 +98,20 @@ class Predict:
 
         print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
         # Fit the model after selecting the lag order
-        lag_order = 120 # optimal_lags.selected_orders['aic']
+        lag_order = 62 # optimal_lags.selected_orders['aic']
         results = model.fit(lag_order)
 
         # Estimate the model (VAR) and show summary
         # Forecast next two weeks
-        horizon = 1
+        horizon = 100
         def run_forecast(df_to_run_forecast_on, df_original):
             forecast = results.forecast(df_to_run_forecast_on.values[-lag_order:], steps=horizon)
 
             idx = pd.date_range(pd.to_datetime(df_to_run_forecast_on.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='120s')
+            print(idx)
             # Convert to dataframe
             df_forecast = pd.DataFrame(forecast, 
-                            columns=df_to_run_forecast_on.columns + '_pred', 
+                            columns=df_to_run_forecast_on.columns, 
                             index=idx)
             # # Invert the transformations to bring it back to the original scale
             df_forecast_original = self.df_inv_transformation(df_forecast, df_original, scaler)
@@ -121,17 +123,16 @@ class Predict:
     
         df_forecast_future_data = run_forecast(df_scaled, df_input)
 
-        predicted_values = df_forecast_test_data["sound"]
+        predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]]
         actual_values_df = df_input[df_input.index.isin(predicted_values.index)] 
-        actual_values = actual_values_df["sound"]
+        actual_values = actual_values_df[actual_values_df.columns[0]]
 
         evaluation_result = self.forecast_accuracy(predicted_values, actual_values)
 
         print("Evaluate: ")
         print(evaluation_result)
-        # print(evaluation_result)
         
-        json_result = df_forecast_test_data.to_json()
+        json_result = df_forecast_future_data.to_json()
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
         return json_result

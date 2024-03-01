@@ -14,7 +14,7 @@ const App = () => {
 
   const valueProperties = useMemo(
     (): TDataProperty[] => [
-      { value: 'sound', label: 'sound' },
+      { value: 'oxygen', label: 'oxygen' },
       { value: 'co2', label: 'co2' }
     ],
     []
@@ -39,10 +39,8 @@ const App = () => {
       const sorted = timeseriesData.sort((a, b) => {
         return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
       });
-      console.log('SORTED!!! --- > ', sorted.slice(0, 15000));
 
-      const sliced = sorted.slice(0, 20000);
-      console.log(sliced?.filter((d) => d.co2 > 700));
+      const sliced = sorted.slice(0, 2000);
       setSortedTSData(sliced);
     }
   }, [timeProperty, timeseriesData]);
