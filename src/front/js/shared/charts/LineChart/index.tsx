@@ -7,7 +7,6 @@ import { ParentSize } from '@visx/responsive';
 import { flatMap, flow, isNil, noop, uniq } from 'lodash';
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
-import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 import ChartOverlays from '../ChartOverlays';
@@ -20,10 +19,15 @@ import { TLineChartData } from 'front/js/types';
 import Legend, { TChartLegendLabel } from '../Legend';
 import { TPadding } from '../types';
 
-const CHART_X_PADDING = 40;
-const CHART_Y_PADDING = 30;
+export const CHART_X_PADDING = 40;
+export const CHART_Y_PADDING = 30;
 
 const GRAY = '#E1E5EA';
+const selectedBrushStyle = {
+  fill: 'transparent',
+  stroke: 'blue',
+  background: 'blue'
+};
 
 // We need to manually offset the handles for them to be rendered at the right position
 function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
@@ -131,24 +135,27 @@ const LineChart = ({
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
+  const yBrushScale = getLinearScale(yValues, [20, 0]);
 
-  const getX = (lineDatum) => {
-    const x = xScale(lineDatum?.valueX);
-    const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
-    return Number(x) + offset;
-  };
+  const getX =
+    (scale = xScale) =>
+    (lineDatum) => {
+      const x = scale(lineDatum?.valueX);
+      const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
+      return Number(x) + offset;
+    };
 
-  const getY = (lineDatum) => {
-    const y = yScale(lineDatum?.valueY);
-    const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
-
-    return Number(y) + offset;
-  };
+  const getY =
+    (scale = yScale) =>
+    (lineDatum) => {
+      const y = scale(lineDatum?.valueY);
+      const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
+      return Number(y) + offset;
+    };
 
   const onBrushChange = (domain: Bounds | null) => {
     if (!domain) return;
     const { x0, x1, y0, y1 } = domain;
-    console.log('------>>> ', { x0, x1, y0, y1 });
 
     const updatedData = data.map(({ datapoints, ...rest }) => ({
       ...rest,
@@ -158,25 +165,21 @@ const LineChart = ({
         return !isNil(s.valueX) && !isNil(s.valueY) && s.valueX > x0 && s.valueX < x1;
       })
     }));
-    console.log('--->>> updated data -- > ', updatedData);
     setFilteredData(updatedData);
   };
 
-  const renderLine = useCallback(
-    (lineData) => {
-      return (
-        <LinePath
-          key={lineData?.id}
-          data={lineData?.datapoints}
-          x={getX}
-          y={getY}
-          stroke={lineData?.color}
-          strokeWidth={2}
-        />
-      );
-    },
-    [xScale, yScale]
-  );
+  const renderLine = useCallback((lineData, xGetter, yGetter) => {
+    return (
+      <LinePath
+        key={lineData?.id}
+        data={lineData?.datapoints}
+        x={xGetter as any}
+        y={yGetter as any}
+        stroke={lineData?.color}
+        strokeWidth={2}
+      />
+    );
+  }, []);
 
   const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } =
     useTooltipConfigs(
@@ -194,7 +197,7 @@ const LineChart = ({
     <>
       <ChartHeading>{heading}</ChartHeading>
       <ChartWrapper>
-        <svg width={width} height={height + 20} ref={containerRef}>
+        <svg width={width} height={height + 40} ref={containerRef}>
           <Group left={padding.left} top={padding.top}>
             {variant === ChartVariant.vertical ? (
               <GridRows
@@ -228,7 +231,7 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            {filteredData?.map(renderLine)}
+            {filteredData?.map((lineData) => renderLine(lineData, getX(xScale), getY(yScale)))}
           </Group>
           <ChartOverlays
             offsetLeft={padding.left}
@@ -241,23 +244,22 @@ const LineChart = ({
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
           />
-          <Brush
-            brushDirection="horizontal"
-            xScale={xBrushScale as any}
-            yScale={yScale as any}
-            width={cleanWidth}
-            height={20}
-            handleSize={8}
-            // margin={brushMargin}
-            // innerRef={brushRef}
-            resizeTriggerAreas={['left', 'right']}
-            // initialBrushPosition={initialBrushPosition}
-            onChange={onBrushChange}
-            // onClick={() => setFilteredStock(stock)}
-            // selectedBoxStyle={selectedBrushStyle}
-            useWindowMoveEvents
-            renderBrushHandle={(props) => <BrushHandle {...props} />}
-          />
+          <Group style={{ fill: 'red' }} left={padding.left} top={cleanHeight + 60}>
+            {data?.map((lineData) => renderLine(lineData, getX(xBrushScale), getY(yBrushScale)))}
+            <Brush
+              brushDirection="horizontal"
+              xScale={xBrushScale as any}
+              yScale={yScale as any}
+              width={cleanWidth}
+              height={20}
+              handleSize={8}
+              resizeTriggerAreas={['left', 'right']}
+              onChange={onBrushChange}
+              selectedBoxStyle={selectedBrushStyle}
+              useWindowMoveEvents
+              renderBrushHandle={(props) => <BrushHandle {...props} />}
+            />
+          </Group>
         </svg>
         {legendLabels.length > 1 ? <Legend items={legendLabels} maxWidth={width} /> : null}
         <ChartTooltips pointTooltip={pointTooltip} xTooltip={xTooltip} yTooltip={yTooltip} />
@@ -301,7 +303,17 @@ export default function ResponsiveLineChart({
         padding={padding}
       />
     ),
-    [data, formatXScale, formatYScale, heading, numXAxisTicks, numYAxisTicks, variant, padding]
+    [
+      heading,
+      variant,
+      data,
+      formatXScale,
+      formatYScale,
+      onClick,
+      numXAxisTicks,
+      numYAxisTicks,
+      padding
+    ]
   );
 
   const renderResponsiveChart = useCallback(

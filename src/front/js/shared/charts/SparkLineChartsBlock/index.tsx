@@ -138,7 +138,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={250}
-          padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
+          padding={{ top: 30, bottom: 60, left: 40, right: 40 }}
         />
         <div>
           {map(valueProperties, (prop) => {
