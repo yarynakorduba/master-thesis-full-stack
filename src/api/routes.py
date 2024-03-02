@@ -52,7 +52,8 @@ def test_var():
     print("hEREkfjnkdfjvnkfdjvn!!!")
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-
+    lag_order = requestBody["lagOrder"]
+    horizon = requestBody["horizon"]
 
     # Opening JSON file
     # f = open('/Users/yarynakorduba/Projects/master-thesis-full-stack/src/front/js/pages/App/test.json')
@@ -62,5 +63,5 @@ def test_var():
     # data_serie = json.load(f)
     # print(data_serie)
 
-    result = Predict().test_var(data_serie)
+    result = Predict().test_var(data_serie, lag_order, horizon)
     return result, 200

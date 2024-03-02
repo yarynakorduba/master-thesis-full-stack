@@ -187,8 +187,8 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
           handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
         />
         <Prediction
-          // isVisible={!!causalityTestResult}
-          isVisible={true}
+          isVisible={!!causalityTestResult}
+          // isVisible={true}
           varTestResult={varTestResult}
           isVARTestLoading={isVARTestLoading}
           handleFetchVARTest={handleFetchVARTest}

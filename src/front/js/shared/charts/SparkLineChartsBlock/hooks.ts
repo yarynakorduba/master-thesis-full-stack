@@ -165,33 +165,23 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
   const [result, setResult] = useState<object | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetchVARTest = useCallback(async () => {
-    try {
+  const handleFetchVARTest = useCallback(
+    async (lagOrder: number, horizon: number) => {
       const selectedProp1 = selectedProps?.[0]?.value;
       const selectedProp2 = selectedProps?.[1]?.value;
       console.log('selectedProps', selectedProp1, selectedProp2, timeseriesData.length);
-      // const dataForAnalysis = reduce(
-      //   timeseriesData,
-      //   (accum, datum) => ({
-      //     ...accum,
-      //     [datum.timestamp]: {
-      //       [selectedProp1]: datum[selectedProp1],
-      //       [selectedProp2]: datum[selectedProp2]
-      //     }
-      //   }),
-      //   {}
-      // );
 
       console.log('HERE!!', timeseriesData[timeseriesData.length - 1]);
 
       if (timeseriesData) {
-        const newResult = await fetchData(timeseriesData);
+        setIsLoading(true);
+        const newResult = await fetchData(timeseriesData, lagOrder, horizon);
         setResult(newResult?.data);
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.log('Error happened');
-    }
-  }, [selectedProps, timeseriesData, fetchData]);
+    },
+    [selectedProps, timeseriesData, fetchData]
+  );
 
   return { varTestResult: result, isVARTestLoading: isLoading, handleFetchVARTest };
 };

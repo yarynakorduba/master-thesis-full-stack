@@ -76,7 +76,7 @@ class Predict:
         #         df_diff[str(col)].cumsum()
         return df_diff
     
-    def test_var(self, data):
+    def test_var(self, data, lag_order = 5, horizon=1):
         print("here")
         df_input = pd.DataFrame.from_records(data, columns=['timestamp', 'oxygen', 'co2'])
 
@@ -98,12 +98,11 @@ class Predict:
 
         print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
         # Fit the model after selecting the lag order
-        lag_order = 62 # optimal_lags.selected_orders['aic']
+        # lag_order = 62 # optimal_lags.selected_orders['aic']
         results = model.fit(lag_order)
 
         # Estimate the model (VAR) and show summary
         # Forecast next two weeks
-        horizon = 100
         def run_forecast(df_to_run_forecast_on, df_original):
             forecast = results.forecast(df_to_run_forecast_on.values[-lag_order:], steps=horizon)
 
