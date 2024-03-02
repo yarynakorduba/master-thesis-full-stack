@@ -1,10 +1,14 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
 import { flatMap, flow, isNil, noop, uniq } from 'lodash';
+import { Brush } from '@visx/brush';
+import { Bounds } from '@visx/brush/lib/types';
+import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
+import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
@@ -20,6 +24,26 @@ const CHART_X_PADDING = 40;
 const CHART_Y_PADDING = 30;
 
 const GRAY = '#E1E5EA';
+
+// We need to manually offset the handles for them to be rendered at the right position
+function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
+  const pathWidth = 8;
+  const pathHeight = 15;
+  if (!isBrushActive) {
+    return null;
+  }
+  return (
+    <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
+      <path
+        fill="#f2f2f2"
+        d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
+        stroke="#999999"
+        strokeWidth="1"
+        style={{ cursor: 'ew-resize' }}
+      />
+    </Group>
+  );
+}
 
 const getUniqueFlatValues = (prop, data): number[] =>
   flow(
@@ -64,6 +88,13 @@ const LineChart = ({
     right: CHART_X_PADDING
   }
 }: TProps) => {
+  const [filteredData, setFilteredData] = useState(data);
+
+  useEffect(() => {
+    console.log('Updated');
+    setFilteredData(data);
+  }, [data.length]);
+
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
@@ -74,9 +105,6 @@ const LineChart = ({
   );
 
   // const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
-
-  const xValues = getUniqueFlatValues('valueX', data);
-  const yValues = getUniqueFlatValues('valueY', data);
 
   // const xTickWidth = useMemo(
   //   () => (isVertical ? cleanWidth / xValues.length : cleanWidth / numXAxisTicks),
@@ -96,23 +124,46 @@ const LineChart = ({
     );
   }, [data]);
 
+  const xValues = getUniqueFlatValues('valueX', filteredData);
+  const xBrushValues = getUniqueFlatValues('valueX', data);
+  const yValues = getUniqueFlatValues('valueY', data);
+
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
+  const xBrushScale = getLinearScale(xBrushValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
+
+  const getX = (lineDatum) => {
+    const x = xScale(lineDatum?.valueX);
+    const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
+    return Number(x) + offset;
+  };
+
+  const getY = (lineDatum) => {
+    const y = yScale(lineDatum?.valueY);
+    const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
+
+    return Number(y) + offset;
+  };
+
+  const onBrushChange = (domain: Bounds | null) => {
+    if (!domain) return;
+    const { x0, x1, y0, y1 } = domain;
+    console.log('------>>> ', { x0, x1, y0, y1 });
+
+    const updatedData = data.map(({ datapoints, ...rest }) => ({
+      ...rest,
+      datapoints: datapoints.filter((s) => {
+        if (!s) return;
+
+        return !isNil(s.valueX) && !isNil(s.valueY) && s.valueX > x0 && s.valueX < x1;
+      })
+    }));
+    console.log('--->>> updated data -- > ', updatedData);
+    setFilteredData(updatedData);
+  };
 
   const renderLine = useCallback(
     (lineData) => {
-      const getX = (lineDatum) => {
-        const x = xScale(lineDatum?.valueX);
-        const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
-        return Number(x) + offset;
-      };
-
-      const getY = (lineDatum) => {
-        const y = yScale(lineDatum?.valueY);
-        const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
-
-        return Number(y) + offset;
-      };
       return (
         <LinePath
           key={lineData?.id}
@@ -143,7 +194,7 @@ const LineChart = ({
     <>
       <ChartHeading>{heading}</ChartHeading>
       <ChartWrapper>
-        <svg width={width} height={height} ref={containerRef}>
+        <svg width={width} height={height + 20} ref={containerRef}>
           <Group left={padding.left} top={padding.top}>
             {variant === ChartVariant.vertical ? (
               <GridRows
@@ -177,7 +228,7 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            {data?.map(renderLine)}
+            {filteredData?.map(renderLine)}
           </Group>
           <ChartOverlays
             offsetLeft={padding.left}
@@ -186,9 +237,26 @@ const LineChart = ({
             height={cleanHeight}
             xScale={xScale}
             yScale={yScale}
-            dataSeries={data}
+            dataSeries={filteredData}
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
+          />
+          <Brush
+            brushDirection="horizontal"
+            xScale={xBrushScale as any}
+            yScale={yScale as any}
+            width={cleanWidth}
+            height={20}
+            handleSize={8}
+            // margin={brushMargin}
+            // innerRef={brushRef}
+            resizeTriggerAreas={['left', 'right']}
+            // initialBrushPosition={initialBrushPosition}
+            onChange={onBrushChange}
+            // onClick={() => setFilteredStock(stock)}
+            // selectedBoxStyle={selectedBrushStyle}
+            useWindowMoveEvents
+            renderBrushHandle={(props) => <BrushHandle {...props} />}
           />
         </svg>
         {legendLabels.length > 1 ? <Legend items={legendLabels} maxWidth={width} /> : null}
