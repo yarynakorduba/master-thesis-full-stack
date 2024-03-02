@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
-import { AppPage, Sidebar, Content } from './styles';
+import { AppPage, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from './test.json';
 import { TDataProperty } from 'front/js/types';

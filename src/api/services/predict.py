@@ -105,8 +105,8 @@ class Predict:
         # Forecast next two weeks
         def run_forecast(df_to_run_forecast_on, df_original):
             forecast = results.forecast(df_to_run_forecast_on.values[-lag_order:], steps=horizon)
-
-            idx = pd.date_range(pd.to_datetime(df_to_run_forecast_on.iloc[-1:].index.item(), unit='ms'), periods=horizon, freq='120s')
+            # Do we need to add one more index here?
+            idx = pd.date_range(pd.to_datetime(df_to_run_forecast_on.iloc[-1:].index.item(), unit='ms'), periods=horizon + 1, freq='120s').delete(0) 
             print(idx)
             # Convert to dataframe
             df_forecast = pd.DataFrame(forecast, 

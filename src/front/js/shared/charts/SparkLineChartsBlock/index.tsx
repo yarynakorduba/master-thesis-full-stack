@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { map, take, takeRight } from 'lodash';
+import { map, take } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';

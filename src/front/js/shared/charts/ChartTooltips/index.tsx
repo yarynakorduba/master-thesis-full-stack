@@ -33,7 +33,10 @@ const yAxisTooltipStyles = {
   background: '#827397'
 };
 
-function TooltipDatumIndicator({ color }) {
+type TTooltipDatumIndicatorProps = {
+  readonly color: string;
+};
+function TooltipDatumIndicator({ color }: TTooltipDatumIndicatorProps) {
   return (
     <svg viewBox="0 0 4 4" width="0.5rem" height="0.5rem" style={{ margin: '0 0.5rem 0 0' }}>
       <circle cx="50%" cy="50%" r="2" fill={color} stroke="none" />
@@ -41,7 +44,12 @@ function TooltipDatumIndicator({ color }) {
   );
 }
 
-export default function ChartTooltips({ pointTooltip, xTooltip, yTooltip }) {
+type TChartTooltipProps = {
+  readonly pointTooltip: any;
+  readonly xTooltip: number;
+  readonly yTooltip: number;
+};
+export default function ChartTooltips({ pointTooltip, xTooltip, yTooltip }: TChartTooltipProps) {
   const renderPointTooltipText = useCallback(
     () =>
       map(pointTooltip?.tooltipData, (point) => (
