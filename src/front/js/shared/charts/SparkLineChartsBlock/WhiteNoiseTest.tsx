@@ -33,7 +33,7 @@ const WhiteNoiseTest = ({
         <div>
           {whiteNoiseResult &&
             map(whiteNoiseResult, (val, propName) => {
-              return `${propName} data ${val.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
+              return `${propName} data ${val?.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
             }).join('; ')}
         </div>
       </Test>

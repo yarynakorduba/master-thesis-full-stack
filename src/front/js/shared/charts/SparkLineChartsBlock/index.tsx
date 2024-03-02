@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { map } from 'lodash';
+import { map, take } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -99,7 +99,25 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       selectedProp?.label
     );
     if (!mainChartData?.datapoints?.length) return [];
-    return predictedData?.datapoints?.length ? [mainChartData, predictedData] : [mainChartData];
+    console.log(
+      '--->>> ',
+      timeseriesData.length,
+      timeseriesData[timeseriesData.length - 1],
+      mainChartData.datapoints.length,
+      mainChartData.datapoints[0],
+      formatUnixToDate(mainChartData.datapoints[mainChartData.datapoints.length - 1].valueX),
+      predictedData?.datapoints?.length ? formatUnixToDate(predictedData.datapoints[0].valueX) : ''
+    );
+
+    return predictedData?.datapoints?.length
+      ? [
+          {
+            ...mainChartData,
+            datapoints: take(mainChartData.datapoints, mappedVarTestResult?.length || 0)
+          },
+          predictedData
+        ]
+      : [mainChartData];
   }, [
     selectedProp,
     timeProperty,
@@ -170,6 +188,7 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
         />
         <Prediction
           isVisible={!!causalityTestResult}
+          // isVisible={true}
           varTestResult={varTestResult}
           isVARTestLoading={isVARTestLoading}
           handleFetchVARTest={handleFetchVARTest}

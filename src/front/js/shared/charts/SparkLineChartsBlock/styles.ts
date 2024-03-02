@@ -7,14 +7,14 @@ export const DataInfo = styled.p`
 export const Content = styled.div`
   grid-column: 2;
   grid-row: 1;
-  display: grid;
-  grid-template-columns: 4fr 4fr;
+  // display: grid;
+  // grid-template-columns: 4fr 4fr;
   padding: 0.75rem;
 `;
 
 export const LineChartContainer = styled.div`
-  display: grid;
-  grid-template-columns: 5fr 2fr;
+  // display: grid;
+  // grid-template-columns: 5fr 2fr;
 `;
 
 export const Step = styled.div`
@@ -55,6 +55,35 @@ export const Test = styled.div`
   grid-row: 2;
   grid-column: 2/3;
   font-size: 0.875rem;
+`;
+
+export const Field = styled.div`
+  margin: 0.25rem 0;
+`;
+
+export const InputLabel = styled.label`
+  display: block;
+  font-size: 0.75rem;
+`;
+
+export const Input = styled.input`
+  display: block;
+  margin: 0;
+  padding: 1.125em 1.125em 1.25em;
+  background-color: #fff;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 4px;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  width: 10rem;
+  height: 0.8rem;
+  font-size: 0.75rem;
+  color: #353538;
+  font-weight: 600;
+  font-family: inherit;
+  transition:
+    box-shadow 0.2s linear,
+    border-color 0.25s ease-out;
 `;
 
 export const ButtonContainer = styled.div`

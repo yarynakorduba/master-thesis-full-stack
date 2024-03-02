@@ -26,5 +26,5 @@ export const formatNumber = (d: number): string => {
   if (d >= 1000) {
     return `${d / 1000}K`;
   }
-  return `${d}`;
+  return `${Math.round(d * 100) / 100}`;
 };

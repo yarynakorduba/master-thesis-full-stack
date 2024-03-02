@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
-import { AppPage, Sidebar, Content } from './styles';
+import { AppPage, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from './test.json';
 import { TDataProperty } from 'front/js/types';
@@ -15,7 +15,7 @@ const App = () => {
   const valueProperties = useMemo(
     (): TDataProperty[] => [
       { value: 'oxygen', label: 'oxygen' },
-      { value: 'dewpt', label: 'dewpt' }
+      { value: 'co2', label: 'co2' }
     ],
     []
   );
@@ -39,8 +39,9 @@ const App = () => {
       const sorted = timeseriesData.sort((a, b) => {
         return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
       });
-      console.log('SORTED!!! --- > ', sorted.slice(0, 3000));
-      setSortedTSData(sorted.slice(0, 3000));
+
+      const sliced = sorted.slice(0, 2000);
+      setSortedTSData(sliced);
     }
   }, [timeProperty, timeseriesData]);
 

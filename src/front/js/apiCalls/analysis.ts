@@ -28,10 +28,10 @@ export const fetchGrangerDataCausalityTest = async (data, dataKeys) => {
   });
 };
 
-export const fetchVARTest = async (data) => {
+export const fetchVARTest = async (data, lagOrder: number, horizon: number) => {
   return fetch(`${process.env.BACKEND_URL}/api/test-var`, {
     method: 'POST',
-    body: JSON.stringify({ data }),
+    body: JSON.stringify({ data, lagOrder, horizon }),
     headers: {
       'Content-type': 'application/json'
     }

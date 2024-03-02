@@ -138,7 +138,6 @@ export const useDataCausalityTest = (
   } = useFetch(fetchGrangerDataCausalityTest);
 
   const handleFetch = useCallback(() => {
-    console.log(selectedProps?.[0]?.value, selectedProps?.[1]?.value);
     if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
       const dataForAnalysis = map(timeseriesData, (datum) => [
         datum[selectedProps[0].value],
@@ -166,26 +165,23 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
   const [result, setResult] = useState<object | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetchVARTest = useCallback(async () => {
-    const selectedProp1 = selectedProps?.[0]?.value;
-    const selectedProp2 = selectedProps?.[1]?.value;
-    const dataForAnalysis = reduce(
-      timeseriesData,
-      (accum, datum) => ({
-        ...accum,
-        [datum.timestamp]: {
-          [selectedProp1]: datum[selectedProp1],
-          [selectedProp2]: datum[selectedProp2]
-        }
-      }),
-      {}
-    );
+  const handleFetchVARTest = useCallback(
+    async (lagOrder: number, horizon: number) => {
+      const selectedProp1 = selectedProps?.[0]?.value;
+      const selectedProp2 = selectedProps?.[1]?.value;
+      console.log('selectedProps', selectedProp1, selectedProp2, timeseriesData.length);
 
-    if (dataForAnalysis) {
-      const newResult = await fetchData(dataForAnalysis);
-      setResult(newResult?.data);
-    }
-  }, [selectedProps, timeseriesData, fetchData]);
+      console.log('HERE!!', timeseriesData[timeseriesData.length - 1]);
+
+      if (timeseriesData) {
+        setIsLoading(true);
+        const newResult = await fetchData(timeseriesData, lagOrder, horizon);
+        setResult(newResult?.data);
+        setIsLoading(false);
+      }
+    },
+    [selectedProps, timeseriesData, fetchData]
+  );
 
   return { varTestResult: result, isVARTestLoading: isLoading, handleFetchVARTest };
 };
