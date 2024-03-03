@@ -21,6 +21,9 @@ import { TPadding } from '../types';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 30;
+export const CHART_HEADING_HEIGHT = 16;
+export const BRUSH_HEIGHT = 20;
+export const LEGEND_HEIGHT = 16;
 
 const GRAY = '#E1E5EA';
 const selectedBrushStyle = {
@@ -95,7 +98,6 @@ const LineChart = ({
   const [filteredData, setFilteredData] = useState(data);
 
   useEffect(() => {
-    console.log('Updated');
     setFilteredData(data);
   }, [data.length]);
 
@@ -103,9 +105,11 @@ const LineChart = ({
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
-  const cleanHeight = useMemo(
-    () => height - padding.top - padding.bottom,
-    [height, padding.bottom, padding.top]
+
+  const svgHeight = height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT;
+  const xyAreaHeight = useMemo(
+    () => svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT,
+    [padding.bottom, padding.top, svgHeight]
   );
 
   // const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
@@ -134,7 +138,7 @@ const LineChart = ({
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, cleanWidth]);
-  const yScale = getLinearScale(yValues, [cleanHeight, 0]);
+  const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
   const yBrushScale = getLinearScale(yValues, [20, 0]);
 
   const getX =
@@ -185,7 +189,7 @@ const LineChart = ({
     useTooltipConfigs(
       padding.left,
       padding.top,
-      cleanHeight,
+      xyAreaHeight,
       variant,
       xScale,
       yScale,
@@ -197,25 +201,25 @@ const LineChart = ({
     <>
       <ChartHeading>{heading}</ChartHeading>
       <ChartWrapper>
-        <svg width={width} height={height + 40} ref={containerRef}>
+        <svg width={width} height={svgHeight} ref={containerRef}>
           <Group left={padding.left} top={padding.top}>
             {variant === ChartVariant.vertical ? (
               <GridRows
                 scale={yScale as any}
                 width={cleanWidth}
-                height={cleanHeight}
+                height={xyAreaHeight}
                 stroke={GRAY}
               />
             ) : (
               <GridColumns
                 scale={xScale as any}
                 width={cleanWidth}
-                height={cleanHeight}
+                height={xyAreaHeight}
                 stroke={GRAY}
               />
             )}
             <AxisBottom
-              top={cleanHeight}
+              top={xyAreaHeight}
               scale={xScale as any}
               hideTicks
               hideAxisLine
@@ -237,21 +241,21 @@ const LineChart = ({
             offsetLeft={padding.left}
             offsetTop={padding.top}
             width={cleanWidth}
-            height={cleanHeight}
+            height={xyAreaHeight}
             xScale={xScale}
             yScale={yScale}
             dataSeries={filteredData}
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
           />
-          <Group style={{ fill: 'red' }} left={padding.left} top={cleanHeight + 60}>
+          <Group style={{ fill: 'red' }} left={padding.left} top={svgHeight - BRUSH_HEIGHT}>
             {data?.map((lineData) => renderLine(lineData, getX(xBrushScale), getY(yBrushScale)))}
             <Brush
               brushDirection="horizontal"
               xScale={xBrushScale as any}
               yScale={yScale as any}
               width={cleanWidth}
-              height={20}
+              height={BRUSH_HEIGHT}
               handleSize={8}
               resizeTriggerAreas={['left', 'right']}
               onChange={onBrushChange}
@@ -328,8 +332,6 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ maxHeight: height, maxWidth: width, height }}>
-      {renderResponsiveChart}
-    </ParentSize>
+    <ParentSize parentSizeStyles={{ maxWidth: width, height }}>{renderResponsiveChart}</ParentSize>
   );
 }
