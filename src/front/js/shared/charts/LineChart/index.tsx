@@ -138,8 +138,9 @@ const LineChart = ({
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, cleanWidth]);
+
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
-  const yBrushScale = getLinearScale(yValues, [20, 0]);
+  const yBrushScale = getLinearScale(yValues, [BRUSH_HEIGHT, 0]);
 
   const getX =
     (scale = xScale) =>
@@ -159,7 +160,7 @@ const LineChart = ({
 
   const onBrushChange = (domain: Bounds | null) => {
     if (!domain) return;
-    const { x0, x1, y0, y1 } = domain;
+    const { x0, x1 } = domain;
 
     const updatedData = data.map(({ datapoints, ...rest }) => ({
       ...rest,
@@ -248,7 +249,7 @@ const LineChart = ({
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
           />
-          <Group style={{ fill: 'red' }} left={padding.left} top={svgHeight - BRUSH_HEIGHT}>
+          <Group left={padding.left} top={svgHeight - BRUSH_HEIGHT} width={cleanWidth}>
             {data?.map((lineData) => renderLine(lineData, getX(xBrushScale), getY(yBrushScale)))}
             <Brush
               brushDirection="horizontal"
@@ -257,11 +258,12 @@ const LineChart = ({
               width={cleanWidth}
               height={BRUSH_HEIGHT}
               handleSize={8}
+              margin={{ left: padding.left }}
               resizeTriggerAreas={['left', 'right']}
               onChange={onBrushChange}
               selectedBoxStyle={selectedBrushStyle}
               useWindowMoveEvents
-              renderBrushHandle={(props) => <BrushHandle {...props} />}
+              renderBrushHandle={(props: any) => <BrushHandle {...props} x={props.x} />}
             />
           </Group>
         </svg>
