@@ -18,7 +18,7 @@ export const getAxisTickLabelProps =
   };
 
 export const getLinearScale = (values: number[] = [], range) =>
-  scaleLinear({
+  scaleLinear<number>({
     domain: [Math.min(...values), Math.max(...values)],
     range
   });

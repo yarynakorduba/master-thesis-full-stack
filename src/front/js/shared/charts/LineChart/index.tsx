@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
@@ -18,11 +18,12 @@ import { ChartHeading, ChartWrapper } from './styles';
 import { TLineChartData } from 'front/js/types';
 import Legend, { TChartLegendLabel } from '../Legend';
 import { TPadding } from '../types';
+import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 30;
 export const CHART_HEADING_HEIGHT = 16;
-export const BRUSH_HEIGHT = 20;
+export const BRUSH_HEIGHT = 40;
 export const LEGEND_HEIGHT = 16;
 
 const GRAY = '#E1E5EA';
@@ -30,6 +31,12 @@ const selectedBrushStyle = {
   fill: 'transparent',
   stroke: 'blue',
   background: 'blue'
+};
+
+const selectedAreaStyle = {
+  fill: '#ffc0cb36',
+  background: 'pink',
+  stroke: 'pink'
 };
 
 // We need to manually offset the handles for them to be rendered at the right position
@@ -101,7 +108,7 @@ const LineChart = ({
     setFilteredData(data);
   }, [data.length]);
 
-  const cleanWidth = useMemo(() => {
+  const xyAreaWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
@@ -136,8 +143,9 @@ const LineChart = ({
   const xBrushValues = getUniqueFlatValues('valueX', data);
   const yValues = getUniqueFlatValues('valueY', data);
 
-  const xScale = getLinearScale(xValues, [0, cleanWidth]);
-  const xBrushScale = getLinearScale(xBrushValues, [0, cleanWidth]);
+  const xScale = useMemo(() => getLinearScale(xValues, [0, xyAreaWidth]), [xValues, xyAreaWidth]);
+  const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
+  // console.log('x scale', xScale(690676390792));
 
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
   const yBrushScale = getLinearScale(yValues, [BRUSH_HEIGHT, 0]);
@@ -158,20 +166,8 @@ const LineChart = ({
       return Number(y) + offset;
     };
 
-  const onBrushChange = (domain: Bounds | null) => {
-    if (!domain) return;
-    const { x0, x1 } = domain;
-
-    const updatedData = data.map(({ datapoints, ...rest }) => ({
-      ...rest,
-      datapoints: datapoints.filter((s) => {
-        if (!s) return;
-
-        return !isNil(s.valueX) && !isNil(s.valueY) && s.valueX > x0 && s.valueX < x1;
-      })
-    }));
-    setFilteredData(updatedData);
-  };
+  const [selectedAreaValueX0, setSelectedAreaValueX0] = useState<number>();
+  const [selectedAreaValueX1, setSelectedAreaValueX1] = useState<number>();
 
   const renderLine = useCallback((lineData, xGetter, yGetter) => {
     return (
@@ -198,23 +194,98 @@ const LineChart = ({
       formatYScale
     );
 
+  const selectedAreaRef = useRef<BaseBrush | null>(null);
+  const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
+
+  const handleUpdateSelectedAreaOnBrushVisual = (x0, x1) => {
+    const selectedAreaOnBrushUpdater: UpdateBrush = (prevBrush) => {
+      const newExtent = selectedAreaOnBrushRef.current?.getExtent(
+        { x: xBrushScale(x0) },
+        { x: xBrushScale(x1) }
+      );
+      if (!newExtent) return prevBrush;
+      const newState: BaseBrushState = {
+        ...prevBrush,
+        start: { y: 0, x: newExtent?.x0 },
+        end: { y: 100, x: newExtent?.x1 },
+        extent: newExtent
+      };
+
+      console.log('here!!! ---> ', x0, x1, newExtent);
+
+      return newState;
+    };
+    selectedAreaOnBrushRef.current?.updateBrush(selectedAreaOnBrushUpdater);
+  };
+
+  const handleUpdateSelectedAreaVisual = () => {
+    if (selectedAreaRef?.current) {
+      const updater: UpdateBrush = (prevBrush) => {
+        if (!selectedAreaValueX0 || !selectedAreaValueX1) return prevBrush;
+
+        const newExtent = selectedAreaRef.current?.getExtent(
+          { x: xScale(selectedAreaValueX0) },
+          { x: xScale(selectedAreaValueX1) }
+        );
+        if (!newExtent) return prevBrush;
+        const newState: BaseBrushState = {
+          ...prevBrush,
+          start: { y: 0, x: newExtent?.x0 },
+          end: { y: xyAreaHeight, x: newExtent?.x1 },
+          extent: { ...newExtent, y0: 0, y1: xyAreaHeight }
+        };
+
+        console.log('--newState -- > ', newState);
+
+        return newState;
+      };
+      selectedAreaRef.current?.updateBrush(updater);
+    }
+  };
+
+  const onSelectedAreaChange = (domain: Bounds | null) => {
+    if (!domain) return;
+    const { x0, x1 } = domain;
+    if (x0 && x1) {
+      setSelectedAreaValueX0(x0);
+      setSelectedAreaValueX1(x1);
+      handleUpdateSelectedAreaOnBrushVisual(x0, x1);
+    }
+  };
+
+  const onBrushChange = (domain: Bounds | null) => {
+    if (!domain) return;
+    const { x0, x1 } = domain;
+    handleUpdateSelectedAreaVisual();
+    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueX0, selectedAreaValueX1);
+    const updatedData = data.map(({ datapoints, ...rest }) => ({
+      ...rest,
+      datapoints: datapoints.filter((s) => {
+        if (!s) return;
+
+        return !isNil(s.valueX) && !isNil(s.valueY) && s.valueX > x0 && s.valueX < x1;
+      })
+    }));
+    setFilteredData(updatedData);
+  };
+
   return (
     <>
       <ChartHeading>{heading}</ChartHeading>
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
-          <Group left={padding.left} top={padding.top}>
+          <Group left={padding.left} top={padding.top} width={xyAreaWidth}>
             {variant === ChartVariant.vertical ? (
               <GridRows
                 scale={yScale as any}
-                width={cleanWidth}
+                width={xyAreaWidth}
                 height={xyAreaHeight}
                 stroke={GRAY}
               />
             ) : (
               <GridColumns
                 scale={xScale as any}
-                width={cleanWidth}
+                width={xyAreaWidth}
                 height={xyAreaHeight}
                 stroke={GRAY}
               />
@@ -241,7 +312,7 @@ const LineChart = ({
           <ChartOverlays
             offsetLeft={padding.left}
             offsetTop={padding.top}
-            width={cleanWidth}
+            width={xyAreaWidth}
             height={xyAreaHeight}
             xScale={xScale}
             yScale={yScale}
@@ -249,17 +320,60 @@ const LineChart = ({
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
           />
-          <Group left={padding.left} top={svgHeight - BRUSH_HEIGHT} width={cleanWidth}>
+          <clipPath id="brushAreaClip">
+            <rect x="0" width={xyAreaWidth} height={xyAreaHeight} />
+          </clipPath>
+          <Group
+            left={padding.left}
+            top={padding.top}
+            width={xyAreaWidth}
+            overflow="hidden"
+            style={{ clipPath: 'url(#brushAreaClip)' }}
+          >
+            <Brush
+              brushDirection="horizontal"
+              xScale={xScale as any}
+              yScale={yScale as any}
+              width={xyAreaWidth}
+              height={xyAreaHeight}
+              margin={{ left: padding.left, top: padding.top }}
+              resizeTriggerAreas={['left', 'right']}
+              onBrushEnd={onSelectedAreaChange}
+              selectedBoxStyle={selectedAreaStyle}
+              useWindowMoveEvents
+              innerRef={selectedAreaRef}
+            />
+          </Group>
+
+          <Group
+            left={padding.left}
+            top={svgHeight - BRUSH_HEIGHT}
+            width={xyAreaWidth}
+            overflow="hidden"
+          >
             {data?.map((lineData) => renderLine(lineData, getX(xBrushScale), getY(yBrushScale)))}
             <Brush
               brushDirection="horizontal"
               xScale={xBrushScale as any}
-              yScale={yScale as any}
-              width={cleanWidth}
+              yScale={yBrushScale as any}
+              width={xyAreaWidth}
+              height={BRUSH_HEIGHT}
+              margin={{ left: padding.left, top: padding.top }}
+              resizeTriggerAreas={[]}
+              onChange={noop}
+              selectedBoxStyle={selectedAreaStyle}
+              innerRef={selectedAreaOnBrushRef}
+              disableDraggingOverlay
+              disableDraggingSelection
+            />
+            <Brush
+              brushDirection="horizontal"
+              xScale={xBrushScale as any}
+              yScale={yBrushScale as any}
+              width={xyAreaWidth}
               height={BRUSH_HEIGHT}
               handleSize={8}
               margin={{ left: padding.left }}
-              resizeTriggerAreas={['left', 'right']}
               onChange={onBrushChange}
               selectedBoxStyle={selectedBrushStyle}
               useWindowMoveEvents
