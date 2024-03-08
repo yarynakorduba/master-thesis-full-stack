@@ -7,6 +7,8 @@ import { noop, map } from 'lodash';
 import { useClosestPoints } from './hooks';
 import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
 import { TLineChartData, TLineChartDatapoint } from 'front/js/types';
+import { Brush } from '@visx/brush';
+import { selectedAreaStyle } from '../LineChart/consts';
 
 type TProps = {
   readonly xScale: TLinScale;
@@ -21,19 +23,23 @@ type TProps = {
   readonly dataSeries: TLineChartData;
   readonly height: number;
   readonly width: number;
-};
+} & any;
 
-export default function ChartOverlays({
-  height,
-  width,
-  xScale,
-  yScale,
-  dataSeries,
-  offsetLeft = 0,
-  offsetTop = 0,
-  onHover = noop,
-  onMouseLeave = noop
-}: TProps) {
+function ChartOverlays(
+  {
+    height,
+    width,
+    xScale,
+    yScale,
+    dataSeries,
+    offsetLeft = 0,
+    offsetTop = 0,
+    onHover = noop,
+    onMouseLeave = noop,
+    onSelectedAreaChange = noop
+  }: TProps,
+  selectedAreaRef
+) {
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
     readonly x: number | undefined;
@@ -47,10 +53,15 @@ export default function ChartOverlays({
   const closestPoints = useClosestPoints(mouseEvent, xScale, yScale, dataSeries, offsetLeft);
   const handleHover = useCallback(
     (pointGroup?: TClosestChartPointGroup) => (event) => {
+      if (pointGroup) {
+        event.stopPropagation();
+      }
       const { x, y } = localPoint(event.target, event) || {
         x: undefined,
         y: undefined
       };
+      console.log('AAAA ---- >>>> !!!! >>> ', event, pointGroup, x, y);
+
       setPointerCoords({
         x: x ? x - offsetLeft : 0,
         y: y ? y - offsetTop : 0
@@ -72,6 +83,7 @@ export default function ChartOverlays({
       }
       setMouseEvent(event);
       onMouseLeave(event, pointGroup);
+      console.log('Mouse Leave', pointGroup);
     },
     [onMouseLeave]
   );
@@ -126,15 +138,15 @@ export default function ChartOverlays({
   );
 
   return (
-    <Group width={width} height={height} top={offsetTop} left={offsetLeft}>
-      <Bar
-        width={width}
-        height={height}
-        fill="transparent"
-        onMouseMove={handleHover()}
-        onMouseLeave={handleMouseLeave()}
-        pointerEvents="all"
-      />
+    <Group
+      width={width}
+      height={height}
+      top={offsetTop}
+      left={offsetLeft}
+      onMouseMove={handleHover()}
+      onMouseLeave={handleMouseLeave()}
+    >
+      <Bar width={width} height={height} fill="transparent" pointerEvents="all" />
       {isLocationDefined && (
         <Group pointerEvents="none">
           <Line
@@ -153,9 +165,29 @@ export default function ChartOverlays({
             pointerEvents="none"
             strokeDasharray="3,6"
           />
-          {renderDataPointIndicators()}
         </Group>
       )}
+      <clipPath id="brushAreaClip">
+        <rect x="0" width={width} height={height} />
+      </clipPath>
+      <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
+        <Brush
+          brushDirection="horizontal"
+          xScale={xScale}
+          yScale={yScale}
+          width={width}
+          height={height}
+          margin={{ left: offsetLeft, top: offsetTop }}
+          resizeTriggerAreas={['left', 'right']}
+          onBrushEnd={onSelectedAreaChange}
+          innerRef={selectedAreaRef}
+          selectedBoxStyle={selectedAreaStyle}
+          useWindowMoveEvents
+        />
+      </Group>
+      {isLocationDefined && renderDataPointIndicators()}
     </Group>
   );
 }
+
+export default React.forwardRef(ChartOverlays);

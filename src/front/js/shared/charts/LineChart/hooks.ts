@@ -1,6 +1,7 @@
 import { useTooltipInPortal } from '@visx/tooltip';
 import { isNil } from 'lodash';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
 
 export const useTooltipConfigs = (
   xPadding,
@@ -92,4 +93,19 @@ export const useTooltipConfigs = (
     handleMouseLeave,
     containerRef
   };
+};
+
+export const useChartSizes = (width, height, padding) => {
+  const xyAreaWidth = useMemo(() => {
+    const clean = width - padding.left - padding.right;
+    return clean > 0 ? clean : 0;
+  }, [padding.left, padding.right, width]);
+
+  const svgHeight = height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT;
+  const xyAreaHeight = useMemo(
+    () => svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT,
+    [padding.bottom, padding.top, svgHeight]
+  );
+
+  return { xyAreaWidth, xyAreaHeight, svgHeight };
 };

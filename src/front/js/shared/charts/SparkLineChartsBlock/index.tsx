@@ -102,10 +102,11 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
 
     return predictedData?.datapoints?.length
       ? [
-          {
-            ...mainChartData,
-            datapoints: take(mainChartData.datapoints, mappedVarTestResult?.length || 0)
-          },
+          // {
+          //   ...mainChartData,
+          //   datapoints: take(mainChartData.datapoints, mappedVarTestResult?.length || 0)
+          // },
+          mainChartData,
           predictedData
         ]
       : [mainChartData];

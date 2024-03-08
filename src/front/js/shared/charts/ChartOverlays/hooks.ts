@@ -65,12 +65,14 @@ export function useClosestPoints(
     const [pointerXValue] = getClosestCoordinate(xScale, x - xPadding);
     // Find all the corresponding linear coord based on band coord
     const findClosest = (prev, curr) =>
-      Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue) ? curr : prev;
+      !prev || Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue)
+        ? curr
+        : prev;
 
     const points = series.reduce(
       (accum: TClosestChartPointGroups, serie: TLineChartSerie): TClosestChartPointGroups => {
         const { datapoints = [], color } = serie;
-        const data = datapoints.reduce(findClosest);
+        const data = datapoints.reduce(findClosest, undefined);
         if (isNil(data)) return accum;
         const yVal = data?.valueY;
         const xVal = data?.valueX;

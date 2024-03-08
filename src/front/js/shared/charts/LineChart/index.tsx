@@ -5,11 +5,10 @@ import { ParentSize } from '@visx/responsive';
 import { isNil, noop } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
-import { Brush } from '@visx/brush';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
-import { useTooltipConfigs } from './hooks';
+import { useChartSizes, useTooltipConfigs } from './hooks';
 import {
   formatAxisTick,
   getAxisTickLabelProps,
@@ -23,7 +22,6 @@ import Legend from '../Legend';
 import { TPadding } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
-import { selectedAreaStyle } from './consts';
 import Grid from './Grid';
 
 export const CHART_X_PADDING = 40;
@@ -74,18 +72,7 @@ const LineChart = ({
     setFilteredData(data);
   }, [data.length]);
 
-  const xyAreaWidth = useMemo(() => {
-    const clean = width - padding.left - padding.right;
-    return clean > 0 ? clean : 0;
-  }, [padding.left, padding.right, width]);
-
-  const svgHeight = height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT;
-  const xyAreaHeight = useMemo(
-    () => svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT,
-    [padding.bottom, padding.top, svgHeight]
-  );
-
-  // const isVertical = useMemo(() => variant === ChartVariant.vertical, [variant]);
+  const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(width, height, padding);
 
   // const xTickWidth = useMemo(
   //   () => (isVertical ? cleanWidth / xValues.length : cleanWidth / numXAxisTicks),
@@ -158,7 +145,7 @@ const LineChart = ({
 
         return newState;
       };
-      selectedAreaRef.current?.updateBrush(updater);
+      selectedAreaRef.current.updateBrush(updater);
     }
   };
 
@@ -211,7 +198,7 @@ const LineChart = ({
               numTicks={numXAxisTicks}
             />
             <AxisLeft
-              scale={yScale as any}
+              scale={yScale}
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatYScale)}
@@ -223,30 +210,6 @@ const LineChart = ({
             ))}
           </Group>
 
-          <clipPath id="brushAreaClip">
-            <rect x="0" width={xyAreaWidth} height={xyAreaHeight} />
-          </clipPath>
-          <Group
-            left={padding.left}
-            top={padding.top}
-            width={xyAreaWidth}
-            overflow="hidden"
-            style={{ clipPath: 'url(#brushAreaClip)' }}
-          >
-            <Brush
-              brushDirection="horizontal"
-              xScale={xScale as any}
-              yScale={yScale as any}
-              width={xyAreaWidth}
-              height={xyAreaHeight}
-              margin={{ left: padding.left, top: padding.top }}
-              resizeTriggerAreas={['left', 'right']}
-              onBrushEnd={onSelectedAreaChange}
-              selectedBoxStyle={selectedAreaStyle}
-              useWindowMoveEvents
-              innerRef={selectedAreaRef}
-            />
-          </Group>
           <ChartOverlays
             offsetLeft={padding.left}
             offsetTop={padding.top}
@@ -257,7 +220,11 @@ const LineChart = ({
             dataSeries={filteredData}
             onHover={handleHover}
             onMouseLeave={handleMouseLeave}
+            ref={selectedAreaRef}
+            onSelectedAreaChange={onSelectedAreaChange}
+            selectedAreaRef={selectedAreaRef}
           />
+
           <CustomBrush
             onChange={onBrushChange}
             data={data}
