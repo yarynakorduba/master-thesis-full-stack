@@ -1,6 +1,13 @@
 import { localPoint } from '@visx/event';
 import { isNil } from 'lodash';
 import { useState, useCallback, useEffect } from 'react';
+import {
+  TClosestChartPoint,
+  TClosestChartPointGroup,
+  TClosestChartPointGroups,
+  TLinScale
+} from '../LineChart/types';
+import { TLineChartData, TLineChartSerie } from 'front/js/types';
 
 export enum ChartVariant {
   vertical = 'vertical',
@@ -25,51 +32,62 @@ export const getClosestCoordinate = (scale, point) => {
   return [scaleValue, bandMidCoordinate];
 };
 
-export function useClosestPoints(event, xScale, yScale, series: TSeries[] = [], xPadding = 15) {
-  const [closestPoints, setClosestPoints] = useState();
+export function useClosestPoints(
+  event: MouseEvent | undefined,
+  xScale: TLinScale,
+  yScale: TLinScale,
+  series: TLineChartSerie[] = [],
+  xPadding: number = 15
+): TClosestChartPointGroups | undefined {
+  const [closestPoints, setClosestPoints] = useState<TClosestChartPointGroups>();
 
-  const addPoint = useCallback((accum = [], color, data, x, y) => {
-    const pointGroupId = `${x}-${y}`;
-    const pointGroup = accum[pointGroupId] ?? { x, y };
-    const points = pointGroup?.points ?? [];
-    const point = {
-      color,
-      data
-    };
-    return {
-      ...accum,
-      [pointGroupId]: {
-        ...pointGroup,
-        points: [...points, point]
-      }
-    };
-  }, []);
+  const addPoint = useCallback(
+    (accum: TClosestChartPointGroups, color, data, x, y): TClosestChartPointGroups => {
+      const pointGroupId = `${x}-${y}`;
+      const pointGroup = accum[pointGroupId] ?? { x, y };
+      const points = pointGroup?.points ?? [];
+      const point = { color, data };
+      return {
+        ...accum,
+        [pointGroupId]: {
+          ...pointGroup,
+          points: [...points, point]
+        }
+      };
+    },
+    []
+  );
 
   const handleSetPoints = useCallback(() => {
     if (!event || !event.target || !xScale || !yScale) {
-      setClosestPoints(undefined);
       return;
     }
 
-    const targetName = event?.target?.localName;
+    const targetName = (event?.target as HTMLElement)?.localName;
     if (targetName !== 'path' && targetName !== 'rect') return;
 
     const { y, x } = localPoint(event) || { x: 0, y: 0 };
-    let points;
 
     const [xValue, xCoordinate] = getClosestCoordinate(xScale, x - xPadding);
-
+    console.log('--- >>> ', { xValue, xCoordinate });
     // Find all the corresponding linear coord based on band coord
-    points = series.reduce((accum, serie) => {
-      const { datapoints = [], color } = serie;
-      const data = datapoints.find((datum) => datum.valueX === xValue);
-      if (isNil(data)) return accum;
-
-      const yVal = data?.valueY;
-      const yCoordinate = yScale(yVal);
-      if (isNil(yCoordinate)) return accum;
-      return addPoint(accum, color, data, xCoordinate, yCoordinate);
-    }, []);
+    const findClosest = function (prev, curr) {
+      return Math.abs(curr.valueX - xValue) < Math.abs(prev.valueX - xValue) ? curr : prev;
+    };
+    const points = series.reduce(
+      (accum: TClosestChartPointGroups, serie: TLineChartSerie): TClosestChartPointGroups => {
+        const { datapoints = [], color } = serie;
+        const data = datapoints.reduce(findClosest);
+        if (isNil(data)) return accum;
+        console.log('REACHED', data);
+        const yVal = data?.valueY;
+        const yCoordinate = yScale(yVal);
+        if (isNil(yCoordinate)) return accum;
+        return addPoint(accum, color, data, xCoordinate, yCoordinate);
+      },
+      {}
+    );
+    console.log('--found points- >>> ', { points, series });
 
     setClosestPoints(points);
   }, [addPoint, event, series, xPadding, xScale, yScale]);

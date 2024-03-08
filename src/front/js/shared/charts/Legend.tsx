@@ -1,7 +1,8 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useMemo } from 'react';
 import { Legend, LegendItem } from '@visx/legend';
 import { scaleOrdinal } from '@visx/scale';
 import styled from 'styled-components';
+import { TLineChartData } from 'front/js/types';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -34,11 +35,24 @@ const LegendMarker = ({ fill, height = 10, width = 10 }: TLegendMarkerProps) => 
 };
 
 type TCustomLegendProps = {
-  readonly items: TChartLegendLabel[];
+  readonly data: TLineChartData;
   readonly maxWidth: number;
 };
 
-export const CustomLegend = ({ items = [], maxWidth }: TCustomLegendProps) => {
+export const CustomLegend = ({ data = [], maxWidth }: TCustomLegendProps) => {
+  const items = useMemo(() => {
+    return (
+      data?.map(
+        ({ label, color }): TChartLegendLabel => ({
+          label,
+          color,
+          width: 20,
+          height: 4
+        })
+      ) || []
+    );
+  }, [data]);
+
   const legendScale = scaleOrdinal({
     domain: items.map(({ label }) => label),
     range: items.map(({ color, width: markerWidth, height: markerHeight }) => {

@@ -45,6 +45,7 @@ export const useTooltipConfigs = (
     (event, pointGroup) => {
       const top = 'clientY' in event ? event.clientY : 0;
       const left = 'clientX' in event ? event.clientX : 0;
+      console.log('HOVER --- > ', pointGroup);
       setPointTooltip({
         tooltipLeft: left - containerBounds.left,
         tooltipTop: top - containerBounds.top,

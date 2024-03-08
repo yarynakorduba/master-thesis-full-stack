@@ -1,69 +1,36 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
-import { GridColumns, GridRows } from '@visx/grid';
 import { Group } from '@visx/group';
-import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
-import { flatMap, flow, isNil, noop, uniq } from 'lodash';
-import { Brush } from '@visx/brush';
+import { isNil, noop } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
-import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
+import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
+import { Brush } from '@visx/brush';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
 import { useTooltipConfigs } from './hooks';
-import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
+import {
+  formatAxisTick,
+  getAxisTickLabelProps,
+  getLinearScale,
+  getUniqueFlatChartValues
+} from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartHeading, ChartWrapper } from './styles';
 import { TLineChartData } from 'front/js/types';
-import Legend, { TChartLegendLabel } from '../Legend';
+import Legend from '../Legend';
 import { TPadding } from '../types';
-import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
+import ChartLine from './ChartLine';
+import CustomBrush from './CustomBrush';
+import { selectedAreaStyle } from './consts';
+import Grid from './Grid';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 30;
 export const CHART_HEADING_HEIGHT = 16;
 export const BRUSH_HEIGHT = 40;
 export const LEGEND_HEIGHT = 16;
-
-const GRAY = '#E1E5EA';
-const selectedBrushStyle = {
-  fill: 'transparent',
-  stroke: 'blue',
-  background: 'blue'
-};
-
-const selectedAreaStyle = {
-  fill: '#ffc0cb36',
-  background: 'pink',
-  stroke: 'pink'
-};
-
-// We need to manually offset the handles for them to be rendered at the right position
-function BrushHandle({ x, height, isBrushActive }: BrushHandleRenderProps) {
-  const pathWidth = 8;
-  const pathHeight = 15;
-  if (!isBrushActive) {
-    return null;
-  }
-  return (
-    <Group left={x + pathWidth / 2} top={(height - pathHeight) / 2}>
-      <path
-        fill="#f2f2f2"
-        d="M -4.5 0.5 L 3.5 0.5 L 3.5 15.5 L -4.5 15.5 L -4.5 0.5 M -1.5 4 L -1.5 12 M 0.5 4 L 0.5 12"
-        stroke="#999999"
-        strokeWidth="1"
-        style={{ cursor: 'ew-resize' }}
-      />
-    </Group>
-  );
-}
-
-const getUniqueFlatValues = (prop, data): number[] =>
-  flow(
-    (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
-    uniq
-  )(data);
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -103,7 +70,6 @@ const LineChart = ({
   }
 }: TProps) => {
   const [filteredData, setFilteredData] = useState(data);
-
   useEffect(() => {
     setFilteredData(data);
   }, [data.length]);
@@ -126,61 +92,18 @@ const LineChart = ({
   //   [cleanWidth, isVertical, numXAxisTicks, xValues.length]
   // );
 
-  const legendLabels = useMemo(() => {
-    return (
-      data?.map(
-        ({ label, color }): TChartLegendLabel => ({
-          label,
-          color,
-          width: 20,
-          height: 4
-        })
-      ) || []
-    );
-  }, [data]);
-
-  const xValues = getUniqueFlatValues('valueX', filteredData);
-  const xBrushValues = getUniqueFlatValues('valueX', data);
-  const yValues = getUniqueFlatValues('valueY', data);
+  const xValues = getUniqueFlatChartValues('valueX', filteredData);
+  const xBrushValues = getUniqueFlatChartValues('valueX', data);
+  const yValues = getUniqueFlatChartValues('valueY', data);
 
   const xScale = useMemo(() => getLinearScale(xValues, [0, xyAreaWidth]), [xValues, xyAreaWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
-  // console.log('x scale', xScale(690676390792));
 
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
   const yBrushScale = getLinearScale(yValues, [BRUSH_HEIGHT, 0]);
 
-  const getX =
-    (scale = xScale) =>
-    (lineDatum) => {
-      const x = scale(lineDatum?.valueX);
-      const offset = 0; //isVertical ? xScale.bandwidth() / 2 : 0;
-      return Number(x) + offset;
-    };
-
-  const getY =
-    (scale = yScale) =>
-    (lineDatum) => {
-      const y = scale(lineDatum?.valueY);
-      const offset = 0; //isVertical ? 0 : yScale.bandwidth() / 2;
-      return Number(y) + offset;
-    };
-
   const [selectedAreaValueX0, setSelectedAreaValueX0] = useState<number>();
   const [selectedAreaValueX1, setSelectedAreaValueX1] = useState<number>();
-
-  const renderLine = useCallback((lineData, xGetter, yGetter) => {
-    return (
-      <LinePath
-        key={lineData?.id}
-        data={lineData?.datapoints}
-        x={xGetter as any}
-        y={yGetter as any}
-        stroke={lineData?.color}
-        strokeWidth={2}
-      />
-    );
-  }, []);
 
   const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } =
     useTooltipConfigs(
@@ -193,6 +116,8 @@ const LineChart = ({
       formatXScale,
       formatYScale
     );
+
+  console.log('POINT TOOLTIP -- > ', pointTooltip);
 
   const selectedAreaRef = useRef<BaseBrush | null>(null);
   const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
@@ -210,8 +135,6 @@ const LineChart = ({
         end: { y: 100, x: newExtent?.x1 },
         extent: newExtent
       };
-
-      console.log('here!!! ---> ', x0, x1, newExtent);
 
       return newState;
     };
@@ -234,8 +157,6 @@ const LineChart = ({
           end: { y: xyAreaHeight, x: newExtent?.x1 },
           extent: { ...newExtent, y0: 0, y1: xyAreaHeight }
         };
-
-        console.log('--newState -- > ', newState);
 
         return newState;
       };
@@ -275,24 +196,16 @@ const LineChart = ({
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
           <Group left={padding.left} top={padding.top} width={xyAreaWidth}>
-            {variant === ChartVariant.vertical ? (
-              <GridRows
-                scale={yScale as any}
-                width={xyAreaWidth}
-                height={xyAreaHeight}
-                stroke={GRAY}
-              />
-            ) : (
-              <GridColumns
-                scale={xScale as any}
-                width={xyAreaWidth}
-                height={xyAreaHeight}
-                stroke={GRAY}
-              />
-            )}
+            <Grid
+              width={xyAreaWidth}
+              height={xyAreaHeight}
+              yScale={yScale}
+              xScale={xScale}
+              chartVariant={variant}
+            />
             <AxisBottom
               top={xyAreaHeight}
-              scale={xScale as any}
+              scale={xScale}
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatXScale)}
@@ -307,19 +220,11 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            {filteredData?.map((lineData) => renderLine(lineData, getX(xScale), getY(yScale)))}
+            {filteredData?.map((lineData) => (
+              <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
+            ))}
           </Group>
-          <ChartOverlays
-            offsetLeft={padding.left}
-            offsetTop={padding.top}
-            width={xyAreaWidth}
-            height={xyAreaHeight}
-            xScale={xScale}
-            yScale={yScale}
-            dataSeries={filteredData}
-            onHover={handleHover}
-            onMouseLeave={handleMouseLeave}
-          />
+
           <clipPath id="brushAreaClip">
             <rect x="0" width={xyAreaWidth} height={xyAreaHeight} />
           </clipPath>
@@ -344,45 +249,35 @@ const LineChart = ({
               innerRef={selectedAreaRef}
             />
           </Group>
-
-          <Group
-            left={padding.left}
-            top={svgHeight - BRUSH_HEIGHT}
+          <ChartOverlays
+            offsetLeft={padding.left}
+            offsetTop={padding.top}
             width={xyAreaWidth}
-            overflow="hidden"
-          >
-            {data?.map((lineData) => renderLine(lineData, getX(xBrushScale), getY(yBrushScale)))}
-            <Brush
-              brushDirection="horizontal"
-              xScale={xBrushScale as any}
-              yScale={yBrushScale as any}
-              width={xyAreaWidth}
-              height={BRUSH_HEIGHT}
-              margin={{ left: padding.left, top: padding.top }}
-              resizeTriggerAreas={[]}
-              onChange={noop}
-              selectedBoxStyle={selectedAreaStyle}
-              innerRef={selectedAreaOnBrushRef}
-              disableDraggingOverlay
-              disableDraggingSelection
-            />
-            <Brush
-              brushDirection="horizontal"
-              xScale={xBrushScale as any}
-              yScale={yBrushScale as any}
-              width={xyAreaWidth}
-              height={BRUSH_HEIGHT}
-              handleSize={8}
-              margin={{ left: padding.left }}
-              onChange={onBrushChange}
-              selectedBoxStyle={selectedBrushStyle}
-              useWindowMoveEvents
-              renderBrushHandle={(props: any) => <BrushHandle {...props} x={props.x} />}
-            />
-          </Group>
+            height={xyAreaHeight}
+            xScale={xScale}
+            yScale={yScale}
+            dataSeries={filteredData}
+            onHover={handleHover}
+            onMouseLeave={handleMouseLeave}
+          />
+          <CustomBrush
+            onChange={onBrushChange}
+            data={data}
+            padding={padding}
+            svgHeight={svgHeight}
+            width={xyAreaWidth}
+            xBrushScale={xBrushScale}
+            yBrushScale={yBrushScale}
+            selectedAreaOnBrushRef={selectedAreaOnBrushRef}
+          />
         </svg>
-        {legendLabels.length > 1 ? <Legend items={legendLabels} maxWidth={width} /> : null}
-        <ChartTooltips pointTooltip={pointTooltip} xTooltip={xTooltip} yTooltip={yTooltip} />
+        {data.length > 1 ? <Legend data={data} maxWidth={width} /> : null}
+        <ChartTooltips
+          pointTooltip={pointTooltip}
+          xTooltip={xTooltip}
+          yTooltip={yTooltip}
+          formatXScale={formatXScale}
+        />
       </ChartWrapper>
     </>
   );

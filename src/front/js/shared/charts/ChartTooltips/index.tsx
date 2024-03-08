@@ -48,18 +48,27 @@ type TChartTooltipProps = {
   readonly pointTooltip: any;
   readonly xTooltip: number;
   readonly yTooltip: number;
-};
-export default function ChartTooltips({ pointTooltip, xTooltip, yTooltip }: TChartTooltipProps) {
+} & any;
+export default function ChartTooltips({
+  pointTooltip,
+  xTooltip,
+  yTooltip,
+  formatXScale
+}: TChartTooltipProps) {
   const renderPointTooltipText = useCallback(
     () =>
       map(pointTooltip?.tooltipData, (point) => (
         <div className="ChartTooltips__content" key={point?.data?.id}>
           <TooltipDatumIndicator color={point?.color} />
-          <div className="ChartTooltips__text">{point.data.text}</div>
+          <div className="ChartTooltips__text">
+            {formatXScale(point.data.valueX)} - {point.data.valueY}
+          </div>
         </div>
       )),
-    [pointTooltip]
+    [formatXScale, pointTooltip?.tooltipData]
   );
+
+  console.log('Rendering tooltip', pointTooltip);
 
   const renderTooltip = useCallback(
     (tooltip, styles, isTooltipForPoint = false) => {

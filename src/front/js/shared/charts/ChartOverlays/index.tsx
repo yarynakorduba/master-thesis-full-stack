@@ -5,6 +5,23 @@ import { localPoint } from '@visx/event';
 import { noop, map } from 'lodash';
 
 import { useClosestPoints } from './hooks';
+import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
+import { TLineChartData, TLineChartDatapoint } from 'front/js/types';
+
+type TProps = {
+  readonly xScale: TLinScale;
+  readonly yScale: TLinScale;
+  readonly offsetTop?: number;
+  readonly offsetLeft?: number;
+
+  readonly onClick?: (datum: TLineChartDatapoint) => void;
+  readonly onHover?: (event: MouseEvent, datum?: TClosestChartPointGroup) => void;
+  readonly onMouseLeave?: (event: MouseEvent, datum?: TClosestChartPointGroup) => void;
+
+  readonly dataSeries: TLineChartData;
+  readonly height: number;
+  readonly width: number;
+};
 
 export default function ChartOverlays({
   height,
@@ -16,7 +33,7 @@ export default function ChartOverlays({
   offsetTop = 0,
   onHover = noop,
   onMouseLeave = noop
-}) {
+}: TProps) {
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
     readonly x: number | undefined;
@@ -29,7 +46,7 @@ export default function ChartOverlays({
 
   const closestPoints = useClosestPoints(mouseEvent, xScale, yScale, dataSeries, offsetLeft);
   const handleHover = useCallback(
-    (pointGroup) => (event) => {
+    (pointGroup?: TClosestChartPointGroup) => (event) => {
       const { x, y } = localPoint(event.target, event) || {
         x: undefined,
         y: undefined
@@ -38,6 +55,7 @@ export default function ChartOverlays({
         x: x ? x - offsetLeft : 0,
         y: y ? y - offsetTop : 0
       });
+      console.log('CLOSEST POINTS --- > ', { pointGroup });
 
       setMouseEvent(event);
       onHover(event, pointGroup);
@@ -46,7 +64,7 @@ export default function ChartOverlays({
   );
 
   const handleMouseLeave = useCallback(
-    (pointGroup) => (event) => {
+    (pointGroup?: TClosestChartPointGroup) => (event) => {
       if (!pointGroup) {
         setPointerCoords({
           x: undefined,
@@ -66,6 +84,7 @@ export default function ChartOverlays({
         const { points, x: pX, y: pY } = pointGroup as any;
         const lastPointColor = points?.[points?.length - 1]?.color;
         const hover = handleHover(pointGroup);
+        console.log('Point hover group -> ', pointGroup);
         const leave = handleMouseLeave(pointGroup);
         return (
           <>
@@ -114,8 +133,8 @@ export default function ChartOverlays({
         width={width}
         height={height}
         fill="transparent"
-        // onMouseMove={handleHover()}
-        // onMouseLeave={handleMouseLeave()}
+        onMouseMove={handleHover()}
+        onMouseLeave={handleMouseLeave()}
         pointerEvents="all"
       />
       {isLocationDefined && (
