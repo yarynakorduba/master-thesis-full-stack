@@ -171,8 +171,6 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
       const selectedProp2 = selectedProps?.[1]?.value;
       console.log('selectedProps', selectedProp1, selectedProp2, timeseriesData.length);
 
-      console.log('HERE!!', timeseriesData[timeseriesData.length - 1]);
-
       if (timeseriesData) {
         setIsLoading(true);
         const newResult = await fetchData(timeseriesData, lagOrder, horizon);

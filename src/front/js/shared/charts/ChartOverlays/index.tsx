@@ -55,7 +55,6 @@ export default function ChartOverlays({
         x: x ? x - offsetLeft : 0,
         y: y ? y - offsetTop : 0
       });
-      console.log('CLOSEST POINTS --- > ', { pointGroup });
 
       setMouseEvent(event);
       onHover(event, pointGroup);
@@ -84,7 +83,6 @@ export default function ChartOverlays({
         const { points, x: pX, y: pY } = pointGroup as any;
         const lastPointColor = points?.[points?.length - 1]?.color;
         const hover = handleHover(pointGroup);
-        console.log('Point hover group -> ', pointGroup);
         const leave = handleMouseLeave(pointGroup);
         return (
           <>

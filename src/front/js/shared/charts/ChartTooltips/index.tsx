@@ -3,32 +3,36 @@ import { defaultStyles, Tooltip, TooltipWithBounds } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
 import { TooltipContent, TooltipText } from './styles';
 
-const pointTooltipStyles = {
+const sharedStyles = {
   ...defaultStyles,
   minWidth: '2rem',
+  fontSize: '0.75rem',
+  pointerEvents: 'none'
+};
+
+const pointTooltipStyles = {
+  ...sharedStyles,
   maxWidth: '20rem',
   textAlign: 'center',
   pointerEvents: 'none'
 };
 
 const xAxisTooltipStyles = {
-  ...defaultStyles,
+  ...sharedStyles,
   minWidth: '2rem',
   maxWidth: '7rem',
   textAlign: 'center',
-  pointerEvents: 'none',
   color: 'white',
   background: '#827397',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
 };
 
 const yAxisTooltipStyles = {
-  ...defaultStyles,
+  ...sharedStyles,
   minWidth: '2rem',
   maxWidth: '7rem',
   width: 'fit-content',
   textAlign: 'center',
-  pointerEvents: 'none',
   color: 'white',
   transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))',
   background: '#827397'
@@ -68,8 +72,6 @@ export default function ChartTooltips({
       )),
     [formatXScale, pointTooltip?.tooltipData]
   );
-
-  console.log('Rendering tooltip', pointTooltip);
 
   const renderTooltip = useCallback(
     (tooltip, styles, isTooltipForPoint = false) => {

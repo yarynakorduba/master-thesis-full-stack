@@ -117,8 +117,6 @@ const LineChart = ({
       formatYScale
     );
 
-  console.log('POINT TOOLTIP -- > ', pointTooltip);
-
   const selectedAreaRef = useRef<BaseBrush | null>(null);
   const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
 

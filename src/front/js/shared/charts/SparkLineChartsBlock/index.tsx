@@ -99,15 +99,6 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
       selectedProp?.label
     );
     if (!mainChartData?.datapoints?.length) return [];
-    console.log(
-      '--->>> ',
-      timeseriesData.length,
-      timeseriesData[timeseriesData.length - 1],
-      mainChartData.datapoints.length,
-      mainChartData.datapoints[0],
-      formatUnixToDate(mainChartData.datapoints[mainChartData.datapoints.length - 1].valueX),
-      predictedData?.datapoints?.length ? formatUnixToDate(predictedData.datapoints[0].valueX) : ''
-    );
 
     return predictedData?.datapoints?.length
       ? [

@@ -1,13 +1,8 @@
 import { localPoint } from '@visx/event';
 import { isNil } from 'lodash';
 import { useState, useCallback, useEffect } from 'react';
-import {
-  TClosestChartPoint,
-  TClosestChartPointGroup,
-  TClosestChartPointGroups,
-  TLinScale
-} from '../LineChart/types';
-import { TLineChartData, TLineChartSerie } from 'front/js/types';
+import { TClosestChartPointGroups, TLinScale } from '../LineChart/types';
+import { TLineChartSerie } from 'front/js/types';
 
 export enum ChartVariant {
   vertical = 'vertical',
@@ -66,22 +61,17 @@ export function useClosestPoints(
     const targetName = (event?.target as HTMLElement)?.localName;
     if (targetName !== 'path' && targetName !== 'rect') return;
 
-    const { y, x } = localPoint(event) || { x: 0, y: 0 };
-
+    const { x } = localPoint(event) || { x: 0, y: 0 };
     const [pointerXValue] = getClosestCoordinate(xScale, x - xPadding);
-    console.log('--- >>> ', { pointerXValue });
     // Find all the corresponding linear coord based on band coord
-    const findClosest = function (prev, curr) {
-      return Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue)
-        ? curr
-        : prev;
-    };
+    const findClosest = (prev, curr) =>
+      Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue) ? curr : prev;
+
     const points = series.reduce(
       (accum: TClosestChartPointGroups, serie: TLineChartSerie): TClosestChartPointGroups => {
         const { datapoints = [], color } = serie;
         const data = datapoints.reduce(findClosest);
         if (isNil(data)) return accum;
-        console.log('REACHED', data);
         const yVal = data?.valueY;
         const xVal = data?.valueX;
         const yCoordinate = yScale(yVal);
@@ -91,7 +81,6 @@ export function useClosestPoints(
       },
       {}
     );
-    console.log('--found points- >>> ', { points, series });
 
     setClosestPoints(points);
   }, [addPoint, event, series, xPadding, xScale, yScale]);
