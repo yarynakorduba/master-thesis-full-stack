@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defaultStyles, Tooltip, TooltipWithBounds } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
+import { TooltipContent, TooltipText } from './styles';
 
 const pointTooltipStyles = {
   ...defaultStyles,
@@ -58,12 +59,12 @@ export default function ChartTooltips({
   const renderPointTooltipText = useCallback(
     () =>
       map(pointTooltip?.tooltipData, (point) => (
-        <div className="ChartTooltips__content" key={point?.data?.id}>
+        <TooltipContent key={point?.data?.id}>
           <TooltipDatumIndicator color={point?.color} />
-          <div className="ChartTooltips__text">
+          <TooltipText>
             {formatXScale(point.data.valueX)} - {point.data.valueY}
-          </div>
-        </div>
+          </TooltipText>
+        </TooltipContent>
       )),
     [formatXScale, pointTooltip?.tooltipData]
   );

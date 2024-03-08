@@ -68,11 +68,13 @@ export function useClosestPoints(
 
     const { y, x } = localPoint(event) || { x: 0, y: 0 };
 
-    const [xValue, xCoordinate] = getClosestCoordinate(xScale, x - xPadding);
-    console.log('--- >>> ', { xValue, xCoordinate });
+    const [pointerXValue] = getClosestCoordinate(xScale, x - xPadding);
+    console.log('--- >>> ', { pointerXValue });
     // Find all the corresponding linear coord based on band coord
     const findClosest = function (prev, curr) {
-      return Math.abs(curr.valueX - xValue) < Math.abs(prev.valueX - xValue) ? curr : prev;
+      return Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue)
+        ? curr
+        : prev;
     };
     const points = series.reduce(
       (accum: TClosestChartPointGroups, serie: TLineChartSerie): TClosestChartPointGroups => {
@@ -81,7 +83,9 @@ export function useClosestPoints(
         if (isNil(data)) return accum;
         console.log('REACHED', data);
         const yVal = data?.valueY;
+        const xVal = data?.valueX;
         const yCoordinate = yScale(yVal);
+        const xCoordinate = xScale(xVal);
         if (isNil(yCoordinate)) return accum;
         return addPoint(accum, color, data, xCoordinate, yCoordinate);
       },
