@@ -60,7 +60,12 @@ const SparkLineChartsBlock = ({
     setSelectedData(timeseriesData);
   }, [timeseriesData]);
 
-  const onSelectedAreaChange = ({ x0, x1 }) => {
+  const onSelectedAreaChange = (domain) => {
+    if (!domain) {
+      setSelectedData(timeseriesData);
+      return;
+    }
+    const { x0, x1 } = domain;
     const newSelectedData = timeseriesData.filter((s) => {
       return +s[timeProperty.value] >= x0 && +s[timeProperty.value] <= x1;
     });

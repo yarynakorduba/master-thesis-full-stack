@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
@@ -16,7 +16,7 @@ import {
   getUniqueFlatChartValues
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
-import { ChartHeading, ChartWrapper } from './styles';
+import { ChartHeading, ChartWrapper, ClearSelectionButton } from './styles';
 import { TLineChartData } from 'front/js/types';
 import Legend from '../Legend';
 import { TPadding } from '../types';
@@ -136,11 +136,11 @@ const LineChart = ({
   const handleUpdateSelectedAreaVisual = () => {
     if (selectedAreaRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
-        if (!selectedAreaValueBounds) return prevBrush;
+        // if (!selectedAreaValueBounds) return prevBrush;
 
         const newExtent = selectedAreaRef.current?.getExtent(
-          { x: xScale(selectedAreaValueBounds?.x0) },
-          { x: xScale(selectedAreaValueBounds?.x1) }
+          { x: selectedAreaValueBounds?.x0 ? xScale(selectedAreaValueBounds?.x0) : undefined },
+          { x: selectedAreaValueBounds?.x1 ? xScale(selectedAreaValueBounds?.x1) : undefined }
         );
         if (!newExtent) return prevBrush;
         const newState: BaseBrushState = {
@@ -156,8 +156,21 @@ const LineChart = ({
     }
   };
 
+  // this is needed to remove the selected area when the selection
+  // is cleared
+  useEffect(() => {
+    console.log('---------AAAA', selectedAreaValueBounds);
+    handleUpdateSelectedAreaVisual();
+  }, [selectedAreaValueBounds]);
+
   const onSelectedAreaChange = (domain: Bounds | null) => {
-    if (!domain) return;
+    if (!domain) {
+      setSelectedAreaValueBounds(undefined);
+      handleUpdateSelectedAreaOnBrushVisual(undefined, undefined);
+      onSelectArea(undefined);
+
+      return;
+    }
     const { x0, x1 } = domain;
     if (x0 && x1) {
       setSelectedAreaValueBounds({ x0, x1 });
@@ -197,7 +210,18 @@ const LineChart = ({
 
   return (
     <>
-      <ChartHeading>{heading}</ChartHeading>
+      <ChartHeading>
+        {heading}
+        {selectedAreaValueBounds && (
+          <ClearSelectionButton
+            onClick={() => {
+              onSelectedAreaChange(null);
+            }}
+          >
+            Clear selection
+          </ClearSelectionButton>
+        )}
+      </ChartHeading>
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
           <Group left={padding.left} top={padding.top} width={xyAreaWidth}>

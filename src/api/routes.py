@@ -64,5 +64,5 @@ def get_arima_prediction():
     lag_order = requestBody["lagOrder"]
     horizon = requestBody["horizon"]
 
-    result = Arima().arima_predict(data_serie)
+    result = Arima().arima_predict(data_serie, horizon)
     return result, 200
