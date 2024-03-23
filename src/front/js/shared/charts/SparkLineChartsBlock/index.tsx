@@ -49,7 +49,6 @@ const SparkLineChartsBlock = ({
   timeProperty,
   timeseriesData,
   predictionData,
-  selectedData,
   setSelectedData,
   selectedProp,
   setSelectedProp

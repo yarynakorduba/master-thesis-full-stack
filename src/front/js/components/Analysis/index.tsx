@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
 import { AnalysisContainer, Subtitle } from './styles';
+import { Button } from '../../pages/App/DatasetForm/styles';
+
+enum EPredictionMode {
+  ARIMA = 'ARIMA',
+  VAR = 'VAR'
+}
 
 const Analysis = ({
   stationarityTestResult,
@@ -18,10 +24,27 @@ const Analysis = ({
   isARIMALoading,
   handleFetchARIMA
 }: any) => {
+  const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
   return (
     <AnalysisContainer>
       <h5>Prediction</h5>
+      <Button
+        onClick={() => {
+          setPredictionMode(EPredictionMode.ARIMA);
+        }}
+      >
+        ARIMA
+      </Button>
+      <Button
+        onClick={() => {
+          setPredictionMode(EPredictionMode.VAR);
+        }}
+      >
+        VAR
+      </Button>
+      {predictionMode}
       <Subtitle>To make a prediction, we need to know a few characteristics of the data</Subtitle>
+
       <StationarityTest
         isVisible
         stationarityTestResult={stationarityTestResult}
