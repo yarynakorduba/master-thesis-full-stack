@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 
-import { Button } from '../../../pages/App/DatasetForm/styles';
+import { Button } from '../../pages/App/DatasetForm/styles';
 import {
   Step,
   StepName,
   Question,
   Test,
-  ButtonContainer,
-  Input,
-  InputLabel,
-  Field
-} from './styles';
-import Loader from '../../Loader';
+  ButtonContainer
+} from '../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../shared/Loader';
+import Input from '../../shared/formFields/Input';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -23,11 +21,11 @@ const Prediction = ({ isVisible, varTestResult, isVARTestLoading, handleFetchVAR
   const [lagOrder, setLagOrder] = useState<number>(2);
   const [horizon, setHorizon] = useState<number>(2);
 
-  const handleLagOrderChange = (ev) => {
-    setLagOrder(+ev.target.value);
+  const handleLagOrderChange = (value) => {
+    setLagOrder(+value);
   };
-  const handleHorizonChange = (ev) => {
-    setHorizon(+ev.target.value);
+  const handleHorizonChange = (value) => {
+    setHorizon(+value);
   };
 
   if (!isVisible) return null;
@@ -36,14 +34,9 @@ const Prediction = ({ isVisible, varTestResult, isVARTestLoading, handleFetchVAR
       <StepName>4</StepName>
       <Question>What is the prediction for the future?</Question>
       <Test>
-        <Field>
-          <InputLabel>Lag Order</InputLabel>
-          <Input value={lagOrder} onChange={handleLagOrderChange} />
-        </Field>
-        <Field>
-          <InputLabel>Horizon</InputLabel>
-          <Input value={horizon} onChange={handleHorizonChange} />
-        </Field>
+        <Input label="Lag Order" value={lagOrder} onChange={handleLagOrderChange} />
+        <Input label="Horizon" value={horizon} onChange={handleHorizonChange} />
+
         <ButtonContainer>
           {isVARTestLoading ? <Loader /> : null}
           {!isVARTestLoading ? (

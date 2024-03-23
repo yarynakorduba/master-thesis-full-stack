@@ -16,9 +16,13 @@ const res = json.map((datum) => {
   };
 });
 
-fs.writeFile('./src/api/data/AIR_Q_TU_Graz/test.json', JSON.stringify(res), (err) => {
-  if (err) {
-    console.error(err);
+fs.writeFile(
+  '/Users/yarynakorduba/Projects/master-thesis-full-stack/src/front/js/pages/App/test.json',
+  JSON.stringify(res),
+  (err) => {
+    if (err) {
+      console.error(err);
+    }
+    // file written successfully
   }
-  // file written successfully
-});
+);

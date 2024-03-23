@@ -2,9 +2,9 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 
-import ScrollToTop from './component/scrollToTop';
+import ScrollToTop from './components/scrollToTop';
 import injectContext from './store/appContext';
-import { Navbar } from './component/Navbar/Navbar';
+import { Navbar } from './components/Navbar/Navbar';
 import App from './pages/App';
 import { theme } from '../styles/theme';
 import GlobalStyle from '../styles/index';

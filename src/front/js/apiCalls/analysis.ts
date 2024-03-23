@@ -37,3 +37,13 @@ export const fetchVARTest = async (data, lagOrder: number, horizon: number) => {
     }
   });
 };
+
+export const fetchARIMA = async (data, lagOrder: number, horizon: number) => {
+  return fetch(`${process.env.BACKEND_URL}/api/get-arima-prediction`, {
+    method: 'POST',
+    body: JSON.stringify({ data, lagOrder, horizon }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+};

@@ -60,7 +60,6 @@ function ChartOverlays(
         x: undefined,
         y: undefined
       };
-      console.log('AAAA ---- >>>> !!!! >>> ', event, pointGroup, x, y);
 
       setPointerCoords({
         x: x ? x - offsetLeft : 0,
@@ -83,7 +82,6 @@ function ChartOverlays(
       }
       setMouseEvent(event);
       onMouseLeave(event, pointGroup);
-      console.log('Mouse Leave', pointGroup);
     },
     [onMouseLeave]
   );

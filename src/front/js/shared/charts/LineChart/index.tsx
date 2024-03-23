@@ -36,6 +36,11 @@ export const LEGEND_HEIGHT = 16;
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
+type TValueBounds = {
+  readonly x0: number;
+  readonly x1: number;
+};
+
 type TProps = {
   readonly width?: number;
   readonly height?: number;
@@ -48,6 +53,8 @@ type TProps = {
   readonly numYAxisTicks?: number;
   readonly padding?: TPadding;
   readonly onClick?: () => void;
+  readonly defaultBrushValueBounds?: TValueBounds;
+  readonly onSelectArea?: (datapoints: any) => void;
 };
 
 const LineChart = ({
@@ -65,32 +72,32 @@ const LineChart = ({
     bottom: CHART_Y_PADDING,
     left: CHART_X_PADDING,
     right: CHART_X_PADDING
-  }
+  },
+  defaultBrushValueBounds = undefined,
+  onSelectArea = noop
 }: TProps) => {
   const [filteredData, setFilteredData] = useState(data);
   useEffect(() => {
     setFilteredData(data);
-  }, [data.length]);
+  }, [data]);
 
   const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(width, height, padding);
-
-  // const xTickWidth = useMemo(
-  //   () => (isVertical ? cleanWidth / xValues.length : cleanWidth / numXAxisTicks),
-  //   [cleanWidth, isVertical, numXAxisTicks, xValues.length]
-  // );
 
   const xValues = getUniqueFlatChartValues('valueX', filteredData);
   const xBrushValues = getUniqueFlatChartValues('valueX', data);
   const yValues = getUniqueFlatChartValues('valueY', data);
 
-  const xScale = useMemo(() => getLinearScale(xValues, [0, xyAreaWidth]), [xValues, xyAreaWidth]);
+  const xScale = getLinearScale(xValues, [0, xyAreaWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
-
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
   const yBrushScale = getLinearScale(yValues, [BRUSH_HEIGHT, 0]);
 
-  const [selectedAreaValueX0, setSelectedAreaValueX0] = useState<number>();
-  const [selectedAreaValueX1, setSelectedAreaValueX1] = useState<number>();
+  const [selectedAreaValueBounds, setSelectedAreaValueBounds] = useState<
+    TValueBounds | undefined
+  >();
+  const [brushValueBounds, setBrushValueBounds] = useState<TValueBounds | undefined>(
+    defaultBrushValueBounds
+  );
 
   const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } =
     useTooltipConfigs(
@@ -129,11 +136,11 @@ const LineChart = ({
   const handleUpdateSelectedAreaVisual = () => {
     if (selectedAreaRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
-        if (!selectedAreaValueX0 || !selectedAreaValueX1) return prevBrush;
+        if (!selectedAreaValueBounds) return prevBrush;
 
         const newExtent = selectedAreaRef.current?.getExtent(
-          { x: xScale(selectedAreaValueX0) },
-          { x: xScale(selectedAreaValueX1) }
+          { x: xScale(selectedAreaValueBounds?.x0) },
+          { x: xScale(selectedAreaValueBounds?.x1) }
         );
         if (!newExtent) return prevBrush;
         const newState: BaseBrushState = {
@@ -153,27 +160,40 @@ const LineChart = ({
     if (!domain) return;
     const { x0, x1 } = domain;
     if (x0 && x1) {
-      setSelectedAreaValueX0(x0);
-      setSelectedAreaValueX1(x1);
+      setSelectedAreaValueBounds({ x0, x1 });
       handleUpdateSelectedAreaOnBrushVisual(x0, x1);
+      onSelectArea({ x0, x1 });
     }
   };
 
   const onBrushChange = (domain: Bounds | null) => {
     if (!domain) return;
     const { x0, x1 } = domain;
+    setBrushValueBounds({ x0, x1 });
     handleUpdateSelectedAreaVisual();
-    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueX0, selectedAreaValueX1);
-    const updatedData = data.map(({ datapoints, ...rest }) => ({
-      ...rest,
-      datapoints: datapoints.filter((s) => {
-        if (!s) return;
-
-        return !isNil(s.valueX) && !isNil(s.valueY) && s.valueX > x0 && s.valueX < x1;
-      })
-    }));
-    setFilteredData(updatedData);
+    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1);
   };
+
+  useEffect(() => {
+    if (isNil(brushValueBounds)) setFilteredData(data);
+    else {
+      const updatedData = data.map(({ datapoints, ...rest }) => ({
+        ...rest,
+        datapoints: datapoints.filter((s) => {
+          return s.valueX > brushValueBounds?.x0 && s.valueX < brushValueBounds?.x1;
+        })
+      }));
+      setFilteredData(updatedData);
+    }
+  }, [brushValueBounds, data]);
+
+  useEffect(() => {
+    setBrushValueBounds(defaultBrushValueBounds);
+  }, [defaultBrushValueBounds]);
+
+  useEffect(() => {
+    handleUpdateSelectedAreaVisual();
+  }, [filteredData]);
 
   return (
     <>
@@ -265,7 +285,9 @@ export default function ResponsiveLineChart({
     left: CHART_X_PADDING,
     right: CHART_X_PADDING
   },
-  onClick = noop
+  onClick = noop,
+  onSelectArea = noop,
+  defaultBrushValueBounds
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -278,9 +300,11 @@ export default function ResponsiveLineChart({
         formatXScale={formatXScale}
         formatYScale={formatYScale}
         onClick={onClick}
+        onSelectArea={onSelectArea}
         numXAxisTicks={numXAxisTicks} // approximate
         numYAxisTicks={numYAxisTicks}
         padding={padding}
+        defaultBrushValueBounds={defaultBrushValueBounds}
       />
     ),
     [
@@ -290,9 +314,11 @@ export default function ResponsiveLineChart({
       formatXScale,
       formatYScale,
       onClick,
+      onSelectArea,
       numXAxisTicks,
       numYAxisTicks,
-      padding
+      padding,
+      defaultBrushValueBounds
     ]
   );
 
@@ -300,6 +326,7 @@ export default function ResponsiveLineChart({
     (parent) => {
       const responsiveWidth = !isNil(width) && Math.min(width, parent.width);
       const responsiveHeight = !isNil(height) && Math.min(height, parent.height);
+      console.log('wIDtH -> ', parent.width);
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
@@ -308,6 +335,6 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ maxWidth: width, height }}>{renderResponsiveChart}</ParentSize>
+    <ParentSize parentSizeStyles={{ width: 'auto', height }}>{renderResponsiveChart}</ParentSize>
   );
 }

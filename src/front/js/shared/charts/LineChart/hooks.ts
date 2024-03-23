@@ -38,7 +38,6 @@ export const useTooltipConfigs = (
   const getAxisTooltipData = useCallback((scale, isScaleLinear, formatter, coordinate) => {
     if (isNil(coordinate)) return undefined;
     const value = scale.invert(coordinate);
-
     return formatter ? formatter(value) : value;
   }, []);
 

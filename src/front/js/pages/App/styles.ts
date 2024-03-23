@@ -17,6 +17,7 @@ export const Sidebar = styled.div`
 `;
 
 export const Content = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0.75rem;
 `;

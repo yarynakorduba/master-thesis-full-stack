@@ -1,9 +1,15 @@
 import React from 'react';
 import { map } from 'lodash';
 
-import { Button } from '../../../pages/App/DatasetForm/styles';
-import { Step, StepName, Question, Test, ButtonContainer } from './styles';
-import Loader from '../../Loader';
+import { Button } from '../../pages/App/DatasetForm/styles';
+import {
+  Step,
+  StepName,
+  Question,
+  Test,
+  ButtonContainer
+} from '../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../shared/Loader';
 
 type TProps = {
   readonly isVisible: boolean;

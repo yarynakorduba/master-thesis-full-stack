@@ -8,5 +8,7 @@ export const theme = {
   darkGray: '#adb6c0',
   contrastBlue: '#71c5e8',
 
-  chartBlue: '#3948A4'
+  chartBlue: '#3948A4',
+  chartFuchsia: '#FF4D6A',
+  chartPink: '#ff4ded'
 };
