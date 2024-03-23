@@ -12,7 +12,7 @@ import {
   useDataStationarityTest,
   useWhiteNoise,
   useDataCausalityTest,
-  useVARTest,
+  useVAR,
   useARIMA
 } from '../../components/Analysis/hooks';
 
@@ -40,11 +40,8 @@ const App = () => {
   const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
     useDataCausalityTest(selectedData, valueProperties);
 
-  const { isVARTestLoading, varTestResult, handleFetchVARTest } = useVARTest(
-    selectedData,
-    valueProperties
-  );
-  const { isARIMALoading, arimaResult, handleFetchARIMA } = useARIMA(selectedData, valueProperties);
+  const { isVARLoading, varResult, handleFetchVAR } = useVAR(selectedData);
+  const { isARIMALoading, arimaResult, handleFetchARIMA } = useARIMA(selectedData);
 
   const mappedARIMAResult = useMemo(
     () =>
@@ -104,6 +101,9 @@ const App = () => {
           arimaResult={arimaResult}
           isARIMALoading={isARIMALoading}
           handleFetchARIMA={handleFetchARIMA}
+          isVARLoading={isVARLoading}
+          varResult={varResult}
+          handleFetchVAR={handleFetchVAR}
         />
       </Content>
     </AppPage>

@@ -5,8 +5,8 @@ export const DataInfo = styled.p`
 `;
 
 export const LineChartContainer = styled.div`
-  // display: grid;
-  // grid-template-columns: 5fr 2fr;
+  display: grid;
+  grid-template-columns: auto 200px;
 `;
 
 export const Step = styled.div`

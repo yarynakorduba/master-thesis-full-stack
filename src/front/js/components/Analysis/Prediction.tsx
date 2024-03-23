@@ -13,11 +13,11 @@ import Input from '../../shared/formFields/Input';
 
 type TProps = {
   readonly isVisible: boolean;
-  readonly varTestResult;
-  readonly isVARTestLoading: boolean;
-  readonly handleFetchVARTest;
+  readonly varResult;
+  readonly isVARLoading: boolean;
+  readonly handleFetchVAR;
 };
-const Prediction = ({ isVisible, varTestResult, isVARTestLoading, handleFetchVARTest }: TProps) => {
+const Prediction = ({ isVisible, varResult, isVARLoading, handleFetchVAR }: TProps) => {
   const [lagOrder, setLagOrder] = useState<number>(2);
   const [horizon, setHorizon] = useState<number>(2);
 
@@ -38,9 +38,9 @@ const Prediction = ({ isVisible, varTestResult, isVARTestLoading, handleFetchVAR
         <Input label="Horizon" value={horizon} onChange={handleHorizonChange} />
 
         <ButtonContainer>
-          {isVARTestLoading ? <Loader /> : null}
-          {!isVARTestLoading ? (
-            <Button onClick={() => handleFetchVARTest(lagOrder, horizon)}>
+          {isVARLoading ? <Loader /> : null}
+          {!isVARLoading ? (
+            <Button onClick={() => handleFetchVAR(lagOrder, horizon)}>
               Run the prediction model
             </Button>
           ) : null}

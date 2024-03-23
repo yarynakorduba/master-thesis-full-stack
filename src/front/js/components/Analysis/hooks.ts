@@ -143,17 +143,13 @@ export const useDataCausalityTest = (
   };
 };
 
-export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TDataProperty[]) => {
+export const useVAR = (timeseriesData: TTimeseriesData) => {
   const { fetch: fetchData } = useFetch(fetchVARTest);
   const [result, setResult] = useState<object | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetchVARTest = useCallback(
+  const handleFetchVAR = useCallback(
     async (lagOrder: number, horizon: number) => {
-      const selectedProp1 = selectedProps?.[0]?.value;
-      const selectedProp2 = selectedProps?.[1]?.value;
-      console.log('selectedProps', selectedProp1, selectedProp2, timeseriesData.length);
-
       if (timeseriesData) {
         setIsLoading(true);
         const newResult = await fetchData(timeseriesData, lagOrder, horizon);
@@ -161,23 +157,19 @@ export const useVARTest = (timeseriesData: TTimeseriesData, selectedProps: TData
         setIsLoading(false);
       }
     },
-    [selectedProps, timeseriesData, fetchData]
+    [timeseriesData, fetchData]
   );
 
-  return { varTestResult: result, isVARTestLoading: isLoading, handleFetchVARTest };
+  return { varResult: result, isVARLoading: isLoading, handleFetchVAR };
 };
 
-export const useARIMA = (timeseriesData: TTimeseriesData, selectedProps: TDataProperty[]) => {
+export const useARIMA = (timeseriesData: TTimeseriesData) => {
   const { fetch: fetchData } = useFetch(fetchARIMA);
   const [result, setResult] = useState<object | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFetchARIMA = useCallback(
     async (lagOrder: number, horizon: number) => {
-      const selectedProp1 = selectedProps?.[0]?.value;
-      const selectedProp2 = selectedProps?.[1]?.value;
-      console.log('selectedProps', selectedProp1, selectedProp2, timeseriesData.length);
-
       if (timeseriesData) {
         setIsLoading(true);
         const newResult = await fetchData(timeseriesData, lagOrder, horizon);
@@ -186,7 +178,7 @@ export const useARIMA = (timeseriesData: TTimeseriesData, selectedProps: TDataPr
         setIsLoading(false);
       }
     },
-    [selectedProps, timeseriesData, fetchData]
+    [timeseriesData, fetchData]
   );
 
   return { arimaResult: result, isARIMALoading: isLoading, handleFetchARIMA };
