@@ -41,12 +41,12 @@ const WhiteNoiseTest = ({
             </Button>
           )}
         </ButtonContainer>
-        <div>
+        <Typography variant="body1">
           {whiteNoiseResult &&
             map(whiteNoiseResult, (val, propName) => {
               return `${propName} data ${val?.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
             }).join('; ')}
-        </div>
+        </Typography>
       </StepContent>
     </>
   );

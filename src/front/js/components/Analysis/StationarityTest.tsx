@@ -1,10 +1,9 @@
 import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
-import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
-import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
 import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
@@ -41,12 +40,12 @@ const StationarityTest = ({
             </Button>
           )}
         </ButtonContainer>
-        <div>
+        <Typography variant="body1">
           {stationarityTestResult &&
             map(stationarityTestResult, (val, propName) => {
               return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
             }).join('; ')}
-        </div>
+        </Typography>
       </StepContent>
     </>
   );

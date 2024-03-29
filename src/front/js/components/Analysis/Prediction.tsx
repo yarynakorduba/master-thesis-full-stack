@@ -42,7 +42,7 @@ const Prediction = ({
       </StepButton>
       <StepContent>
         <Grid container spacing={2} sx={{ mt: 1, mb: 1 }}>
-          <Grid item>
+          <Grid item md={6}>
             <TextField
               label="Max lag order"
               id="outlined-size-small"
@@ -51,7 +51,7 @@ const Prediction = ({
               size="small"
             />
           </Grid>
-          <Grid item>
+          <Grid item md={6}>
             <TextField
               label="Horizon"
               id="outlined-size-small"
