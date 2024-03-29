@@ -56,7 +56,7 @@ class Arima:
         
         return df_diff, diff_order
     
-    def arima_predict(self, data, horizon=40, is_seasonal=True):
+    def arima_predict(self, data, horizon=40, is_seasonal=False):
         print("here")
         # if data empty -> exit with error
         df_input = pd.DataFrame.from_records(data)
@@ -70,7 +70,7 @@ class Arima:
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=1, start_q=1,
                                 test='adf',
-                                max_p=3, max_q=1, m=12,
+                                max_p=3,max_q=1, m=12,
                                 start_P=0, seasonal=is_seasonal,
                                 d=None, D=1, trace=True,
                                 error_action='ignore',  

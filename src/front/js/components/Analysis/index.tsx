@@ -4,12 +4,13 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
-
 import Box from '@mui/material/Box';
+
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
+import ARIMAPrediction from './ARIMAPrediction';
 import { AnalysisContainer } from './styles';
 import { EPredictionMode } from './types';
 import { useStepper } from './hooks';
@@ -108,7 +109,7 @@ const Analysis = ({
                 handleFetchVAR={handleFetchVAR}
               />
             ) : (
-              <Prediction
+              <ARIMAPrediction
                 index={3}
                 isVisible
                 handleSelectStep={handleSelectStep}

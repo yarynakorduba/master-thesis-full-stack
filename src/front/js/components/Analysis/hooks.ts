@@ -169,10 +169,11 @@ export const useARIMA = (timeseriesData: TTimeseriesData) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFetchARIMA = useCallback(
-    async (lagOrder: number, horizon: number) => {
+    // parameters: { lagOrder: number, horizon: number, isSeasonal: boolean }
+    async (parameters) => {
       if (timeseriesData) {
         setIsLoading(true);
-        const newResult = await fetchData(timeseriesData, lagOrder, horizon);
+        const newResult = await fetchData(timeseriesData, parameters);
 
         setResult(newResult?.data);
         setIsLoading(false);

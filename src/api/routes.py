@@ -61,8 +61,9 @@ def get_arima_prediction():
     print("here!")
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    lag_order = requestBody["lagOrder"]
-    horizon = requestBody["horizon"]
+    # lag_order = requestBody["parameters"]["lag_order"]
+    horizon = requestBody["parameters"]["horizon"]
+    is_seasonal = requestBody["parameters"]["isSeasonal"]
 
-    result = Arima().arima_predict(data_serie, horizon)
+    result = Arima().arima_predict(data_serie, horizon, is_seasonal)
     return result, 200

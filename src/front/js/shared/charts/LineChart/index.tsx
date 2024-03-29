@@ -221,7 +221,9 @@ const LineChart = ({
       <Stack direction="row" alignItems={'baseline'} spacing={2}>
         <Typography variant="h6">{heading} </Typography>
         {!isTrainingDataSelectionOn && (
-          <Button onClick={() => setIsTrainingDataSelectionOn(true)}>Select training data</Button>
+          <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
+            Limit data for prediction
+          </Button>
         )}
         {isTrainingDataSelectionOn && (
           <Button
