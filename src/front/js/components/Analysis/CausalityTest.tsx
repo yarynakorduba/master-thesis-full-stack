@@ -1,7 +1,8 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
+import StepButton from '@mui/material/StepButton';
+import StepContent from '@mui/material/StepContent';
+import Box from '@mui/material/Box';
 import {
   Step,
   StepName,
@@ -15,13 +16,17 @@ type TProps = {
   readonly causalityTestResult;
   readonly isCausalityTestLoading: boolean;
   readonly handleFetchGrangerDataCausalityTest;
+  readonly index;
+  readonly handleSelectStep;
 };
 
 const CausalityTest = ({
   isVisible,
   causalityTestResult,
   isCausalityTestLoading,
-  handleFetchGrangerDataCausalityTest
+  handleFetchGrangerDataCausalityTest,
+  index,
+  handleSelectStep
 }: TProps) => {
   const causalityTexts = [
     `${causalityTestResult?.[0]?.dataKeys?.[1]} ${causalityTestResult?.[0]?.isCausal ? '->' : 'x'} ${causalityTestResult?.[0]?.dataKeys?.[0]}`,
@@ -30,23 +35,24 @@ const CausalityTest = ({
 
   if (!isVisible) return null;
   return (
-    <Step>
-      <StepName>3</StepName>
-      <Typography variant="subtitle1">
+    <>
+      <StepButton onClick={handleSelectStep(index)}>
         Do selected variables have a causal relautionship?
-      </Typography>
-      <Test>
-        <ButtonContainer>
-          {isCausalityTestLoading && <Loader />}
-          {!isCausalityTestLoading && !causalityTestResult && (
-            <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
-              Run the causality test
-            </Button>
-          )}
-        </ButtonContainer>
-        <div>{causalityTestResult ? causalityTexts : null}</div>
-      </Test>
-    </Step>
+      </StepButton>
+      <StepContent>
+        <Box sx={{ mb: 2 }}>
+          <ButtonContainer>
+            {isCausalityTestLoading && <Loader />}
+            {!isCausalityTestLoading && !causalityTestResult && (
+              <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+                Run the causality test
+              </Button>
+            )}
+          </ButtonContainer>
+          <div>{causalityTestResult ? causalityTexts : null}</div>
+        </Box>
+      </StepContent>
+    </>
   );
 };
 

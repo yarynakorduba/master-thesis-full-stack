@@ -1,14 +1,12 @@
 import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import Step from '@mui/material/Step';
+import StepButton from '@mui/material/StepButton';
+import StepContent from '@mui/material/StepContent';
+import Box from '@mui/material/Box';
 
-import {
-  Step,
-  StepName,
-  Test,
-  ButtonContainer
-} from '../../shared/charts/SparkLineChartsBlock/styles';
+import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
 
 type TProps = {
@@ -18,36 +16,41 @@ type TProps = {
   readonly timeseriesData;
   readonly handleFetchDataStationarityTest;
   readonly isStationarityTestLoading: boolean;
+  readonly handleSelectStep: any;
+  readonly index: any;
 };
 
 const StationarityTest = ({
   isVisible,
   stationarityTestResult,
   handleFetchDataStationarityTest,
-  isStationarityTestLoading
+  isStationarityTestLoading,
+  handleSelectStep,
+  index
 }: TProps) => {
   if (!isVisible) return null;
   return (
-    <Step>
-      <StepName>1</StepName>
-      <Typography variant="subtitle1">Is the data stationary?</Typography>
-      <Test>
-        <ButtonContainer>
-          {isStationarityTestLoading && <Loader />}
-          {!stationarityTestResult && !isStationarityTestLoading && (
-            <Button size="small" onClick={handleFetchDataStationarityTest}>
-              Run stationarity test
-            </Button>
-          )}
-        </ButtonContainer>
-        <div>
-          {stationarityTestResult &&
-            map(stationarityTestResult, (val, propName) => {
-              return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
-            }).join('; ')}
-        </div>
-      </Test>
-    </Step>
+    <>
+      <StepButton onClick={handleSelectStep(index)}>Is the data stationary?</StepButton>{' '}
+      <StepContent>
+        <Box sx={{ mb: 2 }}>
+          <ButtonContainer>
+            {isStationarityTestLoading && <Loader />}
+            {!stationarityTestResult && !isStationarityTestLoading && (
+              <Button size="small" onClick={handleFetchDataStationarityTest}>
+                Run stationarity test
+              </Button>
+            )}
+          </ButtonContainer>
+          <div>
+            {stationarityTestResult &&
+              map(stationarityTestResult, (val, propName) => {
+                return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
+              }).join('; ')}
+          </div>
+        </Box>
+      </StepContent>
+    </>
   );
 };
 

@@ -23,6 +23,8 @@ type TProps = {
   readonly dataSeries: TLineChartData;
   readonly height: number;
   readonly width: number;
+
+  readonly isAreaSelectionOn?: boolean;
 } & any;
 
 function ChartOverlays(
@@ -36,7 +38,8 @@ function ChartOverlays(
     offsetTop = 0,
     onHover = noop,
     onMouseLeave = noop,
-    onSelectedAreaChange = noop
+    onSelectedAreaChange = noop,
+    isAreaSelectionOn = false
   }: TProps,
   selectedAreaRef
 ) {
@@ -165,24 +168,28 @@ function ChartOverlays(
           />
         </Group>
       )}
-      <clipPath id="brushAreaClip">
-        <rect x="0" width={width} height={height} />
-      </clipPath>
-      <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
-        <Brush
-          brushDirection="horizontal"
-          xScale={xScale}
-          yScale={yScale}
-          width={width}
-          height={height}
-          margin={{ left: offsetLeft, top: offsetTop }}
-          resizeTriggerAreas={['left', 'right']}
-          onBrushEnd={onSelectedAreaChange}
-          innerRef={selectedAreaRef}
-          selectedBoxStyle={selectedAreaStyle}
-          useWindowMoveEvents
-        />
-      </Group>
+      {isAreaSelectionOn && (
+        <>
+          <clipPath id="brushAreaClip">
+            <rect x="0" width={width} height={height} />
+          </clipPath>
+          <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
+            <Brush
+              brushDirection="horizontal"
+              xScale={xScale}
+              yScale={yScale}
+              width={width}
+              height={height}
+              margin={{ left: offsetLeft, top: offsetTop }}
+              resizeTriggerAreas={['left', 'right']}
+              onBrushEnd={onSelectedAreaChange}
+              innerRef={selectedAreaRef}
+              selectedBoxStyle={selectedAreaStyle}
+              useWindowMoveEvents
+            />
+          </Group>
+        </>
+      )}
       {isLocationDefined && renderDataPointIndicators()}
     </Group>
   );

@@ -183,3 +183,19 @@ export const useARIMA = (timeseriesData: TTimeseriesData) => {
 
   return { arimaResult: result, isARIMALoading: isLoading, handleFetchARIMA };
 };
+
+export const useStepper = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const handleSelectStep = (index) => () => {
+    setActiveStep(index);
+  };
+  const handleNext = (index) => () => {
+    setActiveStep((prevActiveStep) => {
+      console.log('prevactive --- > ', prevActiveStep);
+      if (prevActiveStep !== index) {
+        return index;
+      }
+    });
+  };
+  return { activeStep, handleSelectStep };
+};

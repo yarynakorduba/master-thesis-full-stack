@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
 
+import Box from '@mui/material/Box';
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
 import { AnalysisContainer } from './styles';
 import { EPredictionMode } from './types';
+import { useStepper } from './hooks';
 
 const Analysis = ({
   stationarityTestResult,
@@ -32,6 +36,7 @@ const Analysis = ({
   handleFetchVAR
 }: any) => {
   const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
+  const { activeStep, handleSelectStep } = useStepper();
   return (
     <AnalysisContainer>
       <Typography variant="h5" sx={{ marginBottom: 1 }}>
@@ -55,44 +60,66 @@ const Analysis = ({
           VAR
         </ToggleButton>
       </ToggleButtonGroup>
+      <Box sx={{ maxWidth: 400 }}>
+        <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
+          <Step key={0}>
+            <StationarityTest
+              key={0}
+              isVisible
+              handleSelectStep={handleSelectStep}
+              index={0}
+              stationarityTestResult={stationarityTestResult}
+              propertiesToTest={valueProperties}
+              timeseriesData={timeseriesData}
+              handleFetchDataStationarityTest={handleFetchDataStationarityTest}
+              isStationarityTestLoading={isStationarityTestLoading}
+            />
+          </Step>
+          <Step key={1}>
+            <WhiteNoiseTest
+              key={1}
+              isVisible
+              handleSelectStep={handleSelectStep}
+              index={1}
+              whiteNoiseResult={whiteNoiseResult}
+              isWhiteNoiseLoading={isWhiteNoiseLoading}
+              handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
+            />
+          </Step>
 
-      <StationarityTest
-        isVisible
-        stationarityTestResult={stationarityTestResult}
-        propertiesToTest={valueProperties}
-        timeseriesData={timeseriesData}
-        handleFetchDataStationarityTest={handleFetchDataStationarityTest}
-        isStationarityTestLoading={isStationarityTestLoading}
-      />
-      <WhiteNoiseTest
-        isVisible
-        whiteNoiseResult={whiteNoiseResult}
-        isWhiteNoiseLoading={isWhiteNoiseLoading}
-        handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
-      />
-      {predictionMode === EPredictionMode.VAR && (
-        <CausalityTest
-          isVisible
-          causalityTestResult={causalityTestResult}
-          isCausalityTestLoading={isCausalityTestLoading}
-          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-        />
-      )}
-      {predictionMode === EPredictionMode.VAR ? (
-        <Prediction
-          isVisible
-          varResult={varResult}
-          isVARLoading={isVARLoading}
-          handleFetchVAR={handleFetchVAR}
-        />
-      ) : (
-        <Prediction
-          isVisible
-          varResult={arimaResult}
-          isVARLoading={isARIMALoading}
-          handleFetchVAR={handleFetchARIMA}
-        />
-      )}
+          <Step key={2}>
+            <CausalityTest
+              isVisible
+              handleSelectStep={handleSelectStep}
+              index={2}
+              causalityTestResult={causalityTestResult}
+              isCausalityTestLoading={isCausalityTestLoading}
+              handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+            />
+          </Step>
+          <Step key={3}>
+            {predictionMode === EPredictionMode.VAR ? (
+              <Prediction
+                index={3}
+                isVisible
+                handleSelectStep={handleSelectStep}
+                varResult={varResult}
+                isVARLoading={isVARLoading}
+                handleFetchVAR={handleFetchVAR}
+              />
+            ) : (
+              <Prediction
+                index={3}
+                isVisible
+                handleSelectStep={handleSelectStep}
+                varResult={arimaResult}
+                isVARLoading={isARIMALoading}
+                handleFetchVAR={handleFetchARIMA}
+              />
+            )}
+          </Step>
+        </Stepper>
+      </Box>
     </AnalysisContainer>
   );
 };

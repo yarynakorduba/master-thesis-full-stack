@@ -141,8 +141,6 @@ const LineChart = ({
   const handleUpdateSelectedAreaVisual = () => {
     if (selectedAreaRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
-        // if (!selectedAreaValueBounds) return prevBrush;
-
         const newExtent = selectedAreaRef.current?.getExtent(
           { x: selectedAreaValueBounds?.x0 ? xScale(selectedAreaValueBounds?.x0) : undefined },
           { x: selectedAreaValueBounds?.x1 ? xScale(selectedAreaValueBounds?.x1) : undefined }
@@ -164,11 +162,11 @@ const LineChart = ({
   // this is needed to remove the selected area when the selection
   // is cleared
   useEffect(() => {
-    console.log('---------AAAA', selectedAreaValueBounds);
     handleUpdateSelectedAreaVisual();
   }, [selectedAreaValueBounds]);
 
   const onSelectedAreaChange = (domain: Bounds | null) => {
+    if (!isTrainingDataSelectionOn) return;
     if (!domain) {
       setSelectedAreaValueBounds(undefined);
       handleUpdateSelectedAreaOnBrushVisual(undefined, undefined);
@@ -188,8 +186,13 @@ const LineChart = ({
     if (!domain) return;
     const { x0, x1 } = domain;
     setBrushValueBounds({ x0, x1 });
-    handleUpdateSelectedAreaVisual();
-    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1);
+    if (isTrainingDataSelectionOn) {
+      handleUpdateSelectedAreaVisual();
+      handleUpdateSelectedAreaOnBrushVisual(
+        selectedAreaValueBounds?.x0,
+        selectedAreaValueBounds?.x1
+      );
+    }
   };
 
   useEffect(() => {
@@ -210,8 +213,8 @@ const LineChart = ({
   }, [defaultBrushValueBounds]);
 
   useEffect(() => {
-    handleUpdateSelectedAreaVisual();
-  }, [filteredData]);
+    if (isTrainingDataSelectionOn) handleUpdateSelectedAreaVisual();
+  }, [isTrainingDataSelectionOn, filteredData]);
 
   return (
     <>
@@ -275,6 +278,7 @@ const LineChart = ({
             onMouseLeave={handleMouseLeave}
             ref={selectedAreaRef}
             onSelectedAreaChange={onSelectedAreaChange}
+            isAreaSelectionOn={isTrainingDataSelectionOn}
             selectedAreaRef={selectedAreaRef}
           />
 

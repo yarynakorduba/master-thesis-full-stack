@@ -22,7 +22,7 @@ const Layout = () => {
       <BrowserRouter basename={basename}>
         <ScrollToTop>
           <Navbar />
-          <Container maxWidth={false} sx={{ paddingTop: 2, paddingBottom: 2 }}>
+          <Container maxWidth="xl" sx={{ paddingTop: 2, paddingBottom: 2 }}>
             <Routes>
               <Route element={<App />} path="/" />
               <Route element={<h1>Not found!</h1>} />
