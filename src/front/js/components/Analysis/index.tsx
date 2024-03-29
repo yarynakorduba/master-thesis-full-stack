@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import Typography from '@mui/material/Typography';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
-import { AnalysisContainer, Subtitle } from './styles';
-import { Button } from '../../pages/App/DatasetForm/styles';
+import { AnalysisContainer } from './styles';
 import { EPredictionMode } from './types';
 
 const Analysis = ({
@@ -31,11 +34,24 @@ const Analysis = ({
   const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
   return (
     <AnalysisContainer>
-      <h5>Prediction</h5>
-      <Button onClick={() => setPredictionMode(EPredictionMode.ARIMA)}>ARIMA</Button>
-      <Button onClick={() => setPredictionMode(EPredictionMode.VAR)}>VAR</Button>
-      {predictionMode}
-      <Subtitle>To make a prediction, we need to know a few characteristics of the data</Subtitle>
+      <Typography variant="h5">Prediction</Typography>
+      <Typography variant="body2" gutterBottom>
+        To make a prediction, we need to know a few characteristics of the data
+      </Typography>
+      <ToggleButtonGroup
+        value={predictionMode}
+        exclusive
+        onChange={(e, value) => setPredictionMode(value)}
+        aria-label="text alignment"
+        size="small"
+      >
+        <ToggleButton value={EPredictionMode.ARIMA} aria-label="left aligned">
+          ARIMA
+        </ToggleButton>
+        <ToggleButton value={EPredictionMode.VAR} aria-label="right aligned">
+          VAR
+        </ToggleButton>
+      </ToggleButtonGroup>
 
       <StationarityTest
         isVisible

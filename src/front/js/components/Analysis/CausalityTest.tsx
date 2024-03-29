@@ -1,10 +1,10 @@
 import React from 'react';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
-import { Button } from '../../pages/App/DatasetForm/styles';
 import {
   Step,
   StepName,
-  Question,
   Test,
   ButtonContainer
 } from '../../shared/charts/SparkLineChartsBlock/styles';
@@ -32,7 +32,9 @@ const CausalityTest = ({
   return (
     <Step>
       <StepName>3</StepName>
-      <Question>Do selected variables have a causal relautionship?</Question>
+      <Typography variant="subtitle1">
+        Do selected variables have a causal relautionship?
+      </Typography>
       <Test>
         <ButtonContainer>
           {isCausalityTestLoading && <Loader />}

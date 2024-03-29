@@ -65,8 +65,8 @@ const LineChart = ({
   data,
   formatXScale,
   formatYScale,
-  numXAxisTicks = 8, // approximate
-  numYAxisTicks = 8,
+  numXAxisTicks = 5, // approximate
+  numYAxisTicks = 5, // approximate
   padding = {
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
@@ -300,8 +300,8 @@ export default function ResponsiveLineChart({
   data,
   formatXScale,
   formatYScale,
-  numXAxisTicks = 8, // approximate
-  numYAxisTicks = 8, // approximate
+  numXAxisTicks = 5, // approximate
+  numYAxisTicks = 5, // approximate
   isResponsive = true,
   padding = {
     top: CHART_Y_PADDING,

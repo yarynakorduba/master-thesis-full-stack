@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import Typography from '@mui/material/Typography';
 
 import { Button } from '../../pages/App/DatasetForm/styles';
 import {
   Step,
   StepName,
-  Question,
   Test,
   ButtonContainer
 } from '../../shared/charts/SparkLineChartsBlock/styles';
@@ -32,7 +32,9 @@ const Prediction = ({ isVisible, varResult, isVARLoading, handleFetchVAR }: TPro
   return (
     <Step>
       <StepName>4</StepName>
-      <Question>What is the prediction for the future?</Question>
+      <Typography variant="subtitle1" gutterBottom>
+        What is the prediction for the future?
+      </Typography>
       <Test>
         <Input label="Max lag Order" value={lagOrder} onChange={handleLagOrderChange} />
         <Input label="Horizon" value={horizon} onChange={handleHorizonChange} />

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
+import Drawer from '@mui/material/Drawer';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
@@ -69,13 +70,18 @@ const App = () => {
     }
   }, [timeProperty, timeseriesData]);
 
+  const [open, setOpen] = useState(true);
+
   return (
     <AppPage>
-      <Sidebar>
-        <FormProvider {...methods}>
-          <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
-        </FormProvider>
-      </Sidebar>
+      <Drawer open={open} onClose={(e, v) => setOpen(false)}>
+        <Sidebar>
+          <FormProvider {...methods}>
+            <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
+          </FormProvider>
+        </Sidebar>
+      </Drawer>
+
       <Content>
         {sortedTSData?.length ? (
           <SparkLineChartsBlock

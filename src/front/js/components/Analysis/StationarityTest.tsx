@@ -1,11 +1,11 @@
 import React from 'react';
 import { map } from 'lodash';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
-import { Button } from '../../pages/App/DatasetForm/styles';
 import {
   Step,
   StepName,
-  Question,
   Test,
   ButtonContainer
 } from '../../shared/charts/SparkLineChartsBlock/styles';
@@ -30,12 +30,14 @@ const StationarityTest = ({
   return (
     <Step>
       <StepName>1</StepName>
-      <Question>Is the data stationary?</Question>
+      <Typography variant="subtitle1">Is the data stationary?</Typography>
       <Test>
         <ButtonContainer>
           {isStationarityTestLoading && <Loader />}
           {!stationarityTestResult && !isStationarityTestLoading && (
-            <Button onClick={handleFetchDataStationarityTest}>Run stationarity test</Button>
+            <Button size="small" onClick={handleFetchDataStationarityTest}>
+              Run stationarity test
+            </Button>
           )}
         </ButtonContainer>
         <div>

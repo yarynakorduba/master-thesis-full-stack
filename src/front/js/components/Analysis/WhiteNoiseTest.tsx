@@ -1,7 +1,7 @@
 import React from 'react';
 import { map } from 'lodash';
+import Button from '@mui/material/Button';
 
-import { Button } from '../../pages/App/DatasetForm/styles';
 import {
   Step,
   StepName,

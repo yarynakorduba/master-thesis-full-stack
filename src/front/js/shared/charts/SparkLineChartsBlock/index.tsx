@@ -117,8 +117,8 @@ const SparkLineChartsBlock = ({
       <LineChart
         heading={selectedProp?.label || ''}
         data={chartData}
-        numXAxisTicks={5}
-        numYAxisTicks={5}
+        numXAxisTicks={4}
+        numYAxisTicks={4}
         formatXScale={formatUnixToDate}
         formatYScale={formatNumber}
         height={250}

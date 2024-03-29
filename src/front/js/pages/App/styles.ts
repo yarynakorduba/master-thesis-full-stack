@@ -4,9 +4,6 @@ export const AppPage = styled.div`
   width: calc(100% - 0.5rem);
   padding: 0.25rem;
   min-height: calc(100vh - 0.5rem);
-  display: grid;
-  grid-template-columns: 1fr 6fr;
-  gap: 0.25rem;
 `;
 
 export const Sidebar = styled.div`
