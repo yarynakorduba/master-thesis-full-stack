@@ -33,22 +33,20 @@ const WhiteNoiseTest = ({
       {' '}
       <StepButton onClick={handleSelectStep(index)}>Is the data a white noise?</StepButton>{' '}
       <StepContent>
-        <Box sx={{ mb: 2 }}>
-          <ButtonContainer>
-            {isWhiteNoiseLoading && <Loader />}
-            {!whiteNoiseResult && !isWhiteNoiseLoading && (
-              <Button size="small" onClick={handleFetchIsWhiteNoise}>
-                Run white-noise test
-              </Button>
-            )}
-          </ButtonContainer>
-          <div>
-            {whiteNoiseResult &&
-              map(whiteNoiseResult, (val, propName) => {
-                return `${propName} data ${val?.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
-              }).join('; ')}
-          </div>
-        </Box>
+        <ButtonContainer>
+          {isWhiteNoiseLoading && <Loader />}
+          {!whiteNoiseResult && !isWhiteNoiseLoading && (
+            <Button size="small" onClick={handleFetchIsWhiteNoise}>
+              Run white-noise test
+            </Button>
+          )}
+        </ButtonContainer>
+        <div>
+          {whiteNoiseResult &&
+            map(whiteNoiseResult, (val, propName) => {
+              return `${propName} data ${val?.isWhiteNoise ? 'are white noise' : 'are not white noise'}`;
+            }).join('; ')}
+        </div>
       </StepContent>
     </>
   );

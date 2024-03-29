@@ -41,37 +41,35 @@ const Prediction = ({
         What is the prediction for the future?
       </StepButton>
       <StepContent>
-        <Box sx={{ mb: 2 }}>
-          <Grid container spacing={2} sx={{ marginBottom: 1 }}>
-            <Grid item>
-              <TextField
-                label="Max lag order"
-                id="outlined-size-small"
-                value={lagOrder}
-                onChange={handleLagOrderChange}
-                size="small"
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                label="Horizon"
-                id="outlined-size-small"
-                value={horizon}
-                onChange={handleHorizonChange}
-                size="small"
-              />
-            </Grid>
+        <Grid container spacing={2} sx={{ mt: 1, mb: 1 }}>
+          <Grid item>
+            <TextField
+              label="Max lag order"
+              id="outlined-size-small"
+              value={lagOrder}
+              onChange={handleLagOrderChange}
+              size="small"
+            />
           </Grid>
+          <Grid item>
+            <TextField
+              label="Horizon"
+              id="outlined-size-small"
+              value={horizon}
+              onChange={handleHorizonChange}
+              size="small"
+            />
+          </Grid>
+        </Grid>
 
-          <ButtonContainer>
-            {isVARLoading ? <Loader /> : null}
-            {!isVARLoading ? (
-              <Button size="small" onClick={() => handleFetchVAR(lagOrder, horizon)}>
-                Run the prediction model
-              </Button>
-            ) : null}
-          </ButtonContainer>
-        </Box>
+        <ButtonContainer>
+          {isVARLoading ? <Loader /> : null}
+          {!isVARLoading ? (
+            <Button size="small" onClick={() => handleFetchVAR(lagOrder, horizon)}>
+              Run the prediction model
+            </Button>
+          ) : null}
+        </ButtonContainer>
       </StepContent>
     </>
   );

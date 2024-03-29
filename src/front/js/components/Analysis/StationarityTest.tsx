@@ -33,22 +33,20 @@ const StationarityTest = ({
     <>
       <StepButton onClick={handleSelectStep(index)}>Is the data stationary?</StepButton>{' '}
       <StepContent>
-        <Box sx={{ mb: 2 }}>
-          <ButtonContainer>
-            {isStationarityTestLoading && <Loader />}
-            {!stationarityTestResult && !isStationarityTestLoading && (
-              <Button size="small" onClick={handleFetchDataStationarityTest}>
-                Run stationarity test
-              </Button>
-            )}
-          </ButtonContainer>
-          <div>
-            {stationarityTestResult &&
-              map(stationarityTestResult, (val, propName) => {
-                return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
-              }).join('; ')}
-          </div>
-        </Box>
+        <ButtonContainer>
+          {isStationarityTestLoading && <Loader />}
+          {!stationarityTestResult && !isStationarityTestLoading && (
+            <Button size="small" onClick={handleFetchDataStationarityTest}>
+              Run stationarity test
+            </Button>
+          )}
+        </ButtonContainer>
+        <div>
+          {stationarityTestResult &&
+            map(stationarityTestResult, (val, propName) => {
+              return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
+            }).join('; ')}
+        </div>
       </StepContent>
     </>
   );

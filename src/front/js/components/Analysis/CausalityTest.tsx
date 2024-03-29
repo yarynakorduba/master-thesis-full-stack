@@ -40,17 +40,15 @@ const CausalityTest = ({
         Do selected variables have a causal relautionship?
       </StepButton>
       <StepContent>
-        <Box sx={{ mb: 2 }}>
-          <ButtonContainer>
-            {isCausalityTestLoading && <Loader />}
-            {!isCausalityTestLoading && !causalityTestResult && (
-              <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
-                Run the causality test
-              </Button>
-            )}
-          </ButtonContainer>
-          <div>{causalityTestResult ? causalityTexts : null}</div>
-        </Box>
+        <ButtonContainer>
+          {isCausalityTestLoading && <Loader />}
+          {!isCausalityTestLoading && !causalityTestResult && (
+            <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+              Run the causality test
+            </Button>
+          )}
+        </ButtonContainer>
+        <div>{causalityTestResult ? causalityTexts : null}</div>
       </StepContent>
     </>
   );
