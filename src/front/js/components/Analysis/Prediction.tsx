@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
 
 import {
   Step,
   StepName,
-  Question,
   Test,
   ButtonContainer
 } from '../../shared/charts/SparkLineChartsBlock/styles';
@@ -22,26 +23,46 @@ const Prediction = ({ isVisible, varResult, isVARLoading, handleFetchVAR }: TPro
   const [lagOrder, setLagOrder] = useState<number>(2);
   const [horizon, setHorizon] = useState<number>(2);
 
-  const handleLagOrderChange = (value) => {
-    setLagOrder(+value);
+  const handleLagOrderChange = (ev) => {
+    setLagOrder(+ev.target.value);
   };
-  const handleHorizonChange = (value) => {
-    setHorizon(+value);
+  const handleHorizonChange = (ev) => {
+    setHorizon(+ev.target.value);
   };
 
   if (!isVisible) return null;
   return (
     <Step>
       <StepName>4</StepName>
-      <Typography variant="subtitle1">What is the prediction for the future?</Typography>
+      <Typography variant="subtitle1" sx={{ marginBottom: 1 }}>
+        What is the prediction for the future?
+      </Typography>
       <Test>
-        <Input label="Lag Order" value={lagOrder} onChange={handleLagOrderChange} />
-        <Input label="Horizon" value={horizon} onChange={handleHorizonChange} />
+        <Grid container spacing={2} sx={{ marginBottom: 1 }}>
+          <Grid item>
+            <TextField
+              label="Max lag order"
+              id="outlined-size-small"
+              value={lagOrder}
+              onChange={handleLagOrderChange}
+              size="small"
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              label="Horizon"
+              id="outlined-size-small"
+              value={horizon}
+              onChange={handleHorizonChange}
+              size="small"
+            />
+          </Grid>
+        </Grid>
 
         <ButtonContainer>
           {isVARLoading ? <Loader /> : null}
           {!isVARLoading ? (
-            <Button onClick={() => handleFetchVAR(lagOrder, horizon)}>
+            <Button size="small" onClick={() => handleFetchVAR(lagOrder, horizon)}>
               Run the prediction model
             </Button>
           ) : null}

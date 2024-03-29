@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Typography from '@mui/material/Typography';
-
-import { Button } from '../../pages/App/DatasetForm/styles';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import {
   Step,
   StepName,
@@ -32,17 +32,15 @@ const Prediction = ({ isVisible, varResult, isVARLoading, handleFetchVAR }: TPro
   return (
     <Step>
       <StepName>4</StepName>
-      <Typography variant="subtitle1" gutterBottom>
-        What is the prediction for the future?
-      </Typography>
+      <Typography variant="subtitle1">What is the prediction for the future?</Typography>
       <Test>
-        <Input label="Max lag Order" value={lagOrder} onChange={handleLagOrderChange} />
+        <Input label="Max lag order" value={lagOrder} onChange={handleLagOrderChange} />
         <Input label="Horizon" value={horizon} onChange={handleHorizonChange} />
 
         <ButtonContainer>
           {isVARLoading ? <Loader /> : null}
           {!isVARLoading ? (
-            <Button onClick={() => handleFetchVAR(lagOrder, horizon)}>
+            <Button size="small" onClick={() => handleFetchVAR(lagOrder, horizon)}>
               Run the prediction model
             </Button>
           ) : null}

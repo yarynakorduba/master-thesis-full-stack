@@ -21,6 +21,8 @@ export const ChartHeading = styled.h4`
   height: 1rem;
   display: flex;
   align-items: center;
+  z-index: 1;
+  position: relative;
 `;
 
 export const SparkLineChartHeading = styled.h5`

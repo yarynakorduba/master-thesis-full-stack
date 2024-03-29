@@ -34,8 +34,10 @@ const Analysis = ({
   const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
   return (
     <AnalysisContainer>
-      <Typography variant="h5">Prediction</Typography>
-      <Typography variant="body2" gutterBottom>
+      <Typography variant="h5" sx={{ marginBottom: 1 }}>
+        Prediction
+      </Typography>
+      <Typography variant="body2" sx={{ marginBottom: 1 }}>
         To make a prediction, we need to know a few characteristics of the data
       </Typography>
       <ToggleButtonGroup
@@ -44,6 +46,7 @@ const Analysis = ({
         onChange={(e, value) => setPredictionMode(value)}
         aria-label="text alignment"
         size="small"
+        sx={{ marginBottom: 1 }}
       >
         <ToggleButton value={EPredictionMode.ARIMA} aria-label="left aligned">
           ARIMA

@@ -1,11 +1,11 @@
 import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 import {
   Step,
   StepName,
-  Question,
   Test,
   ButtonContainer
 } from '../../shared/charts/SparkLineChartsBlock/styles';
@@ -28,12 +28,14 @@ const WhiteNoiseTest = ({
   return (
     <Step>
       <StepName>2</StepName>
-      <Question>Is the data a white noise?</Question>
+      <Typography variant="subtitle1">Is the data a white noise?</Typography>
       <Test>
         <ButtonContainer>
           {isWhiteNoiseLoading && <Loader />}
           {!whiteNoiseResult && !isWhiteNoiseLoading && (
-            <Button onClick={handleFetchIsWhiteNoise}>Run white-noise test</Button>
+            <Button size="small" onClick={handleFetchIsWhiteNoise}>
+              Run white-noise test
+            </Button>
           )}
         </ButtonContainer>
         <div>

@@ -5,6 +5,9 @@ import { ParentSize } from '@visx/responsive';
 import { isNil, noop } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
@@ -16,7 +19,7 @@ import {
   getUniqueFlatChartValues
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
-import { ChartHeading, ChartWrapper, ClearSelectionButton } from './styles';
+import { ChartWrapper } from './styles';
 import { TLineChartData } from 'front/js/types';
 import Legend from '../Legend';
 import { TPadding } from '../types';
@@ -25,8 +28,8 @@ import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 
 export const CHART_X_PADDING = 40;
-export const CHART_Y_PADDING = 30;
-export const CHART_HEADING_HEIGHT = 16;
+export const CHART_Y_PADDING = 0;
+export const CHART_HEADING_HEIGHT = 36;
 export const BRUSH_HEIGHT = 40;
 export const LEGEND_HEIGHT = 16;
 
@@ -77,6 +80,8 @@ const LineChart = ({
   onSelectArea = noop
 }: TProps) => {
   const [filteredData, setFilteredData] = useState(data);
+  const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(false);
+
   useEffect(() => {
     setFilteredData(data);
   }, [data]);
@@ -210,18 +215,22 @@ const LineChart = ({
 
   return (
     <>
-      <ChartHeading>
-        {heading}
-        {selectedAreaValueBounds && (
-          <ClearSelectionButton
+      <Stack direction="row" alignItems={'baseline'} spacing={2}>
+        <Typography variant="h6">{heading} </Typography>
+        {!isTrainingDataSelectionOn && (
+          <Button onClick={() => setIsTrainingDataSelectionOn(true)}>Select training data</Button>
+        )}
+        {isTrainingDataSelectionOn && (
+          <Button
             onClick={() => {
               onSelectedAreaChange(null);
+              setIsTrainingDataSelectionOn(false);
             }}
           >
-            Clear selection
-          </ClearSelectionButton>
+            Cancel selection
+          </Button>
         )}
-      </ChartHeading>
+      </Stack>
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
           <Group left={padding.left} top={padding.top} width={xyAreaWidth}>
@@ -350,7 +359,6 @@ export default function ResponsiveLineChart({
     (parent) => {
       const responsiveWidth = !isNil(width) && Math.min(width, parent.width);
       const responsiveHeight = !isNil(height) && Math.min(height, parent.height);
-      console.log('wIDtH -> ', parent.width);
 
       return renderChart(responsiveWidth, responsiveHeight);
     },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import Drawer from '@mui/material/Drawer';
+import Container from '@mui/material/Container';
 import ScrollToTop from './components/scrollToTop';
 import injectContext from './store/appContext';
 import { Navbar } from './components/Navbar/Navbar';
@@ -19,17 +19,17 @@ const Layout = () => {
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />
-      <div>
-        <BrowserRouter basename={basename}>
-          <ScrollToTop>
-            <Navbar />
+      <BrowserRouter basename={basename}>
+        <ScrollToTop>
+          <Navbar />
+          <Container maxWidth={false} sx={{ paddingTop: 2, paddingBottom: 2 }}>
             <Routes>
               <Route element={<App />} path="/" />
               <Route element={<h1>Not found!</h1>} />
             </Routes>
-          </ScrollToTop>
-        </BrowserRouter>
-      </div>
+          </Container>
+        </ScrollToTop>
+      </BrowserRouter>
     </ThemeProvider>
   );
 };

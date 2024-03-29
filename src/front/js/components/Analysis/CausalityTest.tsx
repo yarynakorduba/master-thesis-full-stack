@@ -39,7 +39,9 @@ const CausalityTest = ({
         <ButtonContainer>
           {isCausalityTestLoading && <Loader />}
           {!isCausalityTestLoading && !causalityTestResult && (
-            <Button onClick={handleFetchGrangerDataCausalityTest}>Run the causality test</Button>
+            <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+              Run the causality test
+            </Button>
           )}
         </ButtonContainer>
         <div>{causalityTestResult ? causalityTexts : null}</div>

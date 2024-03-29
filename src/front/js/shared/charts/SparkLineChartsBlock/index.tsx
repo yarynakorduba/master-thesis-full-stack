@@ -121,8 +121,8 @@ const SparkLineChartsBlock = ({
         numYAxisTicks={4}
         formatXScale={formatUnixToDate}
         formatYScale={formatNumber}
-        height={250}
-        padding={{ top: 30, bottom: 30, left: 40, right: 40 }}
+        height={260}
+        padding={{ top: 8, bottom: 30, left: 40, right: 40 }}
         defaultBrushValueBounds={defaultBrushValueBounds}
         onSelectArea={onSelectedAreaChange}
         isResponsive={true}
@@ -140,10 +140,10 @@ const SparkLineChartsBlock = ({
             <SparkLineChart
               heading={prop?.label || ''}
               data={chartData ? [chartData] : []}
-              // formatYScale={formatNumber}
               height={90}
               width={300}
               onClick={handleSparklineClick(prop)}
+              padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
             />
           );
         })}

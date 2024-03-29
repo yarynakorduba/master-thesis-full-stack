@@ -2,7 +2,6 @@ import styled from 'styled-components';
 
 export const AppPage = styled.div`
   width: calc(100% - 0.5rem);
-  padding: 0.25rem;
   min-height: calc(100vh - 0.5rem);
 `;
 
@@ -16,5 +15,4 @@ export const Sidebar = styled.div`
 export const Content = styled.div`
   grid-column: 2;
   grid-row: 1;
-  padding: 0.75rem;
 `;
