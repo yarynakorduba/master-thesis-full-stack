@@ -60,7 +60,7 @@ class Arima:
     #                     suppress_warnings=True, 
     #                     stepwise=True)
     
-    def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0):
+    def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
         # TODO: if data empty -> exit with error
         df_input = pd.DataFrame.from_records(data)
         df_input["date"] = pd.to_datetime(df_input['date'], unit = 'ms')
@@ -70,12 +70,14 @@ class Arima:
         size = int(round(len(df_input) * 0.8))
         train, test = df_input['value'][0:size], df_input['value'][size:len(df_input)]
 
+        print("Periods: ", periods_in_season)
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
                                 test='adf',
+                                # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
                                 max_p=max_p,
                                 max_q=max_q,
-                                m=12,
+                                m=periods_in_season, # the number of periods in each season
                                 start_P=0,
                                 seasonal=is_seasonal,
                                 d=None,
@@ -83,18 +85,22 @@ class Arima:
                                 trace=True,
                                 error_action='ignore',  
                                 suppress_warnings=True, 
-                                stepwise=True)
+                                stepwise=True
+                                )
 
 
         # Forecast
         fitted, confint = smodel.predict(n_periods=horizon, return_conf_int=True)
-        index_of_fc = pd.date_range(train.index[-1], periods = horizon, freq='MS')
+        # TODO: move frequency to configurable params
+        index_of_fc = pd.date_range(train.index[-1], periods = horizon, freq='MS') # month start frequency
         # make series for plotting purpose
         print(fitted)
         print(index_of_fc)
+        print("=========")
+        print(smodel.summary())
         fitted_series = pd.Series(fitted, index=index_of_fc).dropna()
-
         json_result = fitted_series.to_json()
+        parameters = smodel.get_params()
         print("-----")
         print(fitted_series)
         print(json_result)
@@ -102,4 +108,4 @@ class Arima:
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
 
-        return json_result
+        return {"prediction": json.loads(json_result), "parameters": { "order": parameters["order"] } }

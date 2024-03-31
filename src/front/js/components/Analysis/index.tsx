@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import Box from '@mui/material/Box';
+import { identity } from 'lodash';
 
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
@@ -13,7 +14,6 @@ import ARIMAPrediction from './ARIMAPrediction';
 import { EPredictionMode } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
-import { identity } from 'lodash';
 
 const Analysis = ({
   stationarityTestResult,
@@ -92,7 +92,7 @@ const Analysis = ({
           index={key}
           isVisible
           handleSelectStep={handleSelectStep}
-          varResult={arimaResult}
+          arimaResult={arimaResult}
           isVARLoading={isARIMALoading}
           handlePredict={handleFetchARIMA}
         />

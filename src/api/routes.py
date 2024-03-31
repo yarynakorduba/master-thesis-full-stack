@@ -68,6 +68,7 @@ def get_arima_prediction():
     max_p = requestBody["parameters"]["maxP"]
     min_q = requestBody["parameters"]["minQ"]
     max_q = requestBody["parameters"]["maxQ"]
+    periods_in_season = requestBody["parameters"]["periodsInSeason"]
 
-    result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q)
+    result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
     return result, 200

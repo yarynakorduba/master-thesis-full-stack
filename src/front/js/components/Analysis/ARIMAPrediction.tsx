@@ -6,14 +6,15 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
 import { useInputState } from '../../hooks';
 
 type TProps = {
   readonly isVisible: boolean;
-  readonly varResult;
+  readonly arimaResult;
   readonly isVARLoading: boolean;
   readonly handlePredict;
   readonly index: number;
@@ -21,7 +22,7 @@ type TProps = {
 };
 const ARIMAPrediction = ({
   isVisible,
-  varResult,
+  arimaResult,
   isVARLoading,
   handlePredict,
   handleSelectStep,
@@ -37,8 +38,10 @@ const ARIMAPrediction = ({
   const [minQ, setMinQ] = useInputState<number>(0);
   const [maxQ, setMaxQ] = useInputState<number>(1);
 
+  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1);
+
   const handleClick = () => {
-    handlePredict({ lagOrder, horizon, isSeasonal, minP, maxP, minQ, maxQ });
+    handlePredict({ lagOrder, horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
   };
 
   if (!isVisible) return null;
@@ -52,7 +55,6 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ marginBottom: 1 }}>
             <TextField
               label="Max lag order"
-              id="outlined-size-small"
               value={lagOrder}
               onChange={setLagOrder}
               size="small"
@@ -62,7 +64,6 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ marginBottom: 1 }}>
             <TextField
               label="Horizon"
-              id="outlined-size-small"
               value={horizon}
               onChange={setHorizon}
               size="small"
@@ -71,58 +72,48 @@ const ARIMAPrediction = ({
           </Grid>
 
           <Grid item md={6}>
-            <TextField
-              label="Min P"
-              id="outlined-size-small"
-              value={minP}
-              onChange={setMinP}
-              size="small"
-              type="number"
-            />
+            <TextField label="Min P" value={minP} onChange={setMinP} size="small" type="number" />
           </Grid>
           <Grid item md={6}>
-            <TextField
-              label="Max P"
-              id="outlined-size-small"
-              value={maxP}
-              onChange={setMaxP}
-              size="small"
-              type="number"
-            />
+            <TextField label="Max P" value={maxP} onChange={setMaxP} size="small" type="number" />
           </Grid>
           <Grid item md={6}>
-            <TextField
-              label="Min Q"
-              id="outlined-size-small"
-              value={minQ}
-              onChange={setMinQ}
-              size="small"
-              type="number"
-            />
+            <TextField label="Min Q" value={minQ} onChange={setMinQ} size="small" type="number" />
           </Grid>
           <Grid item md={6}>
-            <TextField
-              label="Max Q"
-              id="outlined-size-small"
-              value={maxQ}
-              onChange={setMaxQ}
-              size="small"
-              type="number"
-            />
+            <TextField label="Max Q" value={maxQ} onChange={setMaxQ} size="small" type="number" />
           </Grid>
         </Grid>
         <FormControlLabel
           control={<Switch checked={isSeasonal} onChange={setIsSeasonal} />}
           label="Seasonal"
         />
-        <ButtonContainer>
+        {isSeasonal ? (
+          <Grid sx={{ paddingTop: 1 }}>
+            <TextField
+              label="Periods in season"
+              value={periodsInSeason}
+              onChange={setPeriodsInSeason}
+              size="small"
+              type="number"
+            />
+          </Grid>
+        ) : null}
+        <Box sx={{ marginTop: 1, marginBottom: 1 }}>
           {isVARLoading ? <Loader /> : null}
           {!isVARLoading ? (
             <Button size="small" onClick={handleClick}>
               Run the prediction model
             </Button>
           ) : null}
-        </ButtonContainer>
+        </Box>
+        {arimaResult ? (
+          <Box>
+            <Typography>
+              Selected best order: {JSON.stringify(arimaResult?.parameters?.order)}
+            </Typography>
+          </Box>
+        ) : null}
       </StepContent>
     </>
   );

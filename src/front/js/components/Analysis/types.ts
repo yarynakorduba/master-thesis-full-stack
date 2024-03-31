@@ -11,4 +11,5 @@ export type TARIMAParams = {
   readonly maxP: number;
   readonly minQ: number;
   readonly maxQ: number;
+  readonly periodsInSeason?: number;
 };

@@ -47,7 +47,7 @@ const App = () => {
   const mappedARIMAResult = useMemo(
     () =>
       (selectedProp?.value &&
-        map(arimaResult, (value, index) => {
+        map((arimaResult as any)?.prediction, (value, index) => {
           return {
             [timeProperty.value]: +index,
             [selectedProp?.value]: value
