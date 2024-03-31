@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { defaultStyles, Tooltip, TooltipWithBounds } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
+import { useTheme } from '@mui/material/styles';
+
 import { TooltipContent, TooltipText } from './styles';
 
 const sharedStyles = {
@@ -23,7 +25,6 @@ const xAxisTooltipStyles = {
   maxWidth: '7rem',
   textAlign: 'center',
   color: 'white',
-  background: '#827397',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
 };
 
@@ -34,8 +35,7 @@ const yAxisTooltipStyles = {
   width: 'fit-content',
   textAlign: 'center',
   color: 'white',
-  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))',
-  background: '#827397'
+  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))'
 };
 
 type TTooltipDatumIndicatorProps = {
@@ -60,6 +60,8 @@ export default function ChartTooltips({
   yTooltip,
   formatXScale
 }: TChartTooltipProps) {
+  const { palette } = useTheme();
+
   const renderPointTooltipText = useCallback(
     () =>
       map(pointTooltip?.tooltipData, (point) => (
@@ -84,8 +86,15 @@ export default function ChartTooltips({
       }
 
       const TooltipComponent = isTooltipForPoint ? TooltipWithBounds : Tooltip;
+      const componentStyles = isTooltipForPoint
+        ? styles
+        : { ...styles, background: palette.secondary.dark };
       return (
-        <TooltipComponent top={tooltip?.tooltipTop} left={tooltip?.tooltipLeft} style={styles}>
+        <TooltipComponent
+          top={tooltip?.tooltipTop}
+          left={tooltip?.tooltipLeft}
+          style={componentStyles}
+        >
           {isTooltipForPoint ? renderPointTooltipText() : tooltip?.tooltipData}
         </TooltipComponent>
       );

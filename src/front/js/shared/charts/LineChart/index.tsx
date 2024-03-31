@@ -251,7 +251,7 @@ const LineChart = ({
           </Button>
         )}
         {isTrainingDataSelectionOn && !selectedAreaValueBounds && (
-          <Typography variant="body1">
+          <Typography variant="body1" color={palette.text.secondary}>
             Drag&apos;n&apos;drop on the chart to set the data limits
           </Typography>
         )}

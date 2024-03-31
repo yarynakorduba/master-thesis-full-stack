@@ -3,6 +3,7 @@ import { Group } from '@visx/group';
 import { Line, Bar } from '@visx/shape';
 import { localPoint } from '@visx/event';
 import { noop, map } from 'lodash';
+import { useTheme } from '@mui/material/styles';
 
 import { useClosestPoints } from './hooks';
 import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
@@ -43,6 +44,7 @@ function ChartOverlays(
   }: TProps,
   selectedAreaRef
 ) {
+  const { palette } = useTheme();
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
     readonly x: number | undefined;
@@ -153,7 +155,7 @@ function ChartOverlays(
           <Line
             from={{ x: pointerCoords?.x, y: 0 }}
             to={{ x: pointerCoords?.x, y: height }}
-            stroke={'red'}
+            stroke={palette.secondary.dark}
             strokeWidth={1}
             pointerEvents="none"
             strokeDasharray="3,6"
@@ -161,7 +163,7 @@ function ChartOverlays(
           <Line
             from={{ x: 0, y: pointerCoords?.y }}
             to={{ x: width, y: pointerCoords?.y }}
-            stroke={'red'}
+            stroke={palette.secondary.dark}
             strokeWidth={1}
             pointerEvents="none"
             strokeDasharray="3,6"
