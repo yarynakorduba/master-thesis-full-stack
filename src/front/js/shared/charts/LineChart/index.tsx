@@ -8,6 +8,7 @@ import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrus
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
@@ -79,12 +80,22 @@ const LineChart = ({
   defaultBrushValueBounds = undefined,
   onSelectArea = noop
 }: TProps) => {
-  const [filteredData, setFilteredData] = useState(data);
+  console.log('AAA --!!!-- > ', data);
+
+  const { palette } = useTheme();
+  const hiddenColor = palette.grey[300];
+
+  const [displayedData, setDisplayedData] = useState(data);
+  const [filteredData, setFilteredData] = useState(displayedData);
   const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(false);
 
   useEffect(() => {
-    setFilteredData(data);
+    setDisplayedData(data);
   }, [data]);
+
+  useEffect(() => {
+    setFilteredData(displayedData);
+  }, [displayedData]);
 
   const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(width, height, padding);
 
@@ -216,6 +227,20 @@ const LineChart = ({
     if (isTrainingDataSelectionOn) handleUpdateSelectedAreaVisual();
   }, [isTrainingDataSelectionOn, filteredData]);
 
+  const handleHideDataSerie = (dataSerieId) => {
+    const originalColor = data.find((dataSerie) => dataSerie.id === dataSerieId)?.color;
+    const newDisplayedData = displayedData.map((dataSerie) => {
+      if (dataSerie.id === dataSerieId) {
+        return {
+          ...dataSerie,
+          color: dataSerie.color === hiddenColor ? originalColor : hiddenColor
+        };
+      }
+      return dataSerie;
+    });
+    setDisplayedData(newDisplayedData as any);
+  };
+
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
@@ -268,9 +293,16 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            {filteredData?.map((lineData) => (
-              <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
-            ))}
+            {filteredData
+              ?.sort((lineData) => (lineData.color === hiddenColor ? -1 : 1))
+              .map((lineData) => (
+                <ChartLine
+                  key={lineData.label}
+                  lineData={lineData}
+                  xScale={xScale}
+                  yScale={yScale}
+                />
+              ))}
           </Group>
 
           <ChartOverlays
@@ -300,7 +332,9 @@ const LineChart = ({
             selectedAreaOnBrushRef={selectedAreaOnBrushRef}
           />
         </svg>
-        {data.length > 1 ? <Legend data={data} maxWidth={width} /> : null}
+        {data.length > 1 ? (
+          <Legend data={data} maxWidth={width} handleHide={handleHideDataSerie} />
+        ) : null}
         <ChartTooltips
           pointTooltip={pointTooltip}
           xTooltip={xTooltip}

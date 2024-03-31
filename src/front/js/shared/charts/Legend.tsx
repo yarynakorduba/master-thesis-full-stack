@@ -14,6 +14,7 @@ const StyledMarker = styled.svg`
   margin: 0 5px;
 `;
 export type TChartLegendLabel = {
+  readonly id: string | number;
   readonly label: string;
   readonly color: string;
   readonly width: number;
@@ -37,24 +38,26 @@ const LegendMarker = ({ fill, height = 10, width = 10 }: TLegendMarkerProps) => 
 type TCustomLegendProps = {
   readonly data: TLineChartData;
   readonly maxWidth: number;
+  readonly handleHide: (dataSerieId) => void;
 };
 
-export const CustomLegend = ({ data = [], maxWidth }: TCustomLegendProps) => {
+export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendProps) => {
   const items = useMemo(() => {
     return (
       data?.map(
-        ({ label, color }): TChartLegendLabel => ({
-          label,
-          color,
+        (legendItem): TChartLegendLabel => ({
           width: 20,
-          height: 4
+          height: 4,
+          ...legendItem
         })
       ) || []
     );
   }, [data]);
 
+  console.log('---->>> ITEM DAATA -- > ', items);
+
   const legendScale = scaleOrdinal({
-    domain: items.map(({ label }) => label),
+    domain: items.map(({ id, label }) => ({ id, label })),
     range: items.map(({ color, width: markerWidth, height: markerHeight }) => {
       return <LegendMarker key={color} fill={color} width={markerWidth} height={markerHeight} />;
     })
@@ -65,12 +68,18 @@ export const CustomLegend = ({ data = [], maxWidth }: TCustomLegendProps) => {
       return (
         <StyledContainer>
           {legendItems.map((legendItem) => {
+            console.log('LEGEND ITEM -- > ', legendItem);
             const shape = legendScale(legendItem.datum);
             const isValidElement = React.isValidElement(shape);
             return (
-              <LegendItem margin={10} style={{ fontSize: '0.875rem' }} key={legendItem.text}>
+              <LegendItem
+                onClick={() => handleHide(legendItem?.datum?.id)}
+                margin={10}
+                style={{ fontSize: '0.875rem' }}
+                key={legendItem?.datum?.label}
+              >
                 {isValidElement && React.cloneElement(shape as ReactElement)}
-                {legendItem?.datum}
+                {legendItem?.datum?.label}
               </LegendItem>
             );
           })}
