@@ -1,14 +1,5 @@
-import { map, maxBy, minBy, reduce } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
-import { TDataProperty, TLineChartDatapoint, TTimeseriesData } from 'front/js/types';
-import {
-  fetchARIMA,
-  fetchDataStationarityTest,
-  fetchGrangerDataCausalityTest,
-  fetchIsWhiteNoise,
-  fetchVARTest
-} from '../../../apiCalls/analysis';
-import { useFetch } from '../../../hooks/fetch';
+import { maxBy, minBy } from 'lodash';
+import { TDataProperty, TLineChartDatapoint } from 'front/js/types';
 
 export const useTimeseriesMinMaxValues = (
   chartData: TLineChartDatapoint[]

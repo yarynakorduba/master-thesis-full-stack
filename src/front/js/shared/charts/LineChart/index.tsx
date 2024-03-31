@@ -218,14 +218,19 @@ const LineChart = ({
 
   return (
     <>
-      <Stack direction="row" alignItems={'baseline'} spacing={2}>
-        <Typography variant="h6">{heading} </Typography>
+      <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
+        <Typography variant="h5">{heading} </Typography>
         {!isTrainingDataSelectionOn && (
           <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
             Limit data for prediction
           </Button>
         )}
-        {isTrainingDataSelectionOn && (
+        {isTrainingDataSelectionOn && !selectedAreaValueBounds && (
+          <Typography variant="body1">
+            Drag&apos;n&apos;drop on the chart to set the data limits
+          </Typography>
+        )}
+        {isTrainingDataSelectionOn && selectedAreaValueBounds && (
           <Button
             onClick={() => {
               onSelectedAreaChange(null);

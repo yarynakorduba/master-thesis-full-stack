@@ -46,6 +46,7 @@ const Prediction = ({
               value={lagOrder}
               onChange={setLagOrder}
               size="small"
+              type="number"
             />
           </Grid>
           <Grid item md={6}>
@@ -55,6 +56,7 @@ const Prediction = ({
               value={horizon}
               onChange={setHorizon}
               size="small"
+              type="number"
             />
           </Grid>
         </Grid>

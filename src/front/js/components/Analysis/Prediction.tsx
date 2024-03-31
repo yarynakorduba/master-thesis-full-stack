@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import StepButton from '@mui/material/StepButton';
 import TextField from '@mui/material/TextField';
@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid';
 import StepContent from '@mui/material/StepContent';
 import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
+import { useInputState } from '../../hooks';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -23,15 +24,8 @@ const Prediction = ({
   index,
   handleSelectStep
 }: TProps) => {
-  const [lagOrder, setLagOrder] = useState<number>(2);
-  const [horizon, setHorizon] = useState<number>(2);
-
-  const handleLagOrderChange = (ev) => {
-    setLagOrder(+ev.target.value);
-  };
-  const handleHorizonChange = (ev) => {
-    setHorizon(+ev.target.value);
-  };
+  const [lagOrder, setLagOrder] = useInputState<number>(2);
+  const [horizon, setHorizon] = useInputState<number>(2);
 
   if (!isVisible) return null;
   return (
@@ -46,8 +40,9 @@ const Prediction = ({
               label="Max lag order"
               id="outlined-size-small"
               value={lagOrder}
-              onChange={handleLagOrderChange}
+              onChange={setLagOrder}
               size="small"
+              type="number"
             />
           </Grid>
           <Grid item md={6}>
@@ -55,8 +50,9 @@ const Prediction = ({
               label="Horizon"
               id="outlined-size-small"
               value={horizon}
-              onChange={handleHorizonChange}
+              onChange={setHorizon}
               size="small"
+              type="number"
             />
           </Grid>
         </Grid>

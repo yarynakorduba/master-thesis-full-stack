@@ -64,7 +64,7 @@ class Arima:
         df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
         df_input = df_input.drop(columns=['date'])
         print(df_input)
-        size = int(len(df_input) - 40)
+        size = int(round(len(df_input) * 0.8))
         train, test = df_input['value'][0:size], df_input['value'][size:len(df_input)]
 
         # Seasonal - fit stepwise auto-ARIMA
