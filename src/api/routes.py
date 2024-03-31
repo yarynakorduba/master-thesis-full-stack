@@ -58,12 +58,16 @@ def test_var():
 
 @api.route('/get-arima-prediction', methods=['POST'])
 def get_arima_prediction():
-    print("here!")
     requestBody = request.get_json()
     data_serie = requestBody["data"]
     # lag_order = requestBody["parameters"]["lag_order"]
     horizon = requestBody["parameters"]["horizon"]
     is_seasonal = requestBody["parameters"]["isSeasonal"]
 
-    result = Arima().arima_predict(data_serie, horizon, is_seasonal)
+    min_p = requestBody["parameters"]["minP"]
+    max_p = requestBody["parameters"]["maxP"]
+    min_q = requestBody["parameters"]["minQ"]
+    max_q = requestBody["parameters"]["maxQ"]
+
+    result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q)
     return result, 200

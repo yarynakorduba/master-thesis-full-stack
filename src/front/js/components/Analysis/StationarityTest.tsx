@@ -31,7 +31,7 @@ const StationarityTest = ({
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>Is the data stationary?</StepButton>{' '}
-      <StepContent>
+      <StepContent sx={{ paddingTop: 1 }}>
         <ButtonContainer>
           {isStationarityTestLoading && <Loader />}
           {!stationarityTestResult && !isStationarityTestLoading && (

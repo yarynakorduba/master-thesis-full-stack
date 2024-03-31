@@ -5,7 +5,6 @@ import Typography from '@mui/material/Typography';
 
 import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
-import Box from '@mui/material/Box';
 
 import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
@@ -30,9 +29,8 @@ const WhiteNoiseTest = ({
   if (!isVisible) return null;
   return (
     <>
-      {' '}
       <StepButton onClick={handleSelectStep(index)}>Is the data a white noise?</StepButton>{' '}
-      <StepContent>
+      <StepContent sx={{ paddingTop: 1 }}>
         <ButtonContainer>
           {isWhiteNoiseLoading && <Loader />}
           {!whiteNoiseResult && !isWhiteNoiseLoading && (

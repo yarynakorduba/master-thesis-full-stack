@@ -9,6 +9,7 @@ import {
 } from '../../apiCalls/analysis';
 import { useFetch } from '../../hooks/fetch';
 import { TTimeseriesData, TDataProperty } from '../../types';
+import { TARIMAParams } from './types';
 
 type TWhiteNoiseResponse = { readonly isWhiteNoise: boolean };
 type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
@@ -169,8 +170,7 @@ export const useARIMA = (timeseriesData: TTimeseriesData) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFetchARIMA = useCallback(
-    // parameters: { lagOrder: number, horizon: number, isSeasonal: boolean }
-    async (parameters) => {
+    async (parameters: TARIMAParams) => {
       if (timeseriesData) {
         setIsLoading(true);
         const newResult = await fetchData(timeseriesData, parameters);
@@ -192,11 +192,10 @@ export const useStepper = () => {
   };
   const handleNext = (index) => () => {
     setActiveStep((prevActiveStep) => {
-      console.log('prevactive --- > ', prevActiveStep);
       if (prevActiveStep !== index) {
         return index;
       }
     });
   };
-  return { activeStep, handleSelectStep };
+  return { activeStep, handleSelectStep, handleNext };
 };

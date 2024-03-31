@@ -10,7 +10,6 @@ import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
 import ARIMAPrediction from './ARIMAPrediction';
-import { AnalysisContainer } from './styles';
 import { EPredictionMode } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
@@ -95,13 +94,13 @@ const Analysis = ({
           handleSelectStep={handleSelectStep}
           varResult={arimaResult}
           isVARLoading={isARIMALoading}
-          handleFetchVAR={handleFetchARIMA}
+          handlePredict={handleFetchARIMA}
         />
       )
   ].filter(identity);
 
   return (
-    <AnalysisContainer>
+    <div>
       <Typography variant="h5" sx={{ marginBottom: 1 }}>
         Prediction
       </Typography>
@@ -119,7 +118,7 @@ const Analysis = ({
           ))}
         </Stepper>
       </Box>
-    </AnalysisContainer>
+    </div>
   );
 };
 

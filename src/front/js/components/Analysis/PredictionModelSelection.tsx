@@ -4,30 +4,12 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Link from '@mui/material/Link';
-import Accordion from '@mui/material/Accordion';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import AccordionDetails from '@mui/material/AccordionActions';
-import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
 import Typography from '@mui/material/Typography';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import { styled } from '@mui/material/styles';
 import { EPredictionMode } from './types';
-
-const AccordionSummary = styled((props: AccordionSummaryProps) => (
-  <MuiAccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-    {...props}
-  />
-))(({ theme }) => ({
-  flexDirection: 'row-reverse',
-  '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
-    transform: 'rotate(90deg)'
-  },
-  '& .MuiAccordionSummary-content': {
-    marginLeft: theme.spacing(1)
-  }
-}));
+import { Accordion, AccordionSummary } from './styles';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
@@ -52,12 +34,8 @@ const PredictionModelSelection = ({ predictionMode, setPredictionMode }: TProps)
         </ToggleButton>
       </ToggleButtonGroup>
       <>
-        <Accordion disableGutters sx={{ mb: 1 }}>
-          <AccordionSummary
-            expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-            aria-controls="panel1d-content"
-            id="panel1d-header"
-          >
+        <Accordion>
+          <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
             <Typography>More about the model</Typography>
           </AccordionSummary>
           <AccordionDetails disableSpacing sx={{ justifyContent: 'flex-start' }}>

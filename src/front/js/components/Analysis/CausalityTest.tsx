@@ -2,13 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
-import Box from '@mui/material/Box';
-import {
-  Step,
-  StepName,
-  Test,
-  ButtonContainer
-} from '../../shared/charts/SparkLineChartsBlock/styles';
+import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
 
 type TProps = {
@@ -39,7 +33,7 @@ const CausalityTest = ({
       <StepButton onClick={handleSelectStep(index)}>
         Do selected variables have a causal relautionship?
       </StepButton>
-      <StepContent>
+      <StepContent sx={{ paddingTop: 1 }}>
         <ButtonContainer>
           {isCausalityTestLoading && <Loader />}
           {!isCausalityTestLoading && !causalityTestResult && (

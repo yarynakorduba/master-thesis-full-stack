@@ -1,3 +1,5 @@
+import { TARIMAParams } from '../components/Analysis/types';
+
 export const fetchIsWhiteNoise = async (data) => {
   return fetch(`${process.env.BACKEND_URL}/api/white-noise`, {
     method: 'POST',
@@ -38,7 +40,7 @@ export const fetchVARTest = async (data, lagOrder: number, horizon: number) => {
   });
 };
 
-export const fetchARIMA = async (data, parameters) => {
+export const fetchARIMA = async (data, parameters: TARIMAParams) => {
   return fetch(`${process.env.BACKEND_URL}/api/get-arima-prediction`, {
     method: 'POST',
     body: JSON.stringify({ data, parameters }),

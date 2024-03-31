@@ -1,11 +1,6 @@
-import statsmodels.stats.diagnostic as diag
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.stattools import grangercausalitytests
-from statsmodels.tsa.vector_ar.var_model import VAR
 import pandas as pd
 import numpy as np
 import json
-from sklearn.preprocessing import StandardScaler
 from api.services.statistical_tests import Analysis
 import pmdarima as pm
 
@@ -56,9 +51,17 @@ class Arima:
         
         return df_diff, diff_order
     
-    def arima_predict(self, data, horizon=40, is_seasonal=False):
-        print("here")
-        # if data empty -> exit with error
+    # smodel = pm.auto_arima(train, start_p=1, start_q=1,
+    #                     test='adf',
+    #                     max_p=3,max_q=1, m=12,
+    #                     start_P=0, seasonal=is_seasonal,
+    #                     d=None, D=1, trace=True,
+    #                     error_action='ignore',  
+    #                     suppress_warnings=True, 
+    #                     stepwise=True)
+    
+    def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0):
+        # TODO: if data empty -> exit with error
         df_input = pd.DataFrame.from_records(data)
         df_input["date"] = pd.to_datetime(df_input['date'], unit = 'ms')
         df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
@@ -68,11 +71,16 @@ class Arima:
         train, test = df_input['value'][0:size], df_input['value'][size:len(df_input)]
 
         # Seasonal - fit stepwise auto-ARIMA
-        smodel = pm.auto_arima(train, start_p=1, start_q=1,
+        smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
                                 test='adf',
-                                max_p=3,max_q=1, m=12,
-                                start_P=0, seasonal=is_seasonal,
-                                d=None, D=1, trace=True,
+                                max_p=max_p,
+                                max_q=max_q,
+                                m=12,
+                                start_P=0,
+                                seasonal=is_seasonal,
+                                d=None,
+                                D=1,
+                                trace=True,
                                 error_action='ignore',  
                                 suppress_warnings=True, 
                                 stepwise=True)
