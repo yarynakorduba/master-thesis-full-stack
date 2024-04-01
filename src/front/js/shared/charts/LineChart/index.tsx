@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
-import { isNil, noop } from 'lodash';
+import { isNil, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 import Button from '@mui/material/Button';
@@ -80,28 +80,27 @@ const LineChart = ({
   defaultBrushValueBounds = undefined,
   onSelectArea = noop
 }: TProps) => {
-  console.log('AAA --!!!-- > ', data);
-
   const { palette } = useTheme();
   const hiddenColor = palette.grey[300];
+  console.log('AAA --!!!-- > ', data, hiddenColor);
 
-  const [displayedData, setDisplayedData] = useState(data);
-  const [filteredData, setFilteredData] = useState(displayedData);
+  const [visibleLinesData, setVisibleLinesData] = useState(data);
+  const [filteredData, setFilteredData] = useState(visibleLinesData);
   const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(false);
 
   useEffect(() => {
-    setDisplayedData(data);
+    setVisibleLinesData(data);
   }, [data]);
 
   useEffect(() => {
-    setFilteredData(displayedData);
-  }, [displayedData]);
+    setFilteredData(visibleLinesData);
+  }, [visibleLinesData]);
 
   const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(width, height, padding);
 
   const xValues = getUniqueFlatChartValues('valueX', filteredData);
-  const xBrushValues = getUniqueFlatChartValues('valueX', data);
-  const yValues = getUniqueFlatChartValues('valueY', data);
+  const xBrushValues = getUniqueFlatChartValues('valueX', visibleLinesData);
+  const yValues = getUniqueFlatChartValues('valueY', visibleLinesData);
 
   const xScale = getLinearScale(xValues, [0, xyAreaWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
@@ -207,9 +206,9 @@ const LineChart = ({
   };
 
   useEffect(() => {
-    if (isNil(brushValueBounds)) setFilteredData(data);
+    if (isNil(brushValueBounds)) setFilteredData(visibleLinesData);
     else {
-      const updatedData = data.map(({ datapoints, ...rest }) => ({
+      const updatedData = visibleLinesData.map(({ datapoints, ...rest }) => ({
         ...rest,
         datapoints: datapoints.filter((s) => {
           return s.valueX > brushValueBounds?.x0 && s.valueX < brushValueBounds?.x1;
@@ -217,7 +216,7 @@ const LineChart = ({
       }));
       setFilteredData(updatedData);
     }
-  }, [brushValueBounds, data]);
+  }, [brushValueBounds, visibleLinesData]);
 
   useEffect(() => {
     setBrushValueBounds(defaultBrushValueBounds);
@@ -227,19 +226,24 @@ const LineChart = ({
     if (isTrainingDataSelectionOn) handleUpdateSelectedAreaVisual();
   }, [isTrainingDataSelectionOn, filteredData]);
 
-  const handleHideDataSerie = (dataSerieId) => {
-    const originalColor = data.find((dataSerie) => dataSerie.id === dataSerieId)?.color;
-    const newDisplayedData = displayedData.map((dataSerie) => {
-      if (dataSerie.id === dataSerieId) {
-        return {
-          ...dataSerie,
-          color: dataSerie.color === hiddenColor ? originalColor : hiddenColor
-        };
-      }
-      return dataSerie;
-    });
-    setDisplayedData(newDisplayedData as any);
-  };
+  const handleHideDataSerie = useCallback(
+    (dataSerieId) => {
+      const originalColor = data.find((dataSerie) => dataSerie.id === dataSerieId)?.color;
+      const newDisplayedData = visibleLinesData.map((dataSerie) => {
+        if (dataSerie.id === dataSerieId) {
+          return {
+            ...dataSerie,
+            color: dataSerie.color === hiddenColor ? originalColor : hiddenColor
+          };
+        }
+        return dataSerie;
+      });
+      setVisibleLinesData(newDisplayedData as any);
+    },
+    [data, visibleLinesData, hiddenColor]
+  );
+
+  const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
 
   return (
     <>
@@ -293,16 +297,9 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            {filteredData
-              ?.sort((lineData) => (lineData.color === hiddenColor ? -1 : 1))
-              .map((lineData) => (
-                <ChartLine
-                  key={lineData.label}
-                  lineData={lineData}
-                  xScale={xScale}
-                  yScale={yScale}
-                />
-              ))}
+            {sortedDataForLines.map((lineData) => (
+              <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
+            ))}
           </Group>
 
           <ChartOverlays
@@ -323,7 +320,7 @@ const LineChart = ({
 
           <CustomBrush
             onChange={onBrushChange}
-            data={data}
+            data={sortedDataForLines}
             padding={padding}
             svgHeight={svgHeight}
             width={xyAreaWidth}
@@ -332,8 +329,8 @@ const LineChart = ({
             selectedAreaOnBrushRef={selectedAreaOnBrushRef}
           />
         </svg>
-        {data.length > 1 ? (
-          <Legend data={data} maxWidth={width} handleHide={handleHideDataSerie} />
+        {visibleLinesData.length > 1 ? (
+          <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
         ) : null}
         <ChartTooltips
           pointTooltip={pointTooltip}

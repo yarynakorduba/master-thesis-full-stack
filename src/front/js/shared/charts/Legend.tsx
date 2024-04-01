@@ -2,6 +2,10 @@ import React, { ReactElement, useCallback, useMemo } from 'react';
 import { Legend, LegendItem } from '@visx/legend';
 import { scaleOrdinal } from '@visx/scale';
 import styled from 'styled-components';
+import { useTheme } from '@mui/material/styles';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import Typography from '@mui/material/Typography';
 import { TLineChartData } from 'front/js/types';
 
 const StyledContainer = styled.div`
@@ -56,37 +60,54 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
 
   console.log('---->>> ITEM DAATA -- > ', items);
 
-  const legendScale = scaleOrdinal({
-    domain: items.map(({ id, label }) => ({ id, label })),
-    range: items.map(({ color, width: markerWidth, height: markerHeight }) => {
-      return <LegendMarker key={color} fill={color} width={markerWidth} height={markerHeight} />;
-    })
-  });
+  const legendScale = useMemo(
+    () =>
+      scaleOrdinal({
+        domain: items.map(({ id, label, color }) => ({ id, label, color })),
+        range: items.map(({ color, width: markerWidth, height: markerHeight }) => {
+          return (
+            <LegendMarker key={color} fill={color} width={markerWidth} height={markerHeight} />
+          );
+        })
+      }),
+    [items]
+  );
+
+  const { palette } = useTheme();
+  const hiddenColor = palette.grey[300];
 
   const renderItems = useCallback(
     (legendItems) => {
       return (
         <StyledContainer>
           {legendItems.map((legendItem) => {
-            console.log('LEGEND ITEM -- > ', legendItem);
             const shape = legendScale(legendItem.datum);
             const isValidElement = React.isValidElement(shape);
+            const isHidden = legendItem?.datum?.color === hiddenColor;
             return (
               <LegendItem
                 onClick={() => handleHide(legendItem?.datum?.id)}
-                margin={10}
-                style={{ fontSize: '0.875rem' }}
+                style={{
+                  margin: '0 16px',
+                  fontSize: '0.875rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
                 key={legendItem?.datum?.label}
               >
                 {isValidElement && React.cloneElement(shape as ReactElement)}
-                {legendItem?.datum?.label}
+                <Typography color={isHidden ? palette.text.disabled : palette.text.primary}>
+                  {legendItem?.datum?.label}
+                </Typography>
+                {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
               </LegendItem>
             );
           })}
         </StyledContainer>
       );
     },
-    [legendScale]
+    [hiddenColor, legendScale, palette.text.disabled, palette.text.primary, handleHide]
   );
   return (
     <div style={{ maxWidth }}>
