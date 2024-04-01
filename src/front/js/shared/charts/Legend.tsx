@@ -7,6 +7,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
 import { TLineChartData } from 'front/js/types';
+import { getHiddenLineColor } from './LineChart/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -74,7 +75,7 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
   );
 
   const { palette } = useTheme();
-  const hiddenColor = palette.grey[300];
+  const hiddenColor = getHiddenLineColor(palette);
 
   const renderItems = useCallback(
     (legendItems) => {

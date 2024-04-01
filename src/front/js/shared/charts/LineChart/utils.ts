@@ -42,3 +42,5 @@ export const getUniqueFlatChartValues = (prop, data): number[] =>
     (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
     uniq
   )(data);
+
+export const getHiddenLineColor = (palette) => palette.grey[300];

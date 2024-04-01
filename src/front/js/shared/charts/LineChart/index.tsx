@@ -16,12 +16,13 @@ import { useChartSizes, useTooltipConfigs } from './hooks';
 import {
   formatAxisTick,
   getAxisTickLabelProps,
+  getHiddenLineColor,
   getLinearScale,
   getUniqueFlatChartValues
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
-import { TLineChartData } from 'front/js/types';
+import { TLineChartData } from '../../../types';
 import Legend from '../Legend';
 import { TPadding } from '../types';
 import ChartLine from './ChartLine';
@@ -58,7 +59,7 @@ type TProps = {
   readonly padding?: TPadding;
   readonly onClick?: () => void;
   readonly defaultBrushValueBounds?: TValueBounds;
-  readonly onSelectArea?: (datapoints: any) => void;
+  readonly onSelectArea?: (points) => void;
 };
 
 const LineChart = ({
@@ -81,8 +82,7 @@ const LineChart = ({
   onSelectArea = noop
 }: TProps) => {
   const { palette } = useTheme();
-  const hiddenColor = palette.grey[300];
-  console.log('AAA --!!!-- > ', data, hiddenColor);
+  const hiddenColor = getHiddenLineColor(palette);
 
   const [visibleLinesData, setVisibleLinesData] = useState(data);
   const [filteredData, setFilteredData] = useState(visibleLinesData);
