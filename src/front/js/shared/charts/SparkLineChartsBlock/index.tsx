@@ -83,7 +83,6 @@ const SparkLineChartsBlock = ({
     setSelectedProp(chartProp);
   };
 
-  // const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
   const chartData: TLineChartData = useMemo(() => {
     const predictedData = constructLineChartDataFromTs(
       selectedProp,

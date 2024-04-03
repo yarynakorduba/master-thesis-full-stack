@@ -6,10 +6,9 @@ import ListItemText from '@mui/material/ListItemText';
 import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import AccordionDetails from '@mui/material/AccordionActions';
 import Typography from '@mui/material/Typography';
 import { EPredictionMode } from './types';
-import { Accordion, AccordionSummary } from './styles';
+import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
@@ -38,7 +37,7 @@ const PredictionModelSelection = ({ predictionMode, setPredictionMode }: TProps)
           <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
             <Typography>More about the model</Typography>
           </AccordionSummary>
-          <AccordionDetails disableSpacing sx={{ justifyContent: 'flex-start' }}>
+          <AccordionDetails>
             {predictionMode === EPredictionMode.ARIMA ? (
               <div>
                 <Typography>

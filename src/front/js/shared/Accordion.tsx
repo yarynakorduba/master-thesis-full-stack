@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, { AccordionSummaryProps } from '@mui/material/AccordionSummary';
+import MuiAccordionDetails, { AccordionDetailsProps } from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 
 export const Accordion = styled((props: AccordionProps) => (
@@ -30,3 +31,7 @@ export const AccordionSummary = styled((props: AccordionSummaryProps) => (
     marginLeft: theme.spacing(1)
   }
 }));
+
+export const AccordionDetails = styled((props: AccordionDetailsProps) => (
+  <MuiAccordionDetails sx={{ justifyContent: 'flex-start' }} {...props} />
+))(({}) => ({}));

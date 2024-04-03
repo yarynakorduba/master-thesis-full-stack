@@ -4,6 +4,8 @@ import StepButton from '@mui/material/StepButton';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import StepContent from '@mui/material/StepContent';
+import Box from '@mui/material/Box';
+
 import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
 import { useInputState } from '../../hooks';
@@ -31,10 +33,10 @@ const Prediction = ({
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
-        What is the prediction for the future? (VAR)
+        <Box sx={{ fontSize: 16 }}>What is the prediction for the future? (VAR)</Box>
       </StepButton>
       <StepContent>
-        <Grid container spacing={2} sx={{ mt: 1, mb: 1 }}>
+        <Grid container spacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
           <Grid item md={6}>
             <TextField
               label="Max lag order"

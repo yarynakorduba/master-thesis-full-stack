@@ -185,17 +185,20 @@ export const useARIMA = (timeseriesData: TTimeseriesData) => {
   return { arimaResult: result, isARIMALoading: isLoading, handleFetchARIMA };
 };
 
-export const useStepper = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const handleSelectStep = (index) => () => {
+type TUSeStepperResult = {
+  readonly activeStep: number;
+  readonly handleSelectStep: (stepIndex: number) => () => void;
+  readonly handleNext: () => void;
+};
+
+export const useStepper = (): TUSeStepperResult => {
+  const [activeStep, setActiveStep] = useState<number>(0);
+
+  const handleSelectStep = (index: number) => () => {
     setActiveStep(index);
   };
-  const handleNext = (index) => () => {
-    setActiveStep((prevActiveStep) => {
-      if (prevActiveStep !== index) {
-        return index;
-      }
-    });
+  const handleNext = () => {
+    setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
   };
   return { activeStep, handleSelectStep, handleNext };
 };

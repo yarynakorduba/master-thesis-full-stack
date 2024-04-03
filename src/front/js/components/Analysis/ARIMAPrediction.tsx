@@ -18,8 +18,9 @@ type TProps = {
   readonly isVARLoading: boolean;
   readonly handlePredict;
   readonly index: number;
-  readonly handleSelectStep;
+  readonly handleSelectStep: (stepIndex: number) => () => void;
 };
+
 const ARIMAPrediction = ({
   isVisible,
   arimaResult,
@@ -48,10 +49,10 @@ const ARIMAPrediction = ({
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
-        What is the prediction for the future? (ARIMA)
+        <Box sx={{ fontSize: 16 }}> What is the prediction for the future? (ARIMA)</Box>
       </StepButton>
       <StepContent>
-        <Grid container spacing={2} sx={{ mt: 1, mb: 1 }}>
+        <Grid container spacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
           <Grid item md={6} sx={{ marginBottom: 1 }}>
             <TextField
               label="Max lag order"
@@ -110,7 +111,10 @@ const ARIMAPrediction = ({
         {arimaResult ? (
           <Box>
             <Typography>
-              Selected best order: {JSON.stringify(arimaResult?.parameters?.order)}
+              Selected order: {JSON.stringify(arimaResult?.parameters?.order)}
+            </Typography>
+            <Typography>
+              Selected seasonal order: {JSON.stringify(arimaResult?.parameters?.seasonal_order)}
             </Typography>
           </Box>
         ) : null}

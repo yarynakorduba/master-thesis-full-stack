@@ -111,7 +111,7 @@ const Analysis = ({
         predictionMode={predictionMode}
         setPredictionMode={setPredictionMode}
       />
-      <Box sx={{ maxWidth: 400 }}>
+      <Box>
         <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
           {steps.map((renderStep, index: number) => (
             <Step key={index}>{renderStep!(index)}</Step>

@@ -25,7 +25,7 @@ class Analysis():
         # ct - ct: It stands for "constant and trend."
         # The regression model includes both a constant (intercept) and a linear trend term.
         # H0: data is not stationary
-        result = adfuller(data, autolag="AIC")#maxlag=maxlag, regression='ct')
+        result = adfuller(data, autolag="AIC") #maxlag=maxlag, regression='ct')
 
         isStationary = False
         if (

@@ -67,10 +67,11 @@ class Arima:
         df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
         df_input = df_input.drop(columns=['date'])
         print(df_input)
-        size = int(round(len(df_input) * 0.8))
-        train, test = df_input['value'][0:size], df_input['value'][size:len(df_input)]
+        train_data_size = int(round(len(df_input) * 0.9))
+        train, test = df_input['value'][0:train_data_size], df_input['value'][train_data_size:len(df_input)]
 
-        print("Periods: ", periods_in_season)
+        print("Periods: ")
+        print("-----$$$$$-----")
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
                                 test='adf',
@@ -83,29 +84,49 @@ class Arima:
                                 d=None,
                                 D=1,
                                 trace=True,
-                                error_action='ignore',  
+                                error_action='ignore',
                                 suppress_warnings=True, 
                                 stepwise=True
                                 )
-
-
         # Forecast
-        fitted, confint = smodel.predict(n_periods=horizon, return_conf_int=True)
+        test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)
+        # smodel.get_prediction()
         # TODO: move frequency to configurable params
-        index_of_fc = pd.date_range(train.index[-1], periods = horizon, freq='MS') # month start frequency
+        print(f"Frequency: {train.index.freq}")
+        inferred_freq = pd.infer_freq(df_input.index)
+        test_indexes = pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency
         # make series for plotting purpose
-        print(fitted)
-        print(index_of_fc)
-        print("=========")
+        print(test_prediction)
         print(smodel.summary())
-        fitted_series = pd.Series(fitted, index=index_of_fc).dropna()
-        json_result = fitted_series.to_json()
+        test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
+        json_result = test_predicted_series.to_json()
         parameters = smodel.get_params()
-        print("-----")
-        print(fitted_series)
+        print(f"Parameters: {parameters}")
         print(json_result)
+        # --------------------------------------
+
+        # test_prediction, test_confint = smodel.predict(n_periods=horizon, return_conf_int=True)
+        # # TODO: move frequency to configurable params
+        # test_indexes = pd.date_range(train.index[-1], periods = horizon, freq='MS') # month start frequency
+        # # make series for plotting purpose
+        # print(test_prediction)
+        # print("=========")
+        # print(smodel.summary())
+        # test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
+        # json_result = test_predicted_series.to_json()
+        # parameters = smodel.get_params()
+        # print("-----")
+        # print(test_predicted_series)
+        # print(json_result)
+
+        # --------------------------------------
 
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
 
-        return {"prediction": json.loads(json_result), "parameters": { "order": parameters["order"] } }
+        return {"prediction": json.loads(json_result),\
+                "parameters": parameters,\
+                "lastTrainPoint": {\
+                    "date": df_input.index[train_data_size-1],\
+                    "value": df_input['value'][train_data_size-1]\
+                } }

@@ -28,6 +28,7 @@ import { TPadding } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
+import { useTimeseriesMinMaxValues } from '../SparkLineChartsBlock/hooks';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 0;
@@ -329,9 +330,7 @@ const LineChart = ({
             selectedAreaOnBrushRef={selectedAreaOnBrushRef}
           />
         </svg>
-        {visibleLinesData.length > 1 ? (
-          <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
-        ) : null}
+        <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
         <ChartTooltips
           pointTooltip={pointTooltip}
           xTooltip={xTooltip}
