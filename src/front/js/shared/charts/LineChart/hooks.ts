@@ -3,15 +3,17 @@ import { isNil, map } from 'lodash';
 import { useState, useCallback, useMemo } from 'react';
 import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
 import { TDataLabel } from 'front/js/types';
+import { TLinScale } from './types';
+import { TFormatXScale, TFormatYScale, TPadding } from '../types';
 
 export const useTooltipConfigs = (
-  xPadding,
-  yPadding,
-  chartHeight,
-  xScale,
-  yScale,
-  formatXScale,
-  formatYScale,
+  xPadding: number,
+  yPadding: number,
+  chartHeight: number,
+  xScale: TLinScale,
+  yScale: TLinScale,
+  formatXScale: TFormatXScale,
+  formatYScale: TFormatYScale,
   dataLabels: TDataLabel[] = []
 ) => {
   const [pointTooltip, setPointTooltip] = useState<any>();
@@ -23,7 +25,7 @@ export const useTooltipConfigs = (
     detectBounds: true
   });
 
-  const handleMouseLeave = (event, pointGroup) => {
+  const handleMouseLeave = (_e, pointGroup) => {
     const noTooltipData = {
       tooltipLeft: undefined,
       tooltipTop: undefined,
@@ -85,7 +87,7 @@ export const useTooltipConfigs = (
     ]
   );
 
-  const dataLabelTooltips = map(dataLabels, (dataLabel: any) => ({
+  const dataLabelTooltips = map(dataLabels, (dataLabel: TDataLabel) => ({
     tooltipLeft: xScale(dataLabel.valueX) + xPadding,
     tooltipTop: 0,
     tooltipData: dataLabel.label
@@ -103,7 +105,7 @@ export const useTooltipConfigs = (
   };
 };
 
-export const useChartSizes = (width, height, padding) => {
+export const useChartSizes = (width: number, height: number, padding: TPadding) => {
   const xyAreaWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;

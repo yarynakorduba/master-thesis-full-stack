@@ -66,7 +66,7 @@ const LineChart = ({
   );
 
   const xValues = useMemo(() => getUniqueFlatValues('valueX', data), [data]);
-  const yValues = useMemo(() => getUniqueFlatValues('valueY', data as any) as any, [data]);
+  const yValues = useMemo(() => getUniqueFlatValues('valueY', data), [data]);
 
   const xScale = getLinearScale(xValues, [0, cleanWidth]);
   const yScale = getLinearScale(yValues, [cleanHeight, 0]);
@@ -106,10 +106,10 @@ const LineChart = ({
         <svg width={width} height={height}>
           <Group left={padding.left} top={padding.top}>
             <AxisLeft
-              scale={yScale as any}
+              scale={yScale}
               hideTicks
               hideAxisLine
-              tickFormat={formatAxisTick(formatYScale)}
+              tickFormat={formatAxisTick(formatYScale) as any}
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left, '0.5rem') as any}
               numTicks={2}
             />

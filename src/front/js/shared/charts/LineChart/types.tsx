@@ -17,3 +17,10 @@ export type TClosestChartPointGroup = {
 export type TClosestChartPointGroups = {
   readonly [pointGroupId: string]: TClosestChartPointGroup;
 };
+
+export type TAxisTickLabelProps = {
+  readonly fill: string;
+  readonly fontSize: string;
+  readonly dy: string;
+  readonly textAnchor: string;
+};

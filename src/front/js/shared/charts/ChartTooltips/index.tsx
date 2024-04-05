@@ -1,10 +1,11 @@
 import React from 'react';
 import { defaultStyles } from '@visx/tooltip';
 import { useTheme } from '@mui/material/styles';
+import { map } from 'lodash';
 
 import AxisTooltip from './AxisTooltip';
 import PointTooltip from './PointTooltip';
-import { map } from 'lodash';
+import { TFormatXScale } from '../types';
 
 const sharedStyles = {
   ...defaultStyles,
@@ -44,6 +45,7 @@ type TChartTooltipProps = {
   readonly xTooltip: number;
   readonly yTooltip: number;
   readonly dataLabelTooltips: any[];
+  readonly formatXScale: TFormatXScale;
 } & any;
 export default function ChartTooltips({
   pointTooltip,

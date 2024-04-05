@@ -24,7 +24,7 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
 import { TDataLabel, TLineChartData } from '../../../types';
 import Legend from '../Legend';
-import { TPadding } from '../types';
+import { TFormatXScale, TFormatYScale, TPadding } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
@@ -54,8 +54,8 @@ type TProps = {
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
   readonly dataLabels?: TDataLabel[];
-  readonly formatXScale: (value: number) => string | number;
-  readonly formatYScale: (value: number) => string | number;
+  readonly formatXScale: TFormatXScale;
+  readonly formatYScale: TFormatYScale;
   readonly numXAxisTicks?: number;
   readonly numYAxisTicks?: number;
   readonly padding?: TPadding;
@@ -296,7 +296,7 @@ const LineChart = ({
               scale={xScale}
               hideTicks
               hideAxisLine
-              tickFormat={formatAxisTick(formatXScale)}
+              tickFormat={formatAxisTick(formatXScale) as any}
               tickLabelProps={getAxisTickLabelProps() as any}
               numTicks={numXAxisTicks}
             />
@@ -304,7 +304,7 @@ const LineChart = ({
               scale={yScale}
               hideTicks
               hideAxisLine
-              tickFormat={formatAxisTick(formatYScale)}
+              tickFormat={formatAxisTick(formatYScale) as any}
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />

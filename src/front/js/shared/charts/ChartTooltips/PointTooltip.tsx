@@ -2,6 +2,7 @@ import { TooltipWithBounds } from '@visx/tooltip';
 import { map, isNil } from 'lodash';
 import React, { useCallback } from 'react';
 import { TooltipContent, TooltipText } from './styles';
+import { TLinScale } from '../LineChart/types';
 
 type TTooltipDatumIndicatorProps = {
   readonly color: string;
@@ -14,7 +15,12 @@ function TooltipDatumIndicator({ color }: TTooltipDatumIndicatorProps) {
   );
 }
 
-export default function PointTooltip({ tooltip, styles, formatXScale }: any) {
+type TProps = {
+  readonly tooltip;
+  readonly styles;
+  readonly formatXScale: TLinScale;
+};
+export default function PointTooltip({ tooltip, styles, formatXScale }: TProps) {
   const renderPointTooltipText = useCallback(
     () =>
       map(tooltip?.tooltipData, (point) => (
