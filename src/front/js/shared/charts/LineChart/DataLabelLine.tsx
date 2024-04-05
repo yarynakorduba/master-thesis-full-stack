@@ -9,7 +9,7 @@ type TProps = {
   readonly xScale: TLinScale;
   readonly height: number;
 };
-const DataLabel = ({ lineData, xScale, height }: TProps) => {
+const DataLabelLine = ({ lineData, xScale, height }: TProps) => {
   const { palette } = useTheme();
   const strokeColor = palette.grey['400'];
 
@@ -27,4 +27,4 @@ const DataLabel = ({ lineData, xScale, height }: TProps) => {
   );
 };
 
-export default DataLabel;
+export default DataLabelLine;

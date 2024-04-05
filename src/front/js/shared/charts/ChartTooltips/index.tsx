@@ -6,6 +6,7 @@ import { map } from 'lodash';
 import AxisTooltip from './AxisTooltip';
 import PointTooltip from './PointTooltip';
 import { TFormatXScale } from '../types';
+import { TAxisTooltip, TPointTooltip } from './types';
 
 const sharedStyles = {
   ...defaultStyles,
@@ -40,32 +41,37 @@ const yAxisTooltipStyles = {
   transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))'
 };
 
-type TChartTooltipProps = {
-  readonly pointTooltip: any;
-  readonly xTooltip: number;
-  readonly yTooltip: number;
-  readonly dataLabelTooltips: any[];
+type TProps = {
+  readonly pointTooltip?: TPointTooltip;
+  readonly xTooltip?: TAxisTooltip;
+  readonly yTooltip?: TAxisTooltip;
+  readonly dataLabelTooltips: TAxisTooltip[];
   readonly formatXScale: TFormatXScale;
-} & any;
+};
+
 export default function ChartTooltips({
   pointTooltip,
   xTooltip,
   yTooltip,
   formatXScale,
   dataLabelTooltips
-}: TChartTooltipProps) {
+}: TProps) {
   const { palette } = useTheme();
 
   return (
     <>
-      <AxisTooltip
-        tooltip={xTooltip}
-        styles={{ ...xAxisTooltipStyles, background: palette.secondary.dark }}
-      />
-      <AxisTooltip
-        tooltip={yTooltip}
-        styles={{ ...yAxisTooltipStyles, background: palette.secondary.dark }}
-      />
+      {xTooltip && (
+        <AxisTooltip
+          tooltip={xTooltip}
+          styles={{ ...xAxisTooltipStyles, background: palette.secondary.dark }}
+        />
+      )}
+      {yTooltip && (
+        <AxisTooltip
+          tooltip={yTooltip}
+          styles={{ ...yAxisTooltipStyles, background: palette.secondary.dark }}
+        />
+      )}
       {map(dataLabelTooltips, (tooltip) => (
         <AxisTooltip // data label tooltip
           tooltip={tooltip}
@@ -77,11 +83,13 @@ export default function ChartTooltips({
           }}
         />
       ))}
-      <PointTooltip
-        tooltip={pointTooltip}
-        styles={pointTooltipStyles}
-        formatXScale={formatXScale}
-      />
+      {pointTooltip && (
+        <PointTooltip
+          tooltip={pointTooltip}
+          styles={pointTooltipStyles}
+          formatXScale={formatXScale}
+        />
+      )}
     </>
   );
 }

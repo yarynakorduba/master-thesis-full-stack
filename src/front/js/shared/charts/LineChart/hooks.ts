@@ -5,7 +5,17 @@ import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
 import { TDataLabel } from 'front/js/types';
 import { TLinScale } from './types';
 import { TFormatXScale, TFormatYScale, TPadding } from '../types';
+import { TAxisTooltip, TPointTooltip } from '../ChartTooltips/types';
 
+type TTooltipConfigsResult = {
+  readonly pointTooltip: TPointTooltip | undefined;
+  readonly xTooltip: TAxisTooltip | undefined;
+  readonly yTooltip: TAxisTooltip | undefined;
+  readonly dataLabelTooltips: TAxisTooltip[];
+  readonly handleHover;
+  readonly handleMouseLeave;
+  readonly containerRef: (element: HTMLElement | SVGElement | null) => void;
+};
 export const useTooltipConfigs = (
   xPadding: number,
   yPadding: number,
@@ -15,10 +25,10 @@ export const useTooltipConfigs = (
   formatXScale: TFormatXScale,
   formatYScale: TFormatYScale,
   dataLabels: TDataLabel[] = []
-) => {
-  const [pointTooltip, setPointTooltip] = useState<any>();
-  const [xTooltip, setXTooltip] = useState<any>();
-  const [yTooltip, setYTooltip] = useState<any>();
+): TTooltipConfigsResult => {
+  const [pointTooltip, setPointTooltip] = useState<TPointTooltip | undefined>();
+  const [xTooltip, setXTooltip] = useState<TAxisTooltip | undefined>();
+  const [yTooltip, setYTooltip] = useState<TAxisTooltip | undefined>();
 
   const { containerRef, containerBounds } = useTooltipInPortal({
     scroll: true,
@@ -38,11 +48,14 @@ export const useTooltipConfigs = (
     setXTooltip(noTooltipData);
   };
 
-  const getAxisTooltipData = useCallback((scale, isScaleLinear, formatter, coordinate) => {
-    if (isNil(coordinate)) return undefined;
-    const value = scale.invert(coordinate);
-    return formatter ? formatter(value) : value;
-  }, []);
+  const getAxisTooltipData = useCallback(
+    (scale: TLinScale, isScaleLinear, formatter, coordinate: number) => {
+      if (isNil(coordinate)) return undefined;
+      const value = scale.invert(coordinate);
+      return formatter ? formatter(value) : value;
+    },
+    []
+  );
 
   const handleHover = useCallback(
     (event, pointGroup) => {
@@ -100,8 +113,7 @@ export const useTooltipConfigs = (
     dataLabelTooltips,
     handleHover,
     handleMouseLeave,
-    containerRef,
-    containerBounds
+    containerRef
   };
 };
 

@@ -12,6 +12,7 @@ import { selectedAreaStyle, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
 import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
+import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -59,8 +60,8 @@ const CustomBrush = ({
       />
       <Brush
         brushDirection="horizontal"
-        xScale={xBrushScale as any}
-        yScale={yBrushScale as any}
+        xScale={xBrushScale}
+        yScale={yBrushScale}
         width={width}
         height={BRUSH_HEIGHT}
         handleSize={8}
@@ -68,7 +69,9 @@ const CustomBrush = ({
         onChange={onChange}
         selectedBoxStyle={selectedBrushStyle}
         useWindowMoveEvents
-        renderBrushHandle={(props: any) => <BrushHandle {...props} x={props.x} />}
+        renderBrushHandle={(props: BrushHandleRenderProps) => (
+          <BrushHandle {...props} x={props.x} />
+        )}
       />
     </Group>
   );

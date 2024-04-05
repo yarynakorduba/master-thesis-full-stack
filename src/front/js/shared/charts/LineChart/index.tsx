@@ -22,7 +22,7 @@ import {
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
-import { TDataLabel, TLineChartData } from '../../../types';
+import { TDataLabel, TLineChartData, TLineChartSerie } from '../../../types';
 import Legend from '../Legend';
 import { TFormatXScale, TFormatYScale, TPadding } from '../types';
 import ChartLine from './ChartLine';
@@ -124,8 +124,7 @@ const LineChart = ({
     dataLabelTooltips,
     handleHover,
     handleMouseLeave,
-    containerRef,
-    containerBounds
+    containerRef
   } = useTooltipConfigs(
     padding.left,
     padding.top,
@@ -240,16 +239,18 @@ const LineChart = ({
   const handleHideDataSerie = useCallback(
     (dataSerieId) => {
       const originalColor = data.find((dataSerie) => dataSerie.id === dataSerieId)?.color;
-      const newDisplayedData = visibleLinesData.map((dataSerie) => {
-        if (dataSerie.id === dataSerieId) {
-          return {
-            ...dataSerie,
-            color: dataSerie.color === hiddenColor ? originalColor : hiddenColor
-          };
+      const newDisplayedData = visibleLinesData.map(
+        (dataSerie: TLineChartSerie): TLineChartSerie => {
+          if (dataSerie.id === dataSerieId) {
+            return {
+              ...dataSerie,
+              color: (dataSerie.color === hiddenColor ? originalColor : hiddenColor) || 'black'
+            };
+          }
+          return dataSerie;
         }
-        return dataSerie;
-      });
-      setVisibleLinesData(newDisplayedData as any);
+      );
+      setVisibleLinesData(newDisplayedData);
     },
     [data, visibleLinesData, hiddenColor]
   );
@@ -309,13 +310,7 @@ const LineChart = ({
               numTicks={numYAxisTicks}
             />
             {map(dataLabels, (dataLabel) => (
-              <DataLabelLine
-                lineData={dataLabel}
-                height={xyAreaHeight}
-                xScale={xScale}
-                yScale={yScale}
-                containerBounds={containerBounds}
-              />
+              <DataLabelLine lineData={dataLabel} height={xyAreaHeight} xScale={xScale} />
             ))}
             {sortedDataForLines.map((lineData) => (
               <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
