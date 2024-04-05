@@ -22,16 +22,16 @@ import {
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
-import { TLineChartData } from '../../../types';
+import { TDataLabel, TLineChartData } from '../../../types';
 import Legend from '../Legend';
 import { TPadding } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
-import { useTimeseriesMinMaxValues } from '../SparkLineChartsBlock/hooks';
+import DataLabel from './DataLabel';
 
 export const CHART_X_PADDING = 40;
-export const CHART_Y_PADDING = 0;
+export const CHART_Y_PADDING = 20;
 export const CHART_HEADING_HEIGHT = 36;
 export const BRUSH_HEIGHT = 40;
 export const LEGEND_HEIGHT = 16;
@@ -53,6 +53,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
+  readonly dataLabels?: TDataLabel[];
   readonly formatXScale: (value: number) => string | number;
   readonly formatYScale: (value: number) => string | number;
   readonly numXAxisTicks?: number;
@@ -69,6 +70,7 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
+  dataLabels,
   formatXScale,
   formatYScale,
   numXAxisTicks = 5, // approximate
@@ -115,17 +117,24 @@ const LineChart = ({
     defaultBrushValueBounds
   );
 
-  const { pointTooltip, xTooltip, yTooltip, handleHover, handleMouseLeave, containerRef } =
-    useTooltipConfigs(
-      padding.left,
-      padding.top,
-      xyAreaHeight,
-      variant,
-      xScale,
-      yScale,
-      formatXScale,
-      formatYScale
-    );
+  const {
+    pointTooltip,
+    xTooltip,
+    yTooltip,
+    handleHover,
+    handleMouseLeave,
+    containerRef,
+    containerBounds
+  } = useTooltipConfigs(
+    padding.left,
+    padding.top,
+    xyAreaHeight,
+    variant,
+    xScale,
+    yScale,
+    formatXScale,
+    formatYScale
+  );
 
   const selectedAreaRef = useRef<BaseBrush | null>(null);
   const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
@@ -246,6 +255,12 @@ const LineChart = ({
 
   const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
 
+  const dataLabelTooltip = {
+    tooltipLeft: xScale(new Date('1996-08-01')) + padding.left,
+    tooltipTop: 0,
+    tooltipData: 'Test'
+  };
+
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
@@ -298,6 +313,13 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
+            <DataLabel
+              lineData={{ valueX: new Date('1996-08-01'), label: 'Test' }}
+              height={xyAreaHeight}
+              xScale={xScale}
+              yScale={yScale}
+              containerBounds={containerBounds}
+            />
             {sortedDataForLines.map((lineData) => (
               <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
             ))}
@@ -335,6 +357,7 @@ const LineChart = ({
           pointTooltip={pointTooltip}
           xTooltip={xTooltip}
           yTooltip={yTooltip}
+          dataLabelTooltips={[dataLabelTooltip]}
           formatXScale={formatXScale}
         />
       </ChartWrapper>
@@ -361,7 +384,8 @@ export default function ResponsiveLineChart({
   },
   onClick = noop,
   onSelectArea = noop,
-  defaultBrushValueBounds
+  defaultBrushValueBounds,
+  dataLabels
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -371,6 +395,7 @@ export default function ResponsiveLineChart({
         heading={heading}
         variant={variant}
         data={data}
+        dataLabels={dataLabels}
         formatXScale={formatXScale}
         formatYScale={formatYScale}
         onClick={onClick}
@@ -385,6 +410,7 @@ export default function ResponsiveLineChart({
       heading,
       variant,
       data,
+      dataLabels,
       formatXScale,
       formatYScale,
       onClick,

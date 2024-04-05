@@ -18,3 +18,8 @@ export type TLineChartSerie = {
 };
 
 export type TLineChartData = Array<TLineChartSerie>;
+
+// Data labels
+export type TDataLabel = Pick<TLineChartDatapoint, 'valueX'> & {
+  readonly label: string;
+};

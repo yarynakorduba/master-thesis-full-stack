@@ -90,7 +90,8 @@ export const useTooltipConfigs = (
     yTooltip,
     handleHover,
     handleMouseLeave,
-    containerRef
+    containerRef,
+    containerBounds
   };
 };
 
