@@ -1,8 +1,14 @@
 import React from 'react';
 import { Line } from '@visx/shape';
 import { useTheme } from '@mui/material/styles';
+import { TDataLabel } from 'front/js/types';
+import { TLinScale } from './types';
 
-type TProps = {} & any;
+type TProps = {
+  readonly lineData: TDataLabel;
+  readonly xScale: TLinScale;
+  readonly height: number;
+};
 const DataLabel = ({ lineData, xScale, height }: TProps) => {
   const { palette } = useTheme();
   const strokeColor = palette.grey['400'];

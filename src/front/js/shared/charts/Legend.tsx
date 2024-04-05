@@ -26,7 +26,7 @@ export type TChartLegendLabel = {
   readonly color: string;
   readonly width: number;
   readonly height: number;
-  readonly datapoints: any;
+  readonly datapoints: TLineChartDatapoint[];
 };
 
 type TLegendMarkerProps = {

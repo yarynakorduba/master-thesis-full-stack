@@ -4,11 +4,12 @@ import { Line, Bar } from '@visx/shape';
 import { localPoint } from '@visx/event';
 import { noop, map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
+import { Brush } from '@visx/brush';
+import { Bounds } from '@visx/brush/lib/types';
 
 import { useClosestPoints } from './hooks';
 import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
 import { TLineChartData, TLineChartDatapoint } from 'front/js/types';
-import { Brush } from '@visx/brush';
 import { selectedAreaStyle } from '../LineChart/consts';
 
 type TProps = {
@@ -26,7 +27,8 @@ type TProps = {
   readonly width: number;
 
   readonly isAreaSelectionOn?: boolean;
-} & any;
+  readonly onSelectedAreaChange?: (bounds: Bounds | null) => void;
+};
 
 function ChartOverlays(
   {

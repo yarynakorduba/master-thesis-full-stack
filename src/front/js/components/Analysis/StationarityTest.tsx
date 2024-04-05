@@ -10,16 +10,17 @@ import Box from '@mui/material/Box';
 import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../shared/Loader';
 import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
+import { TTimeseriesData } from 'front/js/types';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly stationarityTestResult;
   readonly propertiesToTest;
-  readonly timeseriesData;
+  readonly timeseriesData: TTimeseriesData;
   readonly handleFetchDataStationarityTest;
   readonly isStationarityTestLoading: boolean;
-  readonly handleSelectStep: any;
-  readonly index: any;
+  readonly handleSelectStep: (stepIndex: number) => () => void;
+  readonly index: number;
 };
 
 const StationarityTest = ({

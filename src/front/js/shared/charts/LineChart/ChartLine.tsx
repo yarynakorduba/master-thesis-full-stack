@@ -1,10 +1,14 @@
 import { LinePath } from '@visx/shape';
 import React from 'react';
 import { getX, getY } from './utils';
+import { TLinScale } from './types';
+import { TLineChartSerie } from '../../../types';
 
 type TProps = {
-  readonly lineData;
-} & any;
+  readonly lineData: TLineChartSerie;
+  readonly xScale: TLinScale;
+  readonly yScale: TLinScale;
+};
 
 const ChartLine = ({ lineData, xScale, yScale }: TProps) => {
   return (

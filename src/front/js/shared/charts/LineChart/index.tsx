@@ -335,7 +335,6 @@ const LineChart = ({
             ref={selectedAreaRef}
             onSelectedAreaChange={onSelectedAreaChange}
             isAreaSelectionOn={isTrainingDataSelectionOn}
-            selectedAreaRef={selectedAreaRef}
           />
 
           <CustomBrush
