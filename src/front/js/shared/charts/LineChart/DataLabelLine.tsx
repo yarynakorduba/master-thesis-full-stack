@@ -1,10 +1,6 @@
 import React from 'react';
 import { Line } from '@visx/shape';
 import { useTheme } from '@mui/material/styles';
-import { getX, getY } from './utils';
-import AxisTooltip from '../ChartTooltips/AxisTooltip';
-import { xAxisTooltipStyles } from '../ChartTooltips';
-import { useTooltipInPortal } from '@visx/tooltip';
 
 type TProps = {} & any;
 const DataLabel = ({ lineData, xScale, height }: TProps) => {
@@ -20,7 +16,7 @@ const DataLabel = ({ lineData, xScale, height }: TProps) => {
       stroke={strokeColor}
       strokeWidth={1}
       pointerEvents="none"
-      strokeDasharray="4,6"
+      strokeDasharray="2,2"
     />
   );
 };

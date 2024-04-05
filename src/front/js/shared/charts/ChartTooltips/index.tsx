@@ -69,7 +69,7 @@ export default function ChartTooltips({
           tooltip={tooltip}
           styles={{
             ...xAxisTooltipStyles,
-            background: 'red',
+            background: palette.secondary.main,
             top: 0,
             transform: 'translate(calc(-50% - 0.6rem), -50%)'
           }}

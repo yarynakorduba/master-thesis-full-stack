@@ -7,7 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../../test_data/ArimaV2Dataset.json';
-import { TDataProperty } from 'front/js/types';
+import { TDataLabel, TDataProperty } from 'front/js/types';
 import Analysis from '../../components/Analysis';
 import {
   useDataStationarityTest,
@@ -57,6 +57,18 @@ const App = () => {
     [selectedProp?.value, arimaResult, timeProperty.value]
   );
 
+  const dataLabels =
+    (selectedProp?.value &&
+      arimaResult && [
+        {
+          valueX: new Date((arimaResult as any)?.lastTrainPoint?.dateTime).getTime(),
+          label: 'Train data threshold'
+        }
+      ]) ||
+    [];
+
+  console.log('AAA --- > ', dataLabels);
+
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {
       const sorted = timeseriesData
@@ -93,6 +105,7 @@ const App = () => {
             setSelectedData={setSelectedData}
             selectedProp={selectedProp}
             setSelectedProp={setSelectedProp}
+            dataLabels={dataLabels as TDataLabel[]}
           />
         ) : null}
         <Analysis

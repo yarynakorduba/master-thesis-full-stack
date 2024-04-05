@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
-import { isNil, noop, orderBy } from 'lodash';
+import { isNil, map, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 import Button from '@mui/material/Button';
@@ -28,7 +28,7 @@ import { TPadding } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
-import DataLabel from './DataLabel';
+import DataLabelLine from './DataLabelLine';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 20;
@@ -121,6 +121,7 @@ const LineChart = ({
     pointTooltip,
     xTooltip,
     yTooltip,
+    dataLabelTooltips,
     handleHover,
     handleMouseLeave,
     containerRef,
@@ -129,11 +130,11 @@ const LineChart = ({
     padding.left,
     padding.top,
     xyAreaHeight,
-    variant,
     xScale,
     yScale,
     formatXScale,
-    formatYScale
+    formatYScale,
+    dataLabels
   );
 
   const selectedAreaRef = useRef<BaseBrush | null>(null);
@@ -255,12 +256,6 @@ const LineChart = ({
 
   const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
 
-  const dataLabelTooltip = {
-    tooltipLeft: xScale(new Date('1996-08-01')) + padding.left,
-    tooltipTop: 0,
-    tooltipData: 'Test'
-  };
-
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
@@ -313,13 +308,15 @@ const LineChart = ({
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
             />
-            <DataLabel
-              lineData={{ valueX: new Date('1996-08-01'), label: 'Test' }}
-              height={xyAreaHeight}
-              xScale={xScale}
-              yScale={yScale}
-              containerBounds={containerBounds}
-            />
+            {map(dataLabels, (dataLabel) => (
+              <DataLabelLine
+                lineData={dataLabel}
+                height={xyAreaHeight}
+                xScale={xScale}
+                yScale={yScale}
+                containerBounds={containerBounds}
+              />
+            ))}
             {sortedDataForLines.map((lineData) => (
               <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
             ))}
@@ -357,7 +354,7 @@ const LineChart = ({
           pointTooltip={pointTooltip}
           xTooltip={xTooltip}
           yTooltip={yTooltip}
-          dataLabelTooltips={[dataLabelTooltip]}
+          dataLabelTooltips={dataLabelTooltips}
           formatXScale={formatXScale}
         />
       </ChartWrapper>

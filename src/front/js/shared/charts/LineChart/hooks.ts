@@ -1,5 +1,5 @@
 import { useTooltipInPortal } from '@visx/tooltip';
-import { isNil } from 'lodash';
+import { isNil, map } from 'lodash';
 import { useState, useCallback, useMemo } from 'react';
 import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
 
@@ -7,11 +7,11 @@ export const useTooltipConfigs = (
   xPadding,
   yPadding,
   chartHeight,
-  variant,
   xScale,
   yScale,
   formatXScale,
-  formatYScale
+  formatYScale,
+  dataLabels: any = []
 ) => {
   const [pointTooltip, setPointTooltip] = useState<any>();
   const [xTooltip, setXTooltip] = useState<any>();
@@ -84,10 +84,17 @@ export const useTooltipConfigs = (
     ]
   );
 
+  const dataLabelTooltips = map(dataLabels, (dataLabel: any) => ({
+    tooltipLeft: xScale(dataLabel.valueX) + xPadding,
+    tooltipTop: 0,
+    tooltipData: dataLabel.label
+  }));
+
   return {
     pointTooltip,
     xTooltip,
     yTooltip,
+    dataLabelTooltips,
     handleHover,
     handleMouseLeave,
     containerRef,

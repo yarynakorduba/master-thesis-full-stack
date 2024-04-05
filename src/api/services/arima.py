@@ -127,6 +127,6 @@ class Arima:
         return {"prediction": json.loads(json_result),\
                 "parameters": parameters,\
                 "lastTrainPoint": {\
-                    "date": df_input.index[train_data_size-1],\
+                    "dateTime": df_input.index[train_data_size-1],\
                     "value": df_input['value'][train_data_size-1]\
                 } }

@@ -5,7 +5,7 @@ import { useTheme } from 'styled-components';
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TLineChartData, TTimeseriesData } from '../../../types';
+import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer } from './styles';
@@ -43,18 +43,22 @@ type TProps = {
   readonly setSelectedData: (data: TTimeseriesData) => void;
 
   readonly predictionData?: TTimeseriesData;
+  readonly dataLabels?: TDataLabel[];
 };
 const SparkLineChartsBlock = ({
   valueProperties,
   timeProperty,
   timeseriesData,
   predictionData,
+  dataLabels = [],
   selectedData,
   setSelectedData,
   selectedProp,
   setSelectedProp
 }: TProps) => {
   const theme = useTheme();
+
+  console.log('---predictionData >>> ', predictionData);
 
   useEffect(() => {
     setSelectedData(timeseriesData);
@@ -116,6 +120,7 @@ const SparkLineChartsBlock = ({
       <LineChart
         heading={selectedProp?.label || ''}
         data={chartData}
+        dataLabels={dataLabels}
         numXAxisTicks={4}
         numYAxisTicks={4}
         formatXScale={formatUnixToDate}
