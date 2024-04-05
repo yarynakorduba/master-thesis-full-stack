@@ -11,9 +11,32 @@ import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import Prediction from './Prediction';
 import ARIMAPrediction from './ARIMAPrediction';
-import { EPredictionMode } from './types';
+import { EPredictionMode, TARIMAResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
+import { TTimeseriesData } from 'front/js/types';
+
+type TProps = {
+  readonly stationarityTestResult;
+  readonly valueProperties;
+  readonly timeseriesData: TTimeseriesData;
+  readonly handleFetchDataStationarityTest;
+  readonly isStationarityTestLoading: boolean;
+  readonly whiteNoiseResult;
+  readonly isWhiteNoiseLoading: boolean;
+  readonly handleFetchIsWhiteNoise;
+  readonly arimaResult?: TARIMAResult;
+  readonly isARIMALoading: boolean;
+  readonly handleFetchARIMA;
+
+  readonly causalityTestResult?;
+  readonly isCausalityTestLoading: boolean;
+  readonly handleFetchGrangerDataCausalityTest?;
+
+  readonly varResult;
+  readonly isVARLoading: boolean;
+  readonly handleFetchVAR;
+};
 
 const Analysis = ({
   stationarityTestResult,
@@ -35,7 +58,7 @@ const Analysis = ({
   varResult,
   isVARLoading,
   handleFetchVAR
-}: any) => {
+}: TProps) => {
   const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
   const { activeStep, handleSelectStep } = useStepper();
 

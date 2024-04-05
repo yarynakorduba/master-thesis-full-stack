@@ -117,6 +117,9 @@ const App = () => {
           handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
           arimaResult={arimaResult}
           isARIMALoading={isARIMALoading}
+          isCausalityTestLoading={isCausalityTestLoading}
+          causalityTestResult={causalityTestResult}
+          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
           handleFetchARIMA={handleFetchARIMA}
           isVARLoading={isVARLoading}
           varResult={varResult}

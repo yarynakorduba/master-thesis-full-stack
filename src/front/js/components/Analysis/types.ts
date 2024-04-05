@@ -13,3 +13,12 @@ export type TARIMAParams = {
   readonly maxQ: number;
   readonly periodsInSeason?: number;
 };
+
+export type TARIMAResult = {
+  readonly lastTrainPoint: {
+    readonly dateTime: string;
+    readonly value: number;
+  };
+  readonly parameters: any;
+  readonly prediction: { [msTimestamp: string]: number };
+};
