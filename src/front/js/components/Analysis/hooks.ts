@@ -164,9 +164,23 @@ export const useVAR = (timeseriesData: TTimeseriesData) => {
   return { varResult: result, isVARLoading: isLoading, handleFetchVAR };
 };
 
-export const useARIMA = (timeseriesData: TTimeseriesData) => {
+type TARIMAResult = {
+  readonly lastTrainPoint: {
+    readonly dateTime: string;
+    readonly value: number;
+  };
+  readonly parameters: any;
+  readonly prediction: { [msTimestamp: string]: number };
+};
+type TUseARIMAResult = {
+  readonly arimaResult?: TARIMAResult;
+  readonly isARIMALoading?: boolean;
+  readonly handleFetchARIMA?: (parameters: TARIMAParams) => Promise<void>;
+};
+
+export const useARIMA = (timeseriesData: TTimeseriesData): TUseARIMAResult => {
   const { fetch: fetchData } = useFetch(fetchARIMA);
-  const [result, setResult] = useState<object | undefined>();
+  const [result, setResult] = useState<TARIMAResult | undefined>();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleFetchARIMA = useCallback(

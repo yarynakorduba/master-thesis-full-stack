@@ -2,6 +2,7 @@ import { useTooltipInPortal } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
 import { useState, useCallback, useMemo } from 'react';
 import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
+import { TDataLabel } from 'front/js/types';
 
 export const useTooltipConfigs = (
   xPadding,
@@ -11,7 +12,7 @@ export const useTooltipConfigs = (
   yScale,
   formatXScale,
   formatYScale,
-  dataLabels: any = []
+  dataLabels: TDataLabel[] = []
 ) => {
   const [pointTooltip, setPointTooltip] = useState<any>();
   const [xTooltip, setXTooltip] = useState<any>();

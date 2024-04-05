@@ -58,8 +58,6 @@ const SparkLineChartsBlock = ({
 }: TProps) => {
   const theme = useTheme();
 
-  console.log('---predictionData >>> ', predictionData);
-
   useEffect(() => {
     setSelectedData(timeseriesData);
   }, [timeseriesData]);

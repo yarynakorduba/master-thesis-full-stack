@@ -7,7 +7,7 @@ import Drawer from '@mui/material/Drawer';
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../../test_data/ArimaV2Dataset.json';
-import { TDataLabel, TDataProperty } from 'front/js/types';
+import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
 import Analysis from '../../components/Analysis';
 import {
   useDataStationarityTest,
@@ -19,9 +19,8 @@ import {
 
 const App = () => {
   const methods = useForm();
-  const [timeseriesData, setTimeseriesData] = useState<any>(json);
-  const [sortedTSData, setSortedTSData] = useState<any>([]);
-  const [predictedData, setPredictedData] = useState<any>([]);
+  const [timeseriesData, setTimeseriesData] = useState<TTimeseriesData>(json);
+  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
 
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   const [selectedData, setSelectedData] = useState(timeseriesData);
@@ -47,7 +46,8 @@ const App = () => {
   const mappedARIMAResult = useMemo(
     () =>
       (selectedProp?.value &&
-        map((arimaResult as any)?.prediction, (value, index) => {
+        arimaResult &&
+        map(arimaResult?.prediction, (value, index) => {
           return {
             [timeProperty.value]: +index,
             [selectedProp?.value]: value
@@ -61,20 +61,18 @@ const App = () => {
     (selectedProp?.value &&
       arimaResult && [
         {
-          valueX: new Date((arimaResult as any)?.lastTrainPoint?.dateTime).getTime(),
+          valueX: new Date(arimaResult?.lastTrainPoint?.dateTime).getTime(),
           label: 'Train data threshold'
         }
       ]) ||
     [];
 
-  console.log('AAA --- > ', dataLabels);
-
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {
       const sorted = timeseriesData
-        .sort((a, b) => {
+        .sort((a: TTimeseriesDatum, b: TTimeseriesDatum) => {
           // sort ascending: June, July, August
-          return a[timeProperty.value] - b[timeProperty.value] ? -1 : 1;
+          return (a[timeProperty.value] as number) - (b[timeProperty.value] as number) ? -1 : 1;
         })
         .map((d) => ({ ...d, date: new Date(d.date).getTime() }));
 
@@ -86,7 +84,7 @@ const App = () => {
 
   return (
     <AppPage>
-      <Drawer open={open} onClose={(e, v) => setOpen(false)}>
+      <Drawer open={open} onClose={(_e, _v) => setOpen(false)}>
         <Sidebar>
           <FormProvider {...methods}>
             <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
@@ -105,7 +103,7 @@ const App = () => {
             setSelectedData={setSelectedData}
             selectedProp={selectedProp}
             setSelectedProp={setSelectedProp}
-            dataLabels={dataLabels as TDataLabel[]}
+            dataLabels={dataLabels}
           />
         ) : null}
         <Analysis
