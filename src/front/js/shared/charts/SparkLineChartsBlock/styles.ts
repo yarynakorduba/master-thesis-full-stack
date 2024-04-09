@@ -7,7 +7,7 @@ export const DataInfo = styled.p`
 export const LineChartContainer = styled.div`
   display: grid;
   grid-template-columns: auto 200px;
-  padding-bottom: 48px;
+  padding-bottom: 32px;
 `;
 
 export const Step = styled.div`

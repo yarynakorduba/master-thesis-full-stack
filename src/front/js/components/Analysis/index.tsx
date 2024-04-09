@@ -124,12 +124,6 @@ const Analysis = ({
 
   return (
     <div>
-      <Typography variant="h5" sx={{ marginBottom: 1 }}>
-        Prediction
-      </Typography>
-      <Typography variant="body2" sx={{ marginBottom: 1 }}>
-        To make a prediction, we need to know a few characteristics of the data
-      </Typography>
       <PredictionModelSelection
         predictionMode={predictionMode}
         setPredictionMode={setPredictionMode}

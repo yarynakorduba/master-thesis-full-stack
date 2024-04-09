@@ -70,8 +70,6 @@ class Arima:
         train_data_size = int(round(len(df_input) * 0.9))
         train, test = df_input['value'][0:train_data_size], df_input['value'][train_data_size:len(df_input)]
 
-        print("Periods: ")
-        print("-----$$$$$-----")
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
             test='adf',
@@ -113,27 +111,31 @@ class Arima:
         # --------------------------------------
 
         smodel.update(test)
-        real_prediction, new_conf_int = smodel.predict(n_periods=10, return_conf_int=True)
+        real_prediction, new_conf_int = smodel.predict(n_periods=horizon, return_conf_int=True)
         real_prediction_parameters = smodel.get_params()
         print(f"real data Parameters: {real_prediction_parameters}")
-        real_indexes = pd.date_range(test.index[-1], periods = 11, freq=inferred_freq) # month start frequency
+        real_indexes = pd.date_range(test.index[-1], periods = horizon+1, freq=inferred_freq) # month start frequency
 
-        real__indexes = real_indexes[1:]
-        real_predicted_series = pd.Series(real_prediction, index=real__indexes).dropna()
+        real_indexes = real_indexes[1:]
+        real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
         print(">>> ", real_predicted_series)
         json_real_prediction_result = real_predicted_series.to_json()
 
+        evaluation = self.forecast_accuracy(test_prediction, test)
 
         # --------------------------------------
 
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
 
-        return {"prediction": json.loads(json_result),\
-                "realPrediction": json.loads(json_real_prediction_result),\
-                "testPredictionParameters": test_prediction_parameters,\
-                "realPredictionParameters": real_prediction_parameters,\
-                "lastTrainPoint": {\
-                    "dateTime": df_input.index[train_data_size-1],\
-                    "value": df_input['value'][train_data_size-1]\
-                } }
+        return {
+            "prediction": json.loads(json_result),\
+            "realPrediction": json.loads(json_real_prediction_result),\
+            "testPredictionParameters": test_prediction_parameters,\
+            "realPredictionParameters": real_prediction_parameters,\
+            "lastTrainPoint": {\
+                "dateTime": df_input.index[train_data_size-1],\
+                "value": df_input['value'][train_data_size-1]\
+            },\
+            "evaluation": evaluation
+        }

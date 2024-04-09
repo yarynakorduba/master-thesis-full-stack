@@ -29,16 +29,16 @@ const ARIMAPrediction = ({
   handleSelectStep,
   index
 }: TProps) => {
-  const [horizon, setHorizon] = useInputState<number>(2, { min: 0 });
+  const [horizon, setHorizon] = useInputState<number>(20, { min: 0 });
   const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
 
-  const [minP, setMinP] = useInputState<number>(0);
-  const [maxP, setMaxP] = useInputState<number>(1);
+  const [minP, setMinP] = useInputState<number>(0, { min: 0 });
+  const [maxP, setMaxP] = useInputState<number>(1, { min: 0 });
 
-  const [minQ, setMinQ] = useInputState<number>(0);
-  const [maxQ, setMaxQ] = useInputState<number>(1);
+  const [minQ, setMinQ] = useInputState<number>(0, { min: 0 });
+  const [maxQ, setMaxQ] = useInputState<number>(1, { min: 0 });
 
-  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1);
+  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1, { min: 0 });
 
   const handleClick = () => {
     handlePredict({ horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
@@ -114,6 +114,7 @@ const ARIMAPrediction = ({
               arimaResult?.realPredictionParameters,
               'Future data prediction parameters'
             )}
+            {JSON.stringify(arimaResult?.evaluation)}
           </>
         ) : null}
       </StepContent>

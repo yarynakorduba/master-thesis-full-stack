@@ -84,6 +84,7 @@ export default function ChartTooltips({
       )}
       {map(dataLabelTooltips, (tooltip) => (
         <AxisTooltip // data label tooltip
+          key={tooltip.tooltipData}
           tooltip={tooltip}
           styles={{
             ...dataLabelTooltipStyles,

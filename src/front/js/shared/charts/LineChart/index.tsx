@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
-import { isNil, map, noop, orderBy } from 'lodash';
+import { isEmpty, isNil, map, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
 import Button from '@mui/material/Button';
@@ -185,7 +185,7 @@ const LineChart = ({
   // is cleared
   useEffect(() => {
     handleUpdateSelectedAreaVisual();
-  }, [selectedAreaValueBounds]);
+  }, [isEmpty(selectedAreaValueBounds)]);
 
   const onSelectedAreaChange = (domain: Bounds | null) => {
     if (!isTrainingDataSelectionOn) return;
@@ -258,6 +258,11 @@ const LineChart = ({
   );
 
   const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
+  const sortedDataForBrushLines = orderBy(
+    visibleLinesData,
+    (lineData) => lineData.color !== hiddenColor
+  );
+
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
@@ -341,7 +346,7 @@ const LineChart = ({
 
           <CustomBrush
             onChange={onBrushChange}
-            data={sortedDataForLines}
+            data={sortedDataForBrushLines}
             padding={padding}
             svgHeight={svgHeight}
             width={xyAreaWidth}
@@ -435,6 +440,8 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ width: 'auto', height }}>{renderResponsiveChart}</ParentSize>
+    <ParentSize parentSizeStyles={{ width: 'auto', minHeight: height }}>
+      {renderResponsiveChart}
+    </ParentSize>
   );
 }
