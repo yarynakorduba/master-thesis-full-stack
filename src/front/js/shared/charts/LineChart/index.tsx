@@ -258,7 +258,6 @@ const LineChart = ({
   );
 
   const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
-  console.log('--->>> NUM TICKS-- > ', numYAxisTicks);
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
