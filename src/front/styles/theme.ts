@@ -9,6 +9,6 @@ export const theme = {
   contrastBlue: '#71c5e8',
 
   chartBlue: '#3948A4',
-  chartFuchsia: '#FF4D6A',
-  chartPink: '#ff4ded'
+  chartFuchsia: '#FF00FF',
+  chartPink: '#FF69B4'
 };

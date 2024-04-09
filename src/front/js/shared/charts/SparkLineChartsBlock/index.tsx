@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { map } from 'lodash';
+import { filter, isEmpty, map } from 'lodash';
 import { useTheme } from 'styled-components';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -42,7 +42,7 @@ type TProps = {
   readonly selectedData: TTimeseriesData;
   readonly setSelectedData: (data: TTimeseriesData) => void;
 
-  readonly predictionData?: TTimeseriesData;
+  readonly predictionData?: TTimeseriesData[];
   readonly dataLabels?: TDataLabel[];
 };
 const SparkLineChartsBlock = ({
@@ -89,10 +89,19 @@ const SparkLineChartsBlock = ({
     const predictedData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
-      predictionData,
+      predictionData?.[0],
       theme.chartPink,
-      `${selectedProp?.label} prediction`
+      `${selectedProp?.label} test data prediction`
     );
+
+    const realPredictedData = constructLineChartDataFromTs(
+      selectedProp,
+      timeProperty,
+      predictionData?.[1],
+      theme.chartFuchsia,
+      `${selectedProp?.label} real data prediction`
+    );
+
     const mainChartData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
@@ -101,8 +110,10 @@ const SparkLineChartsBlock = ({
       selectedProp?.label
     );
 
-    if (!mainChartData?.datapoints?.length) return [];
-    return predictedData?.datapoints?.length ? [mainChartData, predictedData] : [mainChartData];
+    return filter(
+      [mainChartData, predictedData, realPredictedData],
+      (d) => !isEmpty(d?.datapoints)
+    ) as TLineChartSerie[];
   }, [
     selectedProp,
     timeProperty,
@@ -127,6 +138,7 @@ const SparkLineChartsBlock = ({
         padding={{ top: 16, bottom: 30, left: 40, right: 40 }}
         defaultBrushValueBounds={defaultBrushValueBounds}
         onSelectArea={onSelectedAreaChange}
+        selectedDataLength={selectedData?.length}
         isResponsive={true}
       />
       <div>

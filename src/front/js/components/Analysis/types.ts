@@ -21,4 +21,5 @@ export type TARIMAResult = {
   };
   readonly parameters: any;
   readonly prediction: { [msTimestamp: string]: number };
+  readonly realPrediction: { [msTimestamp: string]: number };
 };

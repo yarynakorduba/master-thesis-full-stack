@@ -53,6 +53,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
+  readonly selectedDataLength: number;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
   readonly formatYScale: TFormatYScale;
@@ -70,11 +71,12 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
+  selectedDataLength,
   dataLabels,
   formatXScale,
   formatYScale,
-  numXAxisTicks = 5, // approximate
-  numYAxisTicks = 5, // approximate
+  numXAxisTicks = 4, // approximate
+  numYAxisTicks = 4, // approximate
   padding = {
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
@@ -256,7 +258,7 @@ const LineChart = ({
   );
 
   const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
-
+  console.log('--->>> NUM TICKS-- > ', numYAxisTicks);
   return (
     <>
       <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
@@ -269,6 +271,11 @@ const LineChart = ({
         {isTrainingDataSelectionOn && !selectedAreaValueBounds && (
           <Typography variant="body1" color={palette.text.secondary}>
             Drag&apos;n&apos;drop on the chart to set the data limits
+          </Typography>
+        )}
+        {isTrainingDataSelectionOn && selectedAreaValueBounds && (
+          <Typography variant="body1" color={palette.text.secondary}>
+            Selected {selectedDataLength} entries
           </Typography>
         )}
         {isTrainingDataSelectionOn && selectedAreaValueBounds && (
@@ -291,6 +298,7 @@ const LineChart = ({
               yScale={yScale}
               xScale={xScale}
               chartVariant={variant}
+              numTicks={numYAxisTicks}
             />
             <AxisBottom
               top={xyAreaHeight}
@@ -364,8 +372,8 @@ export default function ResponsiveLineChart({
   data,
   formatXScale,
   formatYScale,
-  numXAxisTicks = 5, // approximate
-  numYAxisTicks = 5, // approximate
+  numXAxisTicks = 4, // approximate
+  numYAxisTicks = 4, // approximate
   isResponsive = true,
   padding = {
     top: CHART_Y_PADDING,
@@ -376,7 +384,8 @@ export default function ResponsiveLineChart({
   onClick = noop,
   onSelectArea = noop,
   defaultBrushValueBounds,
-  dataLabels
+  dataLabels,
+  selectedDataLength
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -395,6 +404,7 @@ export default function ResponsiveLineChart({
         numYAxisTicks={numYAxisTicks}
         padding={padding}
         defaultBrushValueBounds={defaultBrushValueBounds}
+        selectedDataLength={selectedDataLength}
       />
     ),
     [
@@ -409,7 +419,8 @@ export default function ResponsiveLineChart({
       numXAxisTicks,
       numYAxisTicks,
       padding,
-      defaultBrushValueBounds
+      defaultBrushValueBounds,
+      selectedDataLength
     ]
   );
 

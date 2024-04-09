@@ -24,10 +24,20 @@ const pointTooltipStyles = {
 
 export const xAxisTooltipStyles = {
   ...sharedStyles,
-  minWidth: '2rem',
   maxWidth: '7rem',
   textAlign: 'center',
   color: 'white',
+  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
+};
+
+export const dataLabelTooltipStyles = {
+  ...sharedStyles,
+  maxWidth: '40rem',
+  textAlign: 'center',
+  color: 'white',
+  width: 'fit-content',
+  whiteSpace: 'pre-wrap',
+  // display: 'inline-block',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
 };
 
@@ -76,7 +86,7 @@ export default function ChartTooltips({
         <AxisTooltip // data label tooltip
           tooltip={tooltip}
           styles={{
-            ...xAxisTooltipStyles,
+            ...dataLabelTooltipStyles,
             background: palette.secondary.main,
             top: 0,
             transform: 'translate(calc(-50% - 0.6rem), -50%)'

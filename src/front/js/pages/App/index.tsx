@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
@@ -43,19 +43,20 @@ const App = () => {
   const { isVARLoading, varResult, handleFetchVAR } = useVAR(selectedData);
   const { isARIMALoading, arimaResult, handleFetchARIMA } = useARIMA(selectedData);
 
-  const mappedARIMAResult = useMemo(
-    () =>
-      (selectedProp?.value &&
-        arimaResult &&
-        map(arimaResult?.prediction, (value, index) => {
-          return {
-            [timeProperty.value]: +index,
-            [selectedProp?.value]: value
-          };
-        })) ||
-      [],
-    [selectedProp?.value, arimaResult, timeProperty.value]
-  );
+  const mappedARIMAPrediction = useMemo(() => {
+    if (!(selectedProp?.value && arimaResult)) return [[], []];
+
+    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
+      return {
+        [timeProperty.value]: +index,
+        [selectedProp?.value]: value
+      };
+    };
+    return [
+      map(arimaResult?.prediction, convertARIMADatapoint),
+      map(arimaResult?.realPrediction, convertARIMADatapoint)
+    ];
+  }, [selectedProp?.value, arimaResult, timeProperty.value]);
 
   const dataLabels =
     (selectedProp?.value &&
@@ -98,7 +99,7 @@ const App = () => {
             valueProperties={valueProperties}
             timeProperty={timeProperty}
             timeseriesData={sortedTSData}
-            predictionData={mappedARIMAResult}
+            predictionData={mappedARIMAPrediction}
             selectedData={selectedData}
             setSelectedData={setSelectedData}
             selectedProp={selectedProp}

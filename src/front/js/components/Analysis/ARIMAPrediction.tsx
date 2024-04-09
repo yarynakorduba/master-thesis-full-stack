@@ -29,8 +29,7 @@ const ARIMAPrediction = ({
   handleSelectStep,
   index
 }: TProps) => {
-  const [lagOrder, setLagOrder] = useInputState<number>(2);
-  const [horizon, setHorizon] = useInputState<number>(2);
+  const [horizon, setHorizon] = useInputState<number>(2, { min: 0 });
   const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
 
   const [minP, setMinP] = useInputState<number>(0);
@@ -42,8 +41,16 @@ const ARIMAPrediction = ({
   const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1);
 
   const handleClick = () => {
-    handlePredict({ lagOrder, horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
+    handlePredict({ horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
   };
+
+  const renderParameters = (parameters, title = 'Test data prediction parameters') => (
+    <Box>
+      <Typography variant="h5">{title}</Typography>
+      <Typography>Selected order: {JSON.stringify(parameters?.order)}</Typography>
+      <Typography>Selected seasonal order: {JSON.stringify(parameters?.seasonal_order)}</Typography>
+    </Box>
+  );
 
   if (!isVisible) return null;
   return (
@@ -55,23 +62,15 @@ const ARIMAPrediction = ({
         <Grid container spacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
           <Grid item md={6} sx={{ marginBottom: 1 }}>
             <TextField
-              label="Max lag order"
-              value={lagOrder}
-              onChange={setLagOrder}
-              size="small"
-              type="number"
-            />
-          </Grid>
-          <Grid item md={6} sx={{ marginBottom: 1 }}>
-            <TextField
               label="Horizon"
               value={horizon}
               onChange={setHorizon}
               size="small"
               type="number"
+              InputProps={{ inputProps: { min: 0 } }}
             />
           </Grid>
-
+          <Grid item md={6} />
           <Grid item md={6}>
             <TextField label="Min P" value={minP} onChange={setMinP} size="small" type="number" />
           </Grid>
@@ -109,14 +108,13 @@ const ARIMAPrediction = ({
           ) : null}
         </Box>
         {arimaResult ? (
-          <Box>
-            <Typography>
-              Selected order: {JSON.stringify(arimaResult?.parameters?.order)}
-            </Typography>
-            <Typography>
-              Selected seasonal order: {JSON.stringify(arimaResult?.parameters?.seasonal_order)}
-            </Typography>
-          </Box>
+          <>
+            {renderParameters(arimaResult?.testPredictionParameters)}
+            {renderParameters(
+              arimaResult?.realPredictionParameters,
+              'Future data prediction parameters'
+            )}
+          </>
         ) : null}
       </StepContent>
     </>

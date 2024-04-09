@@ -9,15 +9,16 @@ type TProps = {
   readonly width: number;
   readonly height: number;
   readonly chartVariant: ChartVariant;
+  readonly numTicks: number;
 };
 
 const GRAY = '#E1E5EA';
 
-const Grid = ({ chartVariant, xScale, yScale, width, height }: TProps) => {
+const Grid = ({ chartVariant, xScale, yScale, width, height, numTicks = 4 }: TProps) => {
   return chartVariant === ChartVariant.vertical ? (
-    <GridRows scale={yScale} width={width} height={height} stroke={GRAY} />
+    <GridRows scale={yScale} width={width} height={height} stroke={GRAY} numTicks={numTicks} />
   ) : (
-    <GridColumns scale={xScale} width={width} height={height} stroke={GRAY} />
+    <GridColumns scale={xScale} width={width} height={height} stroke={GRAY} numTicks={numTicks} />
   );
 };
 

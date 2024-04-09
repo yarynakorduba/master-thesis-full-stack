@@ -137,7 +137,7 @@ export default function ResponsiveLineChart({
   onClick
 }: TProps) {
   const renderChart = useCallback(
-    (chartWidth, chartHeight) => (
+    (chartWidth?: number, chartHeight?: number) => (
       <LineChart
         width={chartWidth}
         height={chartHeight}
@@ -154,8 +154,8 @@ export default function ResponsiveLineChart({
 
   const renderResponsiveChart = useCallback(
     (parent) => {
-      const responsiveWidth = !isNil(width) && Math.min(width, parent.width);
-      const responsiveHeight = !isNil(height) && Math.min(height, parent.height);
+      const responsiveWidth = !isNil(width) ? Math.min(width, parent.width) : undefined;
+      const responsiveHeight = !isNil(height) ? Math.min(height, parent.height) : undefined;
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
@@ -163,14 +163,7 @@ export default function ResponsiveLineChart({
   );
 
   return (
-    <ParentSize
-      parentSizeStyles={{
-        maxHeight: height,
-        maxWidth: width,
-        height
-      }}
-      onClick={onClick}
-    >
+    <ParentSize parentSizeStyles={{ maxHeight: height, maxWidth: width, height }} onClick={onClick}>
       {renderResponsiveChart}
     </ParentSize>
   );
