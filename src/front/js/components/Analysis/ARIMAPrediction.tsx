@@ -46,7 +46,7 @@ const ARIMAPrediction = ({
 
   const renderParameters = (parameters, title = 'Test data prediction parameters') => (
     <Box>
-      <Typography variant="h5">{title}</Typography>
+      <Typography variant="h6">{title}</Typography>
       <Typography>Selected order: {JSON.stringify(parameters?.order)}</Typography>
       <Typography>Selected seasonal order: {JSON.stringify(parameters?.seasonal_order)}</Typography>
     </Box>

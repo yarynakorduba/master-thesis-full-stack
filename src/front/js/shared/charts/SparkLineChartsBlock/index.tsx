@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, isEmpty, map } from 'lodash';
-import { useTheme } from 'styled-components';
+import { useTheme } from '@mui/material/styles';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
@@ -93,7 +93,7 @@ const SparkLineChartsBlock = ({
       selectedProp,
       timeProperty,
       predictionData?.[0],
-      theme.chartPink,
+      theme.palette.charts.chartPink,
       `${selectedProp?.label} test data prediction`
     );
 
@@ -101,7 +101,7 @@ const SparkLineChartsBlock = ({
       selectedProp,
       timeProperty,
       predictionData?.[1],
-      theme.chartFuchsia,
+      theme.palette.charts.chartFuchsia,
       `${selectedProp?.label} real data prediction`
     );
 
@@ -109,7 +109,7 @@ const SparkLineChartsBlock = ({
       selectedProp,
       timeProperty,
       timeseriesData,
-      theme.chartBlue,
+      theme.palette.charts.chartBlue,
       selectedProp?.label
     );
 
@@ -121,8 +121,8 @@ const SparkLineChartsBlock = ({
     selectedProp,
     timeProperty,
     predictionData,
-    theme.chartPink,
-    theme.chartBlue,
+    theme.palette.charts.chartPink,
+    theme.palette.charts.chartBlue,
     timeseriesData
   ]);
 
@@ -150,7 +150,7 @@ const SparkLineChartsBlock = ({
             prop,
             timeProperty,
             timeseriesData,
-            theme.chartBlue,
+            theme.palette.charts.chartBlue,
             prop.label
           );
           return (

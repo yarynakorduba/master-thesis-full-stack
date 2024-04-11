@@ -1,8 +1,7 @@
 import React, { ReactElement, useCallback, useMemo } from 'react';
 import { Legend, LegendItem } from '@visx/legend';
 import { scaleOrdinal } from '@visx/scale';
-import styled from 'styled-components';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
@@ -11,13 +10,13 @@ import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: center;
 `;
 
-const StyledMarker = styled.svg`
+const StyledMarker = styled('svg')`
   margin: 0 5px;
 `;
 export type TChartLegendLabel = {
