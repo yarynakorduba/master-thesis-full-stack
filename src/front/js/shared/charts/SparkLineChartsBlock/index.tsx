@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, isEmpty, map } from 'lodash';
 import { useTheme } from 'styled-components';
 
@@ -62,18 +62,21 @@ const SparkLineChartsBlock = ({
     setSelectedData(timeseriesData);
   }, [timeseriesData]);
 
-  const onSelectedAreaChange = (domain) => {
-    if (!domain) {
-      setSelectedData(timeseriesData);
-      return;
-    }
-    const { x0, x1 } = domain;
-    const newSelectedData = timeseriesData.filter((s) => {
-      return +s[timeProperty.value] >= x0 && +s[timeProperty.value] <= x1;
-    });
-    setSelectedData(newSelectedData);
-    console.log(`Selected ${newSelectedData.length} datapoints`, timeseriesData);
-  };
+  const onSelectedAreaChange = useCallback(
+    (domain) => {
+      if (!domain) {
+        setSelectedData(timeseriesData);
+        return;
+      }
+      const { x0, x1 } = domain;
+      const newSelectedData = timeseriesData.filter((s) => {
+        return +s[timeProperty.value] >= x0 && +s[timeProperty.value] <= x1;
+      });
+      setSelectedData(newSelectedData);
+      console.log(`Selected ${newSelectedData.length} datapoints`, timeseriesData);
+    },
+    [setSelectedData, timeProperty.value, timeseriesData]
+  );
 
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];

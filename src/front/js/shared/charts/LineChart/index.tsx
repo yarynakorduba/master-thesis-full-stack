@@ -187,22 +187,25 @@ const LineChart = ({
     handleUpdateSelectedAreaVisual();
   }, [isEmpty(selectedAreaValueBounds)]);
 
-  const onSelectedAreaChange = (domain: Bounds | null) => {
-    if (!isTrainingDataSelectionOn) return;
-    if (!domain) {
-      setSelectedAreaValueBounds(undefined);
-      handleUpdateSelectedAreaOnBrushVisual(undefined, undefined);
-      onSelectArea(undefined);
+  const onSelectedAreaChange = useCallback(
+    (domain: Bounds | null) => {
+      if (!isTrainingDataSelectionOn) return;
+      if (!domain) {
+        setSelectedAreaValueBounds(undefined);
+        handleUpdateSelectedAreaOnBrushVisual(undefined, undefined);
+        onSelectArea(undefined);
 
-      return;
-    }
-    const { x0, x1 } = domain;
-    if (x0 && x1) {
-      setSelectedAreaValueBounds({ x0, x1 });
-      handleUpdateSelectedAreaOnBrushVisual(x0, x1);
-      onSelectArea({ x0, x1 });
-    }
-  };
+        return;
+      }
+      const { x0, x1 } = domain;
+      if (x0 && x1) {
+        setSelectedAreaValueBounds({ x0, x1 });
+        handleUpdateSelectedAreaOnBrushVisual(x0, x1);
+        onSelectArea({ x0, x1 });
+      }
+    },
+    [handleUpdateSelectedAreaOnBrushVisual, isTrainingDataSelectionOn, onSelectArea]
+  );
 
   const onBrushChange = (domain: Bounds | null) => {
     if (!domain) return;
