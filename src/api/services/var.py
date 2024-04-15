@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import json
 from sklearn.preprocessing import StandardScaler
-from api.services.analysis import Analysis
+from api.services.statistical_tests import Analysis
 
 
 class Predict:
@@ -116,7 +116,8 @@ class Predict:
             df_forecast_original = self.df_inv_transformation(df_forecast, df_original, scaler)
 
             return df_forecast_original
-        df_forecast_on_train_data = run_forecast(df_train, df_input)
+        
+        run_forecast(df_train, df_input)
 
         df_forecast_test_data = run_forecast(df_test, df_input)
     

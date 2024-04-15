@@ -1,4 +1,5 @@
-export type TTimeseriesData = Array<{ [key: string]: string | number }>;
+export type TTimeseriesDatum = { readonly [key: string]: string | number };
+export type TTimeseriesData = Array<TTimeseriesDatum>;
 
 export type TDataProperty = {
   readonly value: string;
@@ -18,3 +19,8 @@ export type TLineChartSerie = {
 };
 
 export type TLineChartData = Array<TLineChartSerie>;
+
+// Data labels
+export type TDataLabel = Pick<TLineChartDatapoint, 'valueX'> & {
+  readonly label: string;
+};

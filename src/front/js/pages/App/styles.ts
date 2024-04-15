@@ -1,22 +1,18 @@
-import styled from 'styled-components';
+import { styled } from '@mui/material/styles';
 
-export const AppPage = styled.div`
+export const AppPage = styled('div')`
   width: calc(100% - 0.5rem);
-  padding: 0.25rem;
   min-height: calc(100vh - 0.5rem);
-  display: grid;
-  grid-template-columns: 1fr 6fr;
-  gap: 0.25rem;
 `;
 
-export const Sidebar = styled.div`
+export const Sidebar = styled('div')`
   grid-column: 1;
   grid-row: 1;
-  border-right: 1px solid ${(props) => props.theme.lightGray};
+  border-right: 1px solid ${({ theme }) => theme.palette.grey[800]};
   padding: 0.75rem;
 `;
 
-export const Content = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+export const Content = styled('div')`
+  grid-column: 2;
+  grid-row: 1;
 `;

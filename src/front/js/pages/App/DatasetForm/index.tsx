@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { isEqual, keys } from 'lodash';
+import Button from '@mui/material/Button';
 import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { useParseDataset } from './hooks';
-import { Dropzone, Select, FormContainer, Button } from './styles';
+import { Dropzone, Select, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 
 type TProps = {

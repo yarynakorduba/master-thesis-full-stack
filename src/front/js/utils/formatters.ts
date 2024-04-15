@@ -2,10 +2,15 @@ import { format } from 'date-fns';
 import { isNumber } from 'lodash';
 
 export const formatUnixToDate = (d) => {
-  if (isNumber(d)) {
-    return format(new Date(d), 'dd/MM/yyyy');
+  try {
+    if (isNumber(d)) {
+      return format(new Date(d), 'dd/MM/yyyy');
+    }
+    return d;
+  } catch (e) {
+    console.log('Error converting date: ', e, d);
+    throw e;
   }
-  return d;
 };
 
 export const formatNumber = (d: number): string => {

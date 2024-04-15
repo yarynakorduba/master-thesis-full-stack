@@ -84,5 +84,6 @@ src/sandbox/
 
 src/api/data/*
 src/**/test.json
+test_data/*
 
 sandbox/*

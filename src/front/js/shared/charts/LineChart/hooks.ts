@@ -1,27 +1,41 @@
 import { useTooltipInPortal } from '@visx/tooltip';
-import { isNil } from 'lodash';
-import { useState, useCallback } from 'react';
+import { isNil, map } from 'lodash';
+import { useState, useCallback, useMemo } from 'react';
+import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
+import { TDataLabel } from 'front/js/types';
+import { TLinScale } from './types';
+import { TFormatXScale, TFormatYScale, TPadding } from '../types';
+import { TAxisTooltip, TPointTooltip } from '../ChartTooltips/types';
 
+type TTooltipConfigsResult = {
+  readonly pointTooltip: TPointTooltip | undefined;
+  readonly xTooltip: TAxisTooltip | undefined;
+  readonly yTooltip: TAxisTooltip | undefined;
+  readonly dataLabelTooltips: TAxisTooltip[];
+  readonly handleHover;
+  readonly handleMouseLeave;
+  readonly containerRef: (element: HTMLElement | SVGElement | null) => void;
+};
 export const useTooltipConfigs = (
-  xPadding,
-  yPadding,
-  chartHeight,
-  variant,
-  xScale,
-  yScale,
-  formatXScale,
-  formatYScale
-) => {
-  const [pointTooltip, setPointTooltip] = useState<any>();
-  const [xTooltip, setXTooltip] = useState<any>();
-  const [yTooltip, setYTooltip] = useState<any>();
+  xPadding: number,
+  yPadding: number,
+  chartHeight: number,
+  xScale: TLinScale,
+  yScale: TLinScale,
+  formatXScale: TFormatXScale,
+  formatYScale: TFormatYScale,
+  dataLabels: TDataLabel[] = []
+): TTooltipConfigsResult => {
+  const [pointTooltip, setPointTooltip] = useState<TPointTooltip | undefined>();
+  const [xTooltip, setXTooltip] = useState<TAxisTooltip | undefined>();
+  const [yTooltip, setYTooltip] = useState<TAxisTooltip | undefined>();
 
   const { containerRef, containerBounds } = useTooltipInPortal({
     scroll: true,
     detectBounds: true
   });
 
-  const handleMouseLeave = (event, pointGroup) => {
+  const handleMouseLeave = (_e, pointGroup) => {
     const noTooltipData = {
       tooltipLeft: undefined,
       tooltipTop: undefined,
@@ -34,12 +48,14 @@ export const useTooltipConfigs = (
     setXTooltip(noTooltipData);
   };
 
-  const getAxisTooltipData = useCallback((scale, isScaleLinear, formatter, coordinate) => {
-    if (isNil(coordinate)) return undefined;
-    const value = scale.invert(coordinate);
-
-    return formatter ? formatter(value) : value;
-  }, []);
+  const getAxisTooltipData = useCallback(
+    (scale: TLinScale, isScaleLinear, formatter, coordinate: number) => {
+      if (isNil(coordinate)) return undefined;
+      const value = scale.invert(coordinate);
+      return formatter ? formatter(value) : value;
+    },
+    []
+  );
 
   const handleHover = useCallback(
     (event, pointGroup) => {
@@ -84,12 +100,34 @@ export const useTooltipConfigs = (
     ]
   );
 
+  const dataLabelTooltips = map(dataLabels, (dataLabel: TDataLabel) => ({
+    tooltipLeft: xScale(dataLabel.valueX) + xPadding,
+    tooltipTop: 0,
+    tooltipData: dataLabel.label
+  }));
+
   return {
     pointTooltip,
     xTooltip,
     yTooltip,
+    dataLabelTooltips,
     handleHover,
     handleMouseLeave,
     containerRef
   };
+};
+
+export const useChartSizes = (width: number, height: number, padding: TPadding) => {
+  const xyAreaWidth = useMemo(() => {
+    const clean = width - padding.left - padding.right;
+    return clean > 0 ? clean : 0;
+  }, [padding.left, padding.right, width]);
+
+  const svgHeight = height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT;
+  const xyAreaHeight = useMemo(
+    () => svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT,
+    [padding.bottom, padding.top, svgHeight]
+  );
+
+  return { xyAreaWidth, xyAreaHeight, svgHeight };
 };

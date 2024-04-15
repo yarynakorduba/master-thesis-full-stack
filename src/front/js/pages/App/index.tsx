@@ -1,77 +1,132 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
-import { AppPage, Sidebar } from './styles';
+import { map } from 'lodash';
+import Drawer from '@mui/material/Drawer';
+
+import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from './test.json';
-import { TDataProperty } from 'front/js/types';
+import json from '../../../../../test_data/ArimaV2Dataset.json';
+import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
+import Analysis from '../../components/Analysis';
+import {
+  useDataStationarityTest,
+  useWhiteNoise,
+  useDataCausalityTest,
+  useVAR,
+  useARIMA
+} from '../../components/Analysis/hooks';
 
 const App = () => {
   const methods = useForm();
-  const [timeseriesData, setTimeseriesData] = useState<any>(json);
-  const [sortedTSData, setSortedTSData] = useState<any>([]);
-  const [predictedData, setPredictedData] = useState<any>([]);
+  const [timeseriesData, setTimeseriesData] = useState<TTimeseriesData>(json);
+  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
+
+  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+  const [selectedData, setSelectedData] = useState(timeseriesData);
 
   const valueProperties = useMemo(
-    (): TDataProperty[] => [
-      { value: 'oxygen', label: 'oxygen' },
-      { value: 'co2', label: 'co2' }
-    ],
+    (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
     []
   );
-  const timeProperty = useMemo(() => ({ value: 'timestamp', label: 'timestamp' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
+  const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
 
-  // const valueProperties = useWatch({ control: methods.control, name: 'prop' });
-  // //  useMemo(
-  // //   (): TDataProperty[] => [{ value: 'oxygen', label: 'oxygen' }],
-  // //   []
-  // // );
-  // //useWatch({ control: methods.control, name: "prop" });
-  // const timeProperty = useWatch({ control: methods.control, name: 'timeProperty' });
-  // // useMemo(
-  // //   (): TDataProperty => ({ value: 'timestamp', label: 'timestamp' }),
-  // //   []
-  // // );
-  // //useWatch({ control: methods.control, name: "timeProperty" });
+  const { isStationarityTestLoading, stationarityTestResult, handleFetchDataStationarityTest } =
+    useDataStationarityTest(selectedData, valueProperties);
+  const { isWhiteNoiseLoading, whiteNoiseResult, handleFetchIsWhiteNoise } = useWhiteNoise(
+    selectedData,
+    valueProperties
+  );
+  const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
+    useDataCausalityTest(selectedData, valueProperties);
+
+  const { isVARLoading, varResult, handleFetchVAR } = useVAR(selectedData);
+  const { isARIMALoading, arimaResult, handleFetchARIMA } = useARIMA(selectedData);
+
+  const mappedARIMAPrediction = useMemo(() => {
+    if (!(selectedProp?.value && arimaResult)) return [[], []];
+
+    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
+      return {
+        [timeProperty.value]: +index,
+        [selectedProp?.value]: value
+      };
+    };
+    return [
+      map(arimaResult?.prediction, convertARIMADatapoint),
+      map(arimaResult?.realPrediction, convertARIMADatapoint)
+    ];
+  }, [selectedProp?.value, arimaResult, timeProperty.value]);
+
+  const dataLabels =
+    (selectedProp?.value &&
+      arimaResult && [
+        {
+          valueX: new Date(arimaResult?.lastTrainPoint?.dateTime).getTime(),
+          label: 'Train data threshold'
+        }
+      ]) ||
+    [];
 
   useEffect(() => {
     if (timeProperty?.value && timeseriesData.length) {
-      const sorted = timeseriesData.sort((a, b) => {
-        return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
-      });
+      const sorted = timeseriesData
+        .sort((a: TTimeseriesDatum, b: TTimeseriesDatum) => {
+          // sort ascending: June, July, August
+          return (a[timeProperty.value] as number) - (b[timeProperty.value] as number) ? -1 : 1;
+        })
+        .map((d) => ({ ...d, date: new Date(d.date).getTime() }));
 
-      const sliced = sorted.slice(0, 2000);
-      setSortedTSData(sliced);
+      setSortedTSData(sorted);
     }
   }, [timeProperty, timeseriesData]);
 
-  // const handleGetArimaResults = async (ts) => {
-  //   const results = await getARIMAResults(ts);
-  //   setPredictedData(results);
-  // };
-
-  // useEffect(() => {
-  //   if (valueProperties?.[0]?.value && sortedTSData.length) {
-  //     const ts = sortedTSData.map((d) => Number(d[valueProperties[0]?.value]));
-  //     handleGetArimaResults(ts);
-  //   }
-  // }, [sortedTSData, valueProperties]);
+  const [open, setOpen] = useState(true);
 
   return (
     <AppPage>
-      <Sidebar>
-        <FormProvider {...methods}>
-          <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
-        </FormProvider>
-      </Sidebar>
-      {sortedTSData?.length ? (
-        <SparkLineChartsBlock
+      <Drawer open={open} onClose={(_e, _v) => setOpen(false)}>
+        <Sidebar>
+          <FormProvider {...methods}>
+            <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
+          </FormProvider>
+        </Sidebar>
+      </Drawer>
+
+      <Content>
+        {sortedTSData?.length ? (
+          <SparkLineChartsBlock
+            valueProperties={valueProperties}
+            timeProperty={timeProperty}
+            timeseriesData={sortedTSData}
+            predictionData={mappedARIMAPrediction}
+            selectedData={selectedData}
+            setSelectedData={setSelectedData}
+            selectedProp={selectedProp}
+            setSelectedProp={setSelectedProp}
+            dataLabels={dataLabels}
+          />
+        ) : null}
+        <Analysis
+          stationarityTestResult={stationarityTestResult}
           valueProperties={valueProperties}
-          timeProperty={timeProperty}
-          timeseriesData={sortedTSData}
-          predictedData={predictedData}
+          timeseriesData={timeseriesData}
+          handleFetchDataStationarityTest={handleFetchDataStationarityTest}
+          isStationarityTestLoading={isStationarityTestLoading}
+          whiteNoiseResult={whiteNoiseResult}
+          isWhiteNoiseLoading={isWhiteNoiseLoading}
+          handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
+          arimaResult={arimaResult}
+          isARIMALoading={isARIMALoading}
+          isCausalityTestLoading={isCausalityTestLoading}
+          causalityTestResult={causalityTestResult}
+          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+          handleFetchARIMA={handleFetchARIMA}
+          isVARLoading={isVARLoading}
+          varResult={varResult}
+          handleFetchVAR={handleFetchVAR}
         />
-      ) : null}
+      </Content>
     </AppPage>
   );
 };

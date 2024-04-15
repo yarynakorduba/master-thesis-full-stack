@@ -1,91 +1,106 @@
-import React, { useCallback } from 'react';
-import { defaultStyles, Tooltip, TooltipWithBounds } from '@visx/tooltip';
-import { isNil, map } from 'lodash';
+import React from 'react';
+import { defaultStyles } from '@visx/tooltip';
+import { useTheme } from '@mui/material/styles';
+import { map } from 'lodash';
 
-const pointTooltipStyles = {
+import AxisTooltip from './AxisTooltip';
+import PointTooltip from './PointTooltip';
+import { TFormatXScale } from '../types';
+import { TAxisTooltip, TPointTooltip } from './types';
+
+const sharedStyles = {
   ...defaultStyles,
   minWidth: '2rem',
+  fontSize: '0.75rem',
+  pointerEvents: 'none'
+};
+
+const pointTooltipStyles = {
+  ...sharedStyles,
   maxWidth: '20rem',
   textAlign: 'center',
   pointerEvents: 'none'
 };
 
-const xAxisTooltipStyles = {
-  ...defaultStyles,
-  minWidth: '2rem',
+export const xAxisTooltipStyles = {
+  ...sharedStyles,
   maxWidth: '7rem',
   textAlign: 'center',
-  pointerEvents: 'none',
   color: 'white',
-  background: '#827397',
+  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
+};
+
+export const dataLabelTooltipStyles = {
+  ...sharedStyles,
+  maxWidth: '40rem',
+  textAlign: 'center',
+  color: 'white',
+  width: 'fit-content',
+  whiteSpace: 'pre-wrap',
+  // display: 'inline-block',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
 };
 
 const yAxisTooltipStyles = {
-  ...defaultStyles,
+  ...sharedStyles,
   minWidth: '2rem',
   maxWidth: '7rem',
   width: 'fit-content',
   textAlign: 'center',
-  pointerEvents: 'none',
   color: 'white',
-  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))',
-  background: '#827397'
+  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))'
 };
 
-type TTooltipDatumIndicatorProps = {
-  readonly color: string;
+type TProps = {
+  readonly pointTooltip?: TPointTooltip;
+  readonly xTooltip?: TAxisTooltip;
+  readonly yTooltip?: TAxisTooltip;
+  readonly dataLabelTooltips: TAxisTooltip[];
+  readonly formatXScale: TFormatXScale;
 };
-function TooltipDatumIndicator({ color }: TTooltipDatumIndicatorProps) {
-  return (
-    <svg viewBox="0 0 4 4" width="0.5rem" height="0.5rem" style={{ margin: '0 0.5rem 0 0' }}>
-      <circle cx="50%" cy="50%" r="2" fill={color} stroke="none" />
-    </svg>
-  );
-}
 
-type TChartTooltipProps = {
-  readonly pointTooltip: any;
-  readonly xTooltip: number;
-  readonly yTooltip: number;
-};
-export default function ChartTooltips({ pointTooltip, xTooltip, yTooltip }: TChartTooltipProps) {
-  const renderPointTooltipText = useCallback(
-    () =>
-      map(pointTooltip?.tooltipData, (point) => (
-        <div className="ChartTooltips__content" key={point?.data?.id}>
-          <TooltipDatumIndicator color={point?.color} />
-          <div className="ChartTooltips__text">{point.data.text}</div>
-        </div>
-      )),
-    [pointTooltip]
-  );
-
-  const renderTooltip = useCallback(
-    (tooltip, styles, isTooltipForPoint = false) => {
-      if (
-        isNil(tooltip?.tooltipData) ||
-        isNil(tooltip?.tooltipTop) ||
-        isNil(tooltip?.tooltipLeft)
-      ) {
-        return null;
-      }
-
-      const TooltipComponent = isTooltipForPoint ? TooltipWithBounds : Tooltip;
-      return (
-        <TooltipComponent top={tooltip?.tooltipTop} left={tooltip?.tooltipLeft} style={styles}>
-          {isTooltipForPoint ? renderPointTooltipText() : tooltip?.tooltipData}
-        </TooltipComponent>
-      );
-    },
-    [renderPointTooltipText]
-  );
+export default function ChartTooltips({
+  pointTooltip,
+  xTooltip,
+  yTooltip,
+  formatXScale,
+  dataLabelTooltips
+}: TProps) {
+  const { palette } = useTheme();
 
   return (
     <>
-      {renderTooltip(xTooltip, xAxisTooltipStyles)}
-      {renderTooltip(yTooltip, yAxisTooltipStyles)}
-      {renderTooltip(pointTooltip, pointTooltipStyles, true)}
+      {xTooltip && (
+        <AxisTooltip
+          tooltip={xTooltip}
+          styles={{ ...xAxisTooltipStyles, background: palette.secondary.dark }}
+        />
+      )}
+      {yTooltip && (
+        <AxisTooltip
+          tooltip={yTooltip}
+          styles={{ ...yAxisTooltipStyles, background: palette.secondary.dark }}
+        />
+      )}
+      {map(dataLabelTooltips, (tooltip) => (
+        <AxisTooltip // data label tooltip
+          key={tooltip.tooltipData}
+          tooltip={tooltip}
+          styles={{
+            ...dataLabelTooltipStyles,
+            background: palette.secondary.main,
+            top: 0,
+            transform: 'translate(calc(-50% - 0.6rem), -50%)'
+          }}
+        />
+      ))}
+      {pointTooltip && (
+        <PointTooltip
+          tooltip={pointTooltip}
+          styles={pointTooltipStyles}
+          formatXScale={formatXScale}
+        />
+      )}
     </>
   );
 }

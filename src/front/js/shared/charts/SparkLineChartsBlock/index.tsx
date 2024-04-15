@@ -1,18 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { map, take } from 'lodash';
-import { useTheme } from 'styled-components';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import { filter, isEmpty, map } from 'lodash';
+import { useTheme } from '@mui/material/styles';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TLineChartData, TTimeseriesData } from '../../../types';
-import { useDataCausalityTest, useDataStationarityTest, useVARTest, useWhiteNoise } from './hooks';
+import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
+
 import { TDataProperty, TLineChartSerie } from '../../../types';
-import { Content, Subtitle, Analysis, LineChartContainer } from './styles';
-import StationarityTest from './StationarityTest';
-import CausalityTest from './CausalityTest';
-import WhiteNoiseTest from './WhiteNoiseTest';
-import Prediction from './Prediction';
+import { LineChartContainer } from './styles';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
@@ -38,17 +34,52 @@ const constructLineChartDataFromTs = (
 
 type TProps = {
   readonly valueProperties: TDataProperty[];
+  readonly selectedProp?: TDataProperty;
+  readonly setSelectedProp: (prop: TDataProperty) => void;
   readonly timeProperty: TDataProperty;
+
   readonly timeseriesData: TTimeseriesData;
-  readonly predictedData: TTimeseriesData;
+  readonly selectedData: TTimeseriesData;
+  readonly setSelectedData: (data: TTimeseriesData) => void;
+
+  readonly predictionData?: TTimeseriesData[];
+  readonly dataLabels?: TDataLabel[];
 };
-const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }: TProps) => {
+const SparkLineChartsBlock = ({
+  valueProperties,
+  timeProperty,
+  timeseriesData,
+  predictionData,
+  dataLabels = [],
+  selectedData,
+  setSelectedData,
+  selectedProp,
+  setSelectedProp
+}: TProps) => {
   const theme = useTheme();
 
-  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+  useEffect(() => {
+    setSelectedData(timeseriesData);
+  }, [timeseriesData]);
+
+  const onSelectedAreaChange = useCallback(
+    (domain) => {
+      if (!domain) {
+        setSelectedData(timeseriesData);
+        return;
+      }
+      const { x0, x1 } = domain;
+      const newSelectedData = timeseriesData.filter((s) => {
+        return +s[timeProperty.value] >= x0 && +s[timeProperty.value] <= x1;
+      });
+      setSelectedData(newSelectedData);
+      console.log(`Selected ${newSelectedData.length} datapoints`, timeseriesData);
+    },
+    [setSelectedData, timeProperty.value, timeseriesData]
+  );
+
   // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];
-
   useEffect(() => {
     if (firstProp) setSelectedProp(firstProp);
   }, [firstProp]);
@@ -57,144 +88,85 @@ const SparkLineChartsBlock = ({ valueProperties, timeProperty, timeseriesData }:
     setSelectedProp(chartProp);
   };
 
-  const { isStationarityTestLoading, stationarityTestResult, handleFetchDataStationarityTest } =
-    useDataStationarityTest(timeseriesData, valueProperties);
-  const { isWhiteNoiseLoading, whiteNoiseResult, handleFetchIsWhiteNoise } = useWhiteNoise(
-    timeseriesData,
-    valueProperties
-  );
-  const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
-    useDataCausalityTest(timeseriesData, valueProperties);
-
-  const { isVARTestLoading, varTestResult, handleFetchVARTest } = useVARTest(
-    timeseriesData,
-    valueProperties
-  );
-
-  const mappedVarTestResult = useMemo(
-    () =>
-      (selectedProp?.value &&
-        map(varTestResult?.[selectedProp?.value], (value, index) => ({
-          timestamp: +index,
-          [selectedProp?.value]: value
-        }))) ||
-      [],
-    [selectedProp?.value, varTestResult]
-  );
-
-  // const [min, max] = useTimeseriesMinMaxValues(mainChartData?.datapoints || []);
   const chartData: TLineChartData = useMemo(() => {
     const predictedData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
-      mappedVarTestResult,
-      theme.contrastBlue,
-      `${selectedProp?.label} prediction`
+      predictionData?.[0],
+      theme.palette.charts.chartPink,
+      `${selectedProp?.label} test data prediction`
     );
+
+    const realPredictedData = constructLineChartDataFromTs(
+      selectedProp,
+      timeProperty,
+      predictionData?.[1],
+      theme.palette.charts.chartFuchsia,
+      `${selectedProp?.label} real data prediction`
+    );
+
     const mainChartData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
       timeseriesData,
-      theme.chartBlue,
+      theme.palette.charts.chartBlue,
       selectedProp?.label
     );
-    if (!mainChartData?.datapoints?.length) return [];
-    console.log(
-      '--->>> ',
-      timeseriesData.length,
-      timeseriesData[timeseriesData.length - 1],
-      mainChartData.datapoints.length,
-      mainChartData.datapoints[0],
-      formatUnixToDate(mainChartData.datapoints[mainChartData.datapoints.length - 1].valueX),
-      predictedData?.datapoints?.length ? formatUnixToDate(predictedData.datapoints[0].valueX) : ''
-    );
 
-    return predictedData?.datapoints?.length
-      ? [
-          {
-            ...mainChartData,
-            datapoints: take(mainChartData.datapoints, mappedVarTestResult?.length || 0)
-          },
-          predictedData
-        ]
-      : [mainChartData];
+    return filter(
+      [mainChartData, predictedData, realPredictedData],
+      (d) => !isEmpty(d?.datapoints)
+    ) as TLineChartSerie[];
   }, [
     selectedProp,
     timeProperty,
-    mappedVarTestResult,
-    theme.contrastBlue,
-    theme.chartBlue,
+    predictionData,
+    theme.palette.charts.chartPink,
+    theme.palette.charts.chartBlue,
     timeseriesData
   ]);
 
+  const defaultBrushValueBounds = undefined;
   return (
-    <Content>
-      <LineChartContainer>
-        <LineChart
-          heading={selectedProp?.label || ''}
-          data={chartData}
-          numXAxisTicks={5}
-          numYAxisTicks={5}
-          formatXScale={formatUnixToDate}
-          formatYScale={formatNumber}
-          height={250}
-          padding={{ top: 30, bottom: 20, left: 40, right: 40 }}
-        />
-        <div>
-          {map(valueProperties, (prop) => {
-            const chartData = constructLineChartDataFromTs(
-              prop,
-              timeProperty,
-              timeseriesData,
-              theme.chartBlue,
-              prop.label
-            );
-            return (
-              <SparkLineChart
-                heading={prop?.label || ''}
-                data={chartData ? [chartData] : []}
-                // formatYScale={formatNumber}
-                height={90}
-                width={300}
-                onClick={handleSparklineClick(prop)}
-              />
-            );
-          })}
-        </div>
-      </LineChartContainer>
-
-      <Analysis>
-        <h5>Predict the future datapoints</h5>
-        <Subtitle>To make a prediction, we need to know a few characteristics of the data</Subtitle>
-        <StationarityTest
-          isVisible
-          stationarityTestResult={stationarityTestResult}
-          propertiesToTest={valueProperties}
-          timeseriesData={timeseriesData}
-          handleFetchDataStationarityTest={handleFetchDataStationarityTest}
-          isStationarityTestLoading={isStationarityTestLoading}
-        />
-        <WhiteNoiseTest
-          isVisible={!!stationarityTestResult}
-          whiteNoiseResult={whiteNoiseResult}
-          isWhiteNoiseLoading={isWhiteNoiseLoading}
-          handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
-        />
-        <CausalityTest
-          isVisible={!!whiteNoiseResult}
-          causalityTestResult={causalityTestResult}
-          isCausalityTestLoading={isCausalityTestLoading}
-          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-        />
-        <Prediction
-          isVisible={!!causalityTestResult}
-          // isVisible={true}
-          varTestResult={varTestResult}
-          isVARTestLoading={isVARTestLoading}
-          handleFetchVARTest={handleFetchVARTest}
-        />
-      </Analysis>
-    </Content>
+    <LineChartContainer>
+      <LineChart
+        heading={selectedProp?.label || ''}
+        data={chartData}
+        dataLabels={dataLabels}
+        numXAxisTicks={4}
+        numYAxisTicks={4}
+        formatXScale={formatUnixToDate}
+        formatYScale={formatNumber}
+        height={260}
+        padding={{ top: 16, bottom: 30, left: 40, right: 40 }}
+        defaultBrushValueBounds={defaultBrushValueBounds}
+        onSelectArea={onSelectedAreaChange}
+        selectedDataLength={selectedData?.length}
+        isResponsive={true}
+      />
+      <div>
+        {map(valueProperties, (prop) => {
+          const chartData = constructLineChartDataFromTs(
+            prop,
+            timeProperty,
+            timeseriesData,
+            theme.palette.charts.chartBlue,
+            prop.label
+          );
+          return (
+            <SparkLineChart
+              key={prop.label}
+              heading={prop?.label || ''}
+              data={chartData ? [chartData] : []}
+              height={90}
+              width={300}
+              onClick={handleSparklineClick(prop)}
+              padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+            />
+          );
+        })}
+      </div>
+    </LineChartContainer>
   );
 };
 

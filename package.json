@@ -72,9 +72,17 @@
   },
   "dependencies": {
     "@babel/eslint-parser": "7.23.3",
+    "@emotion/react": "11.11.4",
+    "@emotion/styled": "11.11.0",
+    "@fontsource/roboto": "5.0.12",
+    "@material/web": "1.4.0",
+    "@mui/icons-material": "5.15.14",
+    "@mui/material": "5.15.14",
+    "@mui/styled-engine-sc": "6.0.0-alpha.18",
     "@types/react": "18.2.47",
     "@types/react-dom": "18.2.18",
     "@visx/axis": "3.5.0",
+    "@visx/brush": "3.6.1",
     "@visx/event": "3.3.0",
     "@visx/grid": "3.5.0",
     "@visx/group": "3.3.0",
@@ -98,7 +106,7 @@
     "react-polyfills": "0.0.1",
     "react-router-dom": "^6.3.0",
     "react-select": "5.8.0",
-    "styled-components": "6.1.8",
+    "react-tabs": "6.0.2",
     "ts-loader": "9.5.1",
     "typescript": "5.3.3"
   }
