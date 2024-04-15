@@ -25,7 +25,7 @@ export default function PointTooltip({ tooltip, styles, formatXScale }: TProps) 
   const renderPointTooltipText = useCallback(
     () =>
       map(tooltip?.tooltipData, (point: TPointTooltipDatum) => (
-        <TooltipContent key={point?.data?.id}>
+        <TooltipContent key={`${point?.data?.id}-${point.data.valueX}`}>
           <TooltipDatumIndicator color={point?.color} />
           <TooltipText>
             {formatXScale(point.data.valueX)} - {point.data.valueY}

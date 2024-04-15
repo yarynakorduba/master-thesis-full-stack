@@ -155,6 +155,7 @@ const SparkLineChartsBlock = ({
           );
           return (
             <SparkLineChart
+              key={prop.label}
               heading={prop?.label || ''}
               data={chartData ? [chartData] : []}
               height={90}

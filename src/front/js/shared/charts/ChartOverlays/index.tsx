@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, Fragment } from 'react';
 import { Group } from '@visx/group';
 import { Line, Bar } from '@visx/shape';
 import { localPoint } from '@visx/event';
@@ -102,9 +102,8 @@ function ChartOverlays(
         const hover = handleHover(pointGroup);
         const leave = handleMouseLeave(pointGroup);
         return (
-          <>
+          <Fragment key={`c1-${pX}-${pY}`}>
             <circle
-              key={`c1-${pX}-${pY}`}
               cx={pX}
               cy={pY}
               r={7.5}
@@ -136,7 +135,7 @@ function ChartOverlays(
               onMouseLeave={leave}
               fill={lastPointColor}
             />
-          </>
+          </Fragment>
         );
       }),
     [closestPoints, handleHover, handleMouseLeave]
