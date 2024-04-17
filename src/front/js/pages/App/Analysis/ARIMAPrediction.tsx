@@ -9,8 +9,8 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import Loader from '../../shared/Loader';
-import { useInputState } from '../../hooks';
+import Loader from '../../../shared/Loader';
+import { useInputState } from '../../../hooks';
 
 type TProps = {
   readonly isVisible: boolean;

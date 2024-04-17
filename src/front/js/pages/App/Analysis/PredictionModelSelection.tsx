@@ -8,7 +8,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { EPredictionMode } from './types';
-import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
+import { Accordion, AccordionDetails, AccordionSummary } from '../../../shared/Accordion';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;

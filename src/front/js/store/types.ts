@@ -1,4 +1,4 @@
-import { EPredictionMode } from '../components/Analysis/types';
+import { EPredictionMode } from '../pages/App/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
 
 export type IConfigurationSlice = {

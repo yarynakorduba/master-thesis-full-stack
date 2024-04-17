@@ -9,7 +9,7 @@ import {
   fetchIsWhiteNoise,
   fetchVAR
 } from '../../apiCalls/analysis';
-import { EPredictionMode } from '../../components/Analysis/types';
+import { EPredictionMode } from '../../pages/App/Analysis/types';
 import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import {
   SET_DATA,

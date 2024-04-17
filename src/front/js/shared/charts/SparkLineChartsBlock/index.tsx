@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, isEmpty, map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
@@ -9,7 +10,6 @@ import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
-import { Box } from '@mui/material';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,

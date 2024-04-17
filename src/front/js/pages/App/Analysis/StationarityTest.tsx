@@ -7,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
 import Box from '@mui/material/Box';
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../shared/Loader';
-import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
+import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../shared/Loader';
+import { Accordion, AccordionDetails, AccordionSummary } from '../../../shared/Accordion';
 import { TTimeseriesData } from 'front/js/types';
 
 type TProps = {

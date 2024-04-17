@@ -13,8 +13,9 @@ import ARIMAPrediction from './ARIMAPrediction';
 import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
-import { TTimeseriesData } from '../../types';
-import { usePredictionMode } from '../../store/configuration/selectors';
+import { TTimeseriesData } from '../../../types';
+import { usePredictionMode } from '../../../store/configuration/selectors';
+import { Container } from '@mui/material';
 
 type TProps = {
   readonly stationarityTestResult;
@@ -115,7 +116,7 @@ const Analysis = ({
   ].filter(identity);
 
   return (
-    <div>
+    <Container sx={{ width: '50%' }}>
       <PredictionModelSelection
         predictionMode={predictionMode}
         setPredictionMode={setPredictionMode}
@@ -127,7 +128,7 @@ const Analysis = ({
           ))}
         </Stepper>
       </Box>
-    </div>
+    </Container>
   );
 };
 

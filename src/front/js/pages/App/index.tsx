@@ -3,12 +3,13 @@ import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
 import Drawer from '@mui/material/Drawer';
+import Stack from '@mui/material/Stack';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../../test_data/ArimaV2Dataset.json';
 import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
-import Analysis from '../../components/Analysis';
+import Analysis from './Analysis';
 import {
   useCausalityTest,
   useConfigData,
@@ -17,6 +18,7 @@ import {
   useStationarityTest,
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
+import PredictionHistory from './PredictionHistory';
 
 const App = () => {
   const methods = useForm();
@@ -110,22 +112,25 @@ const App = () => {
             dataLabels={dataLabels}
           />
         ) : null}
-        <Analysis
-          stationarityTestResult={stationarityTestResult}
-          valueProperties={valueProperties}
-          timeseriesData={timeseriesData}
-          handleFetchDataStationarityTest={() => handleFetchDataStationarityTest(valueProperties)}
-          isStationarityTestLoading={isStationarityTestLoading}
-          whiteNoiseResult={whiteNoiseResult}
-          isWhiteNoiseLoading={isWhiteNoiseLoading}
-          handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
-          predictionResult={predictionResult}
-          isPredictionLoading={isPredictionLoading}
-          isCausalityTestLoading={isCausalityTestLoading}
-          causalityTestResult={causalityTestResult}
-          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-          handleFetchPrediction={handleFetchPrediction}
-        />
+        <Stack direction="row">
+          <Analysis
+            stationarityTestResult={stationarityTestResult}
+            valueProperties={valueProperties}
+            timeseriesData={timeseriesData}
+            handleFetchDataStationarityTest={() => handleFetchDataStationarityTest(valueProperties)}
+            isStationarityTestLoading={isStationarityTestLoading}
+            whiteNoiseResult={whiteNoiseResult}
+            isWhiteNoiseLoading={isWhiteNoiseLoading}
+            handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+            predictionResult={predictionResult}
+            isPredictionLoading={isPredictionLoading}
+            isCausalityTestLoading={isCausalityTestLoading}
+            causalityTestResult={causalityTestResult}
+            handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+            handleFetchPrediction={handleFetchPrediction}
+          />
+          <PredictionHistory />
+        </Stack>
       </Content>
     </AppPage>
   );

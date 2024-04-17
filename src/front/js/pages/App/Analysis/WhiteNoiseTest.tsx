@@ -7,9 +7,9 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
 
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../shared/Loader';
-import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
+import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../shared/Loader';
+import { Accordion, AccordionDetails, AccordionSummary } from '../../../shared/Accordion';
 
 type TProps = {
   readonly isVisible: boolean;
