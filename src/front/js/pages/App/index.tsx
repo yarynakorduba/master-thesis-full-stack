@@ -13,6 +13,7 @@ import {
   useCausalityTest,
   useConfigData,
   usePrediction,
+  useSelectedConfigData,
   useStationarityTest,
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
@@ -20,14 +21,14 @@ import {
 const App = () => {
   const methods = useForm();
   const [timeseriesData, setTimeseriesData] = useConfigData();
+  const [selectedData, setSelectedData] = useSelectedConfigData();
+
+  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
+  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+
   useEffect(() => {
     setTimeseriesData(json as TTimeseriesData);
   }, [setTimeseriesData]);
-
-  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
-
-  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-  const [selectedData, setSelectedData] = useState<TTimeseriesData>(timeseriesData);
 
   const valueProperties = useMemo(
     (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],

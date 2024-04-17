@@ -5,10 +5,17 @@ import { EPredictionMode } from 'front/js/components/Analysis/types';
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetData = (): TTimeseriesData => useBoundStore((state) => state.data);
 export const useSetData = () => useBoundStore((state) => state.setData);
-
 export const useConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => void] => [
   useGetData(),
   useSetData()
+];
+
+export const useGetSelectedData = (): TTimeseriesData =>
+  useBoundStore((state) => state.selectedData);
+export const useSetSelectedData = () => useBoundStore((state) => state.setSelectedData);
+export const useSelectedConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => void] => [
+  useGetSelectedData(),
+  useSetSelectedData()
 ];
 
 export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);

@@ -8,7 +8,7 @@ import { identity } from 'lodash';
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
-import Prediction from './Prediction';
+import Prediction from './VARPrediction';
 import ARIMAPrediction from './ARIMAPrediction';
 import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';

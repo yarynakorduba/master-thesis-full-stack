@@ -210,18 +210,27 @@ const LineChart = ({
     [handleUpdateSelectedAreaOnBrushVisual, isTrainingDataSelectionOn, onSelectArea]
   );
 
-  const onBrushChange = (domain: Bounds | null) => {
-    if (!domain) return;
-    const { x0, x1 } = domain;
-    setBrushValueBounds({ x0, x1 });
-    if (isTrainingDataSelectionOn) {
-      handleUpdateSelectedAreaVisual();
-      handleUpdateSelectedAreaOnBrushVisual(
-        selectedAreaValueBounds?.x0,
-        selectedAreaValueBounds?.x1
-      );
-    }
-  };
+  const onBrushChange = useCallback(
+    (domain: Bounds | null) => {
+      if (!domain) return;
+      const { x0, x1 } = domain;
+      setBrushValueBounds({ x0, x1 });
+      if (isTrainingDataSelectionOn) {
+        handleUpdateSelectedAreaVisual();
+        handleUpdateSelectedAreaOnBrushVisual(
+          selectedAreaValueBounds?.x0,
+          selectedAreaValueBounds?.x1
+        );
+      }
+    },
+    [
+      handleUpdateSelectedAreaOnBrushVisual,
+      handleUpdateSelectedAreaVisual,
+      isTrainingDataSelectionOn,
+      selectedAreaValueBounds?.x0,
+      selectedAreaValueBounds?.x1
+    ]
+  );
 
   useEffect(() => {
     if (isNil(brushValueBounds)) setFilteredData(visibleLinesData);
@@ -268,6 +277,15 @@ const LineChart = ({
     visibleLinesData,
     (lineData) => lineData.color !== hiddenColor
   );
+
+  useEffect(() => {
+    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1);
+  }, [
+    handleUpdateSelectedAreaOnBrushVisual,
+    selectedAreaValueBounds?.x0,
+    selectedAreaValueBounds?.x1,
+    visibleLinesData
+  ]);
 
   return (
     <>

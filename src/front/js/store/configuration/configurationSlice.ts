@@ -10,75 +10,28 @@ import {
   fetchVAR
 } from '../../apiCalls/analysis';
 import { EPredictionMode } from '../../components/Analysis/types';
-import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
-
-export type IConfigurationSlice = {
-  // readonly id: string;
-  readonly data: TTimeseriesData;
-  readonly setData: (data: TTimeseriesData) => void;
-
-  readonly whiteNoiseTest;
-  readonly isWhiteNoiseTestLoading: boolean;
-  readonly fetchWhiteNoiseTest: any;
-
-  readonly stationarityTest;
-  readonly isStationarityTestLoading: boolean;
-
-  readonly fetchStationarityTest;
-
-  readonly predictionMode: EPredictionMode;
-  readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
-
-  readonly prediction: any;
-  readonly isPredictionLoading: boolean;
-
-  readonly fetchARIMAPrediction: (params: any) => Promise<void>;
-  readonly fetchVARPrediction: (params: any) => Promise<void>;
-  readonly fetchPrediction: (params: any) => Promise<void>;
-
-  readonly causalityTest;
-  readonly isCausalityTestLoading: boolean;
-  readonly fetchCausalityTest: (selectedProps: TDataProperty[]) => Promise<void>;
-
-  // readonly currentRun: {
-  //   readonly trainingData: any;
-  //   readonly causalityTest;
-  //   readonly whiteNoiseTest: any;
-  //   readonly prediction: any;
-  // };
-
-  // readonly predictionHistory;
-  // -->     readonly data: any;
-  // -->     readonly trainingData: any;
-  // -->     readonly causalityTest;
-  // -->     readonly whiteNoiseTest: any;
-  // -->     readonly prediction: any;
-};
-
-export type TStoreMiddlewares = [['zustand/devtools', never]];
-
-const SET_DATA = 'SET_DATA';
-const SET_PREDICTION_MODE = 'SET_PREDICTION_MODE';
-
-const FETCH_ARIMA_PREDICTION_START = 'FETCH_ARIMA_PREDICTION_START';
-const FETCH_ARIMA_PREDICTION_SUCCESS = 'FETCH_ARIMA_PREDICTION_SUCCESS';
-const FETCH_ARIMA_PREDICTION_FAILURE = 'FETCH_ARIMA_PREDICTION_FAILURE';
-
-const FETCH_VAR_PREDICTION_START = 'FETCH_VAR_PREDICTION_START';
-const FETCH_VAR_PREDICTION_SUCCESS = 'FETCH_VAR_PREDICTION_SUCCESS';
-const FETCH_VAR_PREDICTION_FAILURE = 'FETCH_VAR_PREDICTION_FAILURE';
-
-const FETCH_WHITE_NOISE_TEST_START = 'FETCH_WHITE_NOISE_TEST_START';
-const FETCH_WHITE_NOISE_TEST_SUCCESS = 'FETCH_WHITE_NOISE_TEST_SUCCESS';
-const FETCH_WHITE_NOISE_TEST_FAILURE = 'FETCH_WHITE_NOISE_TEST_FAILURE';
-
-const FETCH_STATIONARITY_TEST_START = 'FETCH_STATIONARITY_TEST_START';
-const FETCH_STATIONARITY_TEST_SUCCESS = 'FETCH_WHITE_STATIONARITY_SUCCESS';
-const FETCH_STATIONARITY_TEST_FAILURE = 'FETCH_WHITE_STATIONARITY_FAILURE';
-
-const FETCH_CAUSALITY_TEST_START = 'FETCH_CAUSALITY_TEST_START';
-const FETCH_CAUSALITY_TEST_SUCCESS = 'FETCH_CAUSALITY_TEST_SUCCESS';
-const FETCH_CAUSALITY_TEST_FAILURE = 'FETCH_CAUSALITY_TEST_FAILURE';
+import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
+import {
+  SET_DATA,
+  SET_SELECTED_DATA,
+  FETCH_WHITE_NOISE_TEST_START,
+  FETCH_WHITE_NOISE_TEST_SUCCESS,
+  FETCH_WHITE_NOISE_TEST_FAILURE,
+  FETCH_STATIONARITY_TEST_START,
+  FETCH_STATIONARITY_TEST_SUCCESS,
+  FETCH_STATIONARITY_TEST_FAILURE,
+  FETCH_CAUSALITY_TEST_START,
+  FETCH_CAUSALITY_TEST_SUCCESS,
+  FETCH_CAUSALITY_TEST_FAILURE,
+  SET_PREDICTION_MODE,
+  FETCH_ARIMA_PREDICTION_START,
+  FETCH_ARIMA_PREDICTION_SUCCESS,
+  FETCH_ARIMA_PREDICTION_FAILURE,
+  FETCH_VAR_PREDICTION_START,
+  FETCH_VAR_PREDICTION_SUCCESS,
+  FETCH_VAR_PREDICTION_FAILURE
+} from './actionNames';
+import { IConfigurationSlice, TStoreMiddlewares } from '../types';
 
 export const createConfigurationSlice: StateCreator<
   IConfigurationSlice,
@@ -86,8 +39,12 @@ export const createConfigurationSlice: StateCreator<
   [],
   IConfigurationSlice
 > = (set, get) => ({
-  setData: (data: TTimeseriesData) => set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
   data: [],
+  selectedData: [],
+
+  setData: (data: TTimeseriesData) => set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
+  setSelectedData: (selectedData: TTimeseriesData) =>
+    set(() => ({ selectedData }), SHOULD_CLEAR_STORE, SET_SELECTED_DATA),
 
   whiteNoiseTest: null,
   isWhiteNoiseTestLoading: false,
