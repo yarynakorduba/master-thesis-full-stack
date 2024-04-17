@@ -8,7 +8,8 @@ import SparkLineChart from '../LineChart/SparkLineChart';
 import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
-import { LineChartContainer } from './styles';
+import { LineChartContainer, SparkLineChartsContainer } from './styles';
+import { Box } from '@mui/material';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
@@ -129,23 +130,25 @@ const SparkLineChartsBlock = ({
   const defaultBrushValueBounds = undefined;
   return (
     <LineChartContainer>
-      <LineChart
-        heading={selectedProp?.label || ''}
-        data={chartData}
-        dataLabels={dataLabels}
-        numXAxisTicks={4}
-        numYAxisTicks={4}
-        formatXScale={formatUnixToDate}
-        formatYScale={formatNumber}
-        height={260}
-        padding={{ top: 16, bottom: 30, left: 40, right: 40 }}
-        defaultBrushValueBounds={defaultBrushValueBounds}
-        onSelectArea={onSelectedAreaChange}
-        selectedDataLength={selectedData?.length}
-        isResponsive={true}
-      />
+      <Box width="100%">
+        <LineChart
+          heading={selectedProp?.label || ''}
+          data={chartData}
+          dataLabels={dataLabels}
+          numXAxisTicks={4}
+          numYAxisTicks={4}
+          formatXScale={formatUnixToDate}
+          formatYScale={formatNumber}
+          height={260}
+          padding={{ top: 16, bottom: 30, left: 40, right: 40 }}
+          defaultBrushValueBounds={defaultBrushValueBounds}
+          onSelectArea={onSelectedAreaChange}
+          selectedDataLength={selectedData?.length}
+          isResponsive={true}
+        />
+      </Box>
       {valueProperties.length > 1 ? (
-        <div>
+        <SparkLineChartsContainer>
           {map(valueProperties, (prop) => {
             const chartData = constructLineChartDataFromTs(
               prop,
@@ -166,7 +169,7 @@ const SparkLineChartsBlock = ({
               />
             );
           })}
-        </div>
+        </SparkLineChartsContainer>
       ) : null}
     </LineChartContainer>
   );
