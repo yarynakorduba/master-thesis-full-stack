@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
@@ -10,20 +10,25 @@ import json from '../../../../../test_data/ArimaV2Dataset.json';
 import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
 import Analysis from '../../components/Analysis';
 import {
-  useDataStationarityTest,
-  useWhiteNoise,
-  useDataCausalityTest,
-  useVAR,
-  useARIMA
-} from '../../components/Analysis/hooks';
+  useCausalityTest,
+  useConfigData,
+  usePrediction,
+  useSelectedConfigData,
+  useStationarityTest,
+  useWhiteNoiseTest
+} from '../../store/configuration/selectors';
 
 const App = () => {
   const methods = useForm();
-  const [timeseriesData, setTimeseriesData] = useState<TTimeseriesData>(json);
-  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
+  const [timeseriesData, setTimeseriesData] = useConfigData();
+  const [selectedData, setSelectedData] = useSelectedConfigData();
 
+  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-  const [selectedData, setSelectedData] = useState(timeseriesData);
+
+  useEffect(() => {
+    setTimeseriesData(json as TTimeseriesData);
+  }, [setTimeseriesData]);
 
   const valueProperties = useMemo(
     (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
@@ -31,20 +36,18 @@ const App = () => {
   );
   const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
 
-  const { isStationarityTestLoading, stationarityTestResult, handleFetchDataStationarityTest } =
-    useDataStationarityTest(selectedData, valueProperties);
-  const { isWhiteNoiseLoading, whiteNoiseResult, handleFetchIsWhiteNoise } = useWhiteNoise(
-    selectedData,
-    valueProperties
-  );
-  const { isCausalityTestLoading, causalityTestResult, handleFetchGrangerDataCausalityTest } =
-    useDataCausalityTest(selectedData, valueProperties);
+  const [stationarityTestResult, handleFetchDataStationarityTest, isStationarityTestLoading] =
+    useStationarityTest();
 
-  const { isVARLoading, varResult, handleFetchVAR } = useVAR(selectedData);
-  const { isARIMALoading, arimaResult, handleFetchARIMA } = useARIMA(selectedData);
+  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] = useWhiteNoiseTest();
+
+  const [causalityTestResult, handleFetchGrangerDataCausalityTest, isCausalityTestLoading] =
+    useCausalityTest();
+
+  const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
 
   const mappedARIMAPrediction = useMemo(() => {
-    if (!(selectedProp?.value && arimaResult)) return [[], []];
+    if (!(selectedProp?.value && predictionResult)) return [[], []];
 
     const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
       return {
@@ -53,16 +56,16 @@ const App = () => {
       };
     };
     return [
-      map(arimaResult?.prediction, convertARIMADatapoint),
-      map(arimaResult?.realPrediction, convertARIMADatapoint)
+      map(predictionResult?.prediction, convertARIMADatapoint),
+      map(predictionResult?.realPrediction, convertARIMADatapoint)
     ];
-  }, [selectedProp?.value, arimaResult, timeProperty.value]);
+  }, [selectedProp?.value, predictionResult, timeProperty.value]);
 
   const dataLabels =
     (selectedProp?.value &&
-      arimaResult && [
+      predictionResult && [
         {
-          valueX: new Date(arimaResult?.lastTrainPoint?.dateTime).getTime(),
+          valueX: new Date(predictionResult?.lastTrainPoint?.dateTime).getTime(),
           label: 'Train data threshold'
         }
       ]) ||
@@ -111,20 +114,17 @@ const App = () => {
           stationarityTestResult={stationarityTestResult}
           valueProperties={valueProperties}
           timeseriesData={timeseriesData}
-          handleFetchDataStationarityTest={handleFetchDataStationarityTest}
+          handleFetchDataStationarityTest={() => handleFetchDataStationarityTest(valueProperties)}
           isStationarityTestLoading={isStationarityTestLoading}
           whiteNoiseResult={whiteNoiseResult}
           isWhiteNoiseLoading={isWhiteNoiseLoading}
-          handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
-          arimaResult={arimaResult}
-          isARIMALoading={isARIMALoading}
+          handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+          predictionResult={predictionResult}
+          isPredictionLoading={isPredictionLoading}
           isCausalityTestLoading={isCausalityTestLoading}
           causalityTestResult={causalityTestResult}
           handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-          handleFetchARIMA={handleFetchARIMA}
-          isVARLoading={isVARLoading}
-          varResult={varResult}
-          handleFetchVAR={handleFetchVAR}
+          handleFetchPrediction={handleFetchPrediction}
         />
       </Content>
     </AppPage>

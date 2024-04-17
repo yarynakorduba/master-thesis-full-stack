@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import Typography from '@mui/material/Typography';
+import React from 'react';
 
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -9,12 +8,13 @@ import { identity } from 'lodash';
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
-import Prediction from './Prediction';
+import Prediction from './VARPrediction';
 import ARIMAPrediction from './ARIMAPrediction';
-import { EPredictionMode, TARIMAResult } from './types';
+import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
-import { TTimeseriesData } from 'front/js/types';
+import { TTimeseriesData } from '../../types';
+import { usePredictionMode } from '../../store/configuration/selectors';
 
 type TProps = {
   readonly stationarityTestResult;
@@ -25,17 +25,13 @@ type TProps = {
   readonly whiteNoiseResult;
   readonly isWhiteNoiseLoading: boolean;
   readonly handleFetchIsWhiteNoise;
-  readonly arimaResult?: TARIMAResult;
-  readonly isARIMALoading: boolean;
-  readonly handleFetchARIMA;
+  readonly predictionResult?: TARIMAResult | TVARResult; // tvarresult
+  readonly isPredictionLoading: boolean;
+  readonly handleFetchPrediction;
 
   readonly causalityTestResult?;
   readonly isCausalityTestLoading: boolean;
   readonly handleFetchGrangerDataCausalityTest?;
-
-  readonly varResult;
-  readonly isVARLoading: boolean;
-  readonly handleFetchVAR;
 };
 
 const Analysis = ({
@@ -47,19 +43,15 @@ const Analysis = ({
   whiteNoiseResult,
   isWhiteNoiseLoading,
   handleFetchIsWhiteNoise,
-  arimaResult,
-  isARIMALoading,
-  handleFetchARIMA,
+  predictionResult,
+  isPredictionLoading,
+  handleFetchPrediction,
 
   causalityTestResult,
   isCausalityTestLoading,
-  handleFetchGrangerDataCausalityTest,
-
-  varResult,
-  isVARLoading,
-  handleFetchVAR
+  handleFetchGrangerDataCausalityTest
 }: TProps) => {
-  const [predictionMode, setPredictionMode] = useState(EPredictionMode.ARIMA);
+  const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
 
   const steps = [
@@ -106,18 +98,18 @@ const Analysis = ({
           index={key}
           isVisible
           handleSelectStep={handleSelectStep}
-          varResult={varResult}
-          isVARLoading={isVARLoading}
-          handleFetchVAR={handleFetchVAR}
+          varResult={predictionResult}
+          isVARLoading={isPredictionLoading}
+          handleFetchVAR={handleFetchPrediction}
         />
       ) : (
         <ARIMAPrediction
           index={key}
           isVisible
           handleSelectStep={handleSelectStep}
-          arimaResult={arimaResult}
-          isVARLoading={isARIMALoading}
-          handlePredict={handleFetchARIMA}
+          arimaResult={predictionResult}
+          isVARLoading={isPredictionLoading}
+          handlePredict={handleFetchPrediction}
         />
       )
   ].filter(identity);

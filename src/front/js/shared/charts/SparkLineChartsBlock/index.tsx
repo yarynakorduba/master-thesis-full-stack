@@ -144,28 +144,30 @@ const SparkLineChartsBlock = ({
         selectedDataLength={selectedData?.length}
         isResponsive={true}
       />
-      <div>
-        {map(valueProperties, (prop) => {
-          const chartData = constructLineChartDataFromTs(
-            prop,
-            timeProperty,
-            timeseriesData,
-            theme.palette.charts.chartBlue,
-            prop.label
-          );
-          return (
-            <SparkLineChart
-              key={prop.label}
-              heading={prop?.label || ''}
-              data={chartData ? [chartData] : []}
-              height={90}
-              width={300}
-              onClick={handleSparklineClick(prop)}
-              padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
-            />
-          );
-        })}
-      </div>
+      {valueProperties.length > 1 ? (
+        <div>
+          {map(valueProperties, (prop) => {
+            const chartData = constructLineChartDataFromTs(
+              prop,
+              timeProperty,
+              timeseriesData,
+              theme.palette.charts.chartBlue,
+              prop.label
+            );
+            return (
+              <SparkLineChart
+                key={prop.label}
+                heading={prop?.label || ''}
+                data={chartData ? [chartData] : []}
+                height={90}
+                width={300}
+                onClick={handleSparklineClick(prop)}
+                padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+              />
+            );
+          })}
+        </div>
+      ) : null}
     </LineChartContainer>
   );
 };
