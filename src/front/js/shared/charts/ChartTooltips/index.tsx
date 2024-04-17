@@ -90,7 +90,8 @@ export default function ChartTooltips({
             ...dataLabelTooltipStyles,
             background: palette.secondary.main,
             top: 0,
-            transform: 'translate(calc(-50% - 0.6rem), -50%)'
+            transform: 'translate(calc(-50% - 0.6rem), -50%)',
+            whiteSpace: 'nowrap'
           }}
         />
       ))}

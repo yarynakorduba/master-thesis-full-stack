@@ -163,7 +163,7 @@ const LineChart = ({
     [xBrushScale]
   );
 
-  const handleUpdateSelectedAreaVisual = () => {
+  const handleUpdateSelectedAreaVisual = useCallback(() => {
     if (selectedAreaRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
         const newExtent = selectedAreaRef.current?.getExtent(
@@ -182,7 +182,7 @@ const LineChart = ({
       };
       selectedAreaRef.current.updateBrush(updater);
     }
-  };
+  }, [selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1, xScale, xyAreaHeight]);
 
   // this is needed to remove the selected area when the selection
   // is cleared
