@@ -141,24 +141,27 @@ const LineChart = ({
   const selectedAreaRef = useRef<BaseBrush | null>(null);
   const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
 
-  const handleUpdateSelectedAreaOnBrushVisual = (x0, x1) => {
-    const selectedAreaOnBrushUpdater: UpdateBrush = (prevBrush) => {
-      const newExtent = selectedAreaOnBrushRef.current?.getExtent(
-        { x: xBrushScale(x0) },
-        { x: xBrushScale(x1) }
-      );
-      if (!newExtent) return prevBrush;
-      const newState: BaseBrushState = {
-        ...prevBrush,
-        start: { y: 0, x: newExtent?.x0 },
-        end: { y: 100, x: newExtent?.x1 },
-        extent: newExtent
-      };
+  const handleUpdateSelectedAreaOnBrushVisual = useCallback(
+    (x0, x1) => {
+      const selectedAreaOnBrushUpdater: UpdateBrush = (prevBrush) => {
+        const newExtent = selectedAreaOnBrushRef.current?.getExtent(
+          { x: xBrushScale(x0) },
+          { x: xBrushScale(x1) }
+        );
+        if (!newExtent) return prevBrush;
+        const newState: BaseBrushState = {
+          ...prevBrush,
+          start: { y: 0, x: newExtent?.x0 },
+          end: { y: 100, x: newExtent?.x1 },
+          extent: newExtent
+        };
 
-      return newState;
-    };
-    selectedAreaOnBrushRef.current?.updateBrush(selectedAreaOnBrushUpdater);
-  };
+        return newState;
+      };
+      selectedAreaOnBrushRef.current?.updateBrush(selectedAreaOnBrushUpdater);
+    },
+    [xBrushScale]
+  );
 
   const handleUpdateSelectedAreaVisual = () => {
     if (selectedAreaRef?.current) {
@@ -325,7 +328,12 @@ const LineChart = ({
               numTicks={numYAxisTicks}
             />
             {map(dataLabels, (dataLabel) => (
-              <DataLabelLine lineData={dataLabel} height={xyAreaHeight} xScale={xScale} />
+              <DataLabelLine
+                key={`${dataLabel.label}-${dataLabel.valueX}`}
+                lineData={dataLabel}
+                height={xyAreaHeight}
+                xScale={xScale}
+              />
             ))}
             {sortedDataForLines.map((lineData) => (
               <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />

@@ -63,7 +63,7 @@ class Arima:
     def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
         # TODO: if data empty -> exit with error
         df_input = pd.DataFrame.from_records(data)
-        df_input["date"] = pd.to_datetime(df_input['date'], unit = 'ms')
+        df_input["date"] = pd.to_datetime(df_input['date'])
         df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
         df_input = df_input.drop(columns=['date'])
         print(df_input)

@@ -23,3 +23,5 @@ export type TARIMAResult = {
   readonly prediction: { [msTimestamp: string]: number };
   readonly realPrediction: { [msTimestamp: string]: number };
 };
+
+export type TVARResult = any;

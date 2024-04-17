@@ -3,16 +3,13 @@ import { useState, useCallback, useEffect } from 'react';
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
-  fetchGrangerDataCausalityTest,
-  fetchVARTest,
-  fetchARIMA
+  fetchGrangerDataCausalityTest
 } from '../../apiCalls/analysis';
 import { useFetch } from '../../hooks/fetch';
 import { TTimeseriesData, TDataProperty } from '../../types';
-import { TARIMAParams, TARIMAResult } from './types';
 
 type TWhiteNoiseResponse = { readonly isWhiteNoise: boolean };
-type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
+export type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
 type TWhiteNoiseInfo = {
   readonly whiteNoiseResult: TWhiteNoiseResult;
   readonly isWhiteNoiseLoading: boolean;
@@ -66,129 +63,6 @@ type TStationarityInfo = {
   readonly stationarityTestResult: TStationarityResult;
   readonly isStationarityTestLoading: boolean;
   readonly handleFetchDataStationarityTest: () => Promise<void>;
-};
-export const useDataStationarityTest = (
-  timeseriesData: TTimeseriesData,
-  valueProperties: TDataProperty[] | undefined
-): TStationarityInfo => {
-  const [result, setResult] = useState<TStationarityResult>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { fetch: handleFetchDataStationarityTest } = useFetch(fetchDataStationarityTest);
-
-  useEffect(() => {
-    setResult(undefined);
-  }, [valueProperties, timeseriesData]);
-
-  const handleFetch = useCallback(async () => {
-    if (!valueProperties?.length) return;
-    setIsLoading(true);
-
-    const responses = await Promise.all(
-      map(valueProperties, async (selectedProp) => {
-        const dataForAnalysis = selectedProp?.value
-          ? map(timeseriesData, (datum) => datum[selectedProp.value])
-          : undefined;
-        if (dataForAnalysis) {
-          return await handleFetchDataStationarityTest(dataForAnalysis);
-        }
-      })
-    );
-    const newResult = reduce(
-      responses,
-      (accum, response, index) => {
-        return { ...accum, [valueProperties?.[index]?.value]: response?.data };
-      },
-      result || {}
-    );
-    setResult(newResult);
-    setIsLoading(false);
-  }, [valueProperties, result, timeseriesData, handleFetchDataStationarityTest]);
-
-  return {
-    stationarityTestResult: result,
-    isStationarityTestLoading: isLoading,
-    handleFetchDataStationarityTest: handleFetch
-  };
-};
-
-export const useDataCausalityTest = (
-  timeseriesData: TTimeseriesData,
-  selectedProps: TDataProperty[]
-) => {
-  const {
-    data: result,
-    isLoading,
-    fetch: handleFetchGrangerDataCausalityTest
-  } = useFetch(fetchGrangerDataCausalityTest);
-
-  const handleFetch = useCallback(() => {
-    if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
-      const dataForAnalysis = map(timeseriesData, (datum) => [
-        datum[selectedProps[0].value],
-        datum[selectedProps[1].value]
-      ]);
-
-      if (dataForAnalysis) {
-        handleFetchGrangerDataCausalityTest(dataForAnalysis, [
-          selectedProps[0].value,
-          selectedProps[1].value
-        ]);
-      }
-    }
-  }, [selectedProps, handleFetchGrangerDataCausalityTest, timeseriesData]);
-
-  return {
-    causalityTestResult: result,
-    isCausalityTestLoading: isLoading,
-    handleFetchGrangerDataCausalityTest: handleFetch
-  };
-};
-
-export const useVAR = (timeseriesData: TTimeseriesData) => {
-  const { fetch: fetchData } = useFetch(fetchVARTest);
-  const [result, setResult] = useState<object | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleFetchVAR = useCallback(
-    async (lagOrder: number, horizon: number) => {
-      if (timeseriesData) {
-        setIsLoading(true);
-        const newResult = await fetchData(timeseriesData, lagOrder, horizon);
-        setResult(newResult?.data);
-        setIsLoading(false);
-      }
-    },
-    [timeseriesData, fetchData]
-  );
-
-  return { varResult: result, isVARLoading: isLoading, handleFetchVAR };
-};
-
-type TUseARIMAResult = {
-  readonly arimaResult?: TARIMAResult;
-  readonly isARIMALoading: boolean;
-  readonly handleFetchARIMA: (parameters: TARIMAParams) => Promise<void>;
-};
-
-export const useARIMA = (timeseriesData: TTimeseriesData): TUseARIMAResult => {
-  const { fetch: fetchData } = useFetch(fetchARIMA);
-  const [result, setResult] = useState<TARIMAResult | undefined>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleFetchARIMA = useCallback(
-    async (parameters: TARIMAParams) => {
-      if (timeseriesData) {
-        setIsLoading(true);
-        const newResult = await fetchData(timeseriesData, parameters);
-
-        setResult(newResult?.data);
-        setIsLoading(false);
-      }
-    },
-    [timeseriesData, fetchData]
-  );
-
-  return { arimaResult: result, isARIMALoading: isLoading, handleFetchARIMA };
 };
 
 type TUSeStepperResult = {
