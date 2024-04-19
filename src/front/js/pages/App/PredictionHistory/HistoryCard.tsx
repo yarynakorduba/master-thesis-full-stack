@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button, Card, CardActions, CardContent, Typography } from '@mui/material';
+import { round } from 'lodash';
+
 import { THistoryEntry, TLastTrainPoint, TPredictedPoints } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
-import { round } from 'lodash';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;

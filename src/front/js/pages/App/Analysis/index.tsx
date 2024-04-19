@@ -15,7 +15,6 @@ import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
 import { TTimeseriesData } from '../../../types';
 import { usePredictionMode } from '../../../store/configuration/selectors';
-import { Container } from '@mui/material';
 
 type TProps = {
   readonly stationarityTestResult;
