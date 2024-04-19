@@ -9,7 +9,7 @@ import {
   fetchIsWhiteNoise,
   fetchVAR
 } from '../../apiCalls/analysis';
-import { EPredictionMode } from '../../pages/App/Analysis/types';
+import { EPredictionMode, THistoryEntry } from '../../pages/App/Analysis/types';
 import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import {
   SET_DATA,
@@ -29,15 +29,16 @@ import {
   FETCH_ARIMA_PREDICTION_FAILURE,
   FETCH_VAR_PREDICTION_START,
   FETCH_VAR_PREDICTION_SUCCESS,
-  FETCH_VAR_PREDICTION_FAILURE
+  FETCH_VAR_PREDICTION_FAILURE,
+  ADD_ENTRY_TO_PREDICTION_HISTORY
 } from './actionNames';
-import { IConfigurationSlice, TStoreMiddlewares } from '../types';
+import { TConfigurationSlice, TStoreMiddlewares } from '../types';
 
 export const createConfigurationSlice: StateCreator<
-  IConfigurationSlice,
+  TConfigurationSlice,
   TStoreMiddlewares,
   [],
-  IConfigurationSlice
+  TConfigurationSlice
 > = (set, get) => ({
   data: [],
   selectedData: [],
@@ -46,12 +47,12 @@ export const createConfigurationSlice: StateCreator<
   setSelectedData: (selectedData: TTimeseriesData) =>
     set(() => ({ selectedData }), SHOULD_CLEAR_STORE, SET_SELECTED_DATA),
 
-  whiteNoiseTest: null,
+  whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
   fetchWhiteNoiseTest: async (valueProperties) => {
     const timeseriesData = get().data;
     set(
-      () => ({ whiteNoiseTest: null, isWhiteNoiseTestLoading: true }),
+      () => ({ whiteNoiseTest: undefined, isWhiteNoiseTestLoading: true }),
       SHOULD_CLEAR_STORE,
       FETCH_WHITE_NOISE_TEST_START
     );
@@ -83,13 +84,13 @@ export const createConfigurationSlice: StateCreator<
     );
   },
 
-  stationarityTest: null,
+  stationarityTest: undefined,
   isStationarityTestLoading: false,
 
   fetchStationarityTest: async (valueProperties) => {
     const timeseriesData = get().data;
     set(
-      () => ({ stationarityTest: null, isStationarityTestLoading: true }),
+      () => ({ stationarityTest: undefined, isStationarityTestLoading: true }),
       SHOULD_CLEAR_STORE,
       FETCH_STATIONARITY_TEST_START
     );
@@ -120,7 +121,7 @@ export const createConfigurationSlice: StateCreator<
     );
   },
 
-  causalityTest: null,
+  causalityTest: undefined,
   isCausalityTestLoading: false,
 
   fetchCausalityTest: async (selectedProps) => {
@@ -134,7 +135,7 @@ export const createConfigurationSlice: StateCreator<
 
       if (dataForAnalysis) {
         set(
-          () => ({ causalityTest: null, isCausalityTestLoading: true }),
+          () => ({ causalityTest: undefined, isCausalityTestLoading: true }),
           SHOULD_CLEAR_STORE,
           FETCH_CAUSALITY_TEST_START
         );
@@ -157,12 +158,12 @@ export const createConfigurationSlice: StateCreator<
   setPredictionMode: (predictionMode: EPredictionMode) =>
     set(() => ({ predictionMode }), SHOULD_CLEAR_STORE, SET_PREDICTION_MODE),
 
-  prediction: null,
+  prediction: undefined,
   isPredictionLoading: false,
   fetchARIMAPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ prediction: null, isPredictionLoading: true }),
+      () => ({ prediction: undefined, isPredictionLoading: true }),
       SHOULD_CLEAR_STORE,
       FETCH_ARIMA_PREDICTION_START
     );
@@ -179,7 +180,7 @@ export const createConfigurationSlice: StateCreator<
   fetchVARPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ prediction: null, isPredictionLoading: true }),
+      () => ({ prediction: undefined, isPredictionLoading: true }),
       SHOULD_CLEAR_STORE,
       FETCH_VAR_PREDICTION_START
     );
@@ -196,9 +197,27 @@ export const createConfigurationSlice: StateCreator<
   fetchPrediction: async (parameters) => {
     const predictionMode = get().predictionMode;
     if (predictionMode === EPredictionMode.ARIMA) {
-      get().fetchARIMAPrediction(parameters);
+      await get().fetchARIMAPrediction(parameters);
     } else if (predictionMode === EPredictionMode.VAR) {
-      get().fetchVARPrediction(parameters);
+      await get().fetchVARPrediction(parameters);
     }
+
+    const prediction = get().prediction;
+    if (prediction) {
+      get().addEntryToPredictionHistory({
+        ...prediction,
+        timestamp: new Date().toISOString(),
+        id: get().predictionHistory.length
+      });
+    }
+  },
+
+  predictionHistory: [],
+  addEntryToPredictionHistory: (entry: THistoryEntry) => {
+    set(
+      () => ({ predictionHistory: [...get().predictionHistory, entry] }),
+      SHOULD_CLEAR_STORE,
+      ADD_ENTRY_TO_PREDICTION_HISTORY
+    );
   }
 });

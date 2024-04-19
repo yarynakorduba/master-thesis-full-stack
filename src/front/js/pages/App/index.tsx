@@ -3,7 +3,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
 import Drawer from '@mui/material/Drawer';
-import Stack from '@mui/material/Stack';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
@@ -19,6 +18,7 @@ import {
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
+import { Divider, Grid } from '@mui/material';
 
 const App = () => {
   const methods = useForm();
@@ -112,25 +112,31 @@ const App = () => {
             dataLabels={dataLabels}
           />
         ) : null}
-        <Stack direction="row">
-          <Analysis
-            stationarityTestResult={stationarityTestResult}
-            valueProperties={valueProperties}
-            timeseriesData={timeseriesData}
-            handleFetchDataStationarityTest={() => handleFetchDataStationarityTest(valueProperties)}
-            isStationarityTestLoading={isStationarityTestLoading}
-            whiteNoiseResult={whiteNoiseResult}
-            isWhiteNoiseLoading={isWhiteNoiseLoading}
-            handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
-            predictionResult={predictionResult}
-            isPredictionLoading={isPredictionLoading}
-            isCausalityTestLoading={isCausalityTestLoading}
-            causalityTestResult={causalityTestResult}
-            handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-            handleFetchPrediction={handleFetchPrediction}
-          />
-          <PredictionHistory />
-        </Stack>
+        <Grid container justifyContent="start">
+          <Grid item md={6}>
+            <Analysis
+              stationarityTestResult={stationarityTestResult}
+              valueProperties={valueProperties}
+              timeseriesData={timeseriesData}
+              handleFetchDataStationarityTest={() =>
+                handleFetchDataStationarityTest(valueProperties)
+              }
+              isStationarityTestLoading={isStationarityTestLoading}
+              whiteNoiseResult={whiteNoiseResult}
+              isWhiteNoiseLoading={isWhiteNoiseLoading}
+              handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+              predictionResult={predictionResult}
+              isPredictionLoading={isPredictionLoading}
+              isCausalityTestLoading={isCausalityTestLoading}
+              causalityTestResult={causalityTestResult}
+              handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+              handleFetchPrediction={handleFetchPrediction}
+            />
+          </Grid>
+          <Grid item md={6}>
+            <PredictionHistory />
+          </Grid>
+        </Grid>
       </Content>
     </AppPage>
   );

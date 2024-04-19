@@ -1,4 +1,4 @@
-import { TARIMAParams } from '../pages/App/Analysis/types';
+import { TARIMAUserParams } from '../pages/App/Analysis/types';
 
 export const handleFetch = async (fetchRequest): Promise<any> => {
   try {
@@ -58,7 +58,7 @@ export const fetchVAR = async (data, parameters: { lagOrder: number; horizon: nu
   );
 };
 
-export const fetchARIMA = async (data, parameters: TARIMAParams) => {
+export const fetchARIMA = async (data, parameters: TARIMAUserParams) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/get-arima-prediction`, {
       method: 'POST',

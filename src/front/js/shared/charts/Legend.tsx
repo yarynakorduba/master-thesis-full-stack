@@ -5,10 +5,11 @@ import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { maxBy, minBy } from 'lodash';
+import { maxBy, minBy, round } from 'lodash';
 import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
+import { PRECISION } from '../../consts';
 
 const StyledContainer = styled('div')`
   display: flex;
@@ -117,8 +118,9 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
                   variant="body2"
                   color={isHidden ? palette.text.disabled : palette.text.primary}
                 >
-                  ({legendItem?.datum?.dataLength} entries, min: {legendItem?.datum?.min.valueY},
-                  max: {legendItem?.datum?.max?.valueY})
+                  ({legendItem?.datum?.dataLength} entries, min:{' '}
+                  {round(legendItem?.datum?.min.valueY, PRECISION)}, max:{' '}
+                  {round(legendItem?.datum?.max?.valueY, PRECISION)})
                 </Typography>
               </LegendItem>
             );

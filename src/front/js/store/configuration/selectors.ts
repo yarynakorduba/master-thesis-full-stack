@@ -1,6 +1,6 @@
 import { TTimeseriesData } from 'front/js/types';
 import { useBoundStore } from '..';
-import { EPredictionMode } from 'front/js/pages/App/Analysis/types';
+import { EPredictionMode, THistoryEntry } from 'front/js/pages/App/Analysis/types';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetData = (): TTimeseriesData => useBoundStore((state) => state.data);
@@ -66,3 +66,6 @@ export const useCausalityTest = () => [
   useFetchCausalityTest(),
   useIsCausalityTestLoading()
 ];
+
+export const useGetPredictionHistory = () =>
+  useBoundStore((state): THistoryEntry[] => state.predictionHistory);

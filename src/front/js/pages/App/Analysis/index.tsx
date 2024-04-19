@@ -116,19 +116,18 @@ const Analysis = ({
   ].filter(identity);
 
   return (
-    <Container sx={{ width: '50%' }}>
+    <Box>
       <PredictionModelSelection
         predictionMode={predictionMode}
         setPredictionMode={setPredictionMode}
       />
-      <Box>
-        <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
-          {steps.map((renderStep, index: number) => (
-            <Step key={index}>{renderStep!(index)}</Step>
-          ))}
-        </Stepper>
-      </Box>
-    </Container>
+
+      <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
+        {steps.map((renderStep, index: number) => (
+          <Step key={index}>{renderStep!(index)}</Step>
+        ))}
+      </Stepper>
+    </Box>
   );
 };
 

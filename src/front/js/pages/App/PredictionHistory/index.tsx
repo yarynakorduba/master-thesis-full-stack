@@ -1,44 +1,35 @@
 import React from 'react';
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Card, CardContent, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
+import { useGetPredictionHistory } from '../../../store/configuration/selectors';
+import { isEmpty } from 'lodash';
+import HistoryCard from './HistoryCard';
 
 const PredictionHistory = () => {
+  const predictionHistory = useGetPredictionHistory();
+  console.log('PREDICTION HISTORY --- > ', predictionHistory);
+  if (isEmpty(predictionHistory)) return null;
   return (
-    <Container sx={{ background: 'pink', height: 'auto', width: '50%' }}>
+    <Box sx={{ height: 'auto' }}>
       <Typography variant="h5" sx={{ marginBottom: 1 }}>
         History
       </Typography>
       <Grid spacing={1} container>
-        <Grid item xs={4}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Word of the Day
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={4}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Word of the Day
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={4}>
-          <Card variant="outlined">
-            <CardContent>
-              <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                Word of the Day
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        {predictionHistory.map((historyEntry) => {
+          return (
+            <Grid item xs={6} key={historyEntry.id}>
+              <HistoryCard
+                historyEntry={historyEntry}
+                onClick={() => {
+                  console.log('Clicked');
+                }}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

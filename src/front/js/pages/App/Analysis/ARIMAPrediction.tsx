@@ -8,9 +8,11 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { round } from 'lodash';
 
 import Loader from '../../../shared/Loader';
 import { useInputState } from '../../../hooks';
+import { PRECISION } from '../../../consts';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -46,9 +48,13 @@ const ARIMAPrediction = ({
 
   const renderParameters = (parameters, title = 'Test data prediction parameters') => (
     <Box>
-      <Typography variant="h6">{title}</Typography>
-      <Typography>Selected order: {JSON.stringify(parameters?.order)}</Typography>
-      <Typography>Selected seasonal order: {JSON.stringify(parameters?.seasonal_order)}</Typography>
+      <Typography variant="subtitle1">{title}</Typography>
+      <Typography sx={{ lineBreak: 'auto' }}>
+        Selected order: {JSON.stringify(parameters?.order)}
+      </Typography>
+      <Typography sx={{ lineBreak: 'auto' }}>
+        Selected seasonal order: {JSON.stringify(parameters?.seasonal_order)}
+      </Typography>
     </Box>
   );
 
@@ -108,14 +114,17 @@ const ARIMAPrediction = ({
           ) : null}
         </Box>
         {arimaResult ? (
-          <>
+          <Box>
             {renderParameters(arimaResult?.testPredictionParameters)}
             {renderParameters(
               arimaResult?.realPredictionParameters,
               'Future data prediction parameters'
             )}
-            {JSON.stringify(arimaResult?.evaluation)}
-          </>
+            <Typography sx={{ lineBreak: 'auto' }}>
+              MAE: {round(arimaResult?.evaluation?.mae, PRECISION)}, MAPE:{' '}
+              {round(arimaResult?.evaluation?.mape, PRECISION)}
+            </Typography>
+          </Box>
         ) : null}
       </StepContent>
     </>
