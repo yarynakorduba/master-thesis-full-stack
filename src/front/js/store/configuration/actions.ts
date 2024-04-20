@@ -39,7 +39,7 @@ export default (set, get) => ({
     set(() => ({ selectedData }), SHOULD_CLEAR_STORE, SET_SELECTED_DATA),
 
   setPredictionMode: (predictionMode: EPredictionMode) =>
-    set(() => ({ predictionMode }), SHOULD_CLEAR_STORE, SET_PREDICTION_MODE),
+    set(() => ({ latestPrediction: { predictionMode } }), SHOULD_CLEAR_STORE, SET_PREDICTION_MODE),
 
   setDisplayedPredictionId: (itemId: TDisplayedPrediction) =>
     set(() => ({ displayedPredictionId: itemId }), SHOULD_CLEAR_STORE, SET_DISPLAYED_PREDICTION),
@@ -142,6 +142,16 @@ export default (set, get) => ({
       }
     }
   },
+
+  addEntryToPredictionHistory: (entry: THistoryEntry) => {
+    set(
+      // most recent first
+      () => ({ predictionHistory: [entry, ...get().predictionHistory] }),
+      SHOULD_CLEAR_STORE,
+      ADD_ENTRY_TO_PREDICTION_HISTORY
+    );
+  },
+
   fetchARIMAPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
@@ -178,6 +188,7 @@ export default (set, get) => ({
 
   fetchPrediction: async (parameters) => {
     const predictionMode = get().latestPrediction.predictionMode;
+
     if (predictionMode === EPredictionMode.ARIMA) {
       await get().fetchARIMAPrediction(parameters);
     } else if (predictionMode === EPredictionMode.VAR) {
@@ -189,15 +200,9 @@ export default (set, get) => ({
       get().addEntryToPredictionHistory({
         ...prediction,
         timestamp: new Date().toISOString(),
+        predictionMode,
         id: get().predictionHistory.length
       });
     }
-  },
-  addEntryToPredictionHistory: (entry: THistoryEntry) => {
-    set(
-      () => ({ predictionHistory: [...get().predictionHistory, entry] }),
-      SHOULD_CLEAR_STORE,
-      ADD_ENTRY_TO_PREDICTION_HISTORY
-    );
   }
 });

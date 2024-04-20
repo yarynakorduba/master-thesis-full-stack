@@ -40,6 +40,7 @@ export type TPredictionEvaluation = {
 
 export type THistoryEntry = {
   readonly id: number;
+  readonly predictionMode: EPredictionMode;
   readonly timestamp: string; // ISO date string
   readonly prediction: TPredictedPoints;
   readonly lastTrainPoint: TLastTrainPoint;

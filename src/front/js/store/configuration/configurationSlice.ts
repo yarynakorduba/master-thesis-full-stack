@@ -5,6 +5,7 @@ import actions from './actions';
 
 const predictionHistoryStub = [
   {
+    predictionMode: 'ARIMA',
     evaluation: {
       mae: 4.632051840204896,
       mape: 0.19360650296081933,
@@ -172,6 +173,7 @@ const predictionHistoryStub = [
       with_intercept: false
     },
     timestamp: '2024-04-19T09:21:56.317Z',
+    predictionMode: 'VAR',
     id: 1
   }
 ];
