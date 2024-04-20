@@ -28,13 +28,21 @@ import {
   FETCH_VAR_PREDICTION_SUCCESS,
   FETCH_VAR_PREDICTION_FAILURE,
   ADD_ENTRY_TO_PREDICTION_HISTORY,
-  SET_PREDICTION_MODE
+  SET_PREDICTION_MODE,
+  SET_DISPLAYED_PREDICTION
 } from './actionNames';
+import { TDisplayedPrediction } from '../types';
 
 export default (set, get) => ({
   setData: (data: TTimeseriesData) => set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
   setSelectedData: (selectedData: TTimeseriesData) =>
     set(() => ({ selectedData }), SHOULD_CLEAR_STORE, SET_SELECTED_DATA),
+
+  setPredictionMode: (predictionMode: EPredictionMode) =>
+    set(() => ({ predictionMode }), SHOULD_CLEAR_STORE, SET_PREDICTION_MODE),
+
+  setDisplayedPredictionId: (itemId: TDisplayedPrediction) =>
+    set(() => ({ displayedPredictionId: itemId }), SHOULD_CLEAR_STORE, SET_DISPLAYED_PREDICTION),
 
   fetchWhiteNoiseTest: async (valueProperties) => {
     const timeseriesData = get().data;
@@ -137,7 +145,7 @@ export default (set, get) => ({
   fetchARIMAPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ prediction: undefined, isPredictionLoading: true }),
+      () => ({ latestPrediction: { prediction: undefined, isPredictionLoading: true } }),
       SHOULD_CLEAR_STORE,
       FETCH_ARIMA_PREDICTION_START
     );
@@ -145,7 +153,7 @@ export default (set, get) => ({
     const response = await fetchARIMA(timeseriesData, parameters);
 
     set(
-      () => ({ prediction: response.data, isPredictionLoading: false }),
+      () => ({ latestPrediction: { prediction: response.data, isPredictionLoading: false } }),
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_ARIMA_PREDICTION_SUCCESS : FETCH_ARIMA_PREDICTION_FAILURE
     );
@@ -154,7 +162,7 @@ export default (set, get) => ({
   fetchVARPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ prediction: undefined, isPredictionLoading: true }),
+      () => ({ latestPrediction: { prediction: undefined, isPredictionLoading: true } }),
       SHOULD_CLEAR_STORE,
       FETCH_VAR_PREDICTION_START
     );
@@ -162,21 +170,21 @@ export default (set, get) => ({
     const response = await fetchVAR(timeseriesData, parameters);
 
     set(
-      () => ({ prediction: response.data, isPredictionLoading: false }),
+      () => ({ latestPrediction: { prediction: response.data, isPredictionLoading: false } }),
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_VAR_PREDICTION_SUCCESS : FETCH_VAR_PREDICTION_FAILURE
     );
   },
 
   fetchPrediction: async (parameters) => {
-    const predictionMode = get().predictionMode;
+    const predictionMode = get().latestPrediction.predictionMode;
     if (predictionMode === EPredictionMode.ARIMA) {
       await get().fetchARIMAPrediction(parameters);
     } else if (predictionMode === EPredictionMode.VAR) {
       await get().fetchVARPrediction(parameters);
     }
 
-    const prediction = get().prediction;
+    const prediction = get().latestPrediction.prediction;
     if (prediction) {
       get().addEntryToPredictionHistory({
         ...prediction,
@@ -191,8 +199,5 @@ export default (set, get) => ({
       SHOULD_CLEAR_STORE,
       ADD_ENTRY_TO_PREDICTION_HISTORY
     );
-  },
-
-  setPredictionMode: (predictionMode: EPredictionMode) =>
-    set(() => ({ predictionMode }), SHOULD_CLEAR_STORE, SET_PREDICTION_MODE)
+  }
 });

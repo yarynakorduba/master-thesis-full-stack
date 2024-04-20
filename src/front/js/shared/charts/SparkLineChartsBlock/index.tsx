@@ -57,6 +57,7 @@ const SparkLineChartsBlock = ({
   selectedProp,
   setSelectedProp
 }: TProps) => {
+  console.log('AAA --- > ', timeseriesData);
   const theme = useTheme();
 
   useEffect(() => {

@@ -29,6 +29,7 @@ const App = () => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
 
   useEffect(() => {
+    console.log('HAppening');
     setTimeseriesData(json as TTimeseriesData);
   }, [setTimeseriesData]);
 
@@ -47,6 +48,7 @@ const App = () => {
     useCausalityTest();
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
+  console.log('PREDICTION RESULT -- > ', predictionResult);
 
   const mappedARIMAPrediction = useMemo(() => {
     if (!(selectedProp?.value && predictionResult)) return [[], []];

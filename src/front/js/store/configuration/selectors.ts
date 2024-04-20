@@ -1,6 +1,7 @@
 import { TTimeseriesData } from 'front/js/types';
 import { useBoundStore } from '..';
 import { EPredictionMode, THistoryEntry } from 'front/js/pages/App/Analysis/types';
+import { TDisplayedPrediction } from '../types';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetData = (): TTimeseriesData => useBoundStore((state) => state.data);
@@ -19,8 +20,15 @@ export const useSelectedConfigData = (): [TTimeseriesData, (data: TTimeseriesDat
 ];
 
 export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
-export const useGetPrediction = () => useBoundStore((state) => state.prediction);
-export const useIsPredictionLoading = () => useBoundStore((state) => state.isPredictionLoading);
+export const useGetPrediction = () =>
+  useBoundStore((state) => {
+    console.log('0 000 000 -> ', state.predictionHistory, state.displayedPredictionId);
+    return state.displayedPredictionId === 'latestPrediction'
+      ? state.latestPrediction.prediction
+      : state.predictionHistory[state.displayedPredictionId];
+  });
+export const useIsPredictionLoading = () =>
+  useBoundStore((state) => state.latestPrediction.isPredictionLoading);
 
 export const usePrediction = () => [
   useGetPrediction(),
@@ -29,7 +37,7 @@ export const usePrediction = () => [
 ];
 
 export const useGetPredictionMode = (): EPredictionMode =>
-  useBoundStore((state) => state.predictionMode);
+  useBoundStore((state) => state.latestPrediction.predictionMode);
 export const useSetPredictionMode = () => useBoundStore((state) => state.setPredictionMode);
 export const usePredictionMode = (): [
   EPredictionMode,
@@ -69,3 +77,11 @@ export const useCausalityTest = () => [
 
 export const useGetPredictionHistory = () =>
   useBoundStore((state): THistoryEntry[] => state.predictionHistory);
+
+export const useGetDisplayedPredictionId = () =>
+  useBoundStore((state): TDisplayedPrediction => state.displayedPredictionId);
+
+export const useSetDisplayedPredictionId = () =>
+  useBoundStore(
+    (state): ((predictionItemId: TDisplayedPrediction) => void) => state.setDisplayedPredictionId
+  );

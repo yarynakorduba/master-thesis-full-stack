@@ -53,6 +53,7 @@ const Analysis = ({
 }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
+  console.log('AAA --- > ', timeseriesData);
 
   const steps = [
     (key: number) => (

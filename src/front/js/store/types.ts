@@ -7,6 +7,18 @@ import {
 } from '../pages/App/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
 
+// displayedPredictionId: {
+//   predictionMode: EPredictionMode.ARIMA,
+//   prediction: undefined
+// },
+
+// latestPrediction: {
+//   predictionMode: EPredictionMode.ARIMA,
+//   prediction: undefined,
+//   isPredictionLoading: false
+// },
+
+export type TDisplayedPrediction = number | 'latestPrediction';
 export type TConfigurationSlice = {
   // readonly id: string;
   readonly data: TTimeseriesData;
@@ -27,18 +39,22 @@ export type TConfigurationSlice = {
   readonly isCausalityTestLoading: boolean;
   readonly fetchCausalityTest: (selectedProps: TDataProperty[]) => Promise<void>;
 
-  readonly predictionMode: EPredictionMode;
-  readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly displayedPredictionId: TDisplayedPrediction; // latest prediction or id of history item
+  readonly setDisplayedPredictionId: (predictionItemId: TDisplayedPrediction) => void;
 
-  readonly prediction?: TARIMAResult | TVARResult;
-  readonly isPredictionLoading: boolean;
+  readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly latestPrediction: {
+    readonly prediction?: TARIMAResult | TVARResult;
+    readonly isPredictionLoading: boolean;
+    readonly predictionMode: EPredictionMode;
+  };
+
+  readonly predictionHistory: THistoryEntry[];
+  readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
   readonly fetchARIMAPrediction: (params: any) => Promise<void>;
   readonly fetchVARPrediction: (params: any) => Promise<void>;
   readonly fetchPrediction: (params: any) => Promise<void>;
-
-  readonly predictionHistory: THistoryEntry[];
-  readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
   // readonly currentRun: {
   //   readonly trainingData: any;
