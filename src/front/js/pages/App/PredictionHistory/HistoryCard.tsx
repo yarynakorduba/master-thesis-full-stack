@@ -13,7 +13,7 @@ import { round } from 'lodash';
 
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
-import { CardDate, Header } from './styles';
+import { CardDate, CardHeader } from './styles';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -26,7 +26,7 @@ const HistoryCard = ({ historyEntry, onClick }: TProps) => {
     <Card variant="outlined">
       <CardActionArea onClick={() => onClick(historyEntry)}>
         <CardContent>
-          <Header>
+          <CardHeader>
             <Grid container gap={0.5}>
               <Chip size="small" label={historyEntry.predictionMode} />
               <Chip
@@ -41,7 +41,7 @@ const HistoryCard = ({ historyEntry, onClick }: TProps) => {
                 {new Date(historyEntry.timestamp).getMinutes()}
               </Box>
             </CardDate>
-          </Header>
+          </CardHeader>
 
           <Typography variant="subtitle2" color="text.secondary">
             Test data prediction params

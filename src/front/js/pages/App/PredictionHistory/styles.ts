@@ -9,7 +9,7 @@ export const CardDate = styled(Typography)`
   flex-basis: 40%;
 `;
 
-export const Header = styled(Stack)`
+export const CardHeader = styled(Stack)`
   flex-direction: row;
   justify-content: space-between;
   align-items: baseline;
