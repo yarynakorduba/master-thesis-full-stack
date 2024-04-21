@@ -33,3 +33,6 @@ export const formatNumber = (d: number): string => {
   }
   return `${Math.round(d * 100) / 100}`;
 };
+
+// ARIMA params order
+export const formatOrder = (order?: number[]) => (order ? `[${order.join(', ')}]` : 'N/A');

@@ -2,6 +2,7 @@ import { TTimeseriesData } from 'front/js/types';
 import { useBoundStore } from '..';
 import { EPredictionMode, THistoryEntry } from 'front/js/pages/App/Analysis/types';
 import { TDisplayedPrediction } from '../types';
+import { find } from 'lodash';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetData = (): TTimeseriesData => useBoundStore((state) => state.data);
@@ -21,12 +22,11 @@ export const useSelectedConfigData = (): [TTimeseriesData, (data: TTimeseriesDat
 
 export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetPrediction = () =>
-  useBoundStore((state) => {
-    console.log('0 000 000 -> ', state.predictionHistory, state.displayedPredictionId);
-    return state.displayedPredictionId === 'latestPrediction'
+  useBoundStore((state) =>
+    state.displayedPredictionId === 'latestPrediction'
       ? state.latestPrediction.prediction
-      : state.predictionHistory[state.displayedPredictionId];
-  });
+      : find(state.predictionHistory, ({ id }) => id === state.displayedPredictionId)
+  );
 export const useIsPredictionLoading = () =>
   useBoundStore((state) => state.latestPrediction.isPredictionLoading);
 

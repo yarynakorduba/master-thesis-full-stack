@@ -9,10 +9,12 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { round } from 'lodash';
+import { Card, CardContent, CardHeader, Chip } from '@mui/material';
 
 import Loader from '../../../shared/Loader';
 import { useInputState } from '../../../hooks';
 import { PRECISION } from '../../../consts';
+import { formatOrder } from '../../../utils/formatters';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -45,18 +47,6 @@ const ARIMAPrediction = ({
   const handleClick = () => {
     handlePredict({ horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
   };
-
-  const renderParameters = (parameters, title = 'Test data prediction parameters') => (
-    <Box>
-      <Typography variant="subtitle1">{title}</Typography>
-      <Typography sx={{ lineBreak: 'auto' }}>
-        Selected order: {JSON.stringify(parameters?.order)}
-      </Typography>
-      <Typography sx={{ lineBreak: 'auto' }}>
-        Selected seasonal order: {JSON.stringify(parameters?.seasonal_order)}
-      </Typography>
-    </Box>
-  );
 
   if (!isVisible) return null;
   return (
@@ -114,17 +104,39 @@ const ARIMAPrediction = ({
           ) : null}
         </Box>
         {arimaResult ? (
-          <Box>
-            {renderParameters(arimaResult?.testPredictionParameters)}
-            {renderParameters(
-              arimaResult?.realPredictionParameters,
-              'Future data prediction parameters'
-            )}
-            <Typography sx={{ lineBreak: 'auto' }}>
-              MAE: {round(arimaResult?.evaluation?.mae, PRECISION)}, MAPE:{' '}
-              {round(arimaResult?.evaluation?.mape, PRECISION)}
-            </Typography>
-          </Box>
+          <Card variant="outlined">
+            <CardContent>
+              {/* <Grid container gap={0.5}>
+                  <Chip size="small" label={historyEntry.predictionMode} />
+                  <Chip
+                    size="small"
+                    label={<> MAPE: {round(historyEntry.evaluation.mape, PRECISION)}</>}
+                  />
+                </Grid> */}
+
+              <Typography variant="subtitle2" color="text.secondary">
+                Test data prediction params
+              </Typography>
+              <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                Order: {formatOrder(arimaResult.testPredictionParameters.order)}, Seasonal order:{' '}
+                {formatOrder(arimaResult.testPredictionParameters.seasonalOrder)}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Real data prediction params
+              </Typography>
+              <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+                Order: {formatOrder(arimaResult.realPredictionParameters.order)}, Seasonal order:{' '}
+                {formatOrder(arimaResult.realPredictionParameters.seasonalOrder)}
+              </Typography>
+              <Typography variant="subtitle2" color="text.secondary">
+                Evaluation
+              </Typography>
+              <Typography sx={{ lineBreak: 'auto', fontSize: 14 }}>
+                MAE: {round(arimaResult?.evaluation?.mae, PRECISION)}, MAPE:{' '}
+                {round(arimaResult?.evaluation?.mape, PRECISION)}
+              </Typography>
+            </CardContent>
+          </Card>
         ) : null}
       </StepContent>
     </>

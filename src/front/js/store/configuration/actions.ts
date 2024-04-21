@@ -155,7 +155,13 @@ export default (set, get) => ({
   fetchARIMAPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ latestPrediction: { prediction: undefined, isPredictionLoading: true } }),
+      (state) => ({
+        latestPrediction: {
+          predictionMode: state.latestPrediction.predictionMode,
+          prediction: undefined,
+          isPredictionLoading: true
+        }
+      }),
       SHOULD_CLEAR_STORE,
       FETCH_ARIMA_PREDICTION_START
     );
@@ -163,7 +169,13 @@ export default (set, get) => ({
     const response = await fetchARIMA(timeseriesData, parameters);
 
     set(
-      () => ({ latestPrediction: { prediction: response.data, isPredictionLoading: false } }),
+      (state) => ({
+        latestPrediction: {
+          predictionMode: state.latestPrediction.predictionMode,
+          prediction: response.data,
+          isPredictionLoading: false
+        }
+      }),
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_ARIMA_PREDICTION_SUCCESS : FETCH_ARIMA_PREDICTION_FAILURE
     );
@@ -172,7 +184,13 @@ export default (set, get) => ({
   fetchVARPrediction: async (parameters) => {
     const timeseriesData = get().data;
     set(
-      () => ({ latestPrediction: { prediction: undefined, isPredictionLoading: true } }),
+      (state) => ({
+        latestPrediction: {
+          predictionMode: state.latestPrediction.predictionMode,
+          prediction: undefined,
+          isPredictionLoading: true
+        }
+      }),
       SHOULD_CLEAR_STORE,
       FETCH_VAR_PREDICTION_START
     );
@@ -180,7 +198,13 @@ export default (set, get) => ({
     const response = await fetchVAR(timeseriesData, parameters);
 
     set(
-      () => ({ latestPrediction: { prediction: response.data, isPredictionLoading: false } }),
+      (state) => ({
+        latestPrediction: {
+          predictionMode: state.latestPrediction.predictionMode,
+          prediction: response.data,
+          isPredictionLoading: false
+        }
+      }),
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_VAR_PREDICTION_SUCCESS : FETCH_VAR_PREDICTION_FAILURE
     );

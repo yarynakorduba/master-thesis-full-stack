@@ -57,7 +57,6 @@ const SparkLineChartsBlock = ({
   selectedProp,
   setSelectedProp
 }: TProps) => {
-  console.log('AAA --- > ', timeseriesData);
   const theme = useTheme();
 
   useEffect(() => {
@@ -141,7 +140,7 @@ const SparkLineChartsBlock = ({
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={260}
-          padding={{ top: 16, bottom: 30, left: 40, right: 40 }}
+          padding={{ top: 16, bottom: 30, left: 40, right: 8 }}
           defaultBrushValueBounds={defaultBrushValueBounds}
           onSelectArea={onSelectedAreaChange}
           selectedDataLength={selectedData?.length}

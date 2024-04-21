@@ -1,19 +1,11 @@
 import React from 'react';
-import {
-  Box,
-  Card,
-  CardActionArea,
-  CardContent,
-  Chip,
-  Grid,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, Chip, Grid, Typography } from '@mui/material';
 import { round } from 'lodash';
 
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader } from './styles';
+import { formatOrder } from '../../../utils/formatters';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -21,7 +13,6 @@ type TProps = {
 };
 
 const HistoryCard = ({ historyEntry, onClick }: TProps) => {
-  const renderOrder = (order) => (order ? `[${order.join(', ')}]` : 'N/A');
   return (
     <Card variant="outlined">
       <CardActionArea onClick={() => onClick(historyEntry)}>
@@ -42,20 +33,19 @@ const HistoryCard = ({ historyEntry, onClick }: TProps) => {
               </Box>
             </CardDate>
           </CardHeader>
-
           <Typography variant="subtitle2" color="text.secondary">
             Test data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {renderOrder(historyEntry.testPredictionParameters.order)}, Seasonal order:{' '}
-            {renderOrder(historyEntry.testPredictionParameters.seasonalOrder)}
+            Order: {formatOrder(historyEntry.testPredictionParameters.order)}, Seasonal order:{' '}
+            {formatOrder(historyEntry.testPredictionParameters.seasonalOrder)}
           </Typography>
           <Typography variant="subtitle2" color="text.secondary">
             Real data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {renderOrder(historyEntry.realPredictionParameters.order)}, Seasonal order:{' '}
-            {renderOrder(historyEntry.realPredictionParameters.seasonalOrder)}
+            Order: {formatOrder(historyEntry.realPredictionParameters.order)}, Seasonal order:{' '}
+            {formatOrder(historyEntry.realPredictionParameters.seasonalOrder)}
           </Typography>
         </CardContent>
       </CardActionArea>

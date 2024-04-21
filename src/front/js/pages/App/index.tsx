@@ -18,7 +18,7 @@ import {
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
-import { Divider, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 const App = () => {
   const methods = useForm();
@@ -114,7 +114,7 @@ const App = () => {
             dataLabels={dataLabels}
           />
         ) : null}
-        <Grid container justifyContent="start">
+        <Grid container justifyContent="start" gap={3} wrap="nowrap">
           <Grid item md={6}>
             <Analysis
               stationarityTestResult={stationarityTestResult}
