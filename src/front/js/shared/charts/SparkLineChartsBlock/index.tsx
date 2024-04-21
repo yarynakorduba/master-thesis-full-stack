@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { filter, isEmpty, map } from 'lodash';
+import { filter, flow, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
+import { TDataLabel, TLineChartData, TLineChartDatapoint, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
@@ -18,19 +18,21 @@ const constructLineChartDataFromTs = (
   lineColor: string,
   label: string = ''
 ): TLineChartSerie | undefined => {
-  return valueProperty?.value && timeProperty?.value
-    ? {
-        id: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
-        label,
-        color: lineColor,
-        datapoints: map(data, (datum) => ({
-          valueX: datum[timeProperty?.value] as number,
-          valueY: +datum[valueProperty.value]
-        })).sort((a, b) => {
-          return a[timeProperty.value] - b[timeProperty.value] ? 1 : -1;
-        })
-      }
-    : undefined;
+  if (!(valueProperty?.value && timeProperty?.value)) return undefined;
+  const datapoints: TLineChartDatapoint[] = flow([
+    (d) =>
+      map(d, (datum) => ({
+        valueX: datum[timeProperty?.value] as number,
+        valueY: +datum[valueProperty.value]
+      })),
+    (d) => sortBy(d, 'valueX')
+  ])(data);
+  return {
+    id: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
+    label,
+    color: lineColor,
+    datapoints
+  };
 };
 
 type TProps = {
