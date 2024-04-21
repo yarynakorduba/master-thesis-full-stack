@@ -1,4 +1,4 @@
-import { map, every, reduce } from 'lodash';
+import { map, every, reduce, isEmpty } from 'lodash';
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
@@ -6,8 +6,8 @@ import {
   fetchARIMA,
   fetchVAR
 } from '../../apiCalls/analysis';
-import { EPredictionMode, THistoryEntry } from '../../pages/App/Analysis/types';
-import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
+import { EPredictionMode, THistoryEntry, TValueBounds } from '../../pages/App/Analysis/types';
+import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
   SET_DATA,
@@ -32,6 +32,7 @@ import {
   SET_DISPLAYED_PREDICTION
 } from './actionNames';
 import { TDisplayedPrediction } from '../types';
+import { getSelectedDataByBoundaries } from '../../utils';
 
 export default (set, get) => ({
   setData: (data: TTimeseriesData) => set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
@@ -159,14 +160,8 @@ export default (set, get) => ({
 
   fetchARIMAPrediction: async (parameters, timeProperty) => {
     const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
-    const data = get().data;
-    const selectedData = dataBoundaries
-      ? data.filter(
-          (s) =>
-            +s[timeProperty.value] >= dataBoundaries.x0 &&
-            +s[timeProperty.value] <= dataBoundaries.x1
-        )
-      : data;
+    const selectedData = getSelectedDataByBoundaries(get().data, timeProperty, dataBoundaries);
+
     set(
       () => ({
         latestPrediction: {
@@ -181,10 +176,9 @@ export default (set, get) => ({
     );
 
     const response = await fetchARIMA(selectedData, parameters);
-    console.log('Timeseries data --- > ', selectedData, response);
 
     set(
-      (state) => ({
+      () => ({
         latestPrediction: {
           selectedDataBoundaries: dataBoundaries,
           predictionMode: EPredictionMode.ARIMA,
@@ -208,14 +202,7 @@ export default (set, get) => ({
 
   fetchVARPrediction: async (parameters, timeProperty) => {
     const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
-    const data = get().data;
-    const selectedData = dataBoundaries
-      ? data.filter(
-          (s) =>
-            +s[timeProperty.value] >= dataBoundaries.x0 &&
-            +s[timeProperty.value] <= dataBoundaries.x1
-        )
-      : data;
+    const selectedData = getSelectedDataByBoundaries(get().data, timeProperty, dataBoundaries);
 
     set(
       () => ({

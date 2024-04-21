@@ -29,6 +29,7 @@ import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
+import { TValueBounds } from 'front/js/pages/App/Analysis/types';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 20;
@@ -41,11 +42,6 @@ export const LEGEND_HEIGHT = 16;
  * The vertical (default) variant renders vertical bars with band x-axis and linear y-axis.
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
-
-type TValueBounds = {
-  readonly x0: number;
-  readonly x1: number;
-};
 
 type TProps = {
   readonly width?: number;
@@ -124,8 +120,6 @@ const LineChart = ({
   useEffect(() => {
     setSelectedAreaValueBounds(selectedAreaBounds);
   }, [selectedAreaBounds]);
-
-  console.log('selectedAreaValueBounds --- > ', { selectedAreaValueBounds, selectedAreaBounds });
 
   const {
     pointTooltip,

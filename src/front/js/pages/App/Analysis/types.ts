@@ -5,6 +5,11 @@ export enum EPredictionMode {
   VAR = 'VAR'
 }
 
+export type TValueBounds = {
+  readonly x0: number;
+  readonly x1: number;
+};
+
 // params which are passed to the model from the UI
 export type TARIMAUserParams = {
   readonly lagOrder: number;
