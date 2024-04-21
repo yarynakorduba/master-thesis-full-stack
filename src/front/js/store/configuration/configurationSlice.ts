@@ -87,6 +87,7 @@ const predictionHistoryStub = [
       trend: null,
       with_intercept: false
     },
+    selectedDataBoundaries: undefined,
     timestamp: '2024-04-19T09:21:56.317Z',
     id: 0
   },
@@ -174,6 +175,7 @@ const predictionHistoryStub = [
     },
     timestamp: '2024-04-19T09:21:56.317Z',
     predictionMode: 'VAR',
+    selectedDataBoundaries: undefined,
     id: 1
   }
 ];
@@ -185,7 +187,6 @@ export const createConfigurationSlice: StateCreator<
   TConfigurationSlice
 > = (set, get) => ({
   data: [],
-  selectedData: [],
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
@@ -201,7 +202,8 @@ export const createConfigurationSlice: StateCreator<
   latestPrediction: {
     predictionMode: EPredictionMode.ARIMA,
     prediction: undefined,
-    isPredictionLoading: false
+    isPredictionLoading: false,
+    selectedDataBoundaries: undefined
   },
 
   predictionHistory: predictionHistoryStub as any,

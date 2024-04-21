@@ -23,9 +23,8 @@ export type TConfigurationSlice = {
   // readonly id: string;
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;
-  // the data which was selected for training
-  readonly selectedData: TTimeseriesData;
-  readonly setSelectedData: (data: TTimeseriesData) => void;
+
+  readonly setSelectedDataBoundaries: (data: any) => void;
 
   readonly whiteNoiseTest;
   readonly isWhiteNoiseTestLoading: boolean;
@@ -47,14 +46,16 @@ export type TConfigurationSlice = {
     readonly prediction?: TARIMAResult | TVARResult;
     readonly isPredictionLoading: boolean;
     readonly predictionMode: EPredictionMode;
+    // the data which was selected for training
+    readonly selectedDataBoundaries: undefined;
   };
 
   readonly predictionHistory: THistoryEntry[];
   readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
-  readonly fetchARIMAPrediction: (params: any) => Promise<void>;
-  readonly fetchVARPrediction: (params: any) => Promise<void>;
-  readonly fetchPrediction: (params: any) => Promise<void>;
+  readonly fetchARIMAPrediction: (params: any, data) => Promise<void>;
+  readonly fetchVARPrediction: (params: any, data) => Promise<void>;
+  readonly fetchPrediction: (params: any, timeProperty: TDataProperty) => Promise<void>;
 
   // readonly currentRun: {
   //   readonly trainingData: any;

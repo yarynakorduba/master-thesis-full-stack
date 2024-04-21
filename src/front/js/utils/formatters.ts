@@ -8,7 +8,7 @@ export const formatUnixToDate = (d) => {
     }
     return d;
   } catch (e) {
-    console.log('Error converting date: ', e, d);
+    console.error('Error converting date: ', e, d);
     throw e;
   }
 };

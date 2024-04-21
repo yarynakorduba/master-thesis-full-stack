@@ -12,12 +12,18 @@ export const useConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => vo
   useSetData()
 ];
 
-export const useGetSelectedData = (): TTimeseriesData =>
-  useBoundStore((state) => state.selectedData);
-export const useSetSelectedData = () => useBoundStore((state) => state.setSelectedData);
-export const useSelectedConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => void] => [
-  useGetSelectedData(),
-  useSetSelectedData()
+export const useGetSelectedDataBoundaries = (): any =>
+  useBoundStore((state) =>
+    state.displayedPredictionId === 'latestPrediction'
+      ? state.latestPrediction.selectedDataBoundaries
+      : find(state.predictionHistory, ({ id }) => id === state.displayedPredictionId)!
+          .selectedDataBoundaries
+  );
+export const useSetSelectedDataBoundaries = () =>
+  useBoundStore((state) => state.setSelectedDataBoundaries);
+export const useSelectedDataBoundaries = (): [any, (data: any) => void] => [
+  useGetSelectedDataBoundaries(),
+  useSetSelectedDataBoundaries()
 ];
 
 export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);

@@ -1,3 +1,5 @@
+import { TTimeseriesData } from 'front/js/types';
+
 export enum EPredictionMode {
   ARIMA = 'ARIMA',
   VAR = 'VAR'
@@ -49,6 +51,9 @@ export type THistoryEntry = {
   readonly testPredictionParameters: TResponseARIMAParams;
 
   readonly evaluation: TPredictionEvaluation;
+
+  // the data which was selected for training
+  readonly selectedDataBoundaries: TTimeseriesData;
 };
 
 export type TLastTrainPoint = {

@@ -3,6 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
 import { map } from 'lodash';
 import Drawer from '@mui/material/Drawer';
+import { Grid } from '@mui/material';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
@@ -13,31 +14,31 @@ import {
   useCausalityTest,
   useConfigData,
   usePrediction,
-  useSelectedConfigData,
+  useSelectedDataBoundaries,
   useStationarityTest,
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
-import { Grid } from '@mui/material';
 
 const App = () => {
-  const methods = useForm();
-  const [timeseriesData, setTimeseriesData] = useConfigData();
-  const [selectedData, setSelectedData] = useSelectedConfigData();
-
-  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
-  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-
-  useEffect(() => {
-    const mappedJSON = json.map((value) => ({ ...value, date: new Date(value.date).getTime() }));
-    setTimeseriesData(mappedJSON as TTimeseriesData);
-  }, [setTimeseriesData]);
-
   const valueProperties = useMemo(
     (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
     []
   );
   const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
+
+  const methods = useForm();
+  const [timeseriesData, setTimeseriesData] = useConfigData();
+
+  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
+  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+
+  const [selectedDataBoundaries, setSelectedDataBoundaries] = useSelectedDataBoundaries();
+
+  useEffect(() => {
+    const mappedJSON = json.map((value) => ({ ...value, date: new Date(value.date).getTime() }));
+    setTimeseriesData(mappedJSON as TTimeseriesData);
+  }, [setTimeseriesData]);
 
   const [stationarityTestResult, handleFetchDataStationarityTest, isStationarityTestLoading] =
     useStationarityTest();
@@ -107,8 +108,8 @@ const App = () => {
             timeProperty={timeProperty}
             timeseriesData={sortedTSData}
             predictionData={mappedARIMAPrediction}
-            selectedData={selectedData}
-            setSelectedData={setSelectedData}
+            setSelectedDataBoundaries={setSelectedDataBoundaries}
+            selectedAreaBounds={selectedDataBoundaries}
             selectedProp={selectedProp}
             setSelectedProp={setSelectedProp}
             dataLabels={dataLabels}
@@ -132,7 +133,7 @@ const App = () => {
               isCausalityTestLoading={isCausalityTestLoading}
               causalityTestResult={causalityTestResult}
               handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-              handleFetchPrediction={handleFetchPrediction}
+              handleFetchPrediction={(params) => handleFetchPrediction(params, timeProperty)}
             />
           </Grid>
           <Grid item md={6}>

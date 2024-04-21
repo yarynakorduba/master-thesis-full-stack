@@ -125,7 +125,6 @@ class Arima:
 
         real_indexes = real_indexes[1:]
         real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
-        print(">>> ", real_predicted_series)
         json_real_prediction_result = real_predicted_series.to_json()
 
         evaluation = self.forecast_accuracy(test_prediction, test)

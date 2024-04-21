@@ -53,7 +53,8 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
-  readonly selectedDataLength: number;
+  // readonly selectedDataLength: number;
+  readonly selectedAreaBounds: any;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
   readonly formatYScale: TFormatYScale;
@@ -71,7 +72,7 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
-  selectedDataLength,
+  // selectedDataLength,
   dataLabels,
   formatXScale,
   formatYScale,
@@ -84,6 +85,7 @@ const LineChart = ({
     right: CHART_X_PADDING
   },
   defaultBrushValueBounds = undefined,
+  selectedAreaBounds = undefined,
   onSelectArea = noop
 }: TProps) => {
   const { palette } = useTheme();
@@ -112,12 +114,18 @@ const LineChart = ({
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
   const yBrushScale = getLinearScale(yValues, [BRUSH_HEIGHT, 0]);
 
-  const [selectedAreaValueBounds, setSelectedAreaValueBounds] = useState<
-    TValueBounds | undefined
-  >();
+  const [selectedAreaValueBounds, setSelectedAreaValueBounds] = useState<TValueBounds | undefined>(
+    selectedAreaBounds
+  );
   const [brushValueBounds, setBrushValueBounds] = useState<TValueBounds | undefined>(
     defaultBrushValueBounds
   );
+
+  useEffect(() => {
+    setSelectedAreaValueBounds(selectedAreaBounds);
+  }, [selectedAreaBounds]);
+
+  console.log('selectedAreaValueBounds --- > ', { selectedAreaValueBounds, selectedAreaBounds });
 
   const {
     pointTooltip,
@@ -301,11 +309,11 @@ const LineChart = ({
             Drag&apos;n&apos;drop on the chart to set the data limits
           </Typography>
         )}
-        {isTrainingDataSelectionOn && selectedAreaValueBounds && (
+        {/* {isTrainingDataSelectionOn && selectedAreaValueBounds && (
           <Typography variant="body1" color={palette.text.secondary}>
             Selected {selectedDataLength} entries
           </Typography>
-        )}
+        )} */}
         {isTrainingDataSelectionOn && selectedAreaValueBounds && (
           <Button
             onClick={() => {
@@ -418,7 +426,8 @@ export default function ResponsiveLineChart({
   onSelectArea = noop,
   defaultBrushValueBounds,
   dataLabels,
-  selectedDataLength
+  // selectedDataLength,
+  selectedAreaBounds
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -428,6 +437,7 @@ export default function ResponsiveLineChart({
         heading={heading}
         variant={variant}
         data={data}
+        selectedAreaBounds={selectedAreaBounds}
         dataLabels={dataLabels}
         formatXScale={formatXScale}
         formatYScale={formatYScale}
@@ -437,7 +447,7 @@ export default function ResponsiveLineChart({
         numYAxisTicks={numYAxisTicks}
         padding={padding}
         defaultBrushValueBounds={defaultBrushValueBounds}
-        selectedDataLength={selectedDataLength}
+        // selectedDataLength={selectedDataLength}
       />
     ),
     [
@@ -452,8 +462,8 @@ export default function ResponsiveLineChart({
       numXAxisTicks,
       numYAxisTicks,
       padding,
-      defaultBrushValueBounds,
-      selectedDataLength
+      defaultBrushValueBounds
+      // selectedDataLength
     ]
   );
 
