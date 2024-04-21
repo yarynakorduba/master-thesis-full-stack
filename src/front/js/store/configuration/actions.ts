@@ -45,7 +45,7 @@ export default (set, get) => ({
     set(() => ({ displayedPredictionId: itemId }), SHOULD_CLEAR_STORE, SET_DISPLAYED_PREDICTION),
 
   fetchWhiteNoiseTest: async (valueProperties) => {
-    const timeseriesData = get().data;
+    const timeseriesData = get().selectedData;
     set(
       () => ({ whiteNoiseTest: undefined, isWhiteNoiseTestLoading: true }),
       SHOULD_CLEAR_STORE,
@@ -80,7 +80,7 @@ export default (set, get) => ({
   },
 
   fetchStationarityTest: async (valueProperties) => {
-    const timeseriesData = get().data;
+    const timeseriesData = get().selectedData;
     set(
       () => ({ stationarityTest: undefined, isStationarityTestLoading: true }),
       SHOULD_CLEAR_STORE,
@@ -114,7 +114,7 @@ export default (set, get) => ({
   },
 
   fetchCausalityTest: async (selectedProps) => {
-    const timeseriesData = get().data;
+    const timeseriesData = get().selectedData;
 
     if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
       const dataForAnalysis = map(timeseriesData, (datum) => [
@@ -153,11 +153,11 @@ export default (set, get) => ({
   },
 
   fetchARIMAPrediction: async (parameters) => {
-    const timeseriesData = get().data;
+    const timeseriesData = get().selectedData;
     set(
-      (state) => ({
+      () => ({
         latestPrediction: {
-          predictionMode: state.latestPrediction.predictionMode,
+          predictionMode: EPredictionMode.ARIMA,
           prediction: undefined,
           isPredictionLoading: true
         }
@@ -167,11 +167,12 @@ export default (set, get) => ({
     );
 
     const response = await fetchARIMA(timeseriesData, parameters);
+    console.log('Timeseries data --- > ', timeseriesData, response);
 
     set(
-      (state) => ({
+      () => ({
         latestPrediction: {
-          predictionMode: state.latestPrediction.predictionMode,
+          predictionMode: EPredictionMode.ARIMA,
           prediction: response.data,
           isPredictionLoading: false
         }
@@ -179,14 +180,22 @@ export default (set, get) => ({
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_ARIMA_PREDICTION_SUCCESS : FETCH_ARIMA_PREDICTION_FAILURE
     );
+    if (response.isSuccess) {
+      get().addEntryToPredictionHistory({
+        predictionMode: EPredictionMode.ARIMA,
+        timestamp: new Date().toISOString(),
+        id: get().predictionHistory.length,
+        ...response.data
+      });
+    }
   },
 
   fetchVARPrediction: async (parameters) => {
-    const timeseriesData = get().data;
+    const timeseriesData = get().selectedData;
     set(
-      (state) => ({
+      () => ({
         latestPrediction: {
-          predictionMode: state.latestPrediction.predictionMode,
+          predictionMode: EPredictionMode.VAR,
           prediction: undefined,
           isPredictionLoading: true
         }
@@ -198,9 +207,9 @@ export default (set, get) => ({
     const response = await fetchVAR(timeseriesData, parameters);
 
     set(
-      (state) => ({
+      () => ({
         latestPrediction: {
-          predictionMode: state.latestPrediction.predictionMode,
+          predictionMode: EPredictionMode.VAR,
           prediction: response.data,
           isPredictionLoading: false
         }
@@ -208,6 +217,14 @@ export default (set, get) => ({
       SHOULD_CLEAR_STORE,
       response.isSuccess ? FETCH_VAR_PREDICTION_SUCCESS : FETCH_VAR_PREDICTION_FAILURE
     );
+    if (response.isSuccess) {
+      get().addEntryToPredictionHistory({
+        predictionMode: EPredictionMode.VAR,
+        timestamp: new Date().toISOString(),
+        id: get().predictionHistory.length,
+        ...response.data
+      });
+    }
   },
 
   fetchPrediction: async (parameters) => {
@@ -217,16 +234,6 @@ export default (set, get) => ({
       await get().fetchARIMAPrediction(parameters);
     } else if (predictionMode === EPredictionMode.VAR) {
       await get().fetchVARPrediction(parameters);
-    }
-
-    const prediction = get().latestPrediction.prediction;
-    if (prediction) {
-      get().addEntryToPredictionHistory({
-        ...prediction,
-        timestamp: new Date().toISOString(),
-        predictionMode,
-        id: get().predictionHistory.length
-      });
     }
   }
 });

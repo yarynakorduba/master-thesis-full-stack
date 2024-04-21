@@ -29,8 +29,8 @@ const App = () => {
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
 
   useEffect(() => {
-    console.log('HAppening');
-    setTimeseriesData(json as TTimeseriesData);
+    const mappedJSON = json.map((value) => ({ ...value, date: new Date(value.date).getTime() }));
+    setTimeseriesData(mappedJSON as TTimeseriesData);
   }, [setTimeseriesData]);
 
   const valueProperties = useMemo(

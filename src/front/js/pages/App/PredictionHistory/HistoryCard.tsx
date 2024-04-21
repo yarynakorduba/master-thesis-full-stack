@@ -13,6 +13,7 @@ type TProps = {
 };
 
 const HistoryCard = ({ historyEntry, onClick }: TProps) => {
+  console.log(historyEntry);
   return (
     <Card variant="outlined">
       <CardActionArea onClick={() => onClick(historyEntry)}>
