@@ -53,8 +53,7 @@ const LineChart = ({
     bottom: CHART_BOTTOM_PADDING,
     left: CHART_LEFT_PADDING,
     right: CHART_RIGHT_PADDING
-  },
-  onClick = noop
+  }
 }: TProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;

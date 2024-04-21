@@ -49,7 +49,6 @@ const App = () => {
     useCausalityTest();
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
-  console.log('PREDICTION RESULT -- > ', predictionResult);
 
   const mappedARIMAPrediction = useMemo(() => {
     if (!(selectedProp?.value && predictionResult)) return [[], []];

@@ -30,6 +30,7 @@ import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/App/Analysis/types';
+import { getSelectedDataByBoundaries } from '../../../utils';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 20;
@@ -49,8 +50,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
-  // readonly selectedDataLength: number;
-  readonly selectedAreaBounds: any;
+  readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
   readonly formatYScale: TFormatYScale;
@@ -60,6 +60,7 @@ type TProps = {
   readonly onClick?: () => void;
   readonly defaultBrushValueBounds?: TValueBounds;
   readonly onSelectArea?: (points) => void;
+  readonly selectedDataLength?: string;
 };
 
 const LineChart = ({
@@ -68,7 +69,6 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
-  // selectedDataLength,
   dataLabels,
   formatXScale,
   formatYScale,
@@ -82,7 +82,8 @@ const LineChart = ({
   },
   defaultBrushValueBounds = undefined,
   selectedAreaBounds = undefined,
-  onSelectArea = noop
+  onSelectArea = noop,
+  selectedDataLength
 }: TProps) => {
   const { palette } = useTheme();
   const hiddenColor = getHiddenLineColor(palette);
@@ -303,11 +304,11 @@ const LineChart = ({
             Drag&apos;n&apos;drop on the chart to set the data limits
           </Typography>
         )}
-        {/* {isTrainingDataSelectionOn && selectedAreaValueBounds && (
+        {isTrainingDataSelectionOn && selectedAreaValueBounds && !isNil(selectedDataLength) && (
           <Typography variant="body1" color={palette.text.secondary}>
             Selected {selectedDataLength} entries
           </Typography>
-        )} */}
+        )}
         {isTrainingDataSelectionOn && selectedAreaValueBounds && (
           <Button
             onClick={() => {
@@ -420,7 +421,7 @@ export default function ResponsiveLineChart({
   onSelectArea = noop,
   defaultBrushValueBounds,
   dataLabels,
-  // selectedDataLength,
+  selectedDataLength,
   selectedAreaBounds
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
@@ -441,7 +442,7 @@ export default function ResponsiveLineChart({
         numYAxisTicks={numYAxisTicks}
         padding={padding}
         defaultBrushValueBounds={defaultBrushValueBounds}
-        // selectedDataLength={selectedDataLength}
+        selectedDataLength={selectedDataLength}
       />
     ),
     [
@@ -456,8 +457,8 @@ export default function ResponsiveLineChart({
       numXAxisTicks,
       numYAxisTicks,
       padding,
-      defaultBrushValueBounds
-      // selectedDataLength
+      defaultBrushValueBounds,
+      selectedDataLength
     ]
   );
 

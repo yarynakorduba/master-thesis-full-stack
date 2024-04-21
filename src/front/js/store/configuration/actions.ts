@@ -1,4 +1,4 @@
-import { map, every, reduce, isEmpty } from 'lodash';
+import { map, every, reduce } from 'lodash';
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
@@ -7,7 +7,7 @@ import {
   fetchVAR
 } from '../../apiCalls/analysis';
 import { EPredictionMode, THistoryEntry, TValueBounds } from '../../pages/App/Analysis/types';
-import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
+import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
   SET_DATA,
@@ -36,7 +36,7 @@ import { getSelectedDataByBoundaries } from '../../utils';
 
 export default (set, get) => ({
   setData: (data: TTimeseriesData) => set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
-  setSelectedDataBoundaries: (selectedDataBoundaries: any) =>
+  setSelectedDataBoundaries: (selectedDataBoundaries?: TValueBounds) =>
     set(
       (state) => ({ latestPrediction: { ...state.latestPrediction, selectedDataBoundaries } }),
       SHOULD_CLEAR_STORE,
@@ -164,6 +164,7 @@ export default (set, get) => ({
 
     set(
       () => ({
+        displayedPredictionId: 'latestPrediction',
         latestPrediction: {
           selectedDataBoundaries: dataBoundaries,
           predictionMode: EPredictionMode.ARIMA,
@@ -206,6 +207,8 @@ export default (set, get) => ({
 
     set(
       () => ({
+        displayedPredictionId: 'latestPrediction',
+
         latestPrediction: {
           selectedDataBoundaries: dataBoundaries,
           predictionMode: EPredictionMode.VAR,

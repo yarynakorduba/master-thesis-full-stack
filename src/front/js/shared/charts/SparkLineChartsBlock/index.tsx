@@ -10,6 +10,8 @@ import { TDataLabel, TLineChartData, TLineChartDatapoint, TTimeseriesData } from
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
+import { TValueBounds } from '../../../pages/App/Analysis/types';
+import { getSelectedDataByBoundaries } from '../../../utils';
 
 const constructLineChartDataFromTs = (
   valueProperty: TDataProperty | undefined,
@@ -42,9 +44,8 @@ type TProps = {
   readonly timeProperty: TDataProperty;
 
   readonly timeseriesData: TTimeseriesData;
-  readonly selectedAreaBounds: any;
-  // readonly setSelectedDataBoundaries: (data: TTimeseriesData) => void;
-  readonly setSelectedDataBoundaries: (data: any) => void;
+  readonly selectedAreaBounds?: TValueBounds;
+  readonly setSelectedDataBoundaries: (data?: TValueBounds) => void;
 
   readonly predictionData?: TTimeseriesData[];
   readonly dataLabels?: TDataLabel[];
@@ -63,41 +64,22 @@ const SparkLineChartsBlock = ({
   const theme = useTheme();
 
   useEffect(() => {
-    // setSelectedDataBoundaries(timeseriesData);
-
-    setSelectedDataBoundaries(
-      selectedProp && {
-        x0: timeseriesData[0][selectedProp?.value],
-        x1: timeseriesData[timeseriesData.length - 1][selectedProp?.value]
-      }
-    );
+    // if timeseries data updates, reset the selection
+    setSelectedDataBoundaries(undefined);
   }, [timeseriesData]);
 
   const onSelectedAreaChange = useCallback(
     (domain) => {
       if (!domain) {
-        // setSelectedDataBoundaries(timeseriesData);
-        setSelectedDataBoundaries(
-          selectedProp && {
-            x0: timeseriesData[0][selectedProp?.value],
-            x1: timeseriesData[timeseriesData.length - 1][selectedProp?.value]
-          }
-        );
+        setSelectedDataBoundaries(undefined);
         return;
       }
       const { x0, x1 } = domain;
-      const newSelectedData = timeseriesData.filter((s) => {
-        return +s[timeProperty.value] >= x0 && +s[timeProperty.value] <= x1;
-      });
-      // setSelectedDataBoundaries(newSelectedData);
       setSelectedDataBoundaries({ x0, x1 });
-
-      console.log(`Selected ${newSelectedData.length} datapoints`, timeseriesData);
     },
-    [selectedProp, setSelectedDataBoundaries, timeProperty.value, timeseriesData]
+    [setSelectedDataBoundaries]
   );
 
-  // const [time, lastTs] = useSmallestTimeUnit(timeseriesData, timeProperty);
   const firstProp = valueProperties?.[0];
   useEffect(() => {
     if (firstProp) setSelectedProp(firstProp);
@@ -145,6 +127,10 @@ const SparkLineChartsBlock = ({
     timeseriesData
   ]);
 
+  const selectedDataLength =
+    getSelectedDataByBoundaries(timeseriesData, timeProperty, selectedAreaBounds)?.length ||
+    timeseriesData.length;
+
   const defaultBrushValueBounds = undefined;
   return (
     <LineChartContainer>
@@ -163,6 +149,7 @@ const SparkLineChartsBlock = ({
           onSelectArea={onSelectedAreaChange}
           isResponsive={true}
           selectedAreaBounds={selectedAreaBounds}
+          selectedDataLength={selectedDataLength}
         />
       </Box>
       {valueProperties.length > 1 ? (

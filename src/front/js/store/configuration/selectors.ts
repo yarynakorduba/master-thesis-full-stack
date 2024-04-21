@@ -1,8 +1,8 @@
-import { TTimeseriesData } from 'front/js/types';
-import { useBoundStore } from '..';
-import { EPredictionMode, THistoryEntry } from 'front/js/pages/App/Analysis/types';
-import { TDisplayedPrediction } from '../types';
 import { find } from 'lodash';
+import { TTimeseriesData } from '../../types';
+import { useBoundStore } from '..';
+import { EPredictionMode, THistoryEntry, TValueBounds } from '../../pages/App/Analysis/types';
+import { TDisplayedPrediction } from '../types';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetData = (): TTimeseriesData => useBoundStore((state) => state.data);
@@ -12,7 +12,7 @@ export const useConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => vo
   useSetData()
 ];
 
-export const useGetSelectedDataBoundaries = (): any =>
+export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) =>
     state.displayedPredictionId === 'latestPrediction'
       ? state.latestPrediction.selectedDataBoundaries
@@ -21,10 +21,10 @@ export const useGetSelectedDataBoundaries = (): any =>
   );
 export const useSetSelectedDataBoundaries = () =>
   useBoundStore((state) => state.setSelectedDataBoundaries);
-export const useSelectedDataBoundaries = (): [any, (data: any) => void] => [
-  useGetSelectedDataBoundaries(),
-  useSetSelectedDataBoundaries()
-];
+export const useSelectedDataBoundaries = (): [
+  TValueBounds | undefined,
+  (data: TValueBounds | undefined) => void
+] => [useGetSelectedDataBoundaries(), useSetSelectedDataBoundaries()];
 
 export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetPrediction = () =>

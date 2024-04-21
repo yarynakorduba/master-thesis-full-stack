@@ -1,30 +1,19 @@
 import {
   EPredictionMode,
   TARIMAResult,
+  TARIMAUserParams,
   THistoryEntry,
-  TPredictedPoints,
-  TVARResult
+  TVARResult,
+  TValueBounds
 } from '../pages/App/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
 
-// displayedPredictionId: {
-//   predictionMode: EPredictionMode.ARIMA,
-//   prediction: undefined
-// },
-
-// latestPrediction: {
-//   predictionMode: EPredictionMode.ARIMA,
-//   prediction: undefined,
-//   isPredictionLoading: false
-// },
-
 export type TDisplayedPrediction = number | 'latestPrediction';
 export type TConfigurationSlice = {
-  // readonly id: string;
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;
 
-  readonly setSelectedDataBoundaries: (data: any) => void;
+  readonly setSelectedDataBoundaries: (boundaries?: TValueBounds) => void;
 
   readonly whiteNoiseTest;
   readonly isWhiteNoiseTestLoading: boolean;
@@ -47,29 +36,18 @@ export type TConfigurationSlice = {
     readonly isPredictionLoading: boolean;
     readonly predictionMode: EPredictionMode;
     // the data which was selected for training
-    readonly selectedDataBoundaries: undefined;
+    readonly selectedDataBoundaries?: TValueBounds;
   };
 
   readonly predictionHistory: THistoryEntry[];
   readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
-  readonly fetchARIMAPrediction: (params: any, data) => Promise<void>;
-  readonly fetchVARPrediction: (params: any, data) => Promise<void>;
-  readonly fetchPrediction: (params: any, timeProperty: TDataProperty) => Promise<void>;
-
-  // readonly currentRun: {
-  //   readonly trainingData: any;
-  //   readonly causalityTest;
-  //   readonly whiteNoiseTest: any;
-  //   readonly prediction: any;
-  // };
-
-  // readonly predictionHistory;
-  // -->     readonly data: any;
-  // -->     readonly trainingData: any;
-  // -->     readonly causalityTest;
-  // -->     readonly whiteNoiseTest: any;
-  // -->     readonly prediction: any;
+  readonly fetchARIMAPrediction: (params: TARIMAUserParams, timeProperty) => Promise<void>;
+  readonly fetchVARPrediction: (params: any, timeProperty) => Promise<void>;
+  readonly fetchPrediction: (
+    params: TARIMAUserParams | any,
+    timeProperty: TDataProperty
+  ) => Promise<void>;
 };
 
 export type TStoreMiddlewares = [['zustand/devtools', never]];
