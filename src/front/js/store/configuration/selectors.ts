@@ -91,3 +91,8 @@ export const useSetDisplayedPredictionId = () =>
   useBoundStore(
     (state): ((predictionItemId: TDisplayedPrediction) => void) => state.setDisplayedPredictionId
   );
+
+export const useDisplayedPredictionId = (): [
+  TDisplayedPrediction,
+  (predictionItemId: TDisplayedPrediction) => void
+] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];

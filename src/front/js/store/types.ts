@@ -50,4 +50,4 @@ export type TConfigurationSlice = {
   ) => Promise<void>;
 };
 
-export type TStoreMiddlewares = [['zustand/devtools', never]];
+export type TStoreMiddlewares = [['zustand/devtools', never], ['zustand/persist', unknown]];

@@ -7,7 +7,7 @@ import { Grid } from '@mui/material';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from '../../../../../test_data/ArimaV2Dataset.json';
+import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
 import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
 import Analysis from './Analysis';
 import {

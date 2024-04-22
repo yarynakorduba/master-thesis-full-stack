@@ -1,21 +1,21 @@
 import React from 'react';
-import { Box, Card, CardActionArea, CardContent, Chip, Grid, Typography } from '@mui/material';
+import { Box, CardActionArea, CardContent, Chip, Grid, Typography } from '@mui/material';
 import { round } from 'lodash';
 
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
-import { CardDate, CardHeader } from './styles';
+import { CardDate, CardHeader, Card } from './styles';
 import { formatOrder } from '../../../utils/formatters';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
   readonly onClick: (historyEntry: THistoryEntry) => void;
+  readonly isSelected: boolean;
 };
 
-const HistoryCard = ({ historyEntry, onClick }: TProps) => {
-  console.log(historyEntry);
+const HistoryCard = ({ historyEntry, onClick, isSelected }: TProps) => {
   return (
-    <Card variant="outlined">
+    <Card isSelected={isSelected} variant={isSelected ? 'outlined' : 'elevation'}>
       <CardActionArea onClick={() => onClick(historyEntry)}>
         <CardContent>
           <CardHeader>

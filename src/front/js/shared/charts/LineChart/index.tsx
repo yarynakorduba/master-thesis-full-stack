@@ -30,7 +30,6 @@ import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/App/Analysis/types';
-import { getSelectedDataByBoundaries } from '../../../utils';
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 20;
@@ -50,6 +49,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
+  readonly areaData: any;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
@@ -62,6 +62,96 @@ type TProps = {
   readonly onSelectArea?: (points) => void;
   readonly selectedDataLength?: string;
 };
+
+const areaData = [
+  {
+    id: 'passengers-area-19.43174',
+    label: 'passengers',
+    color: 'green',
+    datapoints: [
+      {
+        valueX: 678326400000,
+        valueY: 3.526591
+      },
+      {
+        valueX: 681004800000,
+        valueY: 3.180891
+      },
+      {
+        valueX: 1046476800000,
+        valueY: 10.81699371
+      },
+      {
+        valueX: 1136073600000,
+        valueY: 23.486694
+      },
+      {
+        valueX: 1138752000000,
+        valueY: 12.536987
+      },
+      {
+        valueX: 1141171200000,
+        valueY: 15.467018
+      },
+      {
+        valueX: 1143849600000,
+        valueY: 14.233539
+      },
+      {
+        valueX: 1146441600000,
+        valueY: 17.783058
+      },
+      {
+        valueX: 1149120000000,
+        valueY: 16.291602
+      },
+      {
+        valueX: 1151712000000,
+        valueY: 16.980282
+      },
+      {
+        valueX: 1154390400000,
+        valueY: 18.612189
+      },
+      {
+        valueX: 1157068800000,
+        valueY: 16.623343
+      },
+      {
+        valueX: 1159660800000,
+        valueY: 21.430241
+      },
+      {
+        valueX: 1162339200000,
+        valueY: 23.575517
+      },
+      {
+        valueX: 1164931200000,
+        valueY: 23.334206
+      },
+      {
+        valueX: 1167609600000,
+        valueY: 28.038383
+      },
+      {
+        valueX: 1170288000000,
+        valueY: 16.763869
+      },
+      {
+        valueX: 1172707200000,
+        valueY: 19.792754
+      },
+      {
+        valueX: 1175385600000,
+        valueY: 16.427305
+      },
+      {
+        valueX: 1177977600000,
+        valueY: 21.000742
+      }
+    ]
+  }
+];
 
 const LineChart = ({
   width = 2000,
@@ -422,7 +512,8 @@ export default function ResponsiveLineChart({
   defaultBrushValueBounds,
   dataLabels,
   selectedDataLength,
-  selectedAreaBounds
+  selectedAreaBounds,
+  areaData
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -443,12 +534,14 @@ export default function ResponsiveLineChart({
         padding={padding}
         defaultBrushValueBounds={defaultBrushValueBounds}
         selectedDataLength={selectedDataLength}
+        areaData={areaData}
       />
     ),
     [
       heading,
       variant,
       data,
+      selectedAreaBounds,
       dataLabels,
       formatXScale,
       formatYScale,

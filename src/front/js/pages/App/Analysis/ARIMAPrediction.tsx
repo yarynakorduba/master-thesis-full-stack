@@ -33,7 +33,7 @@ const ARIMAPrediction = ({
   handleSelectStep,
   index
 }: TProps) => {
-  const [horizon, setHorizon] = useInputState<number>(20, { min: 0 });
+  const [horizon, setHorizon] = useInputState<number>(20, { min: 1 });
   const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
 
   const [minP, setMinP] = useInputState<number>(0, { min: 0 });
@@ -63,7 +63,7 @@ const ARIMAPrediction = ({
               onChange={setHorizon}
               size="small"
               type="number"
-              InputProps={{ inputProps: { min: 0 } }}
+              InputProps={{ inputProps: { min: 1 } }}
             />
           </Grid>
           <Grid item md={6} />

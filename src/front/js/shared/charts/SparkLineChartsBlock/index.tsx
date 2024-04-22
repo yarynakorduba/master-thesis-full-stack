@@ -123,6 +123,7 @@ const SparkLineChartsBlock = ({
     timeProperty,
     predictionData,
     theme.palette.charts.chartPink,
+    theme.palette.charts.chartFuchsia,
     theme.palette.charts.chartBlue,
     timeseriesData
   ]);
@@ -138,6 +139,7 @@ const SparkLineChartsBlock = ({
         <LineChart
           heading={selectedProp?.label || ''}
           data={chartData}
+          areaData={[]}
           dataLabels={dataLabels}
           numXAxisTicks={6}
           numYAxisTicks={4}
