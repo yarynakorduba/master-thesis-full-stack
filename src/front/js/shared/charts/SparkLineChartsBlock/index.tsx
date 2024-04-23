@@ -1,16 +1,22 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { filter, flow, isEmpty, map, sortBy } from 'lodash';
+import { filter, flow, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TDataLabel, TLineChartData, TLineChartDatapoint, TTimeseriesData } from '../../../types';
+import {
+  TDataLabel,
+  TLineChartData,
+  TLineChartDatapoint,
+  TTimeseriesData,
+  TTimeseriesDatum
+} from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
-import { TValueBounds } from '../../../pages/App/Analysis/types';
+import { TPredictedPoints, TValueBounds } from '../../../pages/App/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
 
 const constructLineChartDataFromTs = (
@@ -47,7 +53,10 @@ type TProps = {
   readonly selectedAreaBounds?: TValueBounds;
   readonly setSelectedDataBoundaries: (data?: TValueBounds) => void;
 
-  readonly predictionData?: TTimeseriesData[];
+  readonly predictionData?: {
+    readonly prediction: TPredictedPoints;
+    readonly realPrediction: TPredictedPoints;
+  };
   readonly dataLabels?: TDataLabel[];
 };
 const SparkLineChartsBlock = ({
@@ -62,6 +71,21 @@ const SparkLineChartsBlock = ({
   setSelectedProp
 }: TProps) => {
   const theme = useTheme();
+
+  const mappedARIMAPrediction = useMemo(() => {
+    if (!(selectedProp?.value && predictionData)) return [[], []];
+
+    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
+      return {
+        [timeProperty.value]: +index,
+        [selectedProp?.value]: value
+      };
+    };
+    return [
+      map(predictionData?.prediction, convertARIMADatapoint),
+      map(predictionData?.realPrediction, convertARIMADatapoint)
+    ];
+  }, [selectedProp?.value, predictionData, timeProperty.value]);
 
   useEffect(() => {
     // if timeseries data updates, reset the selection
@@ -90,10 +114,10 @@ const SparkLineChartsBlock = ({
   };
 
   const chartData: TLineChartData = useMemo(() => {
-    const predictedData = constructLineChartDataFromTs(
+    const testPredictedData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
-      predictionData?.[0],
+      mappedARIMAPrediction?.[0],
       theme.palette.charts.chartPink,
       `${selectedProp?.label} test data prediction`
     );
@@ -101,7 +125,7 @@ const SparkLineChartsBlock = ({
     const realPredictedData = constructLineChartDataFromTs(
       selectedProp,
       timeProperty,
-      predictionData?.[1],
+      mappedARIMAPrediction?.[1],
       theme.palette.charts.chartFuchsia,
       `${selectedProp?.label} real data prediction`
     );
@@ -115,18 +139,48 @@ const SparkLineChartsBlock = ({
     );
 
     return filter(
-      [mainChartData, predictedData, realPredictedData],
+      [mainChartData, testPredictedData, realPredictedData],
       (d) => !isEmpty(d?.datapoints)
     ) as TLineChartSerie[];
   }, [
     selectedProp,
     timeProperty,
-    predictionData,
+    mappedARIMAPrediction,
     theme.palette.charts.chartPink,
     theme.palette.charts.chartFuchsia,
     theme.palette.charts.chartBlue,
     timeseriesData
   ]);
+
+  const testPredictedDataCounterpart =
+    predictionData &&
+    selectedProp &&
+    intersectionWith(
+      timeseriesData,
+      mappedARIMAPrediction?.[0] || [],
+      (a, b) => a[timeProperty?.value] === b?.[timeProperty?.value]
+    );
+
+  const thresholdData = testPredictedDataCounterpart
+    ? [
+        {
+          id: 'passengers-area-19.43174',
+          label: 'passengers',
+          belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
+          aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
+          datapoints: sortBy(
+            map(testPredictedDataCounterpart, (a) => {
+              return {
+                valueX: a[timeProperty.value],
+                valueY0: a[selectedProp.value],
+                valueY1: predictionData?.prediction[a[timeProperty.value]]
+              };
+            }),
+            'valueX'
+          )
+        }
+      ]
+    : [];
 
   const selectedDataLength =
     getSelectedDataByBoundaries(timeseriesData, timeProperty, selectedAreaBounds)?.length ||
@@ -139,7 +193,7 @@ const SparkLineChartsBlock = ({
         <LineChart
           heading={selectedProp?.label || ''}
           data={chartData}
-          areaData={[]}
+          thresholdData={thresholdData}
           dataLabels={dataLabels}
           numXAxisTicks={6}
           numYAxisTicks={4}

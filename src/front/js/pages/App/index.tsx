@@ -50,21 +50,6 @@ const App = () => {
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
 
-  const mappedARIMAPrediction = useMemo(() => {
-    if (!(selectedProp?.value && predictionResult)) return [[], []];
-
-    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
-      return {
-        [timeProperty.value]: +index,
-        [selectedProp?.value]: value
-      };
-    };
-    return [
-      map(predictionResult?.prediction, convertARIMADatapoint),
-      map(predictionResult?.realPrediction, convertARIMADatapoint)
-    ];
-  }, [selectedProp?.value, predictionResult, timeProperty.value]);
-
   const dataLabels =
     (selectedProp?.value &&
       predictionResult && [
@@ -106,7 +91,7 @@ const App = () => {
             valueProperties={valueProperties}
             timeProperty={timeProperty}
             timeseriesData={sortedTSData}
-            predictionData={mappedARIMAPrediction}
+            predictionData={predictionResult}
             setSelectedDataBoundaries={setSelectedDataBoundaries}
             selectedAreaBounds={selectedDataBoundaries}
             selectedProp={selectedProp}
