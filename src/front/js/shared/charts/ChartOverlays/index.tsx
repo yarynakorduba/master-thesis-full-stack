@@ -171,28 +171,26 @@ function ChartOverlays(
           />
         </Group>
       )}
-      {isAreaSelectionOn && (
-        <>
-          <clipPath id="brushAreaClip">
-            <rect x="0" width={width} height={height} />
-          </clipPath>
-          <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
-            <Brush
-              brushDirection="horizontal"
-              xScale={xScale}
-              yScale={yScale}
-              width={width}
-              height={height}
-              margin={{ left: offsetLeft, top: offsetTop }}
-              resizeTriggerAreas={['left', 'right']}
-              onBrushEnd={onSelectedAreaChange}
-              innerRef={selectedAreaRef}
-              selectedBoxStyle={selectedAreaStyle}
-              useWindowMoveEvents
-            />
-          </Group>
-        </>
-      )}
+      <clipPath id="brushAreaClip">
+        <rect x="0" width={width} height={height} />
+      </clipPath>
+      <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
+        <Brush
+          brushDirection="horizontal"
+          xScale={xScale}
+          yScale={yScale}
+          width={width}
+          height={height}
+          margin={{ left: offsetLeft, top: offsetTop }}
+          onBrushEnd={isAreaSelectionOn ? onSelectedAreaChange : noop}
+          innerRef={selectedAreaRef}
+          selectedBoxStyle={selectedAreaStyle}
+          disableDraggingSelection={!isAreaSelectionOn}
+          disableDraggingOverlay={!isAreaSelectionOn}
+          useWindowMoveEvents={false}
+          resizeTriggerAreas={isAreaSelectionOn ? ['left', 'right'] : []}
+        />
+      </Group>
       {isLocationDefined && renderDataPointIndicators()}
     </Group>
   );

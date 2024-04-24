@@ -58,6 +58,7 @@ type TProps = {
     readonly realPrediction: TPredictedPoints;
   };
   readonly dataLabels?: TDataLabel[];
+  readonly defaultIsTrainingDataSelectionOn?: boolean;
 };
 const SparkLineChartsBlock = ({
   valueProperties,
@@ -68,7 +69,8 @@ const SparkLineChartsBlock = ({
   setSelectedDataBoundaries,
   selectedAreaBounds,
   selectedProp,
-  setSelectedProp
+  setSelectedProp,
+  defaultIsTrainingDataSelectionOn = false
 }: TProps) => {
   const theme = useTheme();
 
@@ -206,6 +208,7 @@ const SparkLineChartsBlock = ({
           isResponsive={true}
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}
+          defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
         />
       </Box>
       {valueProperties.length > 1 ? (

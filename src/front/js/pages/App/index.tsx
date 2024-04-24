@@ -13,6 +13,7 @@ import Analysis from './Analysis';
 import {
   useCausalityTest,
   useConfigData,
+  useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
   useStationarityTest,
@@ -32,7 +33,6 @@ const App = () => {
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-
   const [selectedDataBoundaries, setSelectedDataBoundaries] = useSelectedDataBoundaries();
 
   useEffect(() => {
@@ -50,6 +50,8 @@ const App = () => {
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
 
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
+  console.log('-->> IS HISTORY PRED SELECTED', isHistoryPredictionSelected);
   const dataLabels =
     (selectedProp?.value &&
       predictionResult && [
@@ -97,6 +99,7 @@ const App = () => {
             selectedProp={selectedProp}
             setSelectedProp={setSelectedProp}
             dataLabels={dataLabels}
+            defaultIsTrainingDataSelectionOn={isHistoryPredictionSelected}
           />
         ) : null}
         <Grid container justifyContent="start" gap={3} wrap="nowrap">

@@ -33,6 +33,10 @@ export const useGetPrediction = () =>
       ? state.latestPrediction.prediction
       : find(state.predictionHistory, ({ id }) => id === state.displayedPredictionId)
   );
+
+export const useIsHistoryPredictionSelected = () =>
+  useBoundStore((state) => state.displayedPredictionId !== 'latestPrediction');
+
 export const useIsPredictionLoading = () =>
   useBoundStore((state) => state.latestPrediction.isPredictionLoading);
 

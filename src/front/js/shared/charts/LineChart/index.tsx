@@ -62,43 +62,8 @@ type TProps = {
   readonly defaultBrushValueBounds?: TValueBounds;
   readonly onSelectArea?: (points) => void;
   readonly selectedDataLength?: string;
+  readonly defaultIsTrainingDataSelectionOn?: boolean;
 };
-
-const stubThresholdData = [
-  {
-    id: 'passengers-area-19.43174',
-    label: 'passengers',
-    belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
-    aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
-    datapoints: [
-      {
-        valueX: 678326400000,
-        valueY0: 0,
-        valueY1: 3.526591
-      },
-      {
-        valueX: 1170288000000,
-        valueY0: 0,
-        valueY1: 3.526591
-      },
-      {
-        valueX: 1172707200000,
-        valueY0: 0,
-        valueY1: 3.526591
-      },
-      {
-        valueX: 1175385600000,
-        valueY0: 0,
-        valueY1: 3.526591
-      },
-      {
-        valueX: 1177977600000,
-        valueY0: 0,
-        valueY1: 21.000742
-      }
-    ]
-  }
-];
 
 const LineChart = ({
   width = 2000,
@@ -121,14 +86,21 @@ const LineChart = ({
   selectedAreaBounds = undefined,
   onSelectArea = noop,
   selectedDataLength,
-  thresholdData
+  thresholdData,
+  defaultIsTrainingDataSelectionOn = false
 }: TProps) => {
   const { palette } = useTheme();
   const hiddenColor = getHiddenLineColor(palette);
 
   const [visibleLinesData, setVisibleLinesData] = useState(data);
   const [filteredData, setFilteredData] = useState(visibleLinesData);
-  const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(false);
+  const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(
+    defaultIsTrainingDataSelectionOn
+  );
+
+  useEffect(() => {
+    setIsTrainingDataSelectionOn(defaultIsTrainingDataSelectionOn);
+  }, [defaultIsTrainingDataSelectionOn]);
 
   useEffect(() => {
     setVisibleLinesData(data);
@@ -233,7 +205,7 @@ const LineChart = ({
 
   const onSelectedAreaChange = useCallback(
     (domain: Bounds | null) => {
-      if (!isTrainingDataSelectionOn) return;
+      // if (!isTrainingDataSelectionOn) return;
       if (!domain) {
         setSelectedAreaValueBounds(undefined);
         handleUpdateSelectedAreaOnBrushVisual(undefined, undefined);
@@ -256,13 +228,13 @@ const LineChart = ({
       if (!domain) return;
       const { x0, x1 } = domain;
       setBrushValueBounds({ x0, x1 });
-      if (isTrainingDataSelectionOn) {
-        handleUpdateSelectedAreaVisual();
-        handleUpdateSelectedAreaOnBrushVisual(
-          selectedAreaValueBounds?.x0,
-          selectedAreaValueBounds?.x1
-        );
-      }
+      // if (isTrainingDataSelectionOn) {
+      handleUpdateSelectedAreaVisual();
+      handleUpdateSelectedAreaOnBrushVisual(
+        selectedAreaValueBounds?.x0,
+        selectedAreaValueBounds?.x1
+      );
+      // }
     },
     [
       handleUpdateSelectedAreaOnBrushVisual,
@@ -291,8 +263,9 @@ const LineChart = ({
   }, [defaultBrushValueBounds]);
 
   useEffect(() => {
-    if (isTrainingDataSelectionOn) handleUpdateSelectedAreaVisual();
-  }, [isTrainingDataSelectionOn, filteredData]);
+    // if (isTrainingDataSelectionOn)
+    handleUpdateSelectedAreaVisual();
+  }, [filteredData]);
 
   const handleHideDataSerie = useCallback(
     (dataSerieId) => {
@@ -473,7 +446,8 @@ export default function ResponsiveLineChart({
   dataLabels,
   selectedDataLength,
   selectedAreaBounds,
-  thresholdData
+  thresholdData,
+  defaultIsTrainingDataSelectionOn
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -495,6 +469,7 @@ export default function ResponsiveLineChart({
         defaultBrushValueBounds={defaultBrushValueBounds}
         selectedDataLength={selectedDataLength}
         thresholdData={thresholdData}
+        defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
       />
     ),
     [
@@ -511,7 +486,8 @@ export default function ResponsiveLineChart({
       numYAxisTicks,
       padding,
       defaultBrushValueBounds,
-      selectedDataLength
+      selectedDataLength,
+      defaultIsTrainingDataSelectionOn
     ]
   );
 
