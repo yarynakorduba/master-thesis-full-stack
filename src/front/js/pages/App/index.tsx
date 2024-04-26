@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import DatasetForm from './DatasetForm';
-import { map } from 'lodash';
-import Drawer from '@mui/material/Drawer';
-import { Grid } from '@mui/material';
+import { Grid, Drawer } from '@mui/material';
 
-import { AppPage, Content, Sidebar } from './styles';
+import { AppPage, Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
 import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
@@ -13,6 +11,9 @@ import Analysis from './Analysis';
 import {
   useCausalityTest,
   useConfigData,
+  useDisplayedPredictionId,
+  useGetPredictionHistory,
+  useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
@@ -28,7 +29,6 @@ const App = () => {
   );
   const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
 
-  const methods = useForm();
   const [timeseriesData, setTimeseriesData] = useConfigData();
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
@@ -50,8 +50,14 @@ const App = () => {
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
 
+  const predictionHistory = useGetPredictionHistory();
+  const [displayedPredictionId, setDisplayedPredictionId] = useDisplayedPredictionId();
+  // const isDisplayedItemInitialized = useRef();
+  useEffect(() => {
+    setDisplayedPredictionId(predictionHistory?.[0]?.id);
+  }, []);
+
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
-  console.log('-->> IS HISTORY PRED SELECTED', isHistoryPredictionSelected);
   const dataLabels =
     (selectedProp?.value &&
       predictionResult && [
@@ -75,17 +81,19 @@ const App = () => {
     }
   }, [timeProperty, timeseriesData]);
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
 
   return (
     <AppPage>
-      <Drawer open={open} onClose={(_e, _v) => setOpen(false)}>
+      {/* <Drawer open={open} onClose={(_e, _v) => setOpen(false)} hideBackdrop>
         <Sidebar>
           <FormProvider {...methods}>
             <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
           </FormProvider>
         </Sidebar>
-      </Drawer>
+      </Drawer> */}
 
       <Content>
         {sortedTSData?.length ? (
@@ -123,11 +131,20 @@ const App = () => {
               handleFetchPrediction={(params) => handleFetchPrediction(params, timeProperty)}
             />
           </Grid>
-          <Grid item md={6}>
-            <PredictionHistory />
-          </Grid>
+          <Grid item md={6}></Grid>
         </Grid>
       </Content>
+      <HistoryDrawer
+        open={isHistoryDrawerOpen}
+        onClose={(_e, _v) => setIsHistoryDrawerOpen(false)}
+        hideBackdrop
+        anchor="right"
+        variant="persistent"
+      >
+        <Sidebar>
+          <PredictionHistory />
+        </Sidebar>
+      </HistoryDrawer>
     </AppPage>
   );
 };

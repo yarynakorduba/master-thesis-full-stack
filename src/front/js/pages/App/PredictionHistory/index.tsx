@@ -1,43 +1,45 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Button, Grid } from '@mui/material';
-import { isEmpty } from 'lodash';
+import { Grid, useTheme } from '@mui/material';
+import { red } from '@mui/material/colors';
+import { isEmpty, minBy, maxBy } from 'lodash';
 
 import {
   useDisplayedPredictionId,
   useGetPredictionHistory
 } from '../../../store/configuration/selectors';
 import HistoryCard from './HistoryCard';
+import { scaleLinear } from '@visx/scale';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
   const [displayedPredictionId, setDisplayedPredictionId] = useDisplayedPredictionId();
 
+  const mapeExtent = [
+    minBy(predictionHistory, 'evaluation.mape')?.evaluation.mape || 0,
+    maxBy(predictionHistory, 'evaluation.mape')?.evaluation.mape || 0
+  ];
+
+  const mapeLinearScale = scaleLinear({ domain: mapeExtent, range: [red[50], red[200]] });
+
   if (isEmpty(predictionHistory)) return null;
   return (
     <Box sx={{ height: 'auto' }}>
-      <Typography variant="h5" sx={{ marginBottom: 1 }}>
+      <Typography variant="h5" sx={{ mb: 1 }}>
         History
-        {displayedPredictionId !== 'latestPrediction' ? (
-          <Button
-            sx={{ marginLeft: 1 }}
-            onClick={() => setDisplayedPredictionId('latestPrediction')}
-          >
-            Back to the latest state
-          </Button>
-        ) : null}
       </Typography>
       <Grid spacing={1} container>
         {predictionHistory.map((historyEntry) => {
           return (
-            <Grid item xs={6} key={historyEntry.id}>
+            <Grid item xs={12} key={historyEntry.id}>
               <HistoryCard
                 historyEntry={historyEntry}
                 isSelected={displayedPredictionId === historyEntry.id}
                 onClick={(entry) => {
                   setDisplayedPredictionId(entry.id);
                 }}
+                mapeColor={mapeLinearScale(historyEntry.evaluation.mape)}
               />
             </Grid>
           );

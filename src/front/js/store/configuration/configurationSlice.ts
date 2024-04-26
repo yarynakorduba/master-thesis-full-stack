@@ -3,6 +3,7 @@ import { EPredictionMode } from '../../pages/App/Analysis/types';
 import { TConfigurationSlice, TStoreMiddlewares } from '../types';
 import actions from './actions';
 
+export const DEFAULT_HORIZON = 1;
 export const createConfigurationSlice: StateCreator<
   TConfigurationSlice,
   TStoreMiddlewares,
@@ -10,6 +11,8 @@ export const createConfigurationSlice: StateCreator<
   TConfigurationSlice
 > = (set, get) => ({
   data: [],
+  timeseriesProp: undefined,
+  selectedProps: [],
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
@@ -26,9 +29,11 @@ export const createConfigurationSlice: StateCreator<
     predictionMode: EPredictionMode.ARIMA,
     prediction: undefined,
     isPredictionLoading: false,
-    selectedDataBoundaries: undefined
+    selectedDataBoundaries: undefined,
+    horizon: DEFAULT_HORIZON
   },
 
+  isHistoryDrawerOpen: false,
   predictionHistory: [],
 
   ...actions(set, get)

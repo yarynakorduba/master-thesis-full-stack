@@ -12,6 +12,14 @@ export const useConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => vo
   useSetData()
 ];
 
+export const useGetTimeseriesProp = () => useBoundStore((state) => state.timeseriesProp);
+export const useSetTimeseriesProp = () => useBoundStore((state) => state.setTimeseriesProp);
+export const useTimeseriesProp = () => [useGetTimeseriesProp(), useSetTimeseriesProp()];
+
+export const useGetSelectedProps = () => useBoundStore((state) => state.selectedProps);
+export const useSetSelectedProps = () => useBoundStore((state) => state.setSelectedProps);
+export const useSelectedProps = () => [useGetSelectedProps(), useSetSelectedProps()];
+
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) =>
     state.displayedPredictionId === 'latestPrediction'
@@ -100,3 +108,13 @@ export const useDisplayedPredictionId = (): [
   TDisplayedPrediction,
   (predictionItemId: TDisplayedPrediction) => void
 ] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];
+
+export const useGetHorizon = () => useBoundStore((state): number => state.latestPrediction.horizon);
+export const useSetHorizon = () => useBoundStore((state) => state.setHorizon);
+
+export const useHorizon = () => [useGetHorizon(), useSetHorizon()];
+
+export const useIsHistoryDrawerOpen = (): [boolean, (isOpen: boolean) => void] => [
+  useBoundStore((state) => state.isHistoryDrawerOpen),
+  useBoundStore((state) => state.setIsHistoryDrawerOpen)
+];

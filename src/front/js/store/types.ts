@@ -13,7 +13,15 @@ export type TConfigurationSlice = {
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;
 
+  readonly timeseriesProp?: TDataProperty;
+  readonly setTimeseriesProp: (timeseriesProp: TDataProperty) => void;
+
+  readonly selectedProps?: TDataProperty[];
+  readonly setSelectedProps: (selectedProps: TDataProperty[]) => void;
+
   readonly setSelectedDataBoundaries: (boundaries?: TValueBounds) => void;
+
+  readonly setHorizon: (horizon: number) => void;
 
   readonly whiteNoiseTest;
   readonly isWhiteNoiseTestLoading: boolean;
@@ -37,6 +45,8 @@ export type TConfigurationSlice = {
     readonly predictionMode: EPredictionMode;
     // the data which was selected for training
     readonly selectedDataBoundaries?: TValueBounds;
+
+    readonly horizon: number;
   };
 
   readonly predictionHistory: THistoryEntry[];
@@ -48,6 +58,9 @@ export type TConfigurationSlice = {
     params: TARIMAUserParams | any,
     timeProperty: TDataProperty
   ) => Promise<void>;
+
+  readonly isHistoryDrawerOpen: boolean;
+  readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;
 };
 
 export type TStoreMiddlewares = [['zustand/devtools', never], ['zustand/persist', unknown]];

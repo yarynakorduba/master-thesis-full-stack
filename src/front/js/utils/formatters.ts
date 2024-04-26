@@ -13,6 +13,15 @@ export const formatUnixToDate = (d) => {
   }
 };
 
+export const formatDateToDateTime = (d) => {
+  try {
+    return format(new Date(d), 'dd/MM/yyyy, HH:mm');
+  } catch (e) {
+    console.error('Error converting date: ', e, d);
+    throw e;
+  }
+};
+
 export const formatNumber = (d: number): string => {
   const MILLION = 1000 * 1000;
   const BILLION = 1000 * MILLION;

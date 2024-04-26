@@ -5,15 +5,16 @@ import { round } from 'lodash';
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader, Card } from './styles';
-import { formatOrder } from '../../../utils/formatters';
+import { formatDateToDateTime, formatOrder } from '../../../utils/formatters';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
   readonly onClick: (historyEntry: THistoryEntry) => void;
   readonly isSelected: boolean;
+  readonly mapeColor: string;
 };
 
-const HistoryCard = ({ historyEntry, onClick, isSelected }: TProps) => {
+const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) => {
   return (
     <Card isSelected={isSelected} variant={isSelected ? 'outlined' : 'elevation'}>
       <CardActionArea onClick={() => onClick(historyEntry)}>
@@ -23,15 +24,12 @@ const HistoryCard = ({ historyEntry, onClick, isSelected }: TProps) => {
               <Chip size="small" label={historyEntry.predictionMode} />
               <Chip
                 size="small"
+                sx={{ background: mapeColor }}
                 label={<> MAPE: {round(historyEntry.evaluation.mape, PRECISION)}</>}
               />
             </Grid>
             <CardDate color="text.secondary">
-              {new Date(historyEntry.timestamp).toLocaleDateString()}{' '}
-              <Box sx={{ display: 'inline', whiteSpace: 'nowrap' }}>
-                {new Date(historyEntry.timestamp).getHours()}:{' '}
-                {new Date(historyEntry.timestamp).getMinutes()}
-              </Box>
+              {formatDateToDateTime(new Date(historyEntry.timestamp))}
             </CardDate>
           </CardHeader>
           <Typography variant="subtitle2" color="text.secondary">

@@ -7,7 +7,7 @@ import {
   fetchVAR
 } from '../../apiCalls/analysis';
 import { EPredictionMode, THistoryEntry, TValueBounds } from '../../pages/App/Analysis/types';
-import { TTimeseriesData, TWhiteNoiseResult } from '../../types';
+import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
   SET_DATA,
@@ -29,7 +29,10 @@ import {
   FETCH_VAR_PREDICTION_FAILURE,
   ADD_ENTRY_TO_PREDICTION_HISTORY,
   SET_PREDICTION_MODE,
-  SET_DISPLAYED_PREDICTION
+  SET_DISPLAYED_PREDICTION,
+  SET_TIMESERIES_PROP,
+  SET_SELECTED_PROPS,
+  SET_HORIZON
 } from './actionNames';
 import { TDisplayedPrediction } from '../types';
 import { getSelectedDataByBoundaries } from '../../utils';
@@ -41,6 +44,19 @@ export default (set, get) => ({
       (state) => ({ latestPrediction: { ...state.latestPrediction, selectedDataBoundaries } }),
       SHOULD_CLEAR_STORE,
       SET_SELECTED_DATA
+    ),
+
+  setTimeseriesProp: (timeseriesProp: TDataProperty) =>
+    set(() => ({ timeseriesProp }), SHOULD_CLEAR_STORE, SET_TIMESERIES_PROP),
+
+  setSelectedProps: (selectedProps: TDataProperty[]) =>
+    set(() => ({ selectedProps }), SHOULD_CLEAR_STORE, SET_SELECTED_PROPS),
+
+  setHorizon: (horizon: number) =>
+    set(
+      (state) => ({ latestPrediction: { ...state.latestPrediction, horizon } }),
+      SHOULD_CLEAR_STORE,
+      SET_HORIZON
     ),
 
   setPredictionMode: (predictionMode: EPredictionMode) =>
@@ -253,5 +269,7 @@ export default (set, get) => ({
     } else if (predictionMode === EPredictionMode.VAR) {
       await get().fetchVARPrediction(parameters, timeProperty);
     }
-  }
+  },
+
+  setIsHistoryDrawerOpen: (isOpen: boolean) => set(() => ({ isHistoryDrawerOpen: isOpen }))
 });

@@ -10,7 +10,8 @@ import Box from '@mui/material/Box';
 import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../shared/Loader';
 import { Accordion, AccordionDetails, AccordionSummary } from '../../../shared/Accordion';
-import { TTimeseriesData } from 'front/js/types';
+import { TTimeseriesData } from '../../../types';
+import InfoOverlay from '../../../shared/InfoOverlay';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -35,34 +36,30 @@ const StationarityTest = ({
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>Is the data stationary?</Box>
+        <Box sx={{ fontSize: 16 }}>
+          Is the data{' '}
+          <InfoOverlay id="stationary" label="stationary">
+            <InfoOverlay.Popover>
+              <Typography variant="body1">
+                Stationarity is a fundamental concept in time series analysis. A stationary time
+                series is one whose statistical properties, such as mean, variance, and
+                autocorrelation, remain constant over time. In simpler terms, it does not exhibit
+                trends, seasonal effects, or any other systematic patterns that change over time.
+              </Typography>
+              <Typography variant="body1">
+                To test the data stationarity, we run the{' '}
+                <Link href="https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test">
+                  Augmented Dickey-Fuller statistical test
+                </Link>{' '}
+                with the lag order automatically detected by Akaike Information Criterion
+                (autolag=&quot;AIC&quot;).
+              </Typography>
+            </InfoOverlay.Popover>
+          </InfoOverlay>
+          ?
+        </Box>
       </StepButton>{' '}
       <StepContent sx={{ paddingTop: 1 }}>
-        <Accordion sx={{ maxWidth: 'md' }}>
-          <AccordionSummary
-            aria-controls="panel1d-content"
-            id="panel1d-header"
-            sx={{ minHeight: 16, height: 16, margin: 0.5 }}
-          >
-            <Typography variant="subtitle1">About stationarity</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body1">
-              Stationarity is a fundamental concept in time series analysis. A stationary time
-              series is one whose statistical properties, such as mean, variance, and
-              autocorrelation, remain constant over time. In simpler terms, it does not exhibit
-              trends, seasonal effects, or any other systematic patterns that change over time.
-            </Typography>
-            <Typography variant="body1">
-              To test the data stationarity, we run the{' '}
-              <Link href="https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test">
-                Augmented Dickey-Fuller statistical test
-              </Link>{' '}
-              with the lag order automatically detected by Akaike Information Criterion
-              (autolag=&quot;AIC&quot;).
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
         <ButtonContainer>
           {isStationarityTestLoading && <Loader />}
           {!isStationarityTestLoading && (
