@@ -1,9 +1,9 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Grid, useTheme } from '@mui/material';
+import { Grid } from '@mui/material';
 import { red } from '@mui/material/colors';
-import { isEmpty, minBy, maxBy } from 'lodash';
+import { isEmpty } from 'lodash';
 
 import {
   useDisplayedPredictionId,
@@ -11,16 +11,13 @@ import {
 } from '../../../store/configuration/selectors';
 import HistoryCard from './HistoryCard';
 import { scaleLinear } from '@visx/scale';
+import { getExtent } from '../../../utils';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
   const [displayedPredictionId, setDisplayedPredictionId] = useDisplayedPredictionId();
 
-  const mapeExtent = [
-    minBy(predictionHistory, 'evaluation.mape')?.evaluation.mape || 0,
-    maxBy(predictionHistory, 'evaluation.mape')?.evaluation.mape || 0
-  ];
-
+  const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
   const mapeLinearScale = scaleLinear({ domain: mapeExtent, range: [red[50], red[200]] });
 
   if (isEmpty(predictionHistory)) return null;
@@ -36,9 +33,7 @@ const PredictionHistory = () => {
               <HistoryCard
                 historyEntry={historyEntry}
                 isSelected={displayedPredictionId === historyEntry.id}
-                onClick={(entry) => {
-                  setDisplayedPredictionId(entry.id);
-                }}
+                onClick={(entry) => setDisplayedPredictionId(entry.id)}
                 mapeColor={mapeLinearScale(historyEntry.evaluation.mape)}
               />
             </Grid>

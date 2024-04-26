@@ -15,6 +15,10 @@ import Loader from '../../../shared/Loader';
 import { useInputState } from '../../../hooks';
 import { PRECISION } from '../../../consts';
 import { formatOrder } from '../../../utils/formatters';
+import { red } from '@mui/material/colors';
+import { scaleLinear } from '@visx/scale';
+import { getExtent } from '../../../utils';
+import { useGetPredictionHistory } from '../../../store/configuration/selectors';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -47,6 +51,10 @@ const ARIMAPrediction = ({
   const handleClick = () => {
     handlePredict({ horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
   };
+
+  const predictionHistory = useGetPredictionHistory();
+  const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
+  const mapeLinearScale = scaleLinear({ domain: mapeExtent, range: [red[50], red[200]] });
 
   if (!isVisible) return null;
   return (
@@ -106,34 +114,34 @@ const ARIMAPrediction = ({
         {arimaResult ? (
           <Card variant="outlined">
             <CardContent>
-              {/* <Grid container gap={0.5}>
-                  <Chip size="small" label={historyEntry.predictionMode} />
-                  <Chip
-                    size="small"
-                    label={<> MAPE: {round(historyEntry.evaluation.mape, PRECISION)}</>}
-                  />
-                </Grid> */}
-
               <Typography variant="subtitle2" color="text.secondary">
                 Test data prediction params
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                 Order: {formatOrder(arimaResult.testPredictionParameters.order)}, Seasonal order:{' '}
-                {formatOrder(arimaResult.testPredictionParameters.seasonalOrder)}
+                {formatOrder(arimaResult.testPredictionParameters.seasonal_order)}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
                 Real data prediction params
               </Typography>
               <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
                 Order: {formatOrder(arimaResult.realPredictionParameters.order)}, Seasonal order:{' '}
-                {formatOrder(arimaResult.realPredictionParameters.seasonalOrder)}
+                {formatOrder(arimaResult.realPredictionParameters.seasonal_order)}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
                 Evaluation
               </Typography>
               <Typography sx={{ lineBreak: 'auto', fontSize: 14 }}>
-                MAE: {round(arimaResult?.evaluation?.mae, PRECISION)}, MAPE:{' '}
-                {round(arimaResult?.evaluation?.mape, PRECISION)}
+                <Chip
+                  size="small"
+                  label={<> MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>}
+                  sx={{ mr: 1 }}
+                />
+                <Chip
+                  size="small"
+                  sx={{ background: mapeLinearScale(arimaResult.evaluation.mape) }}
+                  label={<> MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>}
+                />
               </Typography>
             </CardContent>
           </Card>

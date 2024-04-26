@@ -6,42 +6,18 @@ import { Box } from '@mui/material';
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import {
-  TDataLabel,
-  TLineChartData,
-  TLineChartDatapoint,
-  TTimeseriesData,
-  TTimeseriesDatum
-} from '../../../types';
+import { TDataLabel, TLineChartData, TLineChartDatapoint, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
 import { TPredictedPoints, TValueBounds } from '../../../pages/App/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
-
-const constructLineChartDataFromTs = (
-  valueProperty: TDataProperty | undefined,
-  timeProperty: TDataProperty | undefined,
-  data: TTimeseriesData = [],
-  lineColor: string,
-  label: string = ''
-): TLineChartSerie | undefined => {
-  if (!(valueProperty?.value && timeProperty?.value)) return undefined;
-  const datapoints: TLineChartDatapoint[] = flow([
-    (d) =>
-      map(d, (datum) => ({
-        valueX: datum[timeProperty?.value] as number,
-        valueY: +datum[valueProperty.value]
-      })),
-    (d) => sortBy(d, 'valueX')
-  ])(data);
-  return {
-    id: `${valueProperty.label}-${data?.[0]?.[valueProperty?.value]}`,
-    label,
-    color: lineColor,
-    datapoints
-  };
-};
+import {
+  PREDICTION_TIMESTAMP_PROP,
+  PREDICTION_VALUE_PROP,
+  mapARIMAPrediction
+} from '../../../utils/prediction';
+import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 
 type TProps = {
   readonly valueProperties: TDataProperty[];
@@ -73,21 +49,7 @@ const SparkLineChartsBlock = ({
   defaultIsTrainingDataSelectionOn = false
 }: TProps) => {
   const theme = useTheme();
-
-  const mappedARIMAPrediction = useMemo(() => {
-    if (!(selectedProp?.value && predictionData)) return [[], []];
-
-    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
-      return {
-        [timeProperty.value]: +index,
-        [selectedProp?.value]: value
-      };
-    };
-    return [
-      map(predictionData?.prediction, convertARIMADatapoint),
-      map(predictionData?.realPrediction, convertARIMADatapoint)
-    ];
-  }, [selectedProp?.value, predictionData, timeProperty.value]);
+  const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
 
   useEffect(() => {
     // if timeseries data updates, reset the selection
@@ -117,24 +79,24 @@ const SparkLineChartsBlock = ({
 
   const chartData: TLineChartData = useMemo(() => {
     const testPredictedData = constructLineChartDataFromTs(
-      selectedProp,
-      timeProperty,
+      PREDICTION_VALUE_PROP,
+      PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.[0],
       theme.palette.charts.chartPink,
       `${selectedProp?.label} test data prediction`
     );
 
     const realPredictedData = constructLineChartDataFromTs(
-      selectedProp,
-      timeProperty,
+      PREDICTION_VALUE_PROP,
+      PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.[1],
       theme.palette.charts.chartFuchsia,
       `${selectedProp?.label} real data prediction`
     );
 
     const mainChartData = constructLineChartDataFromTs(
-      selectedProp,
-      timeProperty,
+      selectedProp?.value,
+      timeProperty?.value,
       timeseriesData,
       theme.palette.charts.chartBlue,
       selectedProp?.label
@@ -215,8 +177,8 @@ const SparkLineChartsBlock = ({
         <SparkLineChartsContainer>
           {map(valueProperties, (prop) => {
             const chartData = constructLineChartDataFromTs(
-              prop,
-              timeProperty,
+              prop.value,
+              timeProperty.value,
               timeseriesData,
               theme.palette.charts.chartBlue,
               prop.label

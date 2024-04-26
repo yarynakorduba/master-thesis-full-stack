@@ -111,6 +111,7 @@ class Arima:
         print(test_prediction)
         print(smodel.summary())
         test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
+        
         json_result = test_predicted_series.to_json()
         test_prediction_parameters = smodel.get_params()
         print(f"Parameters: {test_prediction_parameters}")

@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import DatasetForm from './DatasetForm';
 import { Grid, Drawer } from '@mui/material';
 
 import { AppPage, Content, Sidebar, HistoryDrawer } from './styles';

@@ -9,7 +9,7 @@ export const formatUnixToDate = (d) => {
     return d;
   } catch (e) {
     console.error('Error converting date: ', e, d);
-    throw e;
+    return '';
   }
 };
 
@@ -18,7 +18,7 @@ export const formatDateToDateTime = (d) => {
     return format(new Date(d), 'dd/MM/yyyy, HH:mm');
   } catch (e) {
     console.error('Error converting date: ', e, d);
-    throw e;
+    return '';
   }
 };
 

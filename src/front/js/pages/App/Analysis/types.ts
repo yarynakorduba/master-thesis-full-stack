@@ -22,7 +22,7 @@ export type TARIMAUserParams = {
 // params which come back as a part of the response
 export type TResponseARIMAParams = {
   readonly order: [number, number, number];
-  readonly seasonalOrder?: [number, number, number, number];
+  readonly seasonal_order?: [number, number, number, number];
   // rest of params which are not used on the client side atm
   readonly maxiter: number;
   readonly method: 'newton' | 'nm' | 'bfgs' | 'lbfgs' | 'powell' | 'cg' | 'ncg' | 'basinhopping'; // The method determines which solver from scipy.optimize is used

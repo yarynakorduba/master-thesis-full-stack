@@ -1,11 +1,19 @@
 import React from 'react';
-import { Box, CardActionArea, CardContent, Chip, Grid, Typography } from '@mui/material';
-import { round } from 'lodash';
+import { Box, CardActionArea, CardContent, Chip, Grid, Typography, useTheme } from '@mui/material';
+import { noop, round } from 'lodash';
 
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime, formatOrder } from '../../../utils/formatters';
+import LineChart from '../../../shared/charts/LineChart';
+import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
+import {
+  PREDICTION_TIMESTAMP_PROP,
+  PREDICTION_VALUE_PROP,
+  mapARIMAPrediction
+} from '../../../utils/prediction';
+import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -15,6 +23,25 @@ type TProps = {
 };
 
 const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) => {
+  const theme = useTheme();
+  const mappedARIMAPrediction = mapARIMAPrediction(historyEntry);
+
+  const testPredictedData = constructLineChartDataFromTs(
+    PREDICTION_VALUE_PROP,
+    PREDICTION_TIMESTAMP_PROP,
+    mappedARIMAPrediction?.[0],
+    theme.palette.charts.chartPink,
+    `test data prediction`
+  );
+
+  const realPredictedData = constructLineChartDataFromTs(
+    PREDICTION_VALUE_PROP,
+    PREDICTION_TIMESTAMP_PROP,
+    mappedARIMAPrediction?.[1],
+    theme.palette.charts.chartFuchsia,
+    `real data prediction`
+  );
+
   return (
     <Card isSelected={isSelected} variant={isSelected ? 'outlined' : 'elevation'}>
       <CardActionArea onClick={() => onClick(historyEntry)}>
@@ -37,15 +64,27 @@ const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) =
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
             Order: {formatOrder(historyEntry.testPredictionParameters.order)}, Seasonal order:{' '}
-            {formatOrder(historyEntry.testPredictionParameters.seasonalOrder)}
+            {formatOrder(historyEntry.testPredictionParameters.seasonal_order)}
           </Typography>
           <Typography variant="subtitle2" color="text.secondary">
             Real data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
             Order: {formatOrder(historyEntry.realPredictionParameters.order)}, Seasonal order:{' '}
-            {formatOrder(historyEntry.realPredictionParameters.seasonalOrder)}
+            {formatOrder(historyEntry.realPredictionParameters.seasonal_order)}
           </Typography>
+          <Box width="100%">
+            <SparkLineChart
+              heading={''}
+              data={
+                testPredictedData && realPredictedData ? [testPredictedData, realPredictedData] : []
+              }
+              height={50}
+              width={300}
+              onClick={noop}
+              padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+            />
+          </Box>
         </CardContent>
       </CardActionArea>
     </Card>

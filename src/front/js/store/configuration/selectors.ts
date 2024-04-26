@@ -23,9 +23,9 @@ export const useSelectedProps = () => [useGetSelectedProps(), useSetSelectedProp
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) =>
     state.displayedPredictionId === 'latestPrediction'
-      ? state.latestPrediction.selectedDataBoundaries
-      : find(state.predictionHistory, ({ id }) => id === state.displayedPredictionId)!
-          .selectedDataBoundaries
+      ? state.latestPrediction?.selectedDataBoundaries
+      : find(state.predictionHistory, ({ id }) => id === state.displayedPredictionId)
+          ?.selectedDataBoundaries
   );
 export const useSetSelectedDataBoundaries = () =>
   useBoundStore((state) => state.setSelectedDataBoundaries);
