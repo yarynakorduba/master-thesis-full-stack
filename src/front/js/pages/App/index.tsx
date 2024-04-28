@@ -93,20 +93,19 @@ const App = () => {
       </Drawer> */}
 
       <Content>
-        {sortedTSData?.length && valueProperties && timeProperty ? (
-          <SparkLineChartsBlock
-            valueProperties={valueProperties}
-            timeProperty={timeProperty}
-            timeseriesData={sortedTSData}
-            predictionData={predictionResult}
-            setSelectedDataBoundaries={setSelectedDataBoundaries}
-            selectedAreaBounds={selectedDataBoundaries}
-            selectedProp={selectedProp}
-            setSelectedProp={setSelectedProp}
-            dataLabels={dataLabels}
-            defaultIsTrainingDataSelectionOn={isHistoryPredictionSelected}
-          />
-        ) : null}
+        <SparkLineChartsBlock
+          valueProperties={valueProperties || []}
+          timeProperty={timeProperty}
+          timeseriesData={sortedTSData}
+          predictionData={predictionResult}
+          setSelectedDataBoundaries={setSelectedDataBoundaries}
+          selectedAreaBounds={selectedDataBoundaries}
+          selectedProp={selectedProp}
+          setSelectedProp={setSelectedProp}
+          dataLabels={dataLabels}
+          defaultIsTrainingDataSelectionOn={isHistoryPredictionSelected}
+        />
+
         <Grid container justifyContent="start" gap={3} wrap="nowrap">
           <Grid item md={6}>
             <Analysis

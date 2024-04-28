@@ -23,7 +23,7 @@ type TProps = {
   readonly valueProperties: TDataProperty[];
   readonly selectedProp?: TDataProperty;
   readonly setSelectedProp: (prop: TDataProperty) => void;
-  readonly timeProperty: TDataProperty;
+  readonly timeProperty?: TDataProperty;
 
   readonly timeseriesData: TTimeseriesData;
   readonly selectedAreaBounds?: TValueBounds;
@@ -78,6 +78,7 @@ const SparkLineChartsBlock = ({
   };
 
   const chartData: TLineChartData = useMemo(() => {
+    if (!selectedProp) return [];
     const testPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
@@ -119,6 +120,7 @@ const SparkLineChartsBlock = ({
   const testPredictedDataCounterpart =
     predictionData &&
     selectedProp &&
+    timeProperty &&
     intersectionWith(
       timeseriesData,
       mappedARIMAPrediction?.[0] || [],
@@ -146,14 +148,17 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
+  console.log('###', chartData);
   const selectedDataLength =
-    getSelectedDataByBoundaries(timeseriesData, timeProperty, selectedAreaBounds)?.length ||
+    (timeProperty &&
+      getSelectedDataByBoundaries(timeseriesData, timeProperty, selectedAreaBounds)?.length) ||
     timeseriesData.length;
 
   const defaultBrushValueBounds = undefined;
+  if (!timeProperty || !selectedProp || isEmpty(valueProperties)) return <LineChartContainer />;
   return (
     <LineChartContainer>
-      <Box width="100%">
+      <Box width="100%" minHeight="300px">
         <LineChart
           heading={selectedProp?.label || ''}
           data={chartData}

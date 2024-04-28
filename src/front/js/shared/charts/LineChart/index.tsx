@@ -153,6 +153,7 @@ const LineChart = ({
 
   const selectedAreaRef = useRef<BaseBrush | null>(null);
   const selectedAreaOnBrushRef = useRef<BaseBrush | null>(null);
+  const brushRef = useRef<BaseBrush | null>(null);
 
   const handleUpdateSelectedAreaOnBrushVisual = useCallback(
     (x0, x1) => {
@@ -392,16 +393,21 @@ const LineChart = ({
             xBrushScale={xBrushScale}
             yBrushScale={yBrushScale}
             selectedAreaOnBrushRef={selectedAreaOnBrushRef}
+            brushRef={brushRef}
           />
         </svg>
-        <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
-        <ChartTooltips
-          pointTooltip={pointTooltip}
-          xTooltip={xTooltip}
-          yTooltip={yTooltip}
-          dataLabelTooltips={dataLabelTooltips}
-          formatXScale={formatXScale}
-        />
+        {width ? (
+          <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
+        ) : null}
+        {width ? (
+          <ChartTooltips
+            pointTooltip={pointTooltip}
+            xTooltip={xTooltip}
+            yTooltip={yTooltip}
+            dataLabelTooltips={dataLabelTooltips}
+            formatXScale={formatXScale}
+          />
+        ) : null}
       </ChartWrapper>
     </>
   );
@@ -487,7 +493,7 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ width: 'auto', minHeight: height }}>
+    <ParentSize parentSizeStyles={{ width: 'auto', minHeight: '300px' }}>
       {renderResponsiveChart}
     </ParentSize>
   );
