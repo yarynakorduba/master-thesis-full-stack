@@ -8,12 +8,13 @@ type TInfoOverlayProps = {
   readonly children: ReactNode | ReactNode[];
   id;
   label;
+  sx?;
 };
 const InfoOverlayPopover = ({ children }: { readonly children: ReactNode | ReactNode[] }) => {
   return <Typography sx={{ p: 2, maxWidth: 500 }}>{children}</Typography>;
 };
 
-const InfoOverlay = ({ id, children, variant, label }: TInfoOverlayProps) => {
+const InfoOverlay = ({ id, children, variant, label, sx = {} }: TInfoOverlayProps) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -30,7 +31,7 @@ const InfoOverlay = ({ id, children, variant, label }: TInfoOverlayProps) => {
 
   return (
     <>
-      <OverlayTrigger variant={variant} onClick={handleClick}>
+      <OverlayTrigger variant={variant} onClick={handleClick} sx={sx}>
         {label}
       </OverlayTrigger>
       <Popover

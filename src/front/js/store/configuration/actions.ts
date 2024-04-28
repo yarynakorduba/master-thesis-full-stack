@@ -34,7 +34,7 @@ import {
   SET_SELECTED_PROPS,
   SET_HORIZON
 } from './actionNames';
-import { TDisplayedPrediction } from '../types';
+import { TConfigurationSlice, TDisplayedPrediction } from '../types';
 import { getSelectedDataByBoundaries } from '../../utils';
 
 export default (set, get) => ({
@@ -66,7 +66,12 @@ export default (set, get) => ({
     set(() => ({ displayedPredictionId: itemId }), SHOULD_CLEAR_STORE, SET_DISPLAYED_PREDICTION),
 
   fetchWhiteNoiseTest: async (valueProperties) => {
-    const timeseriesData = get().latestPrediction.selectedDataBoundaries;
+    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(
+      get().data,
+      get().timeseriesProp,
+      dataBoundaries
+    );
 
     set(
       () => ({ whiteNoiseTest: undefined, isWhiteNoiseTestLoading: true }),
@@ -77,7 +82,7 @@ export default (set, get) => ({
     const responses = await Promise.all(
       map(valueProperties, async (selectedProp) => {
         const dataForAnalysis = selectedProp?.value
-          ? map(timeseriesData, (datum) => datum[selectedProp.value])
+          ? map(selectedData, (datum) => datum[selectedProp.value])
           : undefined;
         if (dataForAnalysis) {
           return await fetchIsWhiteNoise(dataForAnalysis);
@@ -102,7 +107,15 @@ export default (set, get) => ({
   },
 
   fetchStationarityTest: async (valueProperties) => {
-    const timeseriesData = get().latestPrediction.selectedDataBoundaries;
+    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(
+      get().data,
+      get().timeseriesProp,
+      dataBoundaries
+    );
+
+    console.log('iii --- >>> ', { dataBoundaries, selectedData });
+
     set(
       () => ({ stationarityTest: undefined, isStationarityTestLoading: true }),
       SHOULD_CLEAR_STORE,
@@ -112,7 +125,7 @@ export default (set, get) => ({
     const responses = await Promise.all(
       map(valueProperties, async (selectedProp) => {
         const dataForAnalysis = selectedProp?.value
-          ? map(timeseriesData, (datum) => datum[selectedProp.value])
+          ? map(selectedData, (datum) => datum[selectedProp.value])
           : undefined;
         if (dataForAnalysis) {
           return await fetchDataStationarityTest(dataForAnalysis);
@@ -136,10 +149,15 @@ export default (set, get) => ({
   },
 
   fetchCausalityTest: async (selectedProps) => {
-    const timeseriesData = get().latestPrediction.selectedDataBoundaries;
+    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(
+      get().data,
+      get().timeseriesProp,
+      dataBoundaries
+    );
 
     if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
-      const dataForAnalysis = map(timeseriesData, (datum) => [
+      const dataForAnalysis = map(selectedData, (datum) => [
         datum[selectedProps[0].value],
         datum[selectedProps[1].value]
       ]);
@@ -174,17 +192,14 @@ export default (set, get) => ({
     );
   },
 
-  fetchARIMAPrediction: async (parameters, timeProperty) => {
-    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
-    const selectedData = getSelectedDataByBoundaries(get().data, timeProperty, dataBoundaries);
-
+  fetchARIMAPrediction: async (parameters, dataBoundaries, selectedData) => {
     set(
-      () => ({
+      (state) => ({
         displayedPredictionId: 'latestPrediction',
         latestPrediction: {
+          ...state.latestPrediction,
           selectedDataBoundaries: dataBoundaries,
           predictionMode: EPredictionMode.ARIMA,
-          prediction: undefined,
           isPredictionLoading: true
         }
       }),
@@ -217,18 +232,15 @@ export default (set, get) => ({
     }
   },
 
-  fetchVARPrediction: async (parameters, timeProperty) => {
-    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
-    const selectedData = getSelectedDataByBoundaries(get().data, timeProperty, dataBoundaries);
-
+  fetchVARPrediction: async (parameters, dataBoundaries, selectedData) => {
     set(
-      () => ({
+      (state) => ({
         displayedPredictionId: 'latestPrediction',
 
         latestPrediction: {
+          ...state.latestPrediction,
           selectedDataBoundaries: dataBoundaries,
           predictionMode: EPredictionMode.VAR,
-          prediction: undefined,
           isPredictionLoading: true
         }
       }),
@@ -263,11 +275,13 @@ export default (set, get) => ({
 
   fetchPrediction: async (parameters, timeProperty) => {
     const predictionMode = get().latestPrediction.predictionMode;
+    const dataBoundaries = get().latestPrediction.selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(get().data, timeProperty, dataBoundaries);
 
     if (predictionMode === EPredictionMode.ARIMA) {
-      await get().fetchARIMAPrediction(parameters, timeProperty);
+      await get().fetchARIMAPrediction(parameters, dataBoundaries, selectedData);
     } else if (predictionMode === EPredictionMode.VAR) {
-      await get().fetchVARPrediction(parameters, timeProperty);
+      await get().fetchVARPrediction(parameters, dataBoundaries, selectedData);
     }
   },
 

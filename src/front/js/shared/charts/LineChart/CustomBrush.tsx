@@ -20,6 +20,7 @@ type TProps = {
   readonly svgHeight: number;
   readonly width: number;
   readonly selectedAreaOnBrushRef: React.MutableRefObject<BaseBrush | null>;
+
   readonly onChange: (domain: Bounds | null) => void;
   readonly data: TLineChartData;
   readonly padding: TPadding;
@@ -34,6 +35,8 @@ const CustomBrush = ({
   onChange,
   selectedAreaOnBrushRef
 }: TProps) => {
+  console.log('!!!', xBrushScale.range());
+  if (xBrushScale.range()?.[1] === 0) return null;
   return (
     <Group left={padding.left} top={svgHeight - BRUSH_HEIGHT} width={width}>
       {data?.map((lineData) => (
@@ -68,6 +71,10 @@ const CustomBrush = ({
         margin={{ left: padding.left }}
         onChange={onChange}
         selectedBoxStyle={selectedBrushStyle}
+        initialBrushPosition={{
+          start: { x: xBrushScale.range()?.[0] ?? 0 },
+          end: { x: xBrushScale.range()?.[1] ?? 0 }
+        }}
         useWindowMoveEvents
         renderBrushHandle={(props: BrushHandleRenderProps) => (
           <BrushHandle {...props} x={props.x} />

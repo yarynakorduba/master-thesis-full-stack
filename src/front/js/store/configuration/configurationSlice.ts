@@ -11,8 +11,8 @@ export const createConfigurationSlice: StateCreator<
   TConfigurationSlice
 > = (set, get) => ({
   data: [],
-  timeseriesProp: undefined,
-  selectedProps: [],
+  timeseriesProp: { value: 'date', label: 'date' },
+  selectedProps: [{ value: 'value', label: 'passengers' }],
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,

@@ -9,7 +9,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { round } from 'lodash';
-import { Card, CardContent, CardHeader, Chip } from '@mui/material';
+import { Card, CardContent, CardHeader, Chip, Stack } from '@mui/material';
 
 import Loader from '../../../shared/Loader';
 import { useInputState } from '../../../hooks';
@@ -19,6 +19,7 @@ import { red } from '@mui/material/colors';
 import { scaleLinear } from '@visx/scale';
 import { getExtent } from '../../../utils';
 import { useGetPredictionHistory } from '../../../store/configuration/selectors';
+import InfoOverlay from '../../../shared/InfoOverlay';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -63,10 +64,19 @@ const ARIMAPrediction = ({
         <Box sx={{ fontSize: 16 }}> What is the prediction for the future? (ARIMA)</Box>
       </StepButton>
       <StepContent>
-        <Grid container spacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
+        <Grid container columnSpacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
           <Grid item md={6} sx={{ marginBottom: 1 }}>
-            <TextField
+            <InfoOverlay
+              id="periods-in-season"
               label="Horizon"
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+            >
+              <InfoOverlay.Popover>
+                Horizon indicates the number of points you would like to predict
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField
               value={horizon}
               onChange={setHorizon}
               size="small"
@@ -75,27 +85,102 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6} />
-          <Grid item md={6}>
-            <TextField label="Min P" value={minP} onChange={setMinP} size="small" type="number" />
+          <Grid item md={6} sx={{ mt: 0 }}>
+            <InfoOverlay
+              id="periods-in-season"
+              label="Min P"
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+            >
+              <InfoOverlay.Popover>
+                P variable, or lag order, helps you control how much the model relies on past values
+                to predict the current one. It&apos;s like adjusting how far back you want to look
+                to make a good guess about today&apos;s weather.
+                <br />
+                <br />
+                Setting min P helps to avoid considering overly simple models that might not predict
+                future values well.
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField value={minP} onChange={setMinP} size="small" type="number" />
+          </Grid>
+          <Grid item md={6} sx={{ mt: 0 }}>
+            <InfoOverlay
+              id="periods-in-season"
+              label="Max P"
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+            >
+              <InfoOverlay.Popover>
+                P variable, or lag order, helps you control how much the model relies on past values
+                to predict the current one. It&apos;s like adjusting how far back you want to look
+                to make a good guess about today&apos;s weather.
+                <br />
+                <br />
+                Setting max P helps to prevent the algorithm from considering excessively complex
+                models
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField value={maxP} onChange={setMaxP} size="small" type="number" />
           </Grid>
           <Grid item md={6}>
-            <TextField label="Max P" value={maxP} onChange={setMaxP} size="small" type="number" />
+            <InfoOverlay
+              id="periods-in-season"
+              label="Min Q"
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+            >
+              <InfoOverlay.Popover>
+                Q variable indicates how much the current observation is influenced by prediction
+                errors made by the model for previous values.
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField value={minQ} onChange={setMinQ} size="small" type="number" />
           </Grid>
           <Grid item md={6}>
-            <TextField label="Min Q" value={minQ} onChange={setMinQ} size="small" type="number" />
-          </Grid>
-          <Grid item md={6}>
-            <TextField label="Max Q" value={maxQ} onChange={setMaxQ} size="small" type="number" />
+            <InfoOverlay
+              id="periods-in-season"
+              label="Max Q"
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+            >
+              <InfoOverlay.Popover>
+                Q variable indicates how much the current observation is influenced by prediction
+                errors made by the model for previous values.
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField value={maxQ} onChange={setMaxQ} size="small" type="number" />
           </Grid>
         </Grid>
-        <FormControlLabel
-          control={<Switch checked={isSeasonal} onChange={setIsSeasonal} />}
-          label="Seasonal"
-        />
+        <Stack direction="row" alignItems="center" justifyContent="flex-start">
+          <Switch checked={isSeasonal} onChange={setIsSeasonal} />
+          <InfoOverlay
+            id="periods-in-season"
+            label="Data is seasonal"
+            variant="subtitle2"
+            sx={{ fontSize: 12, display: 'block' }}
+          >
+            <InfoOverlay.Popover>aaa</InfoOverlay.Popover>
+          </InfoOverlay>
+        </Stack>
         {isSeasonal ? (
-          <Grid sx={{ paddingTop: 1 }}>
-            <TextField
+          <Grid item md={6} sx={{ paddingTop: 1 }}>
+            <InfoOverlay
+              id="periods-in-season"
               label="Periods in season"
+              variant="subtitle2"
+              sx={{ fontSize: 12, display: 'block' }}
+            >
+              <InfoOverlay.Popover>
+                This number indicates how many data points one seasonal pattern contains. <br />
+                <br />
+                Example: you have a dataset of daily temperatures for a city over several years. You
+                notice that the temperature tends to be higher in the summer months and lower in the
+                winter months, creating a seasonal pattern. For daily data, the seasonal period
+                could be 365 (one year).
+              </InfoOverlay.Popover>
+            </InfoOverlay>
+            <TextField
               value={periodsInSeason}
               onChange={setPeriodsInSeason}
               size="small"
@@ -152,3 +237,14 @@ const ARIMAPrediction = ({
 };
 
 export default ARIMAPrediction;
+
+// Chat GPT
+// While Auto ARIMA is a powerful tool for automatically selecting the optimal ARIMA model for many time series datasets, there are certain types of time series data for which Auto ARIMA may not perform well or may not be suitable for prediction. Here are some scenarios where Auto ARIMA might face challenges or may not be appropriate:
+
+// Non-Stationary Data without Clear Trends or Seasonality: Auto ARIMA is designed for stationary or weakly stationary time series data with clear trends and/or seasonality. If the data is highly non-stationary or lacks clear patterns, Auto ARIMA may struggle to identify an appropriate model.
+// Complex Seasonal Patterns: While Auto ARIMA can handle seasonal data, it may not perform well with complex seasonal patterns or multiple seasonalities. In such cases, specialized models or preprocessing techniques may be required.
+// Highly Irregular or Noisy Data: Auto ARIMA assumes that the time series data contains meaningful patterns that can be captured by an ARIMA model. If the data is highly irregular, noisy, or contains outliers, Auto ARIMA may produce unreliable results.
+// Large or High-Frequency Data: Auto ARIMA may not scale well to very large datasets or high-frequency data due to computational constraints. In such cases, alternative modeling approaches or data reduction techniques may be necessary.
+// Structural Breaks: If the time series data exhibits structural breaks or sudden changes in behavior over time, Auto ARIMA may struggle to capture these changes effectively. Detecting and modeling structural breaks typically requires additional analysis and specialized techniques.
+// Exogenous Variables: Auto ARIMA focuses solely on the time series data itself and does not incorporate external variables or predictors (exogenous variables). If the time series is influenced by external factors that are not included in the model, the predictive performance of Auto ARIMA may be limited.
+// Long-Term Forecasting: Auto ARIMA may not be well-suited for long-term forecasting, especially for time series data with complex dynamics or uncertain future trends. In such cases, alternative forecasting methods, such as machine learning models or hybrid approaches, may be more appropriate.

@@ -1,5 +1,5 @@
 import { find } from 'lodash';
-import { TTimeseriesData } from '../../types';
+import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import { EPredictionMode, THistoryEntry, TValueBounds } from '../../pages/App/Analysis/types';
 import { TDisplayedPrediction } from '../types';
@@ -14,11 +14,17 @@ export const useConfigData = (): [TTimeseriesData, (data: TTimeseriesData) => vo
 
 export const useGetTimeseriesProp = () => useBoundStore((state) => state.timeseriesProp);
 export const useSetTimeseriesProp = () => useBoundStore((state) => state.setTimeseriesProp);
-export const useTimeseriesProp = () => [useGetTimeseriesProp(), useSetTimeseriesProp()];
+export const useTimeseriesProp = (): [TDataProperty | undefined, (data: TDataProperty) => void] => [
+  useGetTimeseriesProp(),
+  useSetTimeseriesProp()
+];
 
 export const useGetSelectedProps = () => useBoundStore((state) => state.selectedProps);
 export const useSetSelectedProps = () => useBoundStore((state) => state.setSelectedProps);
-export const useSelectedProps = () => [useGetSelectedProps(), useSetSelectedProps()];
+export const useSelectedProps = (): [
+  TDataProperty[] | undefined,
+  (data: TDataProperty[]) => void
+] => [useGetSelectedProps(), useSetSelectedProps()];
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) =>

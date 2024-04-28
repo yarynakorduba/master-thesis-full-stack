@@ -1,9 +1,12 @@
+import numpy as np
+from pmdarima.arima.utils import ndiffs
 import statsmodels.stats.diagnostic as diag
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.vector_ar.var_model import VAR
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+from pmdarima.arima.stationarity import ADFTest
 
 SIGNIFICANT_P = 0.05
 
@@ -17,16 +20,25 @@ class Analysis():
         result = diag.acorr_ljungbox(data, boxpierce=True, model_df=0, period=None, return_df=None)
         return { "isWhiteNoise": bool(result.iloc[-1, 1] >= SIGNIFICANT_P) }
     
-    SIGNIFICANT_P = 0.05
-    def test_stationarity(data):
+    def test_stationarity_pmdarima(self, data):
+        adf_test = ADFTest(alpha=0.05)
+        print("-------------------- AAAA", data)
+        p_value, should_diff = adf_test.is_stationary(np.array(data))  # (0.01, False)
+        # Estimate the number of differences using an ADF test:
+        n_adf = ndiffs(np.array(data), test='adf')  # -> 0
+        print(f"----------dflkfdlkvmA{p_value} {should_diff} {n_adf}")
+
+        return { "isStationary": bool(should_diff), "ndiffs": n_adf }
+
+    def test_stationarity(self, data):
         # AIC - autolag parameter which automates
         # the selection of the lag length based on information criteria and penalises complex models.
 
         # ct - ct: It stands for "constant and trend."
         # The regression model includes both a constant (intercept) and a linear trend term.
         # H0: data is not stationary
-        result = adfuller(data, autolag="AIC") #maxlag=maxlag, regression='ct')
-
+        result = adfuller(data, autolag="AIC", regression='ctt', maxlag=14)
+        print(result)
         isStationary = False
         if (
             # result[0] < result[4]["1%"] and  and result[0] < result[4]["10%"]\

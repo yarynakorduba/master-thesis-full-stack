@@ -52,8 +52,16 @@ export type TConfigurationSlice = {
   readonly predictionHistory: THistoryEntry[];
   readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
-  readonly fetchARIMAPrediction: (params: TARIMAUserParams, timeProperty) => Promise<void>;
-  readonly fetchVARPrediction: (params: any, timeProperty) => Promise<void>;
+  readonly fetchARIMAPrediction: (
+    params: TARIMAUserParams,
+    dataBoundaries: TValueBounds,
+    selectedData: TTimeseriesData
+  ) => Promise<void>;
+  readonly fetchVARPrediction: (
+    params: any,
+    dataBoundaries: TValueBounds,
+    selectedData: TTimeseriesData
+  ) => Promise<void>;
   readonly fetchPrediction: (
     params: TARIMAUserParams | any,
     timeProperty: TDataProperty

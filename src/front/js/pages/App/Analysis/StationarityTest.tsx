@@ -41,10 +41,10 @@ const StationarityTest = ({
           <InfoOverlay id="stationary" label="stationary">
             <InfoOverlay.Popover>
               <Typography variant="body1">
-                Stationarity is a fundamental concept in time series analysis. A stationary time
-                series is one whose statistical properties, such as mean, variance, and
-                autocorrelation, remain constant over time. In simpler terms, it does not exhibit
-                trends, seasonal effects, or any other systematic patterns that change over time.
+                A time series is stationary when its statistical properties, such as mean, variance,
+                and autocorrelation, remain constant over time. In simpler terms, it does not
+                exhibit trends, seasonal effects, or any other systematic patterns that change over
+                time.
               </Typography>
               <Typography variant="body1">
                 To test the data stationarity, we run the{' '}
@@ -54,12 +54,29 @@ const StationarityTest = ({
                 with the lag order automatically detected by Akaike Information Criterion
                 (autolag=&quot;AIC&quot;).
               </Typography>
+              <Typography>
+                Many time-series methods may perform better when a time-series is stationary, since
+                forecasting values becomes a far easier task for a stationary time series. ARIMAs
+                that include differencing (i.e., &gt; 0) assume that the data becomes stationary
+                after differencing. This is called difference-stationary. Note that Auto ARIMA will
+                automatically determine the appropriate differencing term for you by default.
+                {/* https://alkaline-ml.com/pmdarima/tips_and_tricks.html#enforcing-stationarity */}
+              </Typography>
             </InfoOverlay.Popover>
           </InfoOverlay>
           ?
         </Box>
       </StepButton>{' '}
       <StepContent sx={{ paddingTop: 1 }}>
+        {/* <Grid sx={{ paddingTop: 1 }}>
+          <TextField
+            label="Periods in season"
+            value={periodsInSeason}
+            onChange={setPeriodsInSeason}
+            size="small"
+            type="number"
+          />
+        </Grid> */}
         <ButtonContainer>
           {isStationarityTestLoading && <Loader />}
           {!isStationarityTestLoading && (

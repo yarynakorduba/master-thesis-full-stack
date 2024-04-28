@@ -15,17 +15,16 @@ import {
   useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
+  useSelectedProps,
   useStationarityTest,
+  useTimeseriesProp,
   useWhiteNoiseTest
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
 
 const App = () => {
-  const valueProperties = useMemo(
-    (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
-    []
-  );
-  const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
+  const [timeProperty] = useTimeseriesProp();
+  const [valueProperties] = useSelectedProps();
 
   const [timeseriesData, setTimeseriesData] = useConfigData();
 
@@ -94,7 +93,7 @@ const App = () => {
       </Drawer> */}
 
       <Content>
-        {sortedTSData?.length ? (
+        {sortedTSData?.length && valueProperties && timeProperty ? (
           <SparkLineChartsBlock
             valueProperties={valueProperties}
             timeProperty={timeProperty}

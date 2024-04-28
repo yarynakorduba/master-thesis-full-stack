@@ -5,6 +5,7 @@ export const LineChartContainer = styled(Box)`
   padding-bottom: 32px;
   display: flex;
   flex-direction: row;
+  min-height: 300px;
 `;
 export const SparkLineChartsContainer = styled(Box)`
   flex-basis: 200px;

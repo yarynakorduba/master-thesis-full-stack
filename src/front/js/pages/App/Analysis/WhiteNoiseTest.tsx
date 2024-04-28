@@ -34,7 +34,7 @@ const WhiteNoiseTest = ({
     <>
       <StepButton onClick={handleSelectStep(index)}>
         <Box sx={{ fontSize: 16 }}>
-          Is the data a{' '}
+          Is the data{' '}
           <InfoOverlay id="stationary" label="white noise">
             <InfoOverlay.Popover>
               <Typography variant="body1">
