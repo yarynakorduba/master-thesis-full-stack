@@ -1,7 +1,13 @@
 import { useTooltipInPortal } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
 import { useState, useCallback, useMemo } from 'react';
-import { CHART_HEADING_HEIGHT, LEGEND_HEIGHT, BRUSH_HEIGHT } from '.';
+import {
+  CHART_HEADING_HEIGHT,
+  LEGEND_HEIGHT,
+  BRUSH_HEIGHT,
+  BRUSH_Y_PADDING,
+  LEGEND_Y_PADDING,
+} from '.';
 import { TDataLabel } from 'front/js/types';
 import { TLinScale } from './types';
 import { TFormatXScale, TFormatYScale, TPadding } from '../types';
@@ -24,7 +30,7 @@ export const useTooltipConfigs = (
   yScale: TLinScale,
   formatXScale: TFormatXScale,
   formatYScale: TFormatYScale,
-  dataLabels: TDataLabel[] = []
+  dataLabels: TDataLabel[] = [],
 ): TTooltipConfigsResult => {
   const [pointTooltip, setPointTooltip] = useState<TPointTooltip | undefined>();
   const [xTooltip, setXTooltip] = useState<TAxisTooltip | undefined>();
@@ -32,14 +38,14 @@ export const useTooltipConfigs = (
 
   const { containerRef, containerBounds } = useTooltipInPortal({
     scroll: true,
-    detectBounds: true
+    detectBounds: true,
   });
 
   const handleMouseLeave = (_e, pointGroup) => {
     const noTooltipData = {
       tooltipLeft: undefined,
       tooltipTop: undefined,
-      tooltipData: undefined
+      tooltipData: undefined,
     };
 
     if (pointGroup) setPointTooltip(noTooltipData);
@@ -54,7 +60,7 @@ export const useTooltipConfigs = (
       const value = scale.invert(coordinate);
       return formatter ? formatter(value) : value;
     },
-    []
+    [],
   );
 
   const handleHover = useCallback(
@@ -64,7 +70,7 @@ export const useTooltipConfigs = (
       setPointTooltip({
         tooltipLeft: left - containerBounds.left,
         tooltipTop: top - containerBounds.top,
-        tooltipData: pointGroup?.points
+        tooltipData: pointGroup?.points,
       });
       setYTooltip({
         tooltipLeft: xPadding,
@@ -73,8 +79,10 @@ export const useTooltipConfigs = (
           yScale,
           true,
           formatYScale,
-          top > yPadding + containerBounds.top ? top - yPadding - containerBounds.top : 0
-        )
+          top > yPadding + containerBounds.top
+            ? top - yPadding - containerBounds.top
+            : 0,
+        ),
       });
       setXTooltip({
         tooltipLeft: left - containerBounds.left,
@@ -83,8 +91,10 @@ export const useTooltipConfigs = (
           xScale,
           true,
           formatXScale,
-          left > xPadding + containerBounds.left ? left - xPadding - containerBounds.left : 0
-        )
+          left > xPadding + containerBounds.left
+            ? left - xPadding - containerBounds.left
+            : 0,
+        ),
       });
     },
     [
@@ -96,14 +106,14 @@ export const useTooltipConfigs = (
       yPadding,
       chartHeight,
       xScale,
-      formatXScale
-    ]
+      formatXScale,
+    ],
   );
 
   const dataLabelTooltips = map(dataLabels, (dataLabel: TDataLabel) => ({
     tooltipLeft: xScale(dataLabel.valueX) + xPadding,
     tooltipTop: 0,
-    tooltipData: dataLabel.label
+    tooltipData: dataLabel.label,
   }));
 
   return {
@@ -113,20 +123,26 @@ export const useTooltipConfigs = (
     dataLabelTooltips,
     handleHover,
     handleMouseLeave,
-    containerRef
+    containerRef,
   };
 };
 
-export const useChartSizes = (width: number, height: number, padding: TPadding) => {
+export const useChartSizes = (
+  width: number,
+  height: number,
+  padding: TPadding,
+) => {
   const xyAreaWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
 
-  const svgHeight = height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT;
+  const svgHeight =
+    height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT - LEGEND_Y_PADDING;
   const xyAreaHeight = useMemo(
-    () => svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT,
-    [padding.bottom, padding.top, svgHeight]
+    () =>
+      svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT - BRUSH_Y_PADDING,
+    [padding.bottom, padding.top, svgHeight],
   );
 
   return { xyAreaWidth, xyAreaHeight, svgHeight };

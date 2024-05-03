@@ -5,7 +5,7 @@ import { Brush } from '@visx/brush';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
 
-import { BRUSH_HEIGHT } from '.';
+import { BRUSH_HEIGHT, BRUSH_Y_PADDING } from '.';
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
 import { selectedAreaStyle, selectedBrushStyle } from './consts';
@@ -35,7 +35,7 @@ const CustomBrush = ({
   yBrushScale,
   onChange,
   selectedAreaOnBrushRef,
-  brushRef
+  brushRef,
 }: TProps) => {
   if (xBrushScale.range()?.[1] === 0) return null;
   return (
@@ -75,7 +75,7 @@ const CustomBrush = ({
         innerRef={brushRef}
         initialBrushPosition={{
           start: { x: xBrushScale.range()?.[0] ?? 0 },
-          end: { x: xBrushScale.range()?.[1] ?? 0 }
+          end: { x: xBrushScale.range()?.[1] ?? 0 },
         }}
         useWindowMoveEvents
         renderBrushHandle={(props: BrushHandleRenderProps) => (

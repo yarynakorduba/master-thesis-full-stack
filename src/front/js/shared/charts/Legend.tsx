@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
 import { PRECISION } from '../../consts';
+import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart';
 
 const StyledContainer = styled('div')`
   display: flex;
@@ -35,7 +36,11 @@ type TLegendMarkerProps = {
   readonly width?: number;
 };
 
-const LegendMarker = ({ fill, height = 10, width = 10 }: TLegendMarkerProps) => {
+const LegendMarker = ({
+  fill,
+  height = 10,
+  width = 10,
+}: TLegendMarkerProps) => {
   return (
     <StyledMarker height={height} width={width}>
       <rect height={height} width={width} fill={fill} />
@@ -52,15 +57,19 @@ type TCustomLegendProps = {
   readonly handleHide: (dataSerieId) => void;
 };
 
-export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendProps) => {
+export const CustomLegend = ({
+  data = [],
+  maxWidth,
+  handleHide,
+}: TCustomLegendProps) => {
   const items = useMemo(() => {
     return (
       data?.map(
         (legendItem): TChartLegendLabel => ({
           width: 20,
           height: 4,
-          ...legendItem
-        })
+          ...legendItem,
+        }),
       ) || []
     );
   }, [data]);
@@ -75,16 +84,23 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
             color,
             dataLength: datapoints.length,
             min: getMinValue(datapoints),
-            max: getMaxValue(datapoints)
+            max: getMaxValue(datapoints),
           };
         }),
-        range: items.map(({ color, width: markerWidth, height: markerHeight }) => {
-          return (
-            <LegendMarker key={color} fill={color} width={markerWidth} height={markerHeight} />
-          );
-        })
+        range: items.map(
+          ({ color, width: markerWidth, height: markerHeight }) => {
+            return (
+              <LegendMarker
+                key={color}
+                fill={color}
+                width={markerWidth}
+                height={markerHeight}
+              />
+            );
+          },
+        ),
       }),
-    [items]
+    [items],
   );
 
   const { palette } = useTheme();
@@ -103,20 +119,26 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
                 onClick={() => handleHide(legendItem?.datum?.id)}
                 style={{
                   margin: '0 16px',
-                  fontSize: '0.875rem'
+                  fontSize: '0.875rem',
                 }}
                 key={legendItem?.datum?.label}
               >
                 <Box display="flex" alignItems="center" gap={1}>
                   {isValidElement && React.cloneElement(shape as ReactElement)}
-                  <Typography color={isHidden ? palette.text.disabled : palette.text.primary}>
+                  <Typography
+                    color={
+                      isHidden ? palette.text.disabled : palette.text.primary
+                    }
+                  >
                     {legendItem?.datum?.label}
                   </Typography>
                   {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
                 </Box>
                 <Typography
                   variant="body2"
-                  color={isHidden ? palette.text.disabled : palette.text.primary}
+                  color={
+                    isHidden ? palette.text.disabled : palette.text.primary
+                  }
                 >
                   ({legendItem?.datum?.dataLength} entries, min:{' '}
                   {round(legendItem?.datum?.min.valueY, PRECISION)}, max:{' '}
@@ -128,10 +150,18 @@ export const CustomLegend = ({ data = [], maxWidth, handleHide }: TCustomLegendP
         </StyledContainer>
       );
     },
-    [hiddenColor, legendScale, palette.text.disabled, palette.text.primary, handleHide]
+    [
+      hiddenColor,
+      legendScale,
+      palette.text.disabled,
+      palette.text.primary,
+      handleHide,
+    ],
   );
   return (
-    <div style={{ maxWidth }}>
+    <div
+      style={{ maxWidth, paddingTop: LEGEND_Y_PADDING, height: LEGEND_HEIGHT }}
+    >
       <Legend scale={legendScale}>{renderItems}</Legend>
     </div>
   );

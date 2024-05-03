@@ -6,16 +6,24 @@ import { Box } from '@mui/material';
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TDataLabel, TLineChartData, TLineChartDatapoint, TTimeseriesData } from '../../../types';
+import {
+  TDataLabel,
+  TLineChartData,
+  TLineChartDatapoint,
+  TTimeseriesData,
+} from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
-import { TPredictedPoints, TValueBounds } from '../../../pages/App/Analysis/types';
+import {
+  TPredictedPoints,
+  TValueBounds,
+} from '../../../pages/App/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,
-  mapARIMAPrediction
+  mapARIMAPrediction,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 
@@ -46,7 +54,7 @@ const SparkLineChartsBlock = ({
   selectedAreaBounds,
   selectedProp,
   setSelectedProp,
-  defaultIsTrainingDataSelectionOn = false
+  defaultIsTrainingDataSelectionOn = false,
 }: TProps) => {
   const theme = useTheme();
   const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
@@ -65,7 +73,7 @@ const SparkLineChartsBlock = ({
       const { x0, x1 } = domain;
       setSelectedDataBoundaries({ x0, x1 });
     },
-    [setSelectedDataBoundaries]
+    [setSelectedDataBoundaries],
   );
 
   const firstProp = valueProperties?.[0];
@@ -84,7 +92,7 @@ const SparkLineChartsBlock = ({
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.[0],
       theme.palette.charts.chartPink,
-      `${selectedProp?.label} test data prediction`
+      `${selectedProp?.label} test data prediction`,
     );
 
     const realPredictedData = constructLineChartDataFromTs(
@@ -92,7 +100,7 @@ const SparkLineChartsBlock = ({
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.[1],
       theme.palette.charts.chartFuchsia,
-      `${selectedProp?.label} real data prediction`
+      `${selectedProp?.label} real data prediction`,
     );
 
     const mainChartData = constructLineChartDataFromTs(
@@ -100,12 +108,12 @@ const SparkLineChartsBlock = ({
       timeProperty?.value,
       timeseriesData,
       theme.palette.charts.chartBlue,
-      selectedProp?.label
+      selectedProp?.label,
     );
 
     return filter(
       [mainChartData, testPredictedData, realPredictedData],
-      (d) => !isEmpty(d?.datapoints)
+      (d) => !isEmpty(d?.datapoints),
     ) as TLineChartSerie[];
   }, [
     selectedProp,
@@ -114,7 +122,7 @@ const SparkLineChartsBlock = ({
     theme.palette.charts.chartPink,
     theme.palette.charts.chartFuchsia,
     theme.palette.charts.chartBlue,
-    timeseriesData
+    timeseriesData,
   ]);
 
   const testPredictedDataCounterpart =
@@ -124,7 +132,7 @@ const SparkLineChartsBlock = ({
     intersectionWith(
       timeseriesData,
       mappedARIMAPrediction?.[0] || [],
-      (a, b) => a[timeProperty?.value] === b?.[timeProperty?.value]
+      (a, b) => a[timeProperty?.value] === b?.[timeProperty?.value],
     );
 
   const thresholdData = testPredictedDataCounterpart
@@ -139,23 +147,28 @@ const SparkLineChartsBlock = ({
               return {
                 valueX: a[timeProperty.value],
                 valueY0: a[selectedProp.value],
-                valueY1: predictionData?.prediction[a[timeProperty.value]]
+                valueY1: predictionData?.prediction[a[timeProperty.value]],
               };
             }),
-            'valueX'
-          )
-        }
+            'valueX',
+          ),
+        },
       ]
     : [];
 
   console.log('###', chartData);
   const selectedDataLength =
     (timeProperty &&
-      getSelectedDataByBoundaries(timeseriesData, timeProperty, selectedAreaBounds)?.length) ||
+      getSelectedDataByBoundaries(
+        timeseriesData,
+        timeProperty,
+        selectedAreaBounds,
+      )?.length) ||
     timeseriesData.length;
 
   const defaultBrushValueBounds = undefined;
-  if (!timeProperty || !selectedProp || isEmpty(valueProperties)) return <LineChartContainer />;
+  if (!timeProperty || !selectedProp || isEmpty(valueProperties))
+    return <LineChartContainer />;
   return (
     <LineChartContainer>
       <Box width="100%" minHeight="300px">
@@ -168,7 +181,7 @@ const SparkLineChartsBlock = ({
           numYAxisTicks={4}
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
-          height={260}
+          height={300}
           padding={{ top: 16, bottom: 30, left: 40, right: 10 }}
           defaultBrushValueBounds={defaultBrushValueBounds}
           onSelectArea={onSelectedAreaChange}
@@ -186,7 +199,7 @@ const SparkLineChartsBlock = ({
               timeProperty.value,
               timeseriesData,
               theme.palette.charts.chartBlue,
-              prop.label
+              prop.label,
             );
             return (
               <SparkLineChart

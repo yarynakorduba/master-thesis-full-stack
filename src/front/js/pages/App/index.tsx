@@ -4,7 +4,11 @@ import { Grid, Drawer } from '@mui/material';
 import { AppPage, Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
-import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
+import {
+  TDataProperty,
+  TTimeseriesData,
+  TTimeseriesDatum,
+} from 'front/js/types';
 import Analysis from './Analysis';
 import {
   useCausalityTest,
@@ -18,7 +22,7 @@ import {
   useSelectedProps,
   useStationarityTest,
   useTimeseriesProp,
-  useWhiteNoiseTest
+  useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
 
@@ -30,25 +34,40 @@ const App = () => {
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
-  const [selectedDataBoundaries, setSelectedDataBoundaries] = useSelectedDataBoundaries();
+  const [selectedDataBoundaries, setSelectedDataBoundaries] =
+    useSelectedDataBoundaries();
 
   useEffect(() => {
-    const mappedJSON = json.map((value) => ({ ...value, date: new Date(value.date).getTime() }));
+    const mappedJSON = json.map((value) => ({
+      ...value,
+      date: new Date(value.date).getTime(),
+    }));
     setTimeseriesData(mappedJSON as TTimeseriesData);
   }, [setTimeseriesData]);
 
-  const [stationarityTestResult, handleFetchDataStationarityTest, isStationarityTestLoading] =
-    useStationarityTest();
+  const [
+    stationarityTestResult,
+    handleFetchDataStationarityTest,
+    isStationarityTestLoading,
+  ] = useStationarityTest();
 
-  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] = useWhiteNoiseTest();
+  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] =
+    useWhiteNoiseTest();
 
-  const [causalityTestResult, handleFetchGrangerDataCausalityTest, isCausalityTestLoading] =
-    useCausalityTest();
+  const [
+    causalityTestResult,
+    handleFetchGrangerDataCausalityTest,
+    isCausalityTestLoading,
+  ] = useCausalityTest();
 
-  const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
+  const [predictionResult, handleFetchPrediction, isPredictionLoading] =
+    usePrediction();
+
+  console.log('---predictionResult>>> ', predictionResult);
 
   const predictionHistory = useGetPredictionHistory();
-  const [displayedPredictionId, setDisplayedPredictionId] = useDisplayedPredictionId();
+  const [displayedPredictionId, setDisplayedPredictionId] =
+    useDisplayedPredictionId();
   // const isDisplayedItemInitialized = useRef();
   useEffect(() => {
     setDisplayedPredictionId(predictionHistory?.[0]?.id);
@@ -59,9 +78,11 @@ const App = () => {
     (selectedProp?.value &&
       predictionResult && [
         {
-          valueX: new Date(predictionResult?.lastTrainPoint?.dateTime).getTime(),
-          label: 'Train data threshold'
-        }
+          valueX: new Date(
+            predictionResult?.lastTrainPoint?.dateTime,
+          ).getTime(),
+          label: 'Train data threshold',
+        },
       ]) ||
     [];
 
@@ -70,7 +91,10 @@ const App = () => {
       const sorted = timeseriesData
         .sort((a: TTimeseriesDatum, b: TTimeseriesDatum) => {
           // sort ascending: June, July, August
-          return (a[timeProperty.value] as number) - (b[timeProperty.value] as number) ? -1 : 1;
+          return (a[timeProperty.value] as number) -
+            (b[timeProperty.value] as number)
+            ? -1
+            : 1;
         })
         .map((d) => ({ ...d, date: new Date(d.date).getTime() }));
 
@@ -80,14 +104,18 @@ const App = () => {
 
   const [open, setOpen] = useState(false);
 
-  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
+  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
+    useIsHistoryDrawerOpen();
 
   return (
     <AppPage>
       {/* <Drawer open={open} onClose={(_e, _v) => setOpen(false)} hideBackdrop>
         <Sidebar>
           <FormProvider {...methods}>
-            <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
+            <DatasetForm
+              timeseriesData={timeseriesData}
+              setTimeseriesData={setTimeseriesData}
+            />
           </FormProvider>
         </Sidebar>
       </Drawer> */}
@@ -103,7 +131,10 @@ const App = () => {
           selectedProp={selectedProp}
           setSelectedProp={setSelectedProp}
           dataLabels={dataLabels}
-          defaultIsTrainingDataSelectionOn={isHistoryPredictionSelected}
+          defaultIsTrainingDataSelectionOn={
+            isHistoryPredictionSelected &&
+            !!predictionResult.selectedDataBoundaries
+          }
         />
 
         <Grid container justifyContent="start" gap={3} wrap="nowrap">
@@ -118,13 +149,19 @@ const App = () => {
               isStationarityTestLoading={isStationarityTestLoading}
               whiteNoiseResult={whiteNoiseResult}
               isWhiteNoiseLoading={isWhiteNoiseLoading}
-              handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+              handleFetchIsWhiteNoise={() =>
+                handleFetchIsWhiteNoise(valueProperties)
+              }
               predictionResult={predictionResult}
               isPredictionLoading={isPredictionLoading}
               isCausalityTestLoading={isCausalityTestLoading}
               causalityTestResult={causalityTestResult}
-              handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
-              handleFetchPrediction={(params) => handleFetchPrediction(params, timeProperty)}
+              handleFetchGrangerDataCausalityTest={
+                handleFetchGrangerDataCausalityTest
+              }
+              handleFetchPrediction={(params) =>
+                handleFetchPrediction(params, timeProperty)
+              }
             />
           </Grid>
           <Grid item md={6}></Grid>
