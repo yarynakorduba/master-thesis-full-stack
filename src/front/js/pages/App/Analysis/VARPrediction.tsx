@@ -6,9 +6,9 @@ import Grid from '@mui/material/Grid';
 import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
 
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../shared/Loader';
-import { useInputState } from '../../hooks';
+import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../shared/Loader';
+import { useInputState } from '../../../hooks';
 
 type TProps = {
   readonly isVisible: boolean;

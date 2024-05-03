@@ -13,8 +13,8 @@ import ARIMAPrediction from './ARIMAPrediction';
 import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
-import { TTimeseriesData } from '../../types';
-import { usePredictionMode } from '../../store/configuration/selectors';
+import { TTimeseriesData } from '../../../types';
+import { usePredictionMode } from '../../../store/configuration/selectors';
 
 type TProps = {
   readonly stationarityTestResult;
@@ -115,19 +115,18 @@ const Analysis = ({
   ].filter(identity);
 
   return (
-    <div>
+    <Box>
       <PredictionModelSelection
         predictionMode={predictionMode}
         setPredictionMode={setPredictionMode}
       />
-      <Box>
-        <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
-          {steps.map((renderStep, index: number) => (
-            <Step key={index}>{renderStep!(index)}</Step>
-          ))}
-        </Stepper>
-      </Box>
-    </div>
+
+      <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
+        {steps.map((renderStep, index: number) => (
+          <Step key={index}>{renderStep!(index)}</Step>
+        ))}
+      </Stepper>
+    </Box>
   );
 };
 

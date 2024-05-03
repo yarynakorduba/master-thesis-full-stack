@@ -4,20 +4,27 @@ import json
 from api.services.statistical_tests import Analysis
 import pmdarima as pm
 
-
+def stringify_nan(value):
+    if (np.isnan(value)):
+        return ''
+    else:
+        return value
+    
 class Arima:
     def __init__(self):
         self = self
 
     def forecast_accuracy(self, forecast, actual):
+
+
         mape = np.mean(np.abs(forecast - actual)/np.abs(actual))  # MAPE
         me = np.mean(forecast - actual)             # ME
         mae = np.mean(np.abs(forecast - actual))    # MAE
         mpe = np.mean((forecast - actual)/actual)   # MPE
         rmse = np.mean((forecast - actual)**2)**.5  # RMSE
 
-        return({'mape':mape, 'me':me, 'mae': mae, 
-                'mpe': mpe, 'rmse':rmse })
+        return({'mape': stringify_nan(mape), 'me': stringify_nan(me), 'mae': stringify_nan(mae), 
+                'mpe': stringify_nan(mpe), 'rmse': stringify_nan(rmse) })
 
     
     def convert_data_to_stationary(df):
@@ -63,7 +70,7 @@ class Arima:
     def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
         # TODO: if data empty -> exit with error
         df_input = pd.DataFrame.from_records(data)
-        df_input["date"] = pd.to_datetime(df_input['date'])
+        df_input["date"] = pd.to_datetime(df_input['date'], unit='ms')
         df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
         df_input = df_input.drop(columns=['date'])
         print(df_input)
@@ -104,6 +111,7 @@ class Arima:
         print(test_prediction)
         print(smodel.summary())
         test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
+        
         json_result = test_predicted_series.to_json()
         test_prediction_parameters = smodel.get_params()
         print(f"Parameters: {test_prediction_parameters}")
@@ -118,7 +126,6 @@ class Arima:
 
         real_indexes = real_indexes[1:]
         real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
-        print(">>> ", real_predicted_series)
         json_real_prediction_result = real_predicted_series.to_json()
 
         evaluation = self.forecast_accuracy(test_prediction, test)

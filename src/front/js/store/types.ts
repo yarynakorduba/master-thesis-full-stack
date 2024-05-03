@@ -1,13 +1,27 @@
-import { EPredictionMode } from '../components/Analysis/types';
+import {
+  EPredictionMode,
+  TARIMAResult,
+  TARIMAUserParams,
+  THistoryEntry,
+  TVARResult,
+  TValueBounds
+} from '../pages/App/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
 
-export type IConfigurationSlice = {
-  // readonly id: string;
+export type TDisplayedPrediction = number | 'latestPrediction';
+export type TConfigurationSlice = {
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;
 
-  readonly selectedData: TTimeseriesData;
-  readonly setSelectedData: (data: TTimeseriesData) => void;
+  readonly timeseriesProp?: TDataProperty;
+  readonly setTimeseriesProp: (timeseriesProp: TDataProperty) => void;
+
+  readonly selectedProps?: TDataProperty[];
+  readonly setSelectedProps: (selectedProps: TDataProperty[]) => void;
+
+  readonly setSelectedDataBoundaries: (boundaries?: TValueBounds) => void;
+
+  readonly setHorizon: (horizon: number) => void;
 
   readonly whiteNoiseTest;
   readonly isWhiteNoiseTestLoading: boolean;
@@ -15,36 +29,46 @@ export type IConfigurationSlice = {
 
   readonly stationarityTest;
   readonly isStationarityTestLoading: boolean;
-
   readonly fetchStationarityTest;
-
-  readonly predictionMode: EPredictionMode;
-  readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
-
-  readonly prediction: any;
-  readonly isPredictionLoading: boolean;
-
-  readonly fetchARIMAPrediction: (params: any) => Promise<void>;
-  readonly fetchVARPrediction: (params: any) => Promise<void>;
-  readonly fetchPrediction: (params: any) => Promise<void>;
 
   readonly causalityTest;
   readonly isCausalityTestLoading: boolean;
   readonly fetchCausalityTest: (selectedProps: TDataProperty[]) => Promise<void>;
 
-  // readonly currentRun: {
-  //   readonly trainingData: any;
-  //   readonly causalityTest;
-  //   readonly whiteNoiseTest: any;
-  //   readonly prediction: any;
-  // };
+  readonly displayedPredictionId: TDisplayedPrediction; // latest prediction or id of history item
+  readonly setDisplayedPredictionId: (predictionItemId: TDisplayedPrediction) => void;
 
-  // readonly predictionHistory;
-  // -->     readonly data: any;
-  // -->     readonly trainingData: any;
-  // -->     readonly causalityTest;
-  // -->     readonly whiteNoiseTest: any;
-  // -->     readonly prediction: any;
+  readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly latestPrediction: {
+    readonly prediction?: TARIMAResult | TVARResult;
+    readonly isPredictionLoading: boolean;
+    readonly predictionMode: EPredictionMode;
+    // the data which was selected for training
+    readonly selectedDataBoundaries?: TValueBounds;
+
+    readonly horizon: number;
+  };
+
+  readonly predictionHistory: THistoryEntry[];
+  readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
+
+  readonly fetchARIMAPrediction: (
+    params: TARIMAUserParams,
+    dataBoundaries: TValueBounds,
+    selectedData: TTimeseriesData
+  ) => Promise<void>;
+  readonly fetchVARPrediction: (
+    params: any,
+    dataBoundaries: TValueBounds,
+    selectedData: TTimeseriesData
+  ) => Promise<void>;
+  readonly fetchPrediction: (
+    params: TARIMAUserParams | any,
+    timeProperty: TDataProperty
+  ) => Promise<void>;
+
+  readonly isHistoryDrawerOpen: boolean;
+  readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;
 };
 
-export type TStoreMiddlewares = [['zustand/devtools', never]];
+export type TStoreMiddlewares = [['zustand/devtools', never], ['zustand/persist', unknown]];

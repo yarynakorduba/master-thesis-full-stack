@@ -7,9 +7,10 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
 
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../shared/Loader';
-import { Accordion, AccordionDetails, AccordionSummary } from '../../shared/Accordion';
+import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../shared/Loader';
+import InfoOverlay from '../../../shared/InfoOverlay';
+import { Link } from 'react-router-dom';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -32,26 +33,26 @@ const WhiteNoiseTest = ({
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>Is the data a white noise?</Box>
+        <Box sx={{ fontSize: 16 }}>
+          Is the data{' '}
+          <InfoOverlay id="stationary" label="white noise">
+            <InfoOverlay.Popover>
+              <Typography variant="body1">
+                A time series is white noise if the variables are independent and identically
+                distributed with a mean of zero. This means that all variables have the same
+                variance (sigma^2) and each value has a zero correlation with all other values in
+                the series.
+              </Typography>
+              <Typography variant="body1">
+                If a time series is white noise, it is a sequence of random numbers and cannot be
+                predicted.
+              </Typography>
+            </InfoOverlay.Popover>
+          </InfoOverlay>
+          ?
+        </Box>
       </StepButton>{' '}
       <StepContent sx={{ paddingTop: 1 }}>
-        <Accordion sx={{ maxWidth: 'md' }}>
-          <AccordionSummary
-            aria-controls="panel1d-content"
-            id="panel1d-header"
-            sx={{ minHeight: 16, height: 16, margin: 0.5 }}
-          >
-            <Typography variant="subtitle1">About stationarity</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body1">
-              Stationarity is a fundamental concept in time series analysis. A stationary time
-              series is one whose statistical properties, such as mean, variance, and
-              autocorrelation, remain constant over time. In simpler terms, it does not exhibit
-              trends, seasonal effects, or any other systematic patterns that change over time.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
         <ButtonContainer>
           {isWhiteNoiseLoading && <Loader />}
           {!whiteNoiseResult && !isWhiteNoiseLoading && (

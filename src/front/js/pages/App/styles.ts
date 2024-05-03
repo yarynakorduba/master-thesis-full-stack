@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles';
+import MuiDrawer from '@mui/material/Drawer';
 
 export const AppPage = styled('div')`
   width: calc(100% - 0.5rem);
@@ -15,4 +16,12 @@ export const Sidebar = styled('div')`
 export const Content = styled('div')`
   grid-column: 2;
   grid-row: 1;
+`;
+
+export const HistoryDrawer = styled(MuiDrawer)`
+  width: 20vw;
+
+  & .MuiDrawer-paper {
+    width: 20vw;
+  }
 `;

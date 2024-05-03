@@ -4,8 +4,8 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
 
-import { ButtonContainer } from '../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../shared/Loader';
+import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../shared/Loader';
 
 type TProps = {
   readonly isVisible: boolean;

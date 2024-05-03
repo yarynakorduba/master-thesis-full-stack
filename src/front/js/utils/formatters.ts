@@ -8,8 +8,17 @@ export const formatUnixToDate = (d) => {
     }
     return d;
   } catch (e) {
-    console.log('Error converting date: ', e, d);
-    throw e;
+    console.error('Error converting date: ', e, d);
+    return '';
+  }
+};
+
+export const formatDateToDateTime = (d) => {
+  try {
+    return format(new Date(d), 'dd/MM/yyyy, HH:mm');
+  } catch (e) {
+    console.error('Error converting date: ', e, d);
+    return '';
   }
 };
 
@@ -33,3 +42,6 @@ export const formatNumber = (d: number): string => {
   }
   return `${Math.round(d * 100) / 100}`;
 };
+
+// ARIMA params order
+export const formatOrder = (order?: number[]) => (order ? `[${order.join(', ')}]` : 'N/A');

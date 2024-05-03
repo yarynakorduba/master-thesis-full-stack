@@ -1,10 +1,18 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import { createConfigurationSlice } from './configuration/configurationSlice';
-import { IConfigurationSlice } from './types';
+import { TConfigurationSlice } from './types';
 
-export const useBoundStore = create<IConfigurationSlice>()(
-  devtools((...a) => ({
-    ...createConfigurationSlice(...a)
-  }))
+export const useBoundStore = create<TConfigurationSlice>()(
+  devtools(
+    persist(
+      (...a) => ({
+        ...createConfigurationSlice(...a)
+      }),
+      {
+        name: 'timeInsights.predictionHistory',
+        partialize: (state) => ({ predictionHistory: state.predictionHistory })
+      }
+    )
+  )
 );

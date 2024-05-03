@@ -1,10 +1,7 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import DatasetForm from './DatasetForm';
-import { map } from 'lodash';
-import Drawer from '@mui/material/Drawer';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { Grid, Drawer } from '@mui/material';
 
-import { AppPage, Content, Sidebar } from './styles';
+import { AppPage, Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
 import {
@@ -12,33 +9,41 @@ import {
   TTimeseriesData,
   TTimeseriesDatum,
 } from 'front/js/types';
-import Analysis from '../../components/Analysis';
+import Analysis from './Analysis';
 import {
   useCausalityTest,
   useConfigData,
+  useDisplayedPredictionId,
+  useGetPredictionHistory,
+  useIsHistoryDrawerOpen,
+  useIsHistoryPredictionSelected,
   usePrediction,
-  useSelectedConfigData,
+  useSelectedDataBoundaries,
+  useSelectedProps,
   useStationarityTest,
+  useTimeseriesProp,
   useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
+import PredictionHistory from './PredictionHistory';
 
 const App = () => {
-  const methods = useForm();
+  const [timeProperty] = useTimeseriesProp();
+  const [valueProperties] = useSelectedProps();
+
   const [timeseriesData, setTimeseriesData] = useConfigData();
-  const [selectedData, setSelectedData] = useSelectedConfigData();
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+  const [selectedDataBoundaries, setSelectedDataBoundaries] =
+    useSelectedDataBoundaries();
 
   useEffect(() => {
-    setTimeseriesData(json as TTimeseriesData);
+    const mappedJSON = json.map((value) => ({
+      ...value,
+      date: new Date(value.date).getTime(),
+    }));
+    setTimeseriesData(mappedJSON as TTimeseriesData);
   }, [setTimeseriesData]);
-
-  const valueProperties = useMemo(
-    (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
-    [],
-  );
-  const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
 
   const [
     stationarityTestResult,
@@ -58,21 +63,17 @@ const App = () => {
   const [predictionResult, handleFetchPrediction, isPredictionLoading] =
     usePrediction();
 
-  const mappedARIMAPrediction = useMemo(() => {
-    if (!(selectedProp?.value && predictionResult)) return [[], []];
+  console.log('---predictionResult>>> ', predictionResult);
 
-    const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
-      return {
-        [timeProperty.value]: +index,
-        [selectedProp?.value]: value,
-      };
-    };
-    return [
-      map(predictionResult?.prediction, convertARIMADatapoint),
-      map(predictionResult?.realPrediction, convertARIMADatapoint),
-    ];
-  }, [selectedProp?.value, predictionResult, timeProperty.value]);
+  const predictionHistory = useGetPredictionHistory();
+  const [displayedPredictionId, setDisplayedPredictionId] =
+    useDisplayedPredictionId();
+  // const isDisplayedItemInitialized = useRef();
+  useEffect(() => {
+    setDisplayedPredictionId(predictionHistory?.[0]?.id);
+  }, []);
 
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const dataLabels =
     (selectedProp?.value &&
       predictionResult && [
@@ -101,11 +102,14 @@ const App = () => {
     }
   }, [timeProperty, timeseriesData]);
 
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
+    useIsHistoryDrawerOpen();
 
   return (
     <AppPage>
-      <Drawer open={open} onClose={(_e, _v) => setOpen(false)}>
+      {/* <Drawer open={open} onClose={(_e, _v) => setOpen(false)} hideBackdrop>
         <Sidebar>
           <FormProvider {...methods}>
             <DatasetForm
@@ -114,45 +118,66 @@ const App = () => {
             />
           </FormProvider>
         </Sidebar>
-      </Drawer>
+      </Drawer> */}
 
       <Content>
-        {sortedTSData?.length ? (
-          <SparkLineChartsBlock
-            valueProperties={valueProperties}
-            timeProperty={timeProperty}
-            timeseriesData={sortedTSData}
-            predictionData={mappedARIMAPrediction}
-            selectedData={selectedData}
-            setSelectedData={setSelectedData}
-            selectedProp={selectedProp}
-            setSelectedProp={setSelectedProp}
-            dataLabels={dataLabels}
-          />
-        ) : null}
-        <Analysis
-          stationarityTestResult={stationarityTestResult}
-          valueProperties={valueProperties}
-          timeseriesData={timeseriesData}
-          handleFetchDataStationarityTest={() =>
-            handleFetchDataStationarityTest(valueProperties)
+        <SparkLineChartsBlock
+          valueProperties={valueProperties || []}
+          timeProperty={timeProperty}
+          timeseriesData={sortedTSData}
+          predictionData={predictionResult}
+          setSelectedDataBoundaries={setSelectedDataBoundaries}
+          selectedAreaBounds={selectedDataBoundaries}
+          selectedProp={selectedProp}
+          setSelectedProp={setSelectedProp}
+          dataLabels={dataLabels}
+          defaultIsTrainingDataSelectionOn={
+            isHistoryPredictionSelected &&
+            !!predictionResult.selectedDataBoundaries
           }
-          isStationarityTestLoading={isStationarityTestLoading}
-          whiteNoiseResult={whiteNoiseResult}
-          isWhiteNoiseLoading={isWhiteNoiseLoading}
-          handleFetchIsWhiteNoise={() =>
-            handleFetchIsWhiteNoise(valueProperties)
-          }
-          predictionResult={predictionResult}
-          isPredictionLoading={isPredictionLoading}
-          isCausalityTestLoading={isCausalityTestLoading}
-          causalityTestResult={causalityTestResult}
-          handleFetchGrangerDataCausalityTest={
-            handleFetchGrangerDataCausalityTest
-          }
-          handleFetchPrediction={handleFetchPrediction}
         />
+
+        <Grid container justifyContent="start" gap={3} wrap="nowrap">
+          <Grid item md={6}>
+            <Analysis
+              stationarityTestResult={stationarityTestResult}
+              valueProperties={valueProperties}
+              timeseriesData={timeseriesData}
+              handleFetchDataStationarityTest={() =>
+                handleFetchDataStationarityTest(valueProperties)
+              }
+              isStationarityTestLoading={isStationarityTestLoading}
+              whiteNoiseResult={whiteNoiseResult}
+              isWhiteNoiseLoading={isWhiteNoiseLoading}
+              handleFetchIsWhiteNoise={() =>
+                handleFetchIsWhiteNoise(valueProperties)
+              }
+              predictionResult={predictionResult}
+              isPredictionLoading={isPredictionLoading}
+              isCausalityTestLoading={isCausalityTestLoading}
+              causalityTestResult={causalityTestResult}
+              handleFetchGrangerDataCausalityTest={
+                handleFetchGrangerDataCausalityTest
+              }
+              handleFetchPrediction={(params) =>
+                handleFetchPrediction(params, timeProperty)
+              }
+            />
+          </Grid>
+          <Grid item md={6}></Grid>
+        </Grid>
       </Content>
+      <HistoryDrawer
+        open={isHistoryDrawerOpen}
+        onClose={(_e, _v) => setIsHistoryDrawerOpen(false)}
+        hideBackdrop
+        anchor="right"
+        variant="persistent"
+      >
+        <Sidebar>
+          <PredictionHistory />
+        </Sidebar>
+      </HistoryDrawer>
     </AppPage>
   );
 };
