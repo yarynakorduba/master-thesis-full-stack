@@ -16,9 +16,9 @@ export const fetchIsWhiteNoise = async (data) => {
       method: 'POST',
       body: JSON.stringify({ data }),
       headers: {
-        'Content-type': 'application/json'
-      }
-    })
+        'Content-type': 'application/json',
+      },
+    }),
   );
 };
 
@@ -28,9 +28,9 @@ export const fetchDataStationarityTest = async (data) => {
       method: 'POST',
       body: JSON.stringify({ data }),
       headers: {
-        'Content-type': 'application/json'
-      }
-    })
+        'Content-type': 'application/json',
+      },
+    }),
   );
 };
 
@@ -40,21 +40,24 @@ export const fetchGrangerDataCausalityTest = async (data, dataKeys) => {
       method: 'POST',
       body: JSON.stringify({ data, dataKeys }),
       headers: {
-        'Content-type': 'application/json'
-      }
-    })
+        'Content-type': 'application/json',
+      },
+    }),
   );
 };
 
-export const fetchVAR = async (data, parameters: { lagOrder: number; horizon: number }) => {
+export const fetchVAR = async (
+  data,
+  parameters: { lagOrder: number; horizon: number },
+) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/test-var`, {
       method: 'POST',
       body: JSON.stringify({ data, ...parameters }),
       headers: {
-        'Content-type': 'application/json'
-      }
-    })
+        'Content-type': 'application/json',
+      },
+    }),
   );
 };
 
@@ -64,8 +67,8 @@ export const fetchARIMA = async (data, parameters: TARIMAParams) => {
       method: 'POST',
       body: JSON.stringify({ data, parameters }),
       headers: {
-        'Content-type': 'application/json'
-      }
-    })
+        'Content-type': 'application/json',
+      },
+    }),
   );
 };

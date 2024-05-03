@@ -6,8 +6,12 @@ import Drawer from '@mui/material/Drawer';
 
 import { AppPage, Content, Sidebar } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from '../../../../../test_data/ArimaV2Dataset.json';
-import { TDataProperty, TTimeseriesData, TTimeseriesDatum } from 'front/js/types';
+import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
+import {
+  TDataProperty,
+  TTimeseriesData,
+  TTimeseriesDatum,
+} from 'front/js/types';
 import Analysis from '../../components/Analysis';
 import {
   useCausalityTest,
@@ -15,7 +19,7 @@ import {
   usePrediction,
   useSelectedConfigData,
   useStationarityTest,
-  useWhiteNoiseTest
+  useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 
 const App = () => {
@@ -32,19 +36,27 @@ const App = () => {
 
   const valueProperties = useMemo(
     (): TDataProperty[] => [{ value: 'value', label: 'passengers' }],
-    []
+    [],
   );
   const timeProperty = useMemo(() => ({ value: 'date', label: 'date' }), []); //useWatch({ control: methods.control, name: "timeProperty" });
 
-  const [stationarityTestResult, handleFetchDataStationarityTest, isStationarityTestLoading] =
-    useStationarityTest();
+  const [
+    stationarityTestResult,
+    handleFetchDataStationarityTest,
+    isStationarityTestLoading,
+  ] = useStationarityTest();
 
-  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] = useWhiteNoiseTest();
+  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] =
+    useWhiteNoiseTest();
 
-  const [causalityTestResult, handleFetchGrangerDataCausalityTest, isCausalityTestLoading] =
-    useCausalityTest();
+  const [
+    causalityTestResult,
+    handleFetchGrangerDataCausalityTest,
+    isCausalityTestLoading,
+  ] = useCausalityTest();
 
-  const [predictionResult, handleFetchPrediction, isPredictionLoading] = usePrediction();
+  const [predictionResult, handleFetchPrediction, isPredictionLoading] =
+    usePrediction();
 
   const mappedARIMAPrediction = useMemo(() => {
     if (!(selectedProp?.value && predictionResult)) return [[], []];
@@ -52,12 +64,12 @@ const App = () => {
     const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
       return {
         [timeProperty.value]: +index,
-        [selectedProp?.value]: value
+        [selectedProp?.value]: value,
       };
     };
     return [
       map(predictionResult?.prediction, convertARIMADatapoint),
-      map(predictionResult?.realPrediction, convertARIMADatapoint)
+      map(predictionResult?.realPrediction, convertARIMADatapoint),
     ];
   }, [selectedProp?.value, predictionResult, timeProperty.value]);
 
@@ -65,9 +77,11 @@ const App = () => {
     (selectedProp?.value &&
       predictionResult && [
         {
-          valueX: new Date(predictionResult?.lastTrainPoint?.dateTime).getTime(),
-          label: 'Train data threshold'
-        }
+          valueX: new Date(
+            predictionResult?.lastTrainPoint?.dateTime,
+          ).getTime(),
+          label: 'Train data threshold',
+        },
       ]) ||
     [];
 
@@ -76,7 +90,10 @@ const App = () => {
       const sorted = timeseriesData
         .sort((a: TTimeseriesDatum, b: TTimeseriesDatum) => {
           // sort ascending: June, July, August
-          return (a[timeProperty.value] as number) - (b[timeProperty.value] as number) ? -1 : 1;
+          return (a[timeProperty.value] as number) -
+            (b[timeProperty.value] as number)
+            ? -1
+            : 1;
         })
         .map((d) => ({ ...d, date: new Date(d.date).getTime() }));
 
@@ -91,7 +108,10 @@ const App = () => {
       <Drawer open={open} onClose={(_e, _v) => setOpen(false)}>
         <Sidebar>
           <FormProvider {...methods}>
-            <DatasetForm timeseriesData={timeseriesData} setTimeseriesData={setTimeseriesData} />
+            <DatasetForm
+              timeseriesData={timeseriesData}
+              setTimeseriesData={setTimeseriesData}
+            />
           </FormProvider>
         </Sidebar>
       </Drawer>
@@ -114,16 +134,22 @@ const App = () => {
           stationarityTestResult={stationarityTestResult}
           valueProperties={valueProperties}
           timeseriesData={timeseriesData}
-          handleFetchDataStationarityTest={() => handleFetchDataStationarityTest(valueProperties)}
+          handleFetchDataStationarityTest={() =>
+            handleFetchDataStationarityTest(valueProperties)
+          }
           isStationarityTestLoading={isStationarityTestLoading}
           whiteNoiseResult={whiteNoiseResult}
           isWhiteNoiseLoading={isWhiteNoiseLoading}
-          handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+          handleFetchIsWhiteNoise={() =>
+            handleFetchIsWhiteNoise(valueProperties)
+          }
           predictionResult={predictionResult}
           isPredictionLoading={isPredictionLoading}
           isCausalityTestLoading={isCausalityTestLoading}
           causalityTestResult={causalityTestResult}
-          handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+          handleFetchGrangerDataCausalityTest={
+            handleFetchGrangerDataCausalityTest
+          }
           handleFetchPrediction={handleFetchPrediction}
         />
       </Content>

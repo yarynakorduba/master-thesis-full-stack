@@ -1,34 +1,38 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AxisLeft, AxisBottom } from '@visx/axis';
-import { Group } from '@visx/group';
-import { ParentSize } from '@visx/responsive';
-import { isEmpty, isNil, map, noop, orderBy } from 'lodash';
-import { Bounds } from '@visx/brush/lib/types';
-import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import { useTheme } from '@mui/material/styles';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { AxisLeft, AxisBottom } from "@visx/axis";
+import { Group } from "@visx/group";
+import { ParentSize } from "@visx/responsive";
+import { isEmpty, isNil, map, noop, orderBy } from "lodash";
+import { Bounds } from "@visx/brush/lib/types";
+import BaseBrush, {
+  BaseBrushState,
+  UpdateBrush,
+} from "@visx/brush/lib/BaseBrush";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import { useTheme } from "@mui/material/styles";
 
-import ChartOverlays from '../ChartOverlays';
-import ChartTooltips from '../ChartTooltips';
-import { useChartSizes, useTooltipConfigs } from './hooks';
+import ChartOverlays from "../ChartOverlays";
+import ChartTooltips from "../ChartTooltips";
+import { useChartSizes, useTooltipConfigs } from "./hooks";
 import {
   formatAxisTick,
   getAxisTickLabelProps,
   getHiddenLineColor,
   getLinearScale,
-  getUniqueFlatChartValues
-} from './utils';
-import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
-import { ChartWrapper } from './styles';
-import { TDataLabel, TLineChartData, TLineChartSerie } from '../../../types';
-import Legend from '../Legend';
-import { TFormatXScale, TFormatYScale, TPadding } from '../types';
-import ChartLine from './ChartLine';
-import CustomBrush from './CustomBrush';
-import Grid from './Grid';
-import DataLabelLine from './DataLabelLine';
+  getUniqueFlatChartValues,
+} from "./utils";
+import { ChartVariant, AxisVariant } from "../ChartOverlays/hooks";
+import { ChartWrapper } from "./styles";
+import { TDataLabel, TLineChartData, TLineChartSerie } from "../../../types";
+import Legend from "../Legend";
+import { TFormatXScale, TFormatYScale, TPadding } from "../types";
+import ChartLine from "./ChartLine";
+import CustomBrush from "./CustomBrush";
+import Grid from "./Grid";
+import DataLabelLine from "./DataLabelLine";
+import { grey } from "@mui/material/colors";
 
 export const CHART_X_PADDING = 40;
 export const CHART_Y_PADDING = 20;
@@ -81,17 +85,18 @@ const LineChart = ({
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
     left: CHART_X_PADDING,
-    right: CHART_X_PADDING
+    right: CHART_X_PADDING,
   },
   defaultBrushValueBounds = undefined,
-  onSelectArea = noop
+  onSelectArea = noop,
 }: TProps) => {
   const { palette } = useTheme();
   const hiddenColor = getHiddenLineColor(palette);
 
   const [visibleLinesData, setVisibleLinesData] = useState(data);
   const [filteredData, setFilteredData] = useState(visibleLinesData);
-  const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] = useState(false);
+  const [isTrainingDataSelectionOn, setIsTrainingDataSelectionOn] =
+    useState(false);
 
   useEffect(() => {
     setVisibleLinesData(data);
@@ -101,11 +106,15 @@ const LineChart = ({
     setFilteredData(visibleLinesData);
   }, [visibleLinesData]);
 
-  const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(width, height, padding);
+  const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(
+    width,
+    height,
+    padding
+  );
 
-  const xValues = getUniqueFlatChartValues('valueX', filteredData);
-  const xBrushValues = getUniqueFlatChartValues('valueX', visibleLinesData);
-  const yValues = getUniqueFlatChartValues('valueY', visibleLinesData);
+  const xValues = getUniqueFlatChartValues("valueX", filteredData);
+  const xBrushValues = getUniqueFlatChartValues("valueX", visibleLinesData);
+  const yValues = getUniqueFlatChartValues("valueY", visibleLinesData);
 
   const xScale = getLinearScale(xValues, [0, xyAreaWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
@@ -115,9 +124,9 @@ const LineChart = ({
   const [selectedAreaValueBounds, setSelectedAreaValueBounds] = useState<
     TValueBounds | undefined
   >();
-  const [brushValueBounds, setBrushValueBounds] = useState<TValueBounds | undefined>(
-    defaultBrushValueBounds
-  );
+  const [brushValueBounds, setBrushValueBounds] = useState<
+    TValueBounds | undefined
+  >(defaultBrushValueBounds);
 
   const {
     pointTooltip,
@@ -126,7 +135,7 @@ const LineChart = ({
     dataLabelTooltips,
     handleHover,
     handleMouseLeave,
-    containerRef
+    containerRef,
   } = useTooltipConfigs(
     padding.left,
     padding.top,
@@ -153,7 +162,7 @@ const LineChart = ({
           ...prevBrush,
           start: { y: 0, x: newExtent?.x0 },
           end: { y: 100, x: newExtent?.x1 },
-          extent: newExtent
+          extent: newExtent,
         };
 
         return newState;
@@ -167,22 +176,35 @@ const LineChart = ({
     if (selectedAreaRef?.current) {
       const updater: UpdateBrush = (prevBrush) => {
         const newExtent = selectedAreaRef.current?.getExtent(
-          { x: selectedAreaValueBounds?.x0 ? xScale(selectedAreaValueBounds?.x0) : undefined },
-          { x: selectedAreaValueBounds?.x1 ? xScale(selectedAreaValueBounds?.x1) : undefined }
+          {
+            x: selectedAreaValueBounds?.x0
+              ? xScale(selectedAreaValueBounds?.x0)
+              : undefined,
+          },
+          {
+            x: selectedAreaValueBounds?.x1
+              ? xScale(selectedAreaValueBounds?.x1)
+              : undefined,
+          }
         );
         if (!newExtent) return prevBrush;
         const newState: BaseBrushState = {
           ...prevBrush,
           start: { y: 0, x: newExtent?.x0 },
           end: { y: xyAreaHeight, x: newExtent?.x1 },
-          extent: { ...newExtent, y0: 0, y1: xyAreaHeight }
+          extent: { ...newExtent, y0: 0, y1: xyAreaHeight },
         };
 
         return newState;
       };
       selectedAreaRef.current.updateBrush(updater);
     }
-  }, [selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1, xScale, xyAreaHeight]);
+  }, [
+    selectedAreaValueBounds?.x0,
+    selectedAreaValueBounds?.x1,
+    xScale,
+    xyAreaHeight,
+  ]);
 
   // this is needed to remove the selected area when the selection
   // is cleared
@@ -207,7 +229,11 @@ const LineChart = ({
         onSelectArea({ x0, x1 });
       }
     },
-    [handleUpdateSelectedAreaOnBrushVisual, isTrainingDataSelectionOn, onSelectArea]
+    [
+      handleUpdateSelectedAreaOnBrushVisual,
+      isTrainingDataSelectionOn,
+      onSelectArea,
+    ]
   );
 
   const onBrushChange = useCallback(
@@ -228,7 +254,7 @@ const LineChart = ({
       handleUpdateSelectedAreaVisual,
       isTrainingDataSelectionOn,
       selectedAreaValueBounds?.x0,
-      selectedAreaValueBounds?.x1
+      selectedAreaValueBounds?.x1,
     ]
   );
 
@@ -238,8 +264,10 @@ const LineChart = ({
       const updatedData = visibleLinesData.map(({ datapoints, ...rest }) => ({
         ...rest,
         datapoints: datapoints.filter((s) => {
-          return s.valueX > brushValueBounds?.x0 && s.valueX < brushValueBounds?.x1;
-        })
+          return (
+            s.valueX > brushValueBounds?.x0 && s.valueX < brushValueBounds?.x1
+          );
+        }),
       }));
       setFilteredData(updatedData);
     }
@@ -255,13 +283,18 @@ const LineChart = ({
 
   const handleHideDataSerie = useCallback(
     (dataSerieId) => {
-      const originalColor = data.find((dataSerie) => dataSerie.id === dataSerieId)?.color;
+      const originalColor = data.find(
+        (dataSerie) => dataSerie.id === dataSerieId
+      )?.color;
       const newDisplayedData = visibleLinesData.map(
         (dataSerie: TLineChartSerie): TLineChartSerie => {
           if (dataSerie.id === dataSerieId) {
             return {
               ...dataSerie,
-              color: (dataSerie.color === hiddenColor ? originalColor : hiddenColor) || 'black'
+              color:
+                (dataSerie.color === hiddenColor
+                  ? originalColor
+                  : hiddenColor) || "black",
             };
           }
           return dataSerie;
@@ -272,24 +305,35 @@ const LineChart = ({
     [data, visibleLinesData, hiddenColor]
   );
 
-  const sortedDataForLines = orderBy(filteredData, (lineData) => lineData.color !== hiddenColor);
+  const sortedDataForLines = orderBy(
+    filteredData,
+    (lineData) => lineData.color !== hiddenColor
+  );
   const sortedDataForBrushLines = orderBy(
     visibleLinesData,
     (lineData) => lineData.color !== hiddenColor
   );
 
   useEffect(() => {
-    handleUpdateSelectedAreaOnBrushVisual(selectedAreaValueBounds?.x0, selectedAreaValueBounds?.x1);
+    handleUpdateSelectedAreaOnBrushVisual(
+      selectedAreaValueBounds?.x0,
+      selectedAreaValueBounds?.x1
+    );
   }, [
     handleUpdateSelectedAreaOnBrushVisual,
     selectedAreaValueBounds?.x0,
     selectedAreaValueBounds?.x1,
-    visibleLinesData
+    visibleLinesData,
   ]);
 
   return (
     <>
-      <Stack direction="row" alignItems={'baseline'} spacing={2} sx={{ height: 38 }}>
+      <Stack
+        direction="row"
+        alignItems={"baseline"}
+        spacing={2}
+        sx={{ height: 38 }}
+      >
         <Typography variant="h5">{heading} </Typography>
         {!isTrainingDataSelectionOn && (
           <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
@@ -331,16 +375,16 @@ const LineChart = ({
             <AxisBottom
               top={xyAreaHeight}
               scale={xScale}
-              hideTicks
-              hideAxisLine
+              stroke={grey[300]}
+              tickStroke={grey[300]}
               tickFormat={formatAxisTick(formatXScale) as any}
               tickLabelProps={getAxisTickLabelProps() as any}
               numTicks={numXAxisTicks}
             />
             <AxisLeft
               scale={yScale}
-              hideTicks
-              hideAxisLine
+              stroke={grey[300]}
+              tickStroke={grey[300]}
               tickFormat={formatAxisTick(formatYScale) as any}
               tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
               numTicks={numYAxisTicks}
@@ -354,7 +398,12 @@ const LineChart = ({
               />
             ))}
             {sortedDataForLines.map((lineData) => (
-              <ChartLine key={lineData.label} lineData={lineData} xScale={xScale} yScale={yScale} />
+              <ChartLine
+                key={lineData.label}
+                lineData={lineData}
+                xScale={xScale}
+                yScale={yScale}
+              />
             ))}
           </Group>
 
@@ -372,7 +421,6 @@ const LineChart = ({
             onSelectedAreaChange={onSelectedAreaChange}
             isAreaSelectionOn={isTrainingDataSelectionOn}
           />
-
           <CustomBrush
             onChange={onBrushChange}
             data={sortedDataForBrushLines}
@@ -384,7 +432,11 @@ const LineChart = ({
             selectedAreaOnBrushRef={selectedAreaOnBrushRef}
           />
         </svg>
-        <Legend data={visibleLinesData} maxWidth={width} handleHide={handleHideDataSerie} />
+        <Legend
+          data={visibleLinesData}
+          maxWidth={width}
+          handleHide={handleHideDataSerie}
+        />
         <ChartTooltips
           pointTooltip={pointTooltip}
           xTooltip={xTooltip}
@@ -412,13 +464,13 @@ export default function ResponsiveLineChart({
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
     left: CHART_X_PADDING,
-    right: CHART_X_PADDING
+    right: CHART_X_PADDING,
   },
   onClick = noop,
   onSelectArea = noop,
   defaultBrushValueBounds,
   dataLabels,
-  selectedDataLength
+  selectedDataLength,
 }: TProps & { readonly isResponsive?: boolean }) {
   const renderChart = useCallback(
     (chartWidth, chartHeight) => (
@@ -453,14 +505,15 @@ export default function ResponsiveLineChart({
       numYAxisTicks,
       padding,
       defaultBrushValueBounds,
-      selectedDataLength
+      selectedDataLength,
     ]
   );
 
   const renderResponsiveChart = useCallback(
     (parent) => {
       const responsiveWidth = !isNil(width) && Math.min(width, parent.width);
-      const responsiveHeight = !isNil(height) && Math.min(height, parent.height);
+      const responsiveHeight =
+        !isNil(height) && Math.min(height, parent.height);
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
@@ -469,7 +522,7 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ width: 'auto', minHeight: height }}>
+    <ParentSize parentSizeStyles={{ width: "auto", minHeight: height }}>
       {renderResponsiveChart}
     </ParentSize>
   );
