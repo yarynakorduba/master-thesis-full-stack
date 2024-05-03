@@ -7,7 +7,7 @@ import { isEmpty } from 'lodash';
 
 import {
   useDisplayedPredictionId,
-  useGetPredictionHistory
+  useGetPredictionHistory,
 } from '../../../store/configuration/selectors';
 import HistoryCard from './HistoryCard';
 import { scaleLinear } from '@visx/scale';
@@ -15,10 +15,14 @@ import { getExtent } from '../../../utils';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
-  const [displayedPredictionId, setDisplayedPredictionId] = useDisplayedPredictionId();
+  const [displayedPredictionId, setDisplayedPredictionId] =
+    useDisplayedPredictionId();
 
   const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
-  const mapeLinearScale = scaleLinear({ domain: mapeExtent, range: [red[50], red[200]] });
+  const mapeLinearScale = scaleLinear({
+    domain: mapeExtent,
+    range: [red[50], red[200]],
+  });
 
   if (isEmpty(predictionHistory)) return null;
   return (

@@ -5,10 +5,9 @@ import { Brush } from '@visx/brush';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
 
-import { BRUSH_HEIGHT, BRUSH_Y_PADDING } from '.';
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
-import { selectedAreaStyle, selectedBrushStyle } from './consts';
+import { BRUSH_HEIGHT, selectedAreaStyle, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
 import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
