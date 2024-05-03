@@ -7,9 +7,10 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { EPredictionMode } from './types';
-import { Accordion, AccordionDetails, AccordionSummary } from '../../../shared/Accordion';
 import { Box, Button } from '@mui/material';
+
+import { EPredictionMode } from './types';
+
 import { useIsHistoryDrawerOpen } from '../../../store/configuration/selectors';
 import InfoOverlay from '../../../shared/InfoOverlay';
 
@@ -17,16 +18,28 @@ type TProps = {
   readonly predictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
 };
-const PredictionModelSelection = ({ predictionMode, setPredictionMode }: TProps) => {
+const PredictionModelSelection = ({
+  predictionMode,
+  setPredictionMode,
+}: TProps) => {
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
 
   return (
     <>
-      <Typography variant="h5" sx={{ marginBottom: 1 }}>
+      <Typography variant="h5">
         Prediction
-        <Button onClick={() => setIsHistoryDrawerOpen(!isHistoryOpen)} sx={{ ml: 2 }}>
+        <Button
+          onClick={() => setIsHistoryDrawerOpen(!isHistoryOpen)}
+          sx={{ ml: 2 }}
+        >
           History
         </Button>
+      </Typography>
+      <Typography
+        variant="subtitle2"
+        sx={{ marginTop: -0.25, marginBottom: 1 }}
+      >
+        Select a model for prediction
       </Typography>
       <ToggleButtonGroup
         value={predictionMode}
@@ -52,32 +65,41 @@ const PredictionModelSelection = ({ predictionMode, setPredictionMode }: TProps)
                   <Link href="https://en.wikipedia.org/wiki/Autoregressive_integrated_moving_average">
                     ARIMA
                   </Link>{' '}
-                  (AutoRegressive Integrated Moving Average) model is a widely used statistical
-                  method for analyzing and forecasting time series data. It can be broken down into
-                  3 components:
+                  (AutoRegressive Integrated Moving Average) model is a widely
+                  used statistical method for analyzing and forecasting time
+                  series data. It can be broken down into 3 components:
                 </Typography>
-                <List sx={{ width: '100%', maxWidth: 'lg', bgcolor: 'background.paper' }}>
+                <List
+                  sx={{
+                    width: '100%',
+                    maxWidth: 'lg',
+                    bgcolor: 'background.paper',
+                  }}
+                >
                   <ListItem disableGutters>
                     <ListItemText>
-                      AR: This component represents the relationship between an observation and a
-                      certain number of lagged observations (i.e., its own past values). It assumes
-                      that the current value of a series can be explained by its previous values.{' '}
+                      AR: This component represents the relationship between an
+                      observation and a certain number of lagged observations
+                      (i.e., its own past values). It assumes that the current
+                      value of a series can be explained by its previous values.{' '}
                     </ListItemText>
                   </ListItem>
                   <ListItem disableGutters>
                     <ListItemText>
-                      Integrated (I): This component indicates the differencing of raw observations
-                      to make the time series stationary. Stationarity is important because many
-                      time series forecasting methods assume that the underlying time series is
-                      stationary.
+                      Integrated (I): This component indicates the differencing
+                      of raw observations to make the time series stationary.
+                      Stationarity is important because many time series
+                      forecasting methods assume that the underlying time series
+                      is stationary.
                     </ListItemText>
                   </ListItem>
                   <ListItem disableGutters>
                     <ListItemText>
-                      Moving Average (MA): This component models the relationship between an
-                      observation and a residual error from a moving average model applied to lagged
-                      observations. It captures the short-term fluctuations in the data.
-                      (AutoRegressive.)
+                      Moving Average (MA): This component models the
+                      relationship between an observation and a residual error
+                      from a moving average model applied to lagged
+                      observations. It captures the short-term fluctuations in
+                      the data. (AutoRegressive.)
                     </ListItemText>
                   </ListItem>
                 </List>
@@ -87,9 +109,10 @@ const PredictionModelSelection = ({ predictionMode, setPredictionMode }: TProps)
                 <Link href="https://en.wikipedia.org/wiki/Vector_autoregression#:~:text=Vector%20autoregression%20(VAR)%20is%20a,allowing%20for%20multivariate%20time%20series.">
                   VAR
                 </Link>{' '}
-                (Vector AutoRegression) model is a statistical model used to analyze the dynamic
-                relationships among multiple time series variables. In a VAR model, each variable is
-                modeled as a linear function of past values of itself and past values of all the
+                (Vector AutoRegression) model is a statistical model used to
+                analyze the dynamic relationships among multiple time series
+                variables. In a VAR model, each variable is modeled as a linear
+                function of past values of itself and past values of all the
                 other variables in the system.
               </div>
             )}

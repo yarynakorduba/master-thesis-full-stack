@@ -13,6 +13,7 @@ declare module '@mui/material/styles' {
       chartBlue: string;
       chartFuchsia: string;
       chartPink: string;
+      chartOverlayPink: string;
     };
   }
 }
@@ -22,7 +23,9 @@ export const theme = createTheme({
     charts: {
       chartBlue: '#3948A4',
       chartFuchsia: '#FF00FF',
-      chartPink: '#FF69B4'
-    }
-  }
+      chartPink: '#FF69B4',
+
+      chartOverlayPink: '#ffc0cb36',
+    },
+  },
 });

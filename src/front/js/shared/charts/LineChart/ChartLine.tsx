@@ -1,5 +1,5 @@
 import { LinePath } from '@visx/shape';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { getX, getY } from './utils';
 import { TLinScale } from './types';
 import { TLineChartSerie } from '../../../types';
@@ -8,9 +8,10 @@ type TProps = {
   readonly lineData: TLineChartSerie;
   readonly xScale: TLinScale;
   readonly yScale: TLinScale;
+  readonly style?: CSSProperties;
 };
 
-const ChartLine = ({ lineData, xScale, yScale }: TProps) => {
+const ChartLine = ({ lineData, xScale, yScale, style = {} }: TProps) => {
   return (
     <LinePath
       key={lineData?.id}
@@ -19,6 +20,7 @@ const ChartLine = ({ lineData, xScale, yScale }: TProps) => {
       y={getY(yScale)}
       stroke={lineData?.color}
       strokeWidth={2}
+      style={style}
     />
   );
 };
