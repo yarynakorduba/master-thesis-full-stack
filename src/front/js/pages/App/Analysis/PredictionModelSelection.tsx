@@ -28,17 +28,18 @@ const PredictionModelSelection = ({
     <>
       <Typography variant="h5">
         Prediction
-        <Button
-          onClick={() => setIsHistoryDrawerOpen(!isHistoryOpen)}
-          sx={{ ml: 2 }}
+        <ToggleButton
+          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+          size="small"
+          color="primary"
+          selected={isHistoryOpen}
+          value={true}
+          onChange={() => setIsHistoryDrawerOpen(!isHistoryOpen)}
         >
           History
-        </Button>
+        </ToggleButton>
       </Typography>
-      <Typography
-        variant="subtitle2"
-        sx={{ marginTop: -0.25, marginBottom: 1 }}
-      >
+      <Typography variant="subtitle2" sx={{ marginTop: 1, marginBottom: 1 }}>
         Select a model for prediction
       </Typography>
       <ToggleButtonGroup

@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
 import { PRECISION } from '../../consts';
-import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart';
+import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart/consts';
 
 const StyledContainer = styled('div')`
   display: flex;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { Grid, Drawer } from '@mui/material';
+import { Grid } from '@mui/material';
 
-import { AppPage, Content, Sidebar, HistoryDrawer } from './styles';
+import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
 import {
@@ -108,7 +108,7 @@ const App = () => {
     useIsHistoryDrawerOpen();
 
   return (
-    <AppPage>
+    <>
       {/* <Drawer open={open} onClose={(_e, _v) => setOpen(false)} hideBackdrop>
         <Sidebar>
           <FormProvider {...methods}>
@@ -120,7 +120,7 @@ const App = () => {
         </Sidebar>
       </Drawer> */}
 
-      <Content>
+      <Content isOpen={isHistoryDrawerOpen}>
         <SparkLineChartsBlock
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}
@@ -178,7 +178,7 @@ const App = () => {
           <PredictionHistory />
         </Sidebar>
       </HistoryDrawer>
-    </AppPage>
+    </>
   );
 };
 

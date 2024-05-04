@@ -30,11 +30,11 @@ export const createConfigurationSlice: StateCreator<
     prediction: undefined,
     isPredictionLoading: false,
     selectedDataBoundaries: undefined,
-    horizon: DEFAULT_HORIZON
+    horizon: DEFAULT_HORIZON,
   },
 
   isHistoryDrawerOpen: false,
   predictionHistory: [],
 
-  ...actions(set, get)
+  ...actions(set, get),
 });

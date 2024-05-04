@@ -8,6 +8,14 @@ export const selectedAreaStyle = {
 
 export const selectedBrushStyle = () => ({
   fill: blue[300],
-  opacity: 0.12,
-  stroke: blue[600], // palette.charts.chartBlue,
+  opacity: 0.15,
+  stroke: blue[600],
 });
+
+export const CHART_X_PADDING = 40;
+export const CHART_Y_PADDING = 20;
+export const CHART_HEADING_HEIGHT = 36;
+export const BRUSH_HEIGHT = 36;
+export const BRUSH_Y_PADDING = 20;
+export const LEGEND_HEIGHT = 46;
+export const LEGEND_Y_PADDING = 20;

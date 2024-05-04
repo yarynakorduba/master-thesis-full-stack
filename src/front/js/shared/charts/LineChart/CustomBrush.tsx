@@ -4,16 +4,15 @@ import { noop } from 'lodash';
 import { Brush } from '@visx/brush';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
+import { Threshold } from '@visx/threshold';
+import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
-import { BRUSH_HEIGHT, BRUSH_Y_PADDING } from '.';
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
-import { selectedAreaStyle, selectedBrushStyle } from './consts';
+import { BRUSH_HEIGHT, selectedAreaStyle, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
 import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
-import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
-import { useTheme } from '@mui/material';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -25,10 +24,12 @@ type TProps = {
 
   readonly onChange: (domain: Bounds | null) => void;
   readonly data: TLineChartData;
+  readonly thresholdData?: any;
   readonly padding: TPadding;
 };
 const CustomBrush = ({
   data,
+  thresholdData = [],
   padding,
   svgHeight,
   width,
@@ -67,6 +68,20 @@ const CustomBrush = ({
           xScale={xBrushScale}
           yScale={yBrushScale}
           style={{ pointerEvents: 'none' }}
+        />
+      ))}
+      {thresholdData.map((dataItem) => (
+        <Threshold<any>
+          id={`brush-${dataItem.id}`}
+          key={dataItem.id}
+          clipAboveTo={0}
+          clipBelowTo={BRUSH_HEIGHT}
+          data={dataItem?.datapoints}
+          x={({ valueX }) => xBrushScale(valueX)}
+          y0={({ valueY0 }) => yBrushScale(valueY0)}
+          y1={({ valueY1 }) => yBrushScale(valueY1)}
+          belowAreaProps={dataItem.belowAreaProps}
+          aboveAreaProps={dataItem.aboveAreaProps}
         />
       ))}
       <Brush

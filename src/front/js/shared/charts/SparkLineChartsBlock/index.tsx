@@ -1,17 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { filter, flow, intersectionWith, isEmpty, map, sortBy } from 'lodash';
+import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import {
-  TDataLabel,
-  TLineChartData,
-  TLineChartDatapoint,
-  TTimeseriesData,
-} from '../../../types';
+import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
 
 import { TDataProperty, TLineChartSerie } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
@@ -132,7 +127,7 @@ const SparkLineChartsBlock = ({
     intersectionWith(
       timeseriesData,
       mappedARIMAPrediction?.[0] || [],
-      (a, b) => a[timeProperty?.value] === b?.[timeProperty?.value],
+      (a, b) => a[timeProperty?.value] === b?.[PREDICTION_TIMESTAMP_PROP],
     );
 
   const thresholdData = testPredictedDataCounterpart
@@ -156,7 +151,13 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
-  console.log('###', chartData);
+  console.log(
+    '###',
+    thresholdData,
+    testPredictedDataCounterpart,
+    timeseriesData,
+    mappedARIMAPrediction,
+  );
   const selectedDataLength =
     (timeProperty &&
       getSelectedDataByBoundaries(
