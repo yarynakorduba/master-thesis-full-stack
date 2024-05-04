@@ -436,6 +436,7 @@ const LineChart = ({
           <CustomBrush
             onChange={onBrushChange}
             data={sortedDataForBrushLines}
+            thresholdData={thresholdData}
             padding={padding}
             svgHeight={svgHeight}
             width={xyAreaWidth}

@@ -13,6 +13,7 @@ import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
 import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 import { useTheme } from '@mui/material';
+import { Threshold } from '@visx/threshold';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -24,10 +25,12 @@ type TProps = {
 
   readonly onChange: (domain: Bounds | null) => void;
   readonly data: TLineChartData;
+  readonly thresholdData?: any;
   readonly padding: TPadding;
 };
 const CustomBrush = ({
   data,
+  thresholdData = [],
   padding,
   svgHeight,
   width,
@@ -66,6 +69,20 @@ const CustomBrush = ({
           xScale={xBrushScale}
           yScale={yBrushScale}
           style={{ pointerEvents: 'none' }}
+        />
+      ))}
+      {thresholdData.map((dataItem) => (
+        <Threshold<any>
+          id={dataItem.id}
+          key={dataItem.id}
+          clipAboveTo={0}
+          clipBelowTo={BRUSH_HEIGHT}
+          data={dataItem?.datapoints}
+          x={({ valueX }) => xBrushScale(valueX)}
+          y0={({ valueY0 }) => yBrushScale(valueY0)}
+          y1={({ valueY1 }) => yBrushScale(valueY1)}
+          belowAreaProps={dataItem.belowAreaProps}
+          aboveAreaProps={dataItem.aboveAreaProps}
         />
       ))}
       <Brush
