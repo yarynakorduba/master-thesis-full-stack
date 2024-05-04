@@ -1,5 +1,13 @@
 import React from 'react';
-import { Box, CardActionArea, CardContent, Chip, Grid, Typography, useTheme } from '@mui/material';
+import {
+  Box,
+  CardActionArea,
+  CardContent,
+  Chip,
+  Grid,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { noop, round } from 'lodash';
 
 import { THistoryEntry } from '../Analysis/types';
@@ -11,18 +19,25 @@ import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,
-  mapARIMAPrediction
+  mapARIMAPrediction,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
   readonly onClick: (historyEntry: THistoryEntry) => void;
+  readonly isLatest?: boolean;
   readonly isSelected: boolean;
   readonly mapeColor: string;
 };
 
-const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) => {
+const HistoryCard = ({
+  historyEntry,
+  onClick,
+  isSelected,
+  isLatest,
+  mapeColor,
+}: TProps) => {
   const theme = useTheme();
   const mappedARIMAPrediction = mapARIMAPrediction(historyEntry);
 
@@ -31,7 +46,7 @@ const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) =
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.[0],
     theme.palette.charts.chartPink,
-    `test data prediction`
+    `test data prediction`,
   );
 
   const realPredictedData = constructLineChartDataFromTs(
@@ -39,11 +54,14 @@ const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) =
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.[1],
     theme.palette.charts.chartFuchsia,
-    `real data prediction`
+    `real data prediction`,
   );
 
   return (
-    <Card isSelected={isSelected} variant={isSelected ? 'outlined' : 'elevation'}>
+    <Card
+      isSelected={isSelected}
+      variant={isSelected ? 'outlined' : 'elevation'}
+    >
       <CardActionArea onClick={() => onClick(historyEntry)}>
         <CardContent>
           <CardHeader>
@@ -52,7 +70,9 @@ const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) =
               <Chip
                 size="small"
                 sx={{ background: mapeColor }}
-                label={<> MAPE: {round(historyEntry.evaluation.mape, PRECISION)}</>}
+                label={
+                  <> MAPE: {round(historyEntry.evaluation.mape, PRECISION)}</>
+                }
               />
             </Grid>
             <CardDate color="text.secondary">
@@ -63,21 +83,25 @@ const HistoryCard = ({ historyEntry, onClick, isSelected, mapeColor }: TProps) =
             Test data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {formatOrder(historyEntry.testPredictionParameters.order)}, Seasonal order:{' '}
+            Order: {formatOrder(historyEntry.testPredictionParameters.order)},
+            Seasonal order:{' '}
             {formatOrder(historyEntry.testPredictionParameters.seasonal_order)}
           </Typography>
           <Typography variant="subtitle2" color="text.secondary">
             Real data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {formatOrder(historyEntry.realPredictionParameters.order)}, Seasonal order:{' '}
+            Order: {formatOrder(historyEntry.realPredictionParameters.order)},
+            Seasonal order:{' '}
             {formatOrder(historyEntry.realPredictionParameters.seasonal_order)}
           </Typography>
           <Box width="100%">
             <SparkLineChart
               heading={''}
               data={
-                testPredictedData && realPredictedData ? [testPredictedData, realPredictedData] : []
+                testPredictedData && realPredictedData
+                  ? [testPredictedData, realPredictedData]
+                  : []
               }
               height={50}
               width={300}

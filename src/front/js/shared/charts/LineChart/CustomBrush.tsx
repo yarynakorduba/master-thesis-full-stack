@@ -4,6 +4,8 @@ import { noop } from 'lodash';
 import { Brush } from '@visx/brush';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
 import { Bounds } from '@visx/brush/lib/types';
+import { Threshold } from '@visx/threshold';
+import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
@@ -11,9 +13,6 @@ import { BRUSH_HEIGHT, selectedAreaStyle, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
 import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
-import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
-import { useTheme } from '@mui/material';
-import { Threshold } from '@visx/threshold';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -73,7 +72,7 @@ const CustomBrush = ({
       ))}
       {thresholdData.map((dataItem) => (
         <Threshold<any>
-          id={dataItem.id}
+          id={`brush-${dataItem.id}`}
           key={dataItem.id}
           clipAboveTo={0}
           clipBelowTo={BRUSH_HEIGHT}

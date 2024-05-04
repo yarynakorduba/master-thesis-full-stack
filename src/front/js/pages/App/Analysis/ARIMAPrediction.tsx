@@ -36,7 +36,7 @@ const ARIMAPrediction = ({
   isVARLoading,
   handlePredict,
   handleSelectStep,
-  index
+  index,
 }: TProps) => {
   const [horizon, setHorizon] = useInputState<number>(20, { min: 1 });
   const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
@@ -47,21 +47,37 @@ const ARIMAPrediction = ({
   const [minQ, setMinQ] = useInputState<number>(0, { min: 0 });
   const [maxQ, setMaxQ] = useInputState<number>(1, { min: 0 });
 
-  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1, { min: 0 });
+  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1, {
+    min: 0,
+  });
 
   const handleClick = () => {
-    handlePredict({ horizon, isSeasonal, minP, maxP, minQ, maxQ, periodsInSeason });
+    handlePredict({
+      horizon,
+      isSeasonal,
+      minP,
+      maxP,
+      minQ,
+      maxQ,
+      periodsInSeason,
+    });
   };
 
   const predictionHistory = useGetPredictionHistory();
   const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
-  const mapeLinearScale = scaleLinear({ domain: mapeExtent, range: [red[50], red[200]] });
+  const mapeLinearScale = scaleLinear({
+    domain: mapeExtent,
+    range: [red[50], red[200]],
+  });
 
   if (!isVisible) return null;
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}> What is the prediction for the future? (ARIMA)</Box>
+        <Box sx={{ fontSize: 16 }}>
+          {' '}
+          What is the prediction for the future? (ARIMA)
+        </Box>
       </StepButton>
       <StepContent>
         <Grid container columnSpacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
@@ -93,16 +109,22 @@ const ARIMAPrediction = ({
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                P variable, or lag order, helps you control how much the model relies on past values
-                to predict the current one. It&apos;s like adjusting how far back you want to look
-                to make a good guess about today&apos;s weather.
+                P variable, or lag order, helps you control how much the model
+                relies on past values to predict the current one. It&apos;s like
+                adjusting how far back you want to look to make a good guess
+                about today&apos;s weather.
                 <br />
                 <br />
-                Setting min P helps to avoid considering overly simple models that might not predict
-                future values well.
+                Setting min P helps to avoid considering overly simple models
+                that might not predict future values well.
               </InfoOverlay.Popover>
             </InfoOverlay>
-            <TextField value={minP} onChange={setMinP} size="small" type="number" />
+            <TextField
+              value={minP}
+              onChange={setMinP}
+              size="small"
+              type="number"
+            />
           </Grid>
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
@@ -112,16 +134,22 @@ const ARIMAPrediction = ({
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                P variable, or lag order, helps you control how much the model relies on past values
-                to predict the current one. It&apos;s like adjusting how far back you want to look
-                to make a good guess about today&apos;s weather.
+                P variable, or lag order, helps you control how much the model
+                relies on past values to predict the current one. It&apos;s like
+                adjusting how far back you want to look to make a good guess
+                about today&apos;s weather.
                 <br />
                 <br />
-                Setting max P helps to prevent the algorithm from considering excessively complex
-                models
+                Setting max P helps to prevent the algorithm from considering
+                excessively complex models
               </InfoOverlay.Popover>
             </InfoOverlay>
-            <TextField value={maxP} onChange={setMaxP} size="small" type="number" />
+            <TextField
+              value={maxP}
+              onChange={setMaxP}
+              size="small"
+              type="number"
+            />
           </Grid>
           <Grid item md={6}>
             <InfoOverlay
@@ -131,11 +159,17 @@ const ARIMAPrediction = ({
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                Q variable indicates how much the current observation is influenced by prediction
-                errors made by the model for previous values.
+                Q variable indicates how much the current observation is
+                influenced by prediction errors made by the model for previous
+                values.
               </InfoOverlay.Popover>
             </InfoOverlay>
-            <TextField value={minQ} onChange={setMinQ} size="small" type="number" />
+            <TextField
+              value={minQ}
+              onChange={setMinQ}
+              size="small"
+              type="number"
+            />
           </Grid>
           <Grid item md={6}>
             <InfoOverlay
@@ -145,11 +179,17 @@ const ARIMAPrediction = ({
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                Q variable indicates how much the current observation is influenced by prediction
-                errors made by the model for previous values.
+                Q variable indicates how much the current observation is
+                influenced by prediction errors made by the model for previous
+                values.
               </InfoOverlay.Popover>
             </InfoOverlay>
-            <TextField value={maxQ} onChange={setMaxQ} size="small" type="number" />
+            <TextField
+              value={maxQ}
+              onChange={setMaxQ}
+              size="small"
+              type="number"
+            />
           </Grid>
         </Grid>
         <Stack direction="row" alignItems="center" justifyContent="flex-start">
@@ -172,11 +212,13 @@ const ARIMAPrediction = ({
               sx={{ fontSize: 12, display: 'block' }}
             >
               <InfoOverlay.Popover>
-                This number indicates how many data points one seasonal pattern contains. <br />
+                This number indicates how many data points one seasonal pattern
+                contains. <br />
                 <br />
-                Example: you have a dataset of daily temperatures for a city over several years. You
-                notice that the temperature tends to be higher in the summer months and lower in the
-                winter months, creating a seasonal pattern. For daily data, the seasonal period
+                Example: you have a dataset of daily temperatures for a city
+                over several years. You notice that the temperature tends to be
+                higher in the summer months and lower in the winter months,
+                creating a seasonal pattern. For daily data, the seasonal period
                 could be 365 (one year).
               </InfoOverlay.Popover>
             </InfoOverlay>
@@ -202,30 +244,54 @@ const ARIMAPrediction = ({
               <Typography variant="subtitle2" color="text.secondary">
                 Test data prediction params
               </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                Order: {formatOrder(arimaResult.testPredictionParameters.order)}, Seasonal order:{' '}
-                {formatOrder(arimaResult.testPredictionParameters.seasonal_order)}
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.primary"
+                gutterBottom
+              >
+                Order: {formatOrder(arimaResult.testPredictionParameters.order)}
+                , Seasonal order:{' '}
+                {formatOrder(
+                  arimaResult.testPredictionParameters.seasonal_order,
+                )}
               </Typography>
               <Typography variant="subtitle2" color="text.secondary">
                 Real data prediction params
               </Typography>
-              <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-                Order: {formatOrder(arimaResult.realPredictionParameters.order)}, Seasonal order:{' '}
-                {formatOrder(arimaResult.realPredictionParameters.seasonal_order)}
+              <Typography
+                sx={{ fontSize: 14 }}
+                color="text.primary"
+                gutterBottom
+              >
+                Order: {formatOrder(arimaResult.realPredictionParameters.order)}
+                , Seasonal order:{' '}
+                {formatOrder(
+                  arimaResult.realPredictionParameters.seasonal_order,
+                )}
               </Typography>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                sx={{ marginBottom: 0.75 }}
+              >
                 Evaluation
               </Typography>
               <Typography sx={{ lineBreak: 'auto', fontSize: 14 }}>
                 <Chip
                   size="small"
-                  label={<> MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>}
+                  label={
+                    <> MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>
+                  }
                   sx={{ mr: 1 }}
                 />
                 <Chip
                   size="small"
-                  sx={{ background: mapeLinearScale(arimaResult.evaluation.mape) }}
-                  label={<> MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>}
+                  sx={{
+                    background: mapeLinearScale(arimaResult.evaluation.mape),
+                  }}
+                  label={
+                    <> MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>
+                  }
                 />
               </Typography>
             </CardContent>

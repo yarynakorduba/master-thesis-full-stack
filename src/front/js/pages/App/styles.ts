@@ -1,6 +1,9 @@
 import { styled } from '@mui/material/styles';
 import MuiDrawer from '@mui/material/Drawer';
 
+const SIDEBAR_WIDTH_SMALL_SCREEN = '400px';
+const SIDEBAR_WIDTH_BIG_SCREEN = '20vw';
+
 export const Sidebar = styled('div')`
   grid-column: 1;
   grid-row: 1;
@@ -12,16 +15,18 @@ export const Sidebar = styled('div')`
 export const Content = styled('div')<{ readonly isOpen: boolean }>`
   grid-column: 2;
   grid-row: 1;
-  ${({ isOpen }) =>
-    isOpen &&
-    `
-   width: calc(100% - 20vw);
-  `}
+
+  @media (width >= 1124px) {
+    ${({ isOpen }) =>
+      isOpen && `width: calc(100% - ${SIDEBAR_WIDTH_SMALL_SCREEN});`}
+  }
   @media (width >= 1700px) {
-    ${({ isOpen }) => isOpen && `width: calc(100% - 20vw + 80px);`}
+    ${({ isOpen }) =>
+      isOpen && `width: calc(100% - ${SIDEBAR_WIDTH_SMALL_SCREEN} + 80px);`}
   }
   @media (width >= 2000px) {
-    ${({ isOpen }) => isOpen && `width: calc(100% - 20vw + 148px);`}
+    ${({ isOpen }) =>
+      isOpen && `width: calc(100% - ${SIDEBAR_WIDTH_BIG_SCREEN} + 148px);`}
   }
   @media (width >= 2304px) {
     ${({ isOpen }) => isOpen && `width: 100%;`}
@@ -29,10 +34,18 @@ export const Content = styled('div')<{ readonly isOpen: boolean }>`
 `;
 
 export const HistoryDrawer = styled(MuiDrawer)`
-  width: 20vw;
-  height: 100vh;
+  ${({ open }) =>
+    open &&
+    `
+    & .MuiDrawer-paper {
+      height: 100vh;
+      width: ${SIDEBAR_WIDTH_SMALL_SCREEN};
+    }
 
-  & .MuiDrawer-paper {
-    width: 20vw;
-  }
+    @media (width >= 2000px) {
+      & .MuiDrawer-paper {
+        width: ${SIDEBAR_WIDTH_BIG_SCREEN};
+      }
+    }
+`}
 `;
