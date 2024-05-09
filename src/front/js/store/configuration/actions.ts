@@ -42,16 +42,28 @@ import { TConfigurationSlice, TDisplayedPrediction } from '../types';
 import { getSelectedDataByBoundaries } from '../../utils';
 
 export default (set, get) => ({
-  setData: (data: TTimeseriesData) =>
-    set(() => ({ data }), SHOULD_CLEAR_STORE, SET_DATA),
-  setSelectedDataBoundaries: (selectedDataBoundaries?: TValueBounds) =>
-    set(
+  setData: (data: TTimeseriesData) => {
+    console.log('Settimg the data -> ', data);
+
+    return set(
+      () => {
+        return { data };
+      },
+      SHOULD_CLEAR_STORE,
+      SET_DATA,
+    );
+  },
+
+  setSelectedDataBoundaries: (selectedDataBoundaries?: TValueBounds) => {
+    console.log('SET SELECTED DATA BOUNDS -- > ', selectedDataBoundaries);
+    return set(
       (state) => ({
         latestPrediction: { ...state.latestPrediction, selectedDataBoundaries },
       }),
       SHOULD_CLEAR_STORE,
       SET_SELECTED_DATA,
-    ),
+    );
+  },
 
   setTimeseriesProp: (timeseriesProp: TDataProperty) =>
     set(() => ({ timeseriesProp }), SHOULD_CLEAR_STORE, SET_TIMESERIES_PROP),
@@ -147,6 +159,7 @@ export default (set, get) => ({
         const dataForAnalysis = selectedProp?.value
           ? map(selectedData, (datum) => datum[selectedProp.value])
           : undefined;
+        console.log('---AAA 0------ --- --- > ', selectedData);
         if (dataForAnalysis) {
           return await fetchDataStationarityTest(dataForAnalysis);
         }

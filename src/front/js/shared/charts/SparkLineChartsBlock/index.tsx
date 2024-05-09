@@ -51,6 +51,7 @@ const SparkLineChartsBlock = ({
   setSelectedProp,
   defaultIsTrainingDataSelectionOn = false,
 }: TProps) => {
+  console.log('TIMESERIES --- > ', timeseriesData);
   const theme = useTheme();
   const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
 
@@ -151,13 +152,7 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
-  console.log(
-    '###',
-    thresholdData,
-    testPredictedDataCounterpart,
-    timeseriesData,
-    mappedARIMAPrediction,
-  );
+  console.log('###', timeseriesData);
   const selectedDataLength =
     (timeProperty &&
       getSelectedDataByBoundaries(

@@ -12,6 +12,7 @@ import { TDisplayedPrediction } from '../types';
 export const useGetData = (): TTimeseriesData =>
   useBoundStore((state) => state.data);
 export const useSetData = () => useBoundStore((state) => state.setData);
+
 export const useConfigData = (): [
   TTimeseriesData,
   (data: TTimeseriesData) => void,

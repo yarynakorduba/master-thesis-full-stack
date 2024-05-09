@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Box, Button } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
@@ -50,10 +50,18 @@ const PredictionModelSelection = ({
         size="small"
         sx={{ marginBottom: 1 }}
       >
-        <ToggleButton value={EPredictionMode.ARIMA} aria-label="left aligned">
+        <ToggleButton
+          value={EPredictionMode.ARIMA}
+          aria-label="left aligned"
+          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+        >
           ARIMA
         </ToggleButton>
-        <ToggleButton value={EPredictionMode.VAR} aria-label="right aligned">
+        <ToggleButton
+          value={EPredictionMode.VAR}
+          aria-label="right aligned"
+          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+        >
           VAR
         </ToggleButton>
       </ToggleButtonGroup>

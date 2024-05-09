@@ -33,7 +33,7 @@ def test_stationarity():
     print("--------------HERE!!!")
     requestBody = request.get_json()
     data_serie = requestBody["data"]
-    result = Analysis().test_stationarity_pmdarima(data_serie)
+    result = Analysis().test_stationarity_kpss_pmdarima(data_serie)
 
     return json.dumps(result), 200
 

@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid } from '@mui/material';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
+import json from '../../../../api/data/globalEarthTemperaturesPreparedForApp.json';
 import {
   TDataProperty,
   TTimeseriesData,
@@ -25,6 +25,8 @@ import {
   useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
+import { useParseDataset } from './DatasetForm/hooks';
+import { flow, map, reverse, sortBy } from 'lodash';
 
 const App = () => {
   const [timeProperty] = useTimeseriesProp();
@@ -38,11 +40,23 @@ const App = () => {
     useSelectedDataBoundaries();
 
   useEffect(() => {
-    const mappedJSON = json.map((value) => ({
-      ...value,
-      date: new Date(value.date).getTime(),
-    }));
+    const mappedJSON = flow(
+      (data) =>
+        map(data, (value) => ({
+          ...value,
+          date: new Date(value.date).getTime(),
+        })),
+      (data) => sortBy(data, (d) => d.date),
+      (data) => reverse(data),
+    )(json);
+    console.log('MAPPED JSON -- @##$%^ ', json);
     setTimeseriesData(mappedJSON as TTimeseriesData);
+    // to test white noise
+    // const mappedJSON = json.map((value, index) => ({
+    //   value,
+    //   date: new Date().getTime() + index * 1000,
+    // }));
+    // setTimeseriesData(mappedJSON as TTimeseriesData);
   }, [setTimeseriesData]);
 
   const [
@@ -62,9 +76,6 @@ const App = () => {
 
   const [predictionResult, handleFetchPrediction, isPredictionLoading] =
     usePrediction();
-
-  console.log('---predictionResult>>> ', predictionResult);
-
   const predictionHistory = useGetPredictionHistory();
   const [displayedPredictionId, setDisplayedPredictionId] =
     useDisplayedPredictionId();
@@ -102,8 +113,6 @@ const App = () => {
     }
   }, [timeProperty, timeseriesData]);
 
-  const [open, setOpen] = useState(false);
-
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
     useIsHistoryDrawerOpen();
 
@@ -133,7 +142,7 @@ const App = () => {
           dataLabels={dataLabels}
           defaultIsTrainingDataSelectionOn={
             isHistoryPredictionSelected &&
-            !!predictionResult.selectedDataBoundaries
+            !!predictionResult?.selectedDataBoundaries
           }
         />
 

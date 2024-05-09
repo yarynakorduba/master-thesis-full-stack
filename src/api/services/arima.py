@@ -15,8 +15,6 @@ class Arima:
         self = self
 
     def forecast_accuracy(self, forecast, actual):
-
-
         mape = np.mean(np.abs(forecast - actual)/np.abs(actual))  # MAPE
         me = np.mean(forecast - actual)             # ME
         mae = np.mean(np.abs(forecast - actual))    # MAE
@@ -79,7 +77,7 @@ class Arima:
 
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
-            test='adf',
+            test='kpss',
             # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
             max_p=max_p, # lag order - the number of lag observations to include
             max_q=max_q, # the size of moving average window

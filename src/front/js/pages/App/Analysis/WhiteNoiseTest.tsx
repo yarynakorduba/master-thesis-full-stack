@@ -56,7 +56,7 @@ const WhiteNoiseTest = ({
       <StepButton onClick={handleSelectStep(index)}>
         <Box sx={{ fontSize: 16 }}>
           Is the data{' '}
-          <InfoOverlay id="stationary" label="white noise">
+          <InfoOverlay id="whiteNoise" label="white noise">
             <InfoOverlay.Popover>
               <Typography>
                 A time series is white noise if the variables are independent
@@ -65,17 +65,19 @@ const WhiteNoiseTest = ({
                 has a zero correlation with all other values in the series.
               </Typography>
               <br />
-              <Typography sx={{ mb: 3.5 }}>
-                If a time series is white noise, it is a sequence of random
-                numbers and cannot be predicted.
-              </Typography>
               <SparkLineChart
                 heading={'Example white noise time series'}
                 data={[whiteNoiseDemoDatapoints]}
                 formatXScale={identity}
                 height={200}
-                padding={{ top: 8, bottom: 30, left: 20, right: 10 }}
+                padding={{ top: 8, bottom: 24, left: 20, right: 10 }}
               />
+              <Typography>
+                To test whether the data is white noise, we run Ljung-Box test
+                of autocorrelation in residuals. If a time series is white
+                noise, it is a sequence of random numbers and cannot be
+                predicted.
+              </Typography>
             </InfoOverlay.Popover>
           </InfoOverlay>
           ?

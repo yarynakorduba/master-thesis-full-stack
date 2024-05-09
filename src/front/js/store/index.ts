@@ -7,12 +7,12 @@ export const useBoundStore = create<TConfigurationSlice>()(
   devtools(
     persist(
       (...a) => ({
-        ...createConfigurationSlice(...a)
+        ...createConfigurationSlice(...a),
       }),
       {
         name: 'timeInsights.predictionHistory',
-        partialize: (state) => ({ predictionHistory: state.predictionHistory })
-      }
-    )
-  )
+        partialize: (state) => ({ predictionHistory: state.predictionHistory }),
+      },
+    ),
+  ),
 );
