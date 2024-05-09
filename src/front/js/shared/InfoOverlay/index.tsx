@@ -10,12 +10,24 @@ type TInfoOverlayProps = {
   label;
   sx?;
 };
-const InfoOverlayPopover = ({ children }: { readonly children: ReactNode | ReactNode[] }) => {
+const InfoOverlayPopover = ({
+  children,
+}: {
+  readonly children: ReactNode | ReactNode[];
+}) => {
   return <Typography sx={{ p: 2, maxWidth: 500 }}>{children}</Typography>;
 };
 
-const InfoOverlay = ({ id, children, variant, label, sx = {} }: TInfoOverlayProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+const InfoOverlay = ({
+  id,
+  children,
+  variant,
+  label,
+  sx = {},
+}: TInfoOverlayProps) => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null,
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -39,7 +51,11 @@ const InfoOverlay = ({ id, children, variant, label, sx = {} }: TInfoOverlayProp
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        sx={{ whiteSpace: 'pre-wrap' }}
       >
         {children}
       </Popover>

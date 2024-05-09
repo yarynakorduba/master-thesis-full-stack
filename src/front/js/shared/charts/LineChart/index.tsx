@@ -50,7 +50,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
-  readonly thresholdData: any;
+  readonly thresholdData?: any;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
@@ -86,7 +86,7 @@ const LineChart = ({
   selectedAreaBounds = undefined,
   onSelectArea = noop,
   selectedDataLength,
-  thresholdData,
+  thresholdData = [],
   defaultIsTrainingDataSelectionOn = false,
 }: TProps) => {
   const { palette } = useTheme();
@@ -349,7 +349,7 @@ const LineChart = ({
               Selected {selectedDataLength} entries
             </Typography>
           )}
-        {isTrainingDataSelectionOn && selectedAreaValueBounds && (
+        {isTrainingDataSelectionOn && (
           <Button
             onClick={() => {
               onSelectedAreaChange(null);

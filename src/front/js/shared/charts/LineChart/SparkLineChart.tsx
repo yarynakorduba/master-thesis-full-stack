@@ -18,8 +18,11 @@ const CHART_RIGHT_PADDING = 32;
 
 const getUniqueFlatValues = (prop, data): number[] =>
   flow(
-    (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
-    uniq
+    (d) =>
+      flatMap(d, (lineData) =>
+        lineData?.datapoints?.map((datum) => datum?.[prop]),
+      ),
+    uniq,
   )(data);
 
 /**
@@ -28,7 +31,9 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TAxisFormatter<Input = string | number, Output = string> = (value: Input) => Output;
+type TAxisFormatter<Input = string | number, Output = string> = (
+  value: Input,
+) => Output;
 
 type TProps = {
   readonly data: TLineChartData;
@@ -52,8 +57,8 @@ const LineChart = ({
     top: CHART_TOP_PADDING,
     bottom: CHART_BOTTOM_PADDING,
     left: CHART_LEFT_PADDING,
-    right: CHART_RIGHT_PADDING
-  }
+    right: CHART_RIGHT_PADDING,
+  },
 }: TProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
@@ -61,7 +66,7 @@ const LineChart = ({
   }, [padding.left, padding.right, width]);
   const cleanHeight = useMemo(
     () => height - padding.top - padding.bottom,
-    [height, padding.bottom, padding.top]
+    [height, padding.bottom, padding.top],
   );
 
   const xValues = useMemo(() => getUniqueFlatValues('valueX', data), [data]);
@@ -95,7 +100,7 @@ const LineChart = ({
         />
       );
     },
-    [xScale, yScale]
+    [xScale, yScale],
   );
 
   return (
@@ -109,7 +114,9 @@ const LineChart = ({
               hideTicks
               hideAxisLine
               tickFormat={formatAxisTick(formatYScale) as any}
-              tickLabelProps={getAxisTickLabelProps(AxisVariant.left, '0.5rem') as any}
+              tickLabelProps={
+                getAxisTickLabelProps(AxisVariant.left, '0.75rem') as any
+              }
               numTicks={2}
             />
             {data?.map(renderLine)}
@@ -131,9 +138,9 @@ export default function ResponsiveLineChart({
     top: CHART_TOP_PADDING,
     bottom: CHART_BOTTOM_PADDING,
     left: CHART_LEFT_PADDING,
-    right: CHART_RIGHT_PADDING
+    right: CHART_RIGHT_PADDING,
   },
-  onClick
+  onClick,
 }: TProps) {
   const renderChart = useCallback(
     (chartWidth?: number, chartHeight?: number) => (
@@ -148,21 +155,28 @@ export default function ResponsiveLineChart({
         onClick={onClick}
       />
     ),
-    [data, formatYScale, heading, variant, padding, onClick]
+    [data, formatYScale, heading, variant, padding, onClick],
   );
 
   const renderResponsiveChart = useCallback(
     (parent) => {
-      const responsiveWidth = !isNil(width) ? Math.min(width, parent.width) : undefined;
-      const responsiveHeight = !isNil(height) ? Math.min(height, parent.height) : undefined;
+      const responsiveWidth = !isNil(width)
+        ? Math.min(width, parent.width)
+        : undefined;
+      const responsiveHeight = !isNil(height)
+        ? Math.min(height, parent.height)
+        : undefined;
 
       return renderChart(responsiveWidth, responsiveHeight);
     },
-    [renderChart, width, height]
+    [renderChart, width, height],
   );
 
   return (
-    <ParentSize parentSizeStyles={{ maxHeight: height, maxWidth: width, height }} onClick={onClick}>
+    <ParentSize
+      parentSizeStyles={{ maxHeight: height, maxWidth: width, height }}
+      onClick={onClick}
+    >
       {renderResponsiveChart}
     </ParentSize>
   );

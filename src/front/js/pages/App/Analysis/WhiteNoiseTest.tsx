@@ -1,5 +1,5 @@
 import React from 'react';
-import { map } from 'lodash';
+import { identity, map, noop } from 'lodash';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -10,7 +10,12 @@ import Box from '@mui/material/Box';
 import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../shared/Loader';
 import InfoOverlay from '../../../shared/InfoOverlay';
-import { Link } from 'react-router-dom';
+import LineChart from '../../../../js/shared/charts/LineChart';
+
+import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
+import { formatNumber } from '../../../../js/utils/formatters';
+import SparkLineChart from '../../../../js/shared/charts/LineChart/SparkLineChart';
+import { useTheme } from '@mui/material/styles';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -27,8 +32,24 @@ const WhiteNoiseTest = ({
   isWhiteNoiseLoading,
   handleFetchIsWhiteNoise,
   handleSelectStep,
-  index
+  index,
 }: TProps) => {
+  const { palette } = useTheme();
+  const whiteNoiseDemoDatapoints = {
+    id: 'white-noise',
+    color: palette.charts.chartBlue,
+    label: '',
+    datapoints: whiteNoiseData.map((element, index) => ({
+      valueX: index,
+      valueY: element,
+    })),
+  };
+
+  // readonly id: string | number;
+  // readonly color: string;
+  // readonly label: string;
+  // readonly datapoints: Array<TLineChartDatapoint>;
+
   if (!isVisible) return null;
   return (
     <>
@@ -37,16 +58,24 @@ const WhiteNoiseTest = ({
           Is the data{' '}
           <InfoOverlay id="stationary" label="white noise">
             <InfoOverlay.Popover>
-              <Typography variant="body1">
-                A time series is white noise if the variables are independent and identically
-                distributed with a mean of zero. This means that all variables have the same
-                variance (sigma^2) and each value has a zero correlation with all other values in
-                the series.
+              <Typography>
+                A time series is white noise if the variables are independent
+                and identically distributed with a mean of zero. This means that
+                all variables have the same variance (sigma^2) and each value
+                has a zero correlation with all other values in the series.
               </Typography>
-              <Typography variant="body1">
-                If a time series is white noise, it is a sequence of random numbers and cannot be
-                predicted.
+              <br />
+              <Typography sx={{ mb: 3.5 }}>
+                If a time series is white noise, it is a sequence of random
+                numbers and cannot be predicted.
               </Typography>
+              <SparkLineChart
+                heading={'Example white noise time series'}
+                data={[whiteNoiseDemoDatapoints]}
+                formatXScale={identity}
+                height={200}
+                padding={{ top: 8, bottom: 30, left: 20, right: 10 }}
+              />
             </InfoOverlay.Popover>
           </InfoOverlay>
           ?
