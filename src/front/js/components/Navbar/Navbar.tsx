@@ -2,30 +2,31 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import {
-  useIsHistoryPredictionSelected,
-  usePrediction,
-} from '../../store/configuration/selectors';
-import { formatDateToDateTime } from '../../../js/utils/formatters';
+
+import { Button } from '@mui/material';
+import { useMatch, useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
-  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
-  const [prediction] = usePrediction();
+  const navigate = useNavigate();
+  const configPageMatch = useMatch('configurations/:id');
+  const isConfigPage = !!configPageMatch;
   return (
     <AppBar position="static" color="default">
       <Toolbar variant="dense">
-        <Typography variant="h5" sx={{ marginRight: 2 }}>
+        <Typography
+          variant="h6"
+          sx={{ marginRight: 2, height: 34, alignSelf: 'center' }}
+        >
           Time Insights
         </Typography>
-        {isHistoryPredictionSelected && !!prediction && (
-          <Typography
-            sx={{ textAlign: 'left' }}
-            variant="subtitle2"
-            color="text.secondary"
+        {isConfigPage && (
+          <Button
+            onClick={() => {
+              navigate('/configurations');
+            }}
           >
-            You are viewing the prediction calculated on{' '}
-            {formatDateToDateTime(prediction.timestamp)}
-          </Typography>
+            Configurations
+          </Button>
         )}
       </Toolbar>
     </AppBar>

@@ -1,4 +1,4 @@
-import { TARIMAUserParams } from '../pages/App/Analysis/types';
+import { TARIMAUserParams } from '../pages/Configuration/Analysis/types';
 
 export const handleFetch = async (fetchRequest): Promise<any> => {
   try {

@@ -43,9 +43,10 @@ class Analysis():
 
         print(np.array(data))
         adf_test = KPSSTest()
-        print(f"params: {adf_test.get_params()}, {np.trunc(np.power(np.array(data).shape[0] - 1, 1 / 3.0))}")
+        # print(f"params: {adf_test.get_params()}")
         p_value, is_non_stationary = adf_test.is_stationary(np.array(data))
-        should_diff_result = adf_test.should_diff(np.array(data))
+        print("yyyyy")
+        should_diff_result = adf_test.should_diff(data)
         # Estimate the number of differences using an ADF test:
         # n_adf = ndiffs(np.array(data), test='adf')  # -> 0
         print(f"{p_value} is non stationary: {is_non_stationary}, should diff: {should_diff_result[1]}")

@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from api.services.arima import Arima
+from api.services.configurations import Configurations
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
@@ -72,4 +73,14 @@ def get_arima_prediction():
     periods_in_season = requestBody["parameters"]["periodsInSeason"]
 
     result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
+    return result, 200
+
+
+@api.route('/configurations', methods=['GET'])
+def get_configurations():
+    config_id = request.args.get('id')
+    if config_id:
+        result = Configurations().get_configuration(config_id)
+    else:
+        result = Configurations().get_configurations()
     return result, 200

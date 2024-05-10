@@ -49,7 +49,7 @@ const Analysis = ({
 
   causalityTestResult,
   isCausalityTestLoading,
-  handleFetchGrangerDataCausalityTest
+  handleFetchGrangerDataCausalityTest,
 }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
@@ -87,7 +87,9 @@ const Analysis = ({
             index={key}
             causalityTestResult={causalityTestResult}
             isCausalityTestLoading={isCausalityTestLoading}
-            handleFetchGrangerDataCausalityTest={handleFetchGrangerDataCausalityTest}
+            handleFetchGrangerDataCausalityTest={
+              handleFetchGrangerDataCausalityTest
+            }
           />
         )
       : undefined,
@@ -111,7 +113,7 @@ const Analysis = ({
           isVARLoading={isPredictionLoading}
           handlePredict={handleFetchPrediction}
         />
-      )
+      ),
   ].filter(identity);
 
   return (

@@ -11,8 +11,12 @@ import { Box } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
-import { useIsHistoryDrawerOpen } from '../../../store/configuration/selectors';
+import {
+  useGetPredictionHistory,
+  useIsHistoryDrawerOpen,
+} from '../../../store/configuration/selectors';
 import InfoOverlay from '../../../shared/InfoOverlay';
+import { isEmpty } from 'lodash';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
@@ -23,21 +27,24 @@ const PredictionModelSelection = ({
   setPredictionMode,
 }: TProps) => {
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
+  const predictionHistory = useGetPredictionHistory();
 
   return (
     <>
       <Typography variant="h5">
         Prediction
-        <ToggleButton
-          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
-          size="small"
-          color="primary"
-          selected={isHistoryOpen}
-          value={true}
-          onChange={() => setIsHistoryDrawerOpen(!isHistoryOpen)}
-        >
-          History
-        </ToggleButton>
+        {!isEmpty(predictionHistory) && (
+          <ToggleButton
+            sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+            size="small"
+            color="primary"
+            selected={isHistoryOpen}
+            value={true}
+            onChange={() => setIsHistoryDrawerOpen(!isHistoryOpen)}
+          >
+            History
+          </ToggleButton>
+        )}
       </Typography>
       <Typography variant="subtitle2" sx={{ marginTop: 1, marginBottom: 1 }}>
         Select a model for prediction

@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import JSON
 
 db = SQLAlchemy()
 
@@ -15,5 +16,24 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            # do not serialize the password, its a security breach
+        }
+    
+class Configuration(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(300), nullable=False)
+    data = db.Column(JSON, nullable=False)
+
+    # password = db.Column(db.String(80), unique=False, nullable=False)
+    # is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+
+    def __repr__(self):
+        return f'<Configuration {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "data": self.data,
             # do not serialize the password, its a security breach
         }

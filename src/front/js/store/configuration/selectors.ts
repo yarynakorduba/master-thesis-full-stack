@@ -5,18 +5,21 @@ import {
   EPredictionMode,
   THistoryEntry,
   TValueBounds,
-} from '../../pages/App/Analysis/types';
+} from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPrediction } from '../types';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
+export const useGetConfigName = (): string =>
+  useBoundStore((state) => state.name || '');
 export const useGetData = (): TTimeseriesData =>
   useBoundStore((state) => state.data);
 export const useSetData = () => useBoundStore((state) => state.setData);
 
 export const useConfigData = (): [
+  string,
   TTimeseriesData,
   (data: TTimeseriesData) => void,
-] => [useGetData(), useSetData()];
+] => [useGetConfigName(), useGetData(), useSetData()];
 
 export const useGetTimeseriesProp = () =>
   useBoundStore((state) => state.timeseriesProp);
@@ -152,3 +155,6 @@ export const useIsHistoryDrawerOpen = (): [
   useBoundStore((state) => state.isHistoryDrawerOpen),
   useBoundStore((state) => state.setIsHistoryDrawerOpen),
 ];
+
+export const useFetchConfiguration = () =>
+  useBoundStore((state) => state.fetchConfiguration);

@@ -1,5 +1,5 @@
 import { get, isEmpty, maxBy, minBy } from 'lodash';
-import { TValueBounds } from '../pages/App/Analysis/types';
+import { TValueBounds } from '../pages/Configuration/Analysis/types';
 import { TDataProperty } from '../types';
 
 export const getSelectedDataByBoundaries = (

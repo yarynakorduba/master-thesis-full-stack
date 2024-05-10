@@ -4,8 +4,9 @@ import { ThemeProvider } from '@emotion/react';
 import Container from '@mui/material/Container';
 import ScrollToTop from './components/scrollToTop';
 import { Navbar } from './components/Navbar/Navbar';
-import App from './pages/App';
+import Configuration from './pages/Configuration';
 import { theme } from '../styles/theme';
+import ConfigurationList from './pages/ConfigurationList';
 
 //create your first component
 const Layout = () => {
@@ -20,7 +21,8 @@ const Layout = () => {
           <Navbar />
           <Container sx={{ paddingTop: 4, paddingBottom: 2 }} maxWidth={'xl'}>
             <Routes>
-              <Route element={<App />} path="/" />
+              <Route element={<ConfigurationList />} path="/configurations" />
+              <Route element={<Configuration />} path="/configurations/:id" />
               <Route element={<h1>Not found!</h1>} />
             </Routes>
           </Container>

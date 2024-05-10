@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
@@ -9,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { round } from 'lodash';
-import { Card, CardContent, CardHeader, Chip, Stack } from '@mui/material';
+import { Card, CardContent, Chip, Stack } from '@mui/material';
 
 import Loader from '../../../shared/Loader';
 import { useInputState } from '../../../hooks';
@@ -303,6 +302,8 @@ const ARIMAPrediction = ({
 };
 
 export default ARIMAPrediction;
+
+// Yes, it's possible that if an ARIMA model predicts poorly, the issue could be related to the size of the dataset. A small dataset might not capture the underlying patterns or trends in the data effectively, leading to poor predictive performance.
 
 // Chat GPT
 // While Auto ARIMA is a powerful tool for automatically selecting the optimal ARIMA model for many time series datasets, there are certain types of time series data for which Auto ARIMA may not perform well or may not be suitable for prediction. Here are some scenarios where Auto ARIMA might face challenges or may not be appropriate:

@@ -1,4 +1,4 @@
-import { map, every, reduce } from 'lodash';
+import { map, every, reduce, isNil } from 'lodash';
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
@@ -10,7 +10,7 @@ import {
   EPredictionMode,
   THistoryEntry,
   TValueBounds,
-} from '../../pages/App/Analysis/types';
+} from '../../pages/Configuration/Analysis/types';
 import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
@@ -37,14 +37,30 @@ import {
   SET_TIMESERIES_PROP,
   SET_SELECTED_PROPS,
   SET_HORIZON,
+  FETCH_CONFIGURATION_START,
+  FETCH_CONFIGURATION_FAILURE,
+  FETCH_CONFIGURATION_SUCCESS,
 } from './actionNames';
-import { TConfigurationSlice, TDisplayedPrediction } from '../types';
+import { TDisplayedPrediction } from '../types';
 import { getSelectedDataByBoundaries } from '../../utils';
+import { fetchConfig } from '../../apiCalls/configuration';
 
 export default (set, get) => ({
-  setData: (data: TTimeseriesData) => {
-    console.log('Settimg the data -> ', data);
+  fetchConfiguration: async (id: string) => {
+    if (isNil(id)) return;
+    set(() => ({}), SHOULD_CLEAR_STORE, FETCH_CONFIGURATION_START);
+    const response = await fetchConfig(id);
 
+    set(
+      () => ({ ...response.data }),
+      SHOULD_CLEAR_STORE,
+      response.isSuccess
+        ? FETCH_CONFIGURATION_SUCCESS
+        : FETCH_CONFIGURATION_FAILURE,
+    );
+  },
+
+  setData: (data: TTimeseriesData) => {
     return set(
       () => {
         return { data };
@@ -55,7 +71,6 @@ export default (set, get) => ({
   },
 
   setSelectedDataBoundaries: (selectedDataBoundaries?: TValueBounds) => {
-    console.log('SET SELECTED DATA BOUNDS -- > ', selectedDataBoundaries);
     return set(
       (state) => ({
         latestPrediction: { ...state.latestPrediction, selectedDataBoundaries },
@@ -146,8 +161,6 @@ export default (set, get) => ({
       dataBoundaries,
     );
 
-    console.log('iii --- >>> ', { dataBoundaries, selectedData });
-
     set(
       () => ({ stationarityTest: undefined, isStationarityTestLoading: true }),
       SHOULD_CLEAR_STORE,
@@ -159,7 +172,6 @@ export default (set, get) => ({
         const dataForAnalysis = selectedProp?.value
           ? map(selectedData, (datum) => datum[selectedProp.value])
           : undefined;
-        console.log('---AAA 0------ --- --- > ', selectedData);
         if (dataForAnalysis) {
           return await fetchDataStationarityTest(dataForAnalysis);
         }

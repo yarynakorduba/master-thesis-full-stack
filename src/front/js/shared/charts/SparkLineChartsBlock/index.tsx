@@ -13,7 +13,7 @@ import { LineChartContainer, SparkLineChartsContainer } from './styles';
 import {
   TPredictedPoints,
   TValueBounds,
-} from '../../../pages/App/Analysis/types';
+} from '../../../pages/Configuration/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
 import {
   PREDICTION_TIMESTAMP_PROP,
@@ -23,6 +23,7 @@ import {
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 
 type TProps = {
+  readonly configName: string;
   readonly valueProperties: TDataProperty[];
   readonly selectedProp?: TDataProperty;
   readonly setSelectedProp: (prop: TDataProperty) => void;
@@ -50,8 +51,8 @@ const SparkLineChartsBlock = ({
   selectedProp,
   setSelectedProp,
   defaultIsTrainingDataSelectionOn = false,
+  configName,
 }: TProps) => {
-  console.log('TIMESERIES --- > ', timeseriesData);
   const theme = useTheme();
   const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
 
@@ -152,7 +153,6 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
-  console.log('###', timeseriesData);
   const selectedDataLength =
     (timeProperty &&
       getSelectedDataByBoundaries(
@@ -169,7 +169,7 @@ const SparkLineChartsBlock = ({
     <LineChartContainer>
       <Box width="100%" minHeight="300px">
         <LineChart
-          heading={selectedProp?.label || ''}
+          heading={configName}
           data={chartData}
           thresholdData={thresholdData}
           dataLabels={dataLabels}

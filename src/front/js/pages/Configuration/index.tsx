@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from '../../../../api/data/globalEarthTemperaturesPreparedForApp.json';
+import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
 import {
   TDataProperty,
   TTimeseriesData,
@@ -14,6 +14,7 @@ import {
   useCausalityTest,
   useConfigData,
   useDisplayedPredictionId,
+  useFetchConfiguration,
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
@@ -25,14 +26,22 @@ import {
   useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
-import { useParseDataset } from './DatasetForm/hooks';
-import { flow, map, reverse, sortBy } from 'lodash';
+import { flow, isNil, map, reverse, sortBy } from 'lodash';
+import PredictionInfoText from './Analysis/PredictionInfoText';
+import { useParams } from 'react-router-dom';
 
-const App = () => {
+const Configuration = () => {
+  const { id } = useParams();
+  const fetchConfiguration = useFetchConfiguration();
+
+  useEffect(() => {
+    if (!isNil(id)) fetchConfiguration(id);
+  }, [fetchConfiguration, id]);
+
   const [timeProperty] = useTimeseriesProp();
   const [valueProperties] = useSelectedProps();
 
-  const [timeseriesData, setTimeseriesData] = useConfigData();
+  const [configName, timeseriesData, setTimeseriesData] = useConfigData();
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
@@ -49,7 +58,6 @@ const App = () => {
       (data) => sortBy(data, (d) => d.date),
       (data) => reverse(data),
     )(json);
-    console.log('MAPPED JSON -- @##$%^ ', json);
     setTimeseriesData(mappedJSON as TTimeseriesData);
     // to test white noise
     // const mappedJSON = json.map((value, index) => ({
@@ -77,8 +85,7 @@ const App = () => {
   const [predictionResult, handleFetchPrediction, isPredictionLoading] =
     usePrediction();
   const predictionHistory = useGetPredictionHistory();
-  const [displayedPredictionId, setDisplayedPredictionId] =
-    useDisplayedPredictionId();
+  const [, setDisplayedPredictionId] = useDisplayedPredictionId();
   // const isDisplayedItemInitialized = useRef();
   useEffect(() => {
     setDisplayedPredictionId(predictionHistory?.[0]?.id);
@@ -130,7 +137,13 @@ const App = () => {
       </Drawer> */}
 
       <Content isOpen={isHistoryDrawerOpen}>
+        <PredictionInfoText
+          prediction={predictionResult}
+          isHistoryPredictionSelected={isHistoryPredictionSelected}
+        />
+
         <SparkLineChartsBlock
+          configName={configName}
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}
           timeseriesData={sortedTSData}
@@ -191,4 +204,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Configuration;

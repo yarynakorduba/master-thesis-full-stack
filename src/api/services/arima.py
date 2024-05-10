@@ -77,7 +77,7 @@ class Arima:
 
         # Seasonal - fit stepwise auto-ARIMA
         smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
-            test='kpss',
+            test='adf',
             # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
             max_p=max_p, # lag order - the number of lag observations to include
             max_q=max_q, # the size of moving average window
@@ -129,7 +129,6 @@ class Arima:
         evaluation = self.forecast_accuracy(test_prediction, test)
 
         # --------------------------------------
-
         with open('data.json', 'w', encoding='utf-8') as f:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
 

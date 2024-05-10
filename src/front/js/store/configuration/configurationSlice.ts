@@ -1,15 +1,15 @@
 import { StateCreator } from 'zustand';
-import { EPredictionMode } from '../../pages/App/Analysis/types';
-import { TConfigurationSlice, TStoreMiddlewares } from '../types';
+import { EPredictionMode } from '../../pages/Configuration/Analysis/types';
+import {
+  TConfigurationSlice,
+  TDisplayedPrediction,
+  TStoreMiddlewares,
+} from '../types';
 import actions from './actions';
 
 export const DEFAULT_HORIZON = 1;
-export const createConfigurationSlice: StateCreator<
-  TConfigurationSlice,
-  TStoreMiddlewares,
-  [],
-  TConfigurationSlice
-> = (set, get) => ({
+
+export const DEFAULT_CONFIGURATION_STATE = {
   data: [],
   timeseriesProp: { value: 'date', label: 'date' },
   selectedProps: [{ value: 'value', label: 'passengers' }],
@@ -23,7 +23,7 @@ export const createConfigurationSlice: StateCreator<
   causalityTest: undefined,
   isCausalityTestLoading: false,
 
-  displayedPredictionId: 'latestPrediction',
+  displayedPredictionId: 'latestPrediction' as TDisplayedPrediction,
 
   latestPrediction: {
     predictionMode: EPredictionMode.ARIMA,
@@ -35,6 +35,18 @@ export const createConfigurationSlice: StateCreator<
 
   isHistoryDrawerOpen: false,
   predictionHistory: [],
+};
 
-  ...actions(set, get),
-});
+export const createConfigurationSlice: StateCreator<
+  TConfigurationSlice,
+  TStoreMiddlewares,
+  [],
+  TConfigurationSlice
+> = (set, get) => {
+  const configSlice: TConfigurationSlice = {
+    ...DEFAULT_CONFIGURATION_STATE,
+    ...actions(set, get),
+  };
+
+  return configSlice;
+};

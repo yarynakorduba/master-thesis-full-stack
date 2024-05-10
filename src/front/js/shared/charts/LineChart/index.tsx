@@ -35,7 +35,7 @@ import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
-import { TValueBounds } from 'front/js/pages/App/Analysis/types';
+import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
 
 /**

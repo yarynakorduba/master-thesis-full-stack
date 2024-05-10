@@ -12,7 +12,7 @@ export const Sidebar = styled('div')`
   height: 100vh;
 `;
 
-export const Content = styled('div')<{ readonly isOpen: boolean }>`
+export const Content = styled('div')<{ readonly isOpen?: boolean }>`
   position: relative;
   grid-column: 2;
   grid-row: 1;
