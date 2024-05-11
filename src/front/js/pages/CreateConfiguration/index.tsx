@@ -9,7 +9,7 @@ const CreateConfiguration = () => {
 
   const formMethods = useForm({
     defaultValues: {
-      prop: [{ value: undefined, label: undefined }],
+      valueProperties: [],
     },
   });
 

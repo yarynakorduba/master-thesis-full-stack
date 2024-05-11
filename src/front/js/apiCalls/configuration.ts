@@ -20,13 +20,12 @@ export const fetchConfig = async (id: string) => {
 };
 
 export const createConfig = async (config) => {
-  const blobData = new Blob([config.data], { type: 'application/json' });
   // Creating FormData object
   const formData = new FormData();
 
   // Add data to the object
   // Here myfile is the name of the form field
-  formData.append('jsonData', JSON.stringify(config.data));
+  formData.append('data', JSON.stringify(config.data));
   formData.append('name', config.name);
   formData.append('id', uuidv4());
   // console.log('FORM DATA --- > ', formData, blobData);

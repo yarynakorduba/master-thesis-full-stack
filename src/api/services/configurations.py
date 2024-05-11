@@ -20,7 +20,7 @@ class Configurations:
     }
 
   def create_configuration(self, data):
-    configuration = Configuration(id=data["id"], data=json.loads(data["jsonData"]), name=data["name"])
+    configuration = Configuration(id=data["id"], data=json.loads(data["data"]), name=data["name"])
     db.session.add(configuration)
     db.session.commit()
     return json.dumps(self._serialize(configuration))

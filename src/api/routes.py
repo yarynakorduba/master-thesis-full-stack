@@ -89,14 +89,13 @@ def get_configurations():
 @api.route('/configurations/create', methods=['POST'])
 def create_configuration():
     config_id = request.form["id"]
-    file = request.form["jsonData"]
+    file = request.form["data"]
     name = request.form["name"]
-    # print(f"config id  ---- > {config_id}, {name} {request.form} {file}")
-    # data = request.form["jsonData"]
+    # props = re
 
     result = Configurations().create_configuration({
         "id": config_id,
-        "jsonData": file,
+        "data": file,
         "name": name
     })
 

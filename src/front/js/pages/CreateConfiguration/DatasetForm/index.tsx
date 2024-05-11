@@ -1,18 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { isEqual, keys, map, noop } from 'lodash';
+import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
 import {
   Controller,
-  FormProvider,
   useFieldArray,
-  useForm,
   useFormContext,
   useWatch,
 } from 'react-hook-form';
 import {
   FormControl,
-  InputLabel,
   MenuItem,
   TextField,
   Typography,
@@ -32,11 +29,12 @@ type TProps = {
 
 enum EConfigurationFormFields {
   name = 'name',
-  data = 'data',
+  timeProperty = 'timeProperty',
+  valueProperties = 'valueProperties',
 }
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
-  const formMethods = useFormContext(); // retrieve all hook methods
+  const formMethods = useFormContext();
 
   const {
     control,
@@ -45,11 +43,9 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
     handleSubmit,
   } = formMethods;
 
-  console.log('--->>> ', formMethods);
-
   const { fields, append } = useFieldArray({
-    control, // control valueProperties comes from useForm (optional: if you are using FormContext)
-    name: 'prop', // unique name for your Field Array,
+    control,
+    name: EConfigurationFormFields.valueProperties,
   });
 
   const addField = () => {
@@ -62,7 +58,17 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   }, []);
 
   const handleSave = async (config) => {
-    await createConfig({ ...config, data: timeseriesData });
+    const { valueProperties, timeProperty } = config;
+    console.log('CONFIGUR -- > ', config, timeProperty, valueProperties);
+    await createConfig({
+      ...config,
+      data: timeseriesData,
+      valueProperties: map(valueProperties, (valueProperty) => ({
+        value: valueProperty,
+        label: valueProperty,
+      })),
+      timeProperty: { value: timeProperty, label: timeProperty },
+    });
   };
 
   const {
@@ -75,82 +81,89 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   } = useDropzone({ onDrop });
   const acceptedFile = acceptedFiles[0];
 
-  const timeseriesProps = useMemo(
+  const timeseriesProps: string[] = useMemo(
     () => (timeseriesData.length ? keys(timeseriesData[0]) : []),
     [timeseriesData],
   );
-  const selectOptions = timeseriesProps.map((prop) => ({
-    value: prop,
-    label: prop,
-  }));
 
-  const selectedProp = useWatch({ name: 'prop[0]' });
-  const selectedTimeseriesProp = useWatch({ name: 'timeProperty' });
-  const filteredSelectOptions = selectOptions.filter(
-    (option) =>
-      !isEqual(option, selectedProp) &&
-      !isEqual(option, selectedTimeseriesProp),
-  );
+  const selectedProp = useWatch({
+    name: EConfigurationFormFields.valueProperties,
+  });
+  const selectedTimeseriesProp = useWatch({
+    name: EConfigurationFormFields.timeProperty,
+  });
 
   return (
-    <FormContainer onSubmit={handleSubmit(handleSave)} noValidate>
-      <Grid item md={6} sx={{ marginBottom: 1 }}>
-        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-          <label htmlFor="name">Dataset name</label>
-        </Typography>
-        <TextField
-          size="small"
-          type="text"
-          sx={{ width: '100%' }}
-          {...register(EConfigurationFormFields.name)}
-        />
-      </Grid>
-      <Grid item md={6} sx={{ marginBottom: 1 }}>
-        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-          <label>Upload the dataset</label>
-        </Typography>
-        <Dropzone
-          {...register(EConfigurationFormFields.data)}
-          {...getRootProps({ isFocused, isDragAccept, isDragReject })}
-        >
-          <input {...getInputProps()} />
-          <Typography>
-            {acceptedFile
-              ? acceptedFile.name
-              : "Drag 'n' drop some files here, or click to select files"}
+    <>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Add new dataset
+      </Typography>
+      <FormContainer onSubmit={handleSubmit(handleSave)}>
+        <Grid item md={6} sx={{ mb: 1 }}>
+          <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+            <label>Upload the dataset</label>
           </Typography>
-        </Dropzone>
-      </Grid>
-      <Grid item md={6} sx={{ marginBottom: 1 }}>
-        <Controller
-          name="timeProperty"
-          control={control}
-          render={(valueProperties) => (
-            <FormControl
-              sx={{ width: '100%' }}
-              size="small"
-              disabled={!acceptedFile}
-            >
-              <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                <label htmlFor="name" id="demo-select-small-label">
-                  Timestamp variable
-                </label>
-              </Typography>
-              <Select {...valueProperties.field}>
-                {map(filteredSelectOptions, (option) => (
-                  <MenuItem value={option.value}>{option.label}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-          // rules={{ required: true }}
-        />
-      </Grid>
-      <Grid item md={6} sx={{ marginBottom: 1 }}>
-        {fields.map((f, index) => (
+          <Dropzone
+            {...getRootProps({ isFocused, isDragAccept, isDragReject })}
+          >
+            <input {...getInputProps()} />
+            <Typography>
+              {acceptedFile
+                ? acceptedFile.name
+                : "Drag 'n' drop some files here, or click to select files"}
+            </Typography>
+          </Dropzone>
+        </Grid>
+        <Grid item md={6} sx={{ marginBottom: 1 }}>
+          <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+            <label htmlFor="name">Dataset name</label>
+          </Typography>
+          <TextField
+            autoFocus
+            size="small"
+            type="text"
+            sx={{ width: '100%' }}
+            {...register(EConfigurationFormFields.name)}
+          />
+        </Grid>
+        <Grid item md={6} sx={{ marginBottom: 1 }}>
           <Controller
-            name={`prop[${index}]`}
-            key={`prop[${index}]`}
+            control={control}
+            {...register(EConfigurationFormFields.timeProperty)}
+            render={(valueProperties) => {
+              return (
+                <FormControl
+                  sx={{ width: '100%' }}
+                  size="small"
+                  disabled={!acceptedFile}
+                >
+                  <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+                    <label htmlFor="name">Timestamp variable</label>
+                  </Typography>
+                  <Select {...valueProperties.field}>
+                    {map(timeseriesProps, (option: string) => {
+                      console.log('OPTION -- > ', option);
+                      return (
+                        <MenuItem
+                          value={option}
+                          disabled={includes<string>(valueProperties, option)}
+                        >
+                          {option}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              );
+            }}
+            // rules={{ required: true }}
+          />
+        </Grid>
+
+        <Grid item md={6} sx={{ marginBottom: 1 }}>
+          <Controller
+            name={`${EConfigurationFormFields.valueProperties}[0]`}
+            key={`${EConfigurationFormFields.valueProperties}[0]`}
             control={control}
             render={(valueProperties) => (
               <FormControl
@@ -161,24 +174,72 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                 <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
                   <label htmlFor="name">Variable to analyse</label>
                 </Typography>
-                <Select {...valueProperties.field} id="demo-select-small">
-                  {map(filteredSelectOptions, (option) => (
-                    <MenuItem value={option.value}>{option.label}</MenuItem>
+                <Select {...valueProperties.field}>
+                  {map(timeseriesProps, (option: string) => (
+                    <MenuItem
+                      value={option}
+                      disabled={
+                        includes<string>(valueProperties, option) ||
+                        option === selectedTimeseriesProp
+                      }
+                    >
+                      {option}
+                    </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             )}
-            // rules={{ required: true }}
+            rules={{ required: true }}
           />
-        ))}
-      </Grid>
-      <Button onClick={addField} disabled={!acceptedFile}>
-        + Add a variable
-      </Button>
-      <Button type="submit" sx={{ mt: 2 }}>
-        Save dataset configuration
-      </Button>
-    </FormContainer>
+        </Grid>
+        {!!fields.length &&
+          slice(fields, 1).map((f, index) => (
+            <Grid
+              item
+              md={6}
+              sx={{ marginBottom: 1 }}
+              key={`${EConfigurationFormFields.valueProperties}[${index}]`}
+            >
+              <Controller
+                name={`${EConfigurationFormFields.valueProperties}[${index}]`}
+                control={control}
+                render={(valueProperties) => (
+                  <FormControl
+                    sx={{ width: '100%' }}
+                    size="small"
+                    disabled={!acceptedFile}
+                  >
+                    <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+                      <label htmlFor="name">Variable to analyse</label>
+                    </Typography>
+                    <Select {...valueProperties.field}>
+                      {map(timeseriesProps, (option: string) => (
+                        <MenuItem
+                          value={option}
+                          disabled={
+                            includes(selectedProp, option as any) ||
+                            option === selectedTimeseriesProp
+                          }
+                        >
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+                rules={{ required: true }}
+              />
+            </Grid>
+          ))}
+
+        <Button onClick={addField} disabled={!acceptedFile}>
+          + Add a variable
+        </Button>
+        <Button type="submit" sx={{ mt: 2 }}>
+          Save dataset configuration
+        </Button>
+      </FormContainer>
+    </>
   );
 };
 

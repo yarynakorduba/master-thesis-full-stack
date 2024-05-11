@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@emotion/react';
 import Container from '@mui/material/Container';
 import ScrollToTop from './components/scrollToTop';
@@ -28,6 +28,7 @@ const Layout = () => {
                 path="/configurations/create"
               />
               <Route element={<Configuration />} path="/configurations/:id" />
+              <Route path="/" element={<Navigate to="/configurations" />} />
               <Route element={<h1>Not found!</h1>} />
             </Routes>
           </Container>
