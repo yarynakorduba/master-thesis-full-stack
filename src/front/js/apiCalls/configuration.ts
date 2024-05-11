@@ -25,16 +25,16 @@ export const createConfig = async (config) => {
 
   // Add data to the object
   // Here myfile is the name of the form field
-  formData.append('data', JSON.stringify(config.data));
-  formData.append('name', config.name);
   formData.append('id', uuidv4());
-  // console.log('FORM DATA --- > ', formData, blobData);
-  // const data = { id: uuidv4(), ...config };
+  formData.append('name', config.name);
+  formData.append('data', JSON.stringify(config.data));
+  formData.append('time_property', JSON.stringify(config.timeProperty));
+  formData.append('value_properties', JSON.stringify(config.valueProperties));
+
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/configurations/create`, {
       method: 'POST',
       body: formData,
-      // headers: { 'Content-type': 'application/json' },
     }),
   );
 };

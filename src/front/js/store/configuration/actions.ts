@@ -48,11 +48,15 @@ import { fetchConfig } from '../../apiCalls/configuration';
 export default (set, get) => ({
   fetchConfiguration: async (id: string) => {
     if (isNil(id)) return;
-    set(() => ({}), SHOULD_CLEAR_STORE, FETCH_CONFIGURATION_START);
+    set(
+      () => ({ isConfigurationLoading: true }),
+      SHOULD_CLEAR_STORE,
+      FETCH_CONFIGURATION_START,
+    );
     const response = await fetchConfig(id);
 
     set(
-      () => ({ ...response.data }),
+      () => ({ ...response.data, isConfigurationLoading: false }),
       SHOULD_CLEAR_STORE,
       response.isSuccess
         ? FETCH_CONFIGURATION_SUCCESS

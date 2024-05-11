@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
@@ -15,12 +15,14 @@ import {
   Typography,
   Select,
   Grid,
+  CircularProgress,
 } from '@mui/material';
 
 import { Dropzone, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './hooks';
+import { useNavigate } from 'react-router-dom';
 
 type TProps = {
   readonly timeseriesData: TTimeseriesData;
@@ -34,6 +36,7 @@ enum EConfigurationFormFields {
 }
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
+  const navigate = useNavigate();
   const formMethods = useFormContext();
 
   const {
@@ -57,10 +60,11 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
     parseFile(file, setTimeseriesData);
   }, []);
 
+  const [isSaving, setIsSaving] = useState<boolean>(false);
   const handleSave = async (config) => {
     const { valueProperties, timeProperty } = config;
-    console.log('CONFIGUR -- > ', config, timeProperty, valueProperties);
-    await createConfig({
+    setIsSaving(true);
+    const response = await createConfig({
       ...config,
       data: timeseriesData,
       valueProperties: map(valueProperties, (valueProperty) => ({
@@ -69,6 +73,12 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
       })),
       timeProperty: { value: timeProperty, label: timeProperty },
     });
+    setIsSaving(false);
+
+    if (response.isSuccess && response.data?.id) {
+      // navigate to config view mode
+      navigate(`/configurations/${response.data?.id}`);
+    }
   };
 
   const {
@@ -235,7 +245,10 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
         <Button onClick={addField} disabled={!acceptedFile}>
           + Add a variable
         </Button>
-        <Button type="submit" sx={{ mt: 2 }}>
+        <Button type="submit" sx={{ mt: 2 }} disabled={isSaving}>
+          {isSaving && (
+            <CircularProgress size="0.875rem" sx={{ mr: 1 }} color="inherit" />
+          )}
           Save dataset configuration
         </Button>
       </FormContainer>

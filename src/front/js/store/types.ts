@@ -25,6 +25,8 @@ export type TConfigurationSlice = {
   // TODO: remove temporary :?
   readonly id?: string;
   readonly name?: string;
+  readonly isConfigurationLoading: boolean;
+
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;
   readonly fetchConfiguration: (id: string) => Promise<void>;

@@ -32,9 +32,11 @@ type TProps = {
   readonly causalityTestResult?;
   readonly isCausalityTestLoading: boolean;
   readonly handleFetchGrangerDataCausalityTest?;
+  readonly isConfigurationLoading: boolean;
 };
 
 const Analysis = ({
+  isConfigurationLoading,
   stationarityTestResult,
   valueProperties,
   timeseriesData,
@@ -53,6 +55,8 @@ const Analysis = ({
 }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
+
+  if (isConfigurationLoading) return null;
 
   const steps = [
     (key: number) => (

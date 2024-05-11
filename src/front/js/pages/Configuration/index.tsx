@@ -32,7 +32,7 @@ import PredictionInfoText from './Analysis/PredictionInfoText';
 
 const Configuration = () => {
   const { id } = useParams();
-  const fetchConfiguration = useFetchConfiguration();
+  const [fetchConfiguration, isConfigurationLoading] = useFetchConfiguration();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);
@@ -124,17 +124,6 @@ const Configuration = () => {
 
   return (
     <>
-      {/* <Drawer open={open} onClose={(_e, _v) => setOpen(false)} hideBackdrop>
-        <Sidebar>
-          <FormProvider {...methods}>
-            <DatasetForm
-              timeseriesData={timeseriesData}
-              setTimeseriesData={setTimeseriesData}
-            />
-          </FormProvider>
-        </Sidebar>
-      </Drawer> */}
-
       <Content isOpen={isHistoryDrawerOpen}>
         <PredictionInfoText
           prediction={predictionResult}
@@ -142,6 +131,7 @@ const Configuration = () => {
         />
 
         <SparkLineChartsBlock
+          isConfigurationLoading={isConfigurationLoading}
           configName={configName}
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}
@@ -161,6 +151,7 @@ const Configuration = () => {
         <Grid container justifyContent="start" gap={3} wrap="nowrap">
           <Grid item md={6}>
             <Analysis
+              isConfigurationLoading={isConfigurationLoading}
               stationarityTestResult={stationarityTestResult}
               valueProperties={valueProperties}
               timeseriesData={timeseriesData}

@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSON
 import datetime
 
 db = SQLAlchemy()
@@ -22,17 +22,29 @@ class User(db.Model):
     
 class Configuration(db.Model):
     id = db.Column(db.String(36), primary_key=True)
-    name = db.Column(db.String(300), nullable=False)
-    data = db.Column(JSONB, nullable=False) # limit 255MB
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    value_properties = db.Column(JSON, nullable=False, default=[])
+    time_property = db.Column(JSON, nullable=False, default=[])
+    name = db.Column(db.String(300), nullable=False)
+    data = db.Column(JSON, nullable=False) # limit 255MB
+
 
     def __repr__(self):
         return f'<Configuration {self.id}>'
+    
+    def serialize_general_info(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
 
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
             "data": self.data,
+            "time_property": self.time_property,
+            "value_properties": self.value_properties
         }
     

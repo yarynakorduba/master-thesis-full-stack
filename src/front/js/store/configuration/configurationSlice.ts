@@ -10,6 +10,7 @@ import actions from './actions';
 export const DEFAULT_HORIZON = 1;
 
 export const DEFAULT_CONFIGURATION_STATE = {
+  isConfigurationLoading: false,
   data: [],
   timeseriesProp: { value: 'date', label: 'date' },
   selectedProps: [{ value: 'value', label: 'passengers' }],

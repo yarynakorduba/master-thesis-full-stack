@@ -91,12 +91,15 @@ def create_configuration():
     config_id = request.form["id"]
     file = request.form["data"]
     name = request.form["name"]
-    # props = re
+    time_property = request.form["time_property"]
+    value_properties = request.form["value_properties"]
 
     result = Configurations().create_configuration({
         "id": config_id,
         "data": file,
-        "name": name
+        "name": name,
+        "time_property": time_property,
+        "value_properties": value_properties
     })
 
     return result, 200

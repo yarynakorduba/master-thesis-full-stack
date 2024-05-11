@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
-
+import Skeleton from '@mui/material/Skeleton';
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
@@ -39,8 +39,10 @@ type TProps = {
   };
   readonly dataLabels?: TDataLabel[];
   readonly defaultIsTrainingDataSelectionOn?: boolean;
+  readonly isConfigurationLoading?: boolean;
 };
 const SparkLineChartsBlock = ({
+  isConfigurationLoading,
   valueProperties,
   timeProperty,
   timeseriesData,
@@ -163,8 +165,26 @@ const SparkLineChartsBlock = ({
     timeseriesData.length;
 
   const defaultBrushValueBounds = undefined;
-  if (!timeProperty || !selectedProp || isEmpty(valueProperties))
-    return <LineChartContainer />;
+  if (
+    !timeProperty ||
+    !selectedProp ||
+    isEmpty(valueProperties) ||
+    isConfigurationLoading
+  ) {
+    return (
+      <LineChartContainer>
+        {isConfigurationLoading ? (
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            width="100%"
+            height="300px"
+          />
+        ) : null}
+      </LineChartContainer>
+    );
+  }
+
   return (
     <LineChartContainer>
       <Box width="100%" minHeight="300px">

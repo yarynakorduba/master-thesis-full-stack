@@ -156,5 +156,10 @@ export const useIsHistoryDrawerOpen = (): [
   useBoundStore((state) => state.setIsHistoryDrawerOpen),
 ];
 
-export const useFetchConfiguration = () =>
-  useBoundStore((state) => state.fetchConfiguration);
+export const useFetchConfiguration = (): [
+  (id: string) => Promise<void>,
+  boolean,
+] => [
+  useBoundStore((state) => state.fetchConfiguration),
+  useBoundStore((state) => state.isConfigurationLoading),
+];
