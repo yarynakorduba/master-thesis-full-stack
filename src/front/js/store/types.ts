@@ -26,6 +26,8 @@ export type TConfigurationSlice = {
   readonly id?: string;
   readonly name?: string;
   readonly isConfigurationLoading: boolean;
+  readonly timeProperty?: TDataProperty;
+  readonly valueProperties?: TDataProperty[];
 
   readonly data: TTimeseriesData;
   readonly setData: (data: TTimeseriesData) => void;

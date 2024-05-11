@@ -3,6 +3,7 @@ import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
+
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
@@ -155,6 +156,7 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
+  console.log('---selectedAreaBounds->>> ', selectedAreaBounds);
   const selectedDataLength =
     (timeProperty &&
       getSelectedDataByBoundaries(

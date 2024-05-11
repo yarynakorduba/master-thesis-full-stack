@@ -54,9 +54,16 @@ export default (set, get) => ({
       FETCH_CONFIGURATION_START,
     );
     const response = await fetchConfig(id);
+    const { time_property, value_properties, ...responseData } =
+      response?.data || {};
 
     set(
-      () => ({ ...response.data, isConfigurationLoading: false }),
+      () => ({
+        ...responseData,
+        timeProperty: time_property,
+        valueProperties: value_properties,
+        isConfigurationLoading: false,
+      }),
       SHOULD_CLEAR_STORE,
       response.isSuccess
         ? FETCH_CONFIGURATION_SUCCESS
@@ -104,12 +111,15 @@ export default (set, get) => ({
       SET_PREDICTION_MODE,
     ),
 
-  setDisplayedPredictionId: (itemId: TDisplayedPrediction) =>
-    set(
-      () => ({ displayedPredictionId: itemId }),
-      SHOULD_CLEAR_STORE,
-      SET_DISPLAYED_PREDICTION,
-    ),
+  setDisplayedPredictionId: (itemId: TDisplayedPrediction) => {
+    if (!isNil(itemId)) {
+      return set(
+        () => ({ displayedPredictionId: itemId }),
+        SHOULD_CLEAR_STORE,
+        SET_DISPLAYED_PREDICTION,
+      );
+    }
+  },
 
   fetchWhiteNoiseTest: async (valueProperties) => {
     const dataBoundaries = get().latestPrediction.selectedDataBoundaries;

@@ -15,17 +15,25 @@ export const useGetData = (): TTimeseriesData =>
   useBoundStore((state) => state.data);
 export const useSetData = () => useBoundStore((state) => state.setData);
 
-export const useConfigData = (): [
-  string,
-  TTimeseriesData,
-  (data: TTimeseriesData) => void,
-] => [useGetConfigName(), useGetData(), useSetData()];
+export const useConfigData = (): any =>
+  useBoundStore((state) => {
+    console.log('STATE --- >>> ', state);
+    return {
+      fetchConfiguration: state.fetchConfiguration,
+      name: state.name,
+      id: state.id,
+      data: state.data,
+      timeProperty: state.timeProperty,
+      valueProperties: state.valueProperties,
+      setData: state.setData,
+    } as any;
+  });
 
 export const useGetTimeseriesProp = () =>
   useBoundStore((state) => state.timeseriesProp);
 export const useSetTimeseriesProp = () =>
   useBoundStore((state) => state.setTimeseriesProp);
-export const useTimeseriesProp = (): [
+export const useTimeProperty = (): [
   TDataProperty | undefined,
   (data: TDataProperty) => void,
 ] => [useGetTimeseriesProp(), useSetTimeseriesProp()];
@@ -40,14 +48,15 @@ export const useSelectedProps = (): [
 ] => [useGetSelectedProps(), useSetSelectedProps()];
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
-  useBoundStore((state) =>
-    state.displayedPredictionId === 'latestPrediction'
+  useBoundStore((state) => {
+    console.log('---->>> ', state);
+    return state.displayedPredictionId === 'latestPrediction'
       ? state.latestPrediction?.selectedDataBoundaries
       : find(
           state.predictionHistory,
           ({ id }) => id === state.displayedPredictionId,
-        )?.selectedDataBoundaries,
-  );
+        )?.selectedDataBoundaries;
+  });
 export const useSetSelectedDataBoundaries = () =>
   useBoundStore((state) => state.setSelectedDataBoundaries);
 export const useSelectedDataBoundaries = (): [

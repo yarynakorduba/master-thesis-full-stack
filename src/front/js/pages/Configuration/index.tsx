@@ -22,9 +22,7 @@ import {
   useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
-  useSelectedProps,
   useStationarityTest,
-  useTimeseriesProp,
   useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
@@ -38,15 +36,20 @@ const Configuration = () => {
     if (!isNil(id)) fetchConfiguration(id);
   }, [fetchConfiguration, id]);
 
-  const [timeProperty] = useTimeseriesProp();
-  const [valueProperties] = useSelectedProps();
-
-  const [configName, timeseriesData, setTimeseriesData] = useConfigData();
+  const {
+    name: configName,
+    data: timeseriesData,
+    setData: setTimeseriesData,
+    timeProperty,
+    valueProperties,
+  } = useConfigData();
 
   const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
+
+  console.log('SELECTED DATA BOU!!NDARIES --- > ', selectedDataBoundaries);
 
   useEffect(() => {
     const mappedJSON = flow(
@@ -59,12 +62,6 @@ const Configuration = () => {
       (data) => reverse(data),
     )(json);
     setTimeseriesData(mappedJSON as TTimeseriesData);
-    // to test white noise
-    // const mappedJSON = json.map((value, index) => ({
-    //   value,
-    //   date: new Date().getTime() + index * 1000,
-    // }));
-    // setTimeseriesData(mappedJSON as TTimeseriesData);
   }, [setTimeseriesData]);
 
   const [
@@ -87,7 +84,9 @@ const Configuration = () => {
   const predictionHistory = useGetPredictionHistory();
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
   useEffect(() => {
-    setDisplayedPredictionId(predictionHistory?.[0]?.id);
+    if (predictionHistory.length) {
+      setDisplayedPredictionId(predictionHistory?.[0]?.id);
+    }
   }, []);
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
