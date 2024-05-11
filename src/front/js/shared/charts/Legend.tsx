@@ -5,7 +5,7 @@ import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { maxBy, minBy, round } from 'lodash';
+import { isNil, maxBy, minBy, round } from 'lodash';
 import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
@@ -111,17 +111,18 @@ export const CustomLegend = ({
       return (
         <StyledContainer>
           {legendItems.map((legendItem) => {
-            const shape = legendScale(legendItem.datum);
+            const datum = legendItem?.datum;
+            const shape = legendScale(datum);
             const isValidElement = React.isValidElement(shape);
-            const isHidden = legendItem?.datum?.color === hiddenColor;
+            const isHidden = datum?.color === hiddenColor;
             return (
               <LegendItem
-                onClick={() => handleHide(legendItem?.datum?.id)}
+                onClick={() => handleHide(datum?.id)}
                 style={{
                   margin: '0 16px',
                   fontSize: '0.875rem',
                 }}
-                key={legendItem?.datum?.label}
+                key={datum?.label}
               >
                 <Box display="flex" alignItems="center" gap={1}>
                   {isValidElement && React.cloneElement(shape as ReactElement)}
@@ -130,7 +131,7 @@ export const CustomLegend = ({
                       isHidden ? palette.text.disabled : palette.text.primary
                     }
                   >
-                    {legendItem?.datum?.label}
+                    {datum?.label}
                   </Typography>
                   {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
                 </Box>
@@ -140,9 +141,15 @@ export const CustomLegend = ({
                     isHidden ? palette.text.disabled : palette.text.primary
                   }
                 >
-                  ({legendItem?.datum?.dataLength} entries, min:{' '}
-                  {round(legendItem?.datum?.min.valueY, PRECISION)}, max:{' '}
-                  {round(legendItem?.datum?.max?.valueY, PRECISION)})
+                  ({datum?.dataLength} entries, min:{' '}
+                  {!isNil(datum?.min?.valueY)
+                    ? round(datum?.min?.valueY, PRECISION)
+                    : 'N/A'}
+                  , max:{' '}
+                  {!isNil(datum?.max?.valueY)
+                    ? round(legendItem?.datum?.max?.valueY, PRECISION)
+                    : 'N/A'}
+                  )
                 </Typography>
               </LegendItem>
             );

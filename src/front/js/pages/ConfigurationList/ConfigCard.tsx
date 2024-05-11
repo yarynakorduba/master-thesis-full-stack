@@ -5,10 +5,9 @@ import { useNavigate } from 'react-router-dom';
 const ConfigCard = ({ config }) => {
   const navigate = useNavigate();
   return (
-    <Card>
+    <Card sx={{ height: '100%' }}>
       <CardActionArea
         onClick={() => {
-          console.log('Clicked config card');
           navigate(`/configurations/${config.id}`);
         }}
       >

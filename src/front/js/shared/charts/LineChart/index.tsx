@@ -334,7 +334,7 @@ const LineChart = ({
         <Typography variant="h5">{heading} </Typography>
         {!isTrainingDataSelectionOn && (
           <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
-            Limit data for prediction
+            Limit data for analysis
           </Button>
         )}
         {isTrainingDataSelectionOn && !selectedAreaValueBounds && (

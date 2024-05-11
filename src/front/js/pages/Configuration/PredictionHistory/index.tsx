@@ -38,7 +38,7 @@ const PredictionHistory = () => {
       <Typography variant="h5" sx={{ mb: 1 }}>
         History
       </Typography>
-      <Grid spacing={1} container>
+      <Grid spacing={1} container alignItems="stretch">
         {predictionHistory.map((historyEntry, index) => {
           return (
             <Grid item xs={12} key={historyEntry.id}>

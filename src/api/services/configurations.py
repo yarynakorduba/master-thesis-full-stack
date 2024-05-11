@@ -1,6 +1,6 @@
 import json
 from api.models import Configuration
-
+from api.models import db
 
 class Configurations:
   def __init__(self):
@@ -15,12 +15,15 @@ class Configurations:
   def _serialize(self, config):
     return {
         "id": config.id,
-      "name": config.name,
+        "name": config.name,
         "data": config.data
     }
 
-  def create_configuration(self):
-    return None
+  def create_configuration(self, data):
+    configuration = Configuration(id=data["id"], data=json.loads(data["jsonData"]), name=data["name"])
+    db.session.add(configuration)
+    db.session.commit()
+    return json.dumps(self._serialize(configuration))
   
   def get_configurations(self):
     configurations = Configuration.query.all()

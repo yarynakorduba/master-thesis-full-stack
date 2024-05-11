@@ -25,7 +25,7 @@ export const Navbar = () => {
               navigate('/configurations');
             }}
           >
-            Configurations
+            Datasets
           </Button>
         )}
       </Toolbar>

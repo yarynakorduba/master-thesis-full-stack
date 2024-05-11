@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy.dialects.postgresql import JSONB
+import datetime
 
 db = SQLAlchemy()
 
@@ -20,12 +21,10 @@ class User(db.Model):
         }
     
 class Configuration(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(36), primary_key=True)
     name = db.Column(db.String(300), nullable=False)
-    data = db.Column(JSON, nullable=False)
-
-    # password = db.Column(db.String(80), unique=False, nullable=False)
-    # is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    data = db.Column(JSONB, nullable=False) # limit 255MB
+    created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __repr__(self):
         return f'<Configuration {self.id}>'
@@ -35,5 +34,5 @@ class Configuration(db.Model):
             "id": self.id,
             "name": self.name,
             "data": self.data,
-            # do not serialize the password, its a security breach
         }
+    

@@ -7,6 +7,7 @@ import { Navbar } from './components/Navbar/Navbar';
 import Configuration from './pages/Configuration';
 import { theme } from '../styles/theme';
 import ConfigurationList from './pages/ConfigurationList';
+import CreateConfiguration from './pages/CreateConfiguration';
 
 //create your first component
 const Layout = () => {
@@ -22,6 +23,10 @@ const Layout = () => {
           <Container sx={{ paddingTop: 4, paddingBottom: 2 }} maxWidth={'xl'}>
             <Routes>
               <Route element={<ConfigurationList />} path="/configurations" />
+              <Route
+                element={<CreateConfiguration />}
+                path="/configurations/create"
+              />
               <Route element={<Configuration />} path="/configurations/:id" />
               <Route element={<h1>Not found!</h1>} />
             </Routes>

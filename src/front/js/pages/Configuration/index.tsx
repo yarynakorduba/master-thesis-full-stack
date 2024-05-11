@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { flow, isNil, map, reverse, sortBy } from 'lodash';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
@@ -26,9 +28,7 @@ import {
   useWhiteNoiseTest,
 } from '../../store/configuration/selectors';
 import PredictionHistory from './PredictionHistory';
-import { flow, isNil, map, reverse, sortBy } from 'lodash';
 import PredictionInfoText from './Analysis/PredictionInfoText';
-import { useParams } from 'react-router-dom';
 
 const Configuration = () => {
   const { id } = useParams();
@@ -86,7 +86,6 @@ const Configuration = () => {
     usePrediction();
   const predictionHistory = useGetPredictionHistory();
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
-  // const isDisplayedItemInitialized = useRef();
   useEffect(() => {
     setDisplayedPredictionId(predictionHistory?.[0]?.id);
   }, []);

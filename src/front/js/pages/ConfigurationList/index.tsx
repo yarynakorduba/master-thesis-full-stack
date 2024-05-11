@@ -19,7 +19,6 @@ const ConfigurationList = () => {
   const handleFetchConfigurations = async () => {
     setIsLoading(true);
     const response = await fetchConfigs();
-    console.log('RESPONSE -- > ', response);
     if (response.isSuccess) {
       setConfigs(response.data);
     }
@@ -31,7 +30,7 @@ const ConfigurationList = () => {
 
   return (
     <Content>
-      <Typography variant="h4">Configurations</Typography>
+      <Typography variant="h4">Datasets</Typography>
       <Grid spacing={2} container sx={{ marginTop: 3 }}>
         {map(configs, (config) => (
           <Grid item xs={6} lg={4}>

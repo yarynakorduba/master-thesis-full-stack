@@ -84,3 +84,20 @@ def get_configurations():
     else:
         result = Configurations().get_configurations()
     return result, 200
+
+
+@api.route('/configurations/create', methods=['POST'])
+def create_configuration():
+    config_id = request.form["id"]
+    file = request.form["jsonData"]
+    name = request.form["name"]
+    # print(f"config id  ---- > {config_id}, {name} {request.form} {file}")
+    # data = request.form["jsonData"]
+
+    result = Configurations().create_configuration({
+        "id": config_id,
+        "jsonData": file,
+        "name": name
+    })
+
+    return result, 200
