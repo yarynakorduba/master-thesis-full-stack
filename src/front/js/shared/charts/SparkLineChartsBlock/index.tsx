@@ -79,7 +79,7 @@ const SparkLineChartsBlock = ({
   const firstProp = valueProperties?.[0];
   useEffect(() => {
     if (firstProp) setSelectedProp(firstProp);
-  }, [firstProp]);
+  }, [firstProp, setSelectedProp]);
 
   const handleSparklineClick = (chartProp) => () => {
     setSelectedProp(chartProp);
@@ -156,7 +156,6 @@ const SparkLineChartsBlock = ({
       ]
     : [];
 
-  console.log('---selectedAreaBounds->>> ', selectedAreaBounds);
   const selectedDataLength =
     (timeProperty &&
       getSelectedDataByBoundaries(
@@ -168,8 +167,8 @@ const SparkLineChartsBlock = ({
 
   const defaultBrushValueBounds = undefined;
   if (
+    isEmpty(timeseriesData) ||
     !timeProperty ||
-    !selectedProp ||
     isEmpty(valueProperties) ||
     isConfigurationLoading
   ) {
@@ -182,7 +181,9 @@ const SparkLineChartsBlock = ({
             width="100%"
             height="300px"
           />
-        ) : null}
+        ) : (
+          'Some or all the data for this configuration is missing. Please create a new configuration.'
+        )}
       </LineChartContainer>
     );
   }

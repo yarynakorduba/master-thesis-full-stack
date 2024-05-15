@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { flow, isNil, map, reverse, sortBy } from 'lodash';
+import { isNil } from 'lodash';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
-import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
-import {
-  TDataProperty,
-  TTimeseriesData,
-  TTimeseriesDatum,
-} from 'front/js/types';
+// import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
+import { TDataProperty } from 'front/js/types';
 import Analysis from './Analysis';
 import {
   useCausalityTest,
   useConfigData,
   useDisplayedPredictionId,
-  useFetchConfiguration,
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
@@ -30,39 +25,23 @@ import PredictionInfoText from './Analysis/PredictionInfoText';
 
 const Configuration = () => {
   const { id } = useParams();
-  const [fetchConfiguration, isConfigurationLoading] = useFetchConfiguration();
+
+  const {
+    name: configName,
+    data: timeseriesData,
+    fetchConfiguration,
+    isConfigurationLoading,
+    timeProperty,
+    valueProperties,
+  } = useConfigData();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);
   }, [fetchConfiguration, id]);
 
-  const {
-    name: configName,
-    data: timeseriesData,
-    setData: setTimeseriesData,
-    timeProperty,
-    valueProperties,
-  } = useConfigData();
-
-  const [sortedTSData, setSortedTSData] = useState<TTimeseriesData>([]);
   const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
-
-  console.log('SELECTED DATA BOU!!NDARIES --- > ', selectedDataBoundaries);
-
-  useEffect(() => {
-    const mappedJSON = flow(
-      (data) =>
-        map(data, (value) => ({
-          ...value,
-          date: new Date(value.date).getTime(),
-        })),
-      (data) => sortBy(data, (d) => d.date),
-      (data) => reverse(data),
-    )(json);
-    setTimeseriesData(mappedJSON as TTimeseriesData);
-  }, [setTimeseriesData]);
 
   const [
     stationarityTestResult,
@@ -102,22 +81,6 @@ const Configuration = () => {
       ]) ||
     [];
 
-  useEffect(() => {
-    if (timeProperty?.value && timeseriesData.length) {
-      const sorted = timeseriesData
-        .sort((a: TTimeseriesDatum, b: TTimeseriesDatum) => {
-          // sort ascending: June, July, August
-          return (a[timeProperty.value] as number) -
-            (b[timeProperty.value] as number)
-            ? -1
-            : 1;
-        })
-        .map((d) => ({ ...d, date: new Date(d.date).getTime() }));
-
-      setSortedTSData(sorted);
-    }
-  }, [timeProperty, timeseriesData]);
-
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
     useIsHistoryDrawerOpen();
 
@@ -134,7 +97,7 @@ const Configuration = () => {
           configName={configName}
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}
-          timeseriesData={sortedTSData}
+          timeseriesData={timeseriesData || []}
           predictionData={predictionResult}
           setSelectedDataBoundaries={setSelectedDataBoundaries}
           selectedAreaBounds={selectedDataBoundaries}

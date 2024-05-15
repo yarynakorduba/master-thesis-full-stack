@@ -17,9 +17,9 @@ export const useSetData = () => useBoundStore((state) => state.setData);
 
 export const useConfigData = (): any =>
   useBoundStore((state) => {
-    console.log('STATE --- >>> ', state);
     return {
       fetchConfiguration: state.fetchConfiguration,
+      isConfigurationLoading: state.isConfigurationLoading,
       name: state.name,
       id: state.id,
       data: state.data,

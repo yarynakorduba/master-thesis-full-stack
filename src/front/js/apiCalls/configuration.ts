@@ -19,6 +19,15 @@ export const fetchConfig = async (id: string) => {
   );
 };
 
+export const deleteConfig = async (id: string) => {
+  return handleFetch(
+    fetch(`${process.env.BACKEND_URL}/api/configurations?id=${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-type': 'application/json' },
+    }),
+  );
+};
+
 export const createConfig = async (config) => {
   // Creating FormData object
   const formData = new FormData();

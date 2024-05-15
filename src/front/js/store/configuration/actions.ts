@@ -1,4 +1,4 @@
-import { map, every, reduce, isNil } from 'lodash';
+import { map, every, reduce, isNil, flow, reverse, sortBy } from 'lodash';
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
@@ -54,16 +54,34 @@ export default (set, get) => ({
       FETCH_CONFIGURATION_START,
     );
     const response = await fetchConfig(id);
-    const { time_property, value_properties, ...responseData } =
-      response?.data || {};
+    const {
+      time_property,
+      value_properties,
+      data: dataset,
+      ...responseData
+    } = response?.data || {};
+
+    const config = {
+      ...responseData,
+      timeProperty: time_property,
+      valueProperties: value_properties,
+      isConfigurationLoading: false,
+    };
+
+    const mappedJSON = flow(
+      (data) =>
+        map(data, (value) => ({
+          ...value,
+          [config.timeProperty.value]: new Date(
+            value[config.timeProperty.value],
+          ).getTime(),
+        })),
+      (data) => sortBy(data, (d) => d[config.timeProperty.value]),
+      (data) => reverse(data),
+    )(dataset);
 
     set(
-      () => ({
-        ...responseData,
-        timeProperty: time_property,
-        valueProperties: value_properties,
-        isConfigurationLoading: false,
-      }),
+      () => ({ ...config, data: mappedJSON }),
       SHOULD_CLEAR_STORE,
       response.isSuccess
         ? FETCH_CONFIGURATION_SUCCESS

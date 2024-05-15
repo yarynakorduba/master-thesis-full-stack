@@ -1,6 +1,8 @@
 import json
 from api.models import Configuration
 from api.models import db
+from sqlalchemy.sql import text
+
 
 class Configurations:
   def __init__(self):
@@ -18,6 +20,14 @@ class Configurations:
     db.session.add(configuration)
     db.session.commit()
     return json.dumps(Configuration.serialize(configuration))
+  
+  def delete_configuration(self, configuration_id):
+    print(f"aaaa {configuration_id}")
+    result = db.session.query(Configuration).filter(Configuration.id == configuration_id).delete()
+    db.session.commit()
+    
+    print(f"CONFIGURATION DELETED {result}")
+    return result
   
   def get_configurations(self):
     configurations = Configuration.query.all()

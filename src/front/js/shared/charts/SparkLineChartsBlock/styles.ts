@@ -7,6 +7,8 @@ export const LineChartContainer = styled(Box)`
   flex-direction: row;
   min-height: 300px;
   width: 100%;
+  align-items: center;
+  justify-content: center;
 `;
 export const SparkLineChartsContainer = styled(Box)`
   flex-basis: 200px;

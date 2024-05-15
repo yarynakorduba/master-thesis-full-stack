@@ -11,6 +11,7 @@ import { TTimeseriesData, TDataProperty } from '../types';
 export type TConfiguration = {
   readonly id: string;
   readonly data: TTimeseriesData;
+  readonly name: string;
 };
 
 export type TConfigurationsSlice = {

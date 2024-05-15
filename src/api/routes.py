@@ -103,3 +103,12 @@ def create_configuration():
     })
 
     return result, 200
+
+@api.route('/configurations', methods=['DELETE'])
+def delete_configuration():
+    config_id = request.args.get('id')
+    result = Configurations().delete_configuration(config_id)
+    if (result > 0):
+      return json.dumps({ "message": "Item deleted successfully" }), 200
+    else:
+      raise Exception('The configuration was not found')

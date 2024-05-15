@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
@@ -17,12 +17,12 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { Dropzone, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './hooks';
-import { useNavigate } from 'react-router-dom';
 
 type TProps = {
   readonly timeseriesData: TTimeseriesData;
@@ -42,7 +42,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   const {
     control,
     register,
-    formState: { isSubmitting, isSubmitSuccessful },
+    formState: { isSubmitting },
     handleSubmit,
   } = formMethods;
 
@@ -60,10 +60,8 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
     parseFile(file, setTimeseriesData);
   }, []);
 
-  const [isSaving, setIsSaving] = useState<boolean>(false);
   const handleSave = async (config) => {
     const { valueProperties, timeProperty } = config;
-    setIsSaving(true);
     const response = await createConfig({
       ...config,
       data: timeseriesData,
@@ -73,7 +71,6 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
       })),
       timeProperty: { value: timeProperty, label: timeProperty },
     });
-    setIsSaving(false);
 
     if (response.isSuccess && response.data?.id) {
       // navigate to config view mode
@@ -134,6 +131,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             type="text"
             sx={{ width: '100%' }}
             {...register(EConfigurationFormFields.name)}
+            required
           />
         </Grid>
         <Grid item md={6} sx={{ marginBottom: 1 }}>
@@ -152,7 +150,6 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                   </Typography>
                   <Select {...valueProperties.field}>
                     {map(timeseriesProps, (option: string) => {
-                      console.log('OPTION -- > ', option);
                       return (
                         <MenuItem
                           value={option}
@@ -166,7 +163,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                 </FormControl>
               );
             }}
-            // rules={{ required: true }}
+            rules={{ required: true }}
           />
         </Grid>
 
@@ -237,7 +234,6 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                     </Select>
                   </FormControl>
                 )}
-                rules={{ required: true }}
               />
             </Grid>
           ))}
@@ -245,8 +241,8 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
         <Button onClick={addField} disabled={!acceptedFile}>
           + Add a variable
         </Button>
-        <Button type="submit" sx={{ mt: 2 }} disabled={isSaving}>
-          {isSaving && (
+        <Button type="submit" sx={{ mt: 2 }} disabled={isSubmitting}>
+          {isSubmitting && (
             <CircularProgress size="0.875rem" sx={{ mr: 1 }} color="inherit" />
           )}
           Save dataset configuration
