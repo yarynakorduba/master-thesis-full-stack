@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Button, Grid, Skeleton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { map } from 'lodash';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Content } from '../Configuration/styles';
 import { fetchConfigs } from '../../apiCalls/configuration';
 import ConfigCard from './ConfigCard';
+import { ERoutePaths } from '../../types/router';
 
 const ConfigurationList = () => {
   const navigate = useNavigate();
@@ -25,18 +26,15 @@ const ConfigurationList = () => {
     handleFetchConfigurations();
   }, []);
 
-  const handleAddDataset = () => {
-    navigate('/configurations/create');
-  };
-
   return (
     <Content>
       <Typography variant="h4" sx={{ mb: 3 }}>
         Datasets
         <Button
+          component={Link}
+          to={ERoutePaths.CREATE_CONFIGURATION}
           startIcon={<AddIcon />}
           sx={{ ml: 2 }}
-          onClick={handleAddDataset}
         >
           Add new dataset
         </Button>

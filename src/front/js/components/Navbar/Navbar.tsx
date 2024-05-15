@@ -4,7 +4,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 import { Button } from '@mui/material';
-import { useMatch, useNavigate } from 'react-router-dom';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
+import { ERoutePaths } from '../../types/router';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -20,11 +21,7 @@ export const Navbar = () => {
           Time Insights
         </Typography>
         {isConfigPage && (
-          <Button
-            onClick={() => {
-              navigate('/configurations');
-            }}
-          >
+          <Button component={Link} to={ERoutePaths.CONFIGURATIONS}>
             Datasets
           </Button>
         )}

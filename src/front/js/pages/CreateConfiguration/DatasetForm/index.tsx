@@ -17,12 +17,13 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { redirect } from 'react-router-dom';
 
 import { Dropzone, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './hooks';
+import { ERoutePaths } from '../../../types/router';
 
 type TProps = {
   readonly timeseriesData: TTimeseriesData;
@@ -36,7 +37,6 @@ enum EConfigurationFormFields {
 }
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
-  const navigate = useNavigate();
   const formMethods = useFormContext();
 
   const {
@@ -74,7 +74,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
 
     if (response.isSuccess && response.data?.id) {
       // navigate to config view mode
-      navigate(`/configurations/${response.data?.id}`);
+      redirect(`${ERoutePaths.CONFIGURATIONS}/${response.data.id}`);
     }
   };
 

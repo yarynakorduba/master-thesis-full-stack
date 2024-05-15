@@ -86,7 +86,7 @@ def get_configurations():
     return result, 200
 
 
-@api.route('/configurations/create', methods=['POST'])
+@api.route('/configurations', methods=['POST'])
 def create_configuration():
     config_id = request.form["id"]
     file = request.form["data"]

@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteConfig } from '../../apiCalls/configuration';
 import { TConfiguration } from '../../../js/store/types';
+import { ERoutePaths } from '../../types/router';
 
 type TProps = {
   readonly config: TConfiguration;
@@ -26,7 +27,7 @@ const ConfigCard = ({ config }: TProps) => {
     <Card sx={{ height: '100%' }}>
       <CardActionArea
         onClick={() => {
-          navigate(`/configurations/${config.id}`);
+          navigate(`${ERoutePaths.CONFIGURATIONS}/${config.id}`);
         }}
       >
         <CardContent>

@@ -41,7 +41,7 @@ export const createConfig = async (config) => {
   formData.append('value_properties', JSON.stringify(config.valueProperties));
 
   return handleFetch(
-    fetch(`${process.env.BACKEND_URL}/api/configurations/create`, {
+    fetch(`${process.env.BACKEND_URL}/api/configurations`, {
       method: 'POST',
       body: formData,
     }),
