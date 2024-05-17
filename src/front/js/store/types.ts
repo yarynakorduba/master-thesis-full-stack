@@ -96,6 +96,9 @@ export type TConfigurationSlice = {
 
   readonly isHistoryDrawerOpen: boolean;
   readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;
+
+  readonly fetchPredictionHistory: () => Promise<void>;
+  readonly isPredictionHistoryLoading: boolean;
 };
 
 export type TStoreMiddlewares = [

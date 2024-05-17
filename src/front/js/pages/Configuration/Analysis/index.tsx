@@ -14,7 +14,7 @@ import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
 import { TTimeseriesData } from '../../../types';
-import { usePredictionMode } from '../../../store/configuration/selectors';
+import { usePredictionMode } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
   readonly stationarityTestResult;

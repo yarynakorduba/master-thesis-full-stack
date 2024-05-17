@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-import { handleFetch } from './analysis';
+import { handleFetch } from './utils';
+import { mapKeys, snakeCase } from 'lodash';
 
 export const fetchConfigs = async () => {
   return handleFetch(
@@ -34,7 +34,7 @@ export const createConfig = async (config) => {
 
   // Add data to the object
   // Here myfile is the name of the form field
-  formData.append('id', uuidv4());
+  formData.append('id', config.id);
   formData.append('name', config.name);
   formData.append('data', JSON.stringify(config.data));
   formData.append('time_property', JSON.stringify(config.timeProperty));
@@ -45,5 +45,29 @@ export const createConfig = async (config) => {
       method: 'POST',
       body: formData,
     }),
+  );
+};
+
+export const addEntryToPredictionHistory = async (prediction) => {
+  return handleFetch(
+    fetch(`${process.env.BACKEND_URL}/api/prediction_history`, {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify(mapKeys(prediction, (value, key) => snakeCase(key))),
+    }),
+  );
+};
+
+export const fetchPredictionHistoryByConfigId = async (
+  configurationId: string,
+) => {
+  return handleFetch(
+    fetch(
+      `${process.env.BACKEND_URL}/api/prediction_history?configuration_id=${configurationId}`,
+      {
+        method: 'GET',
+        headers: { 'Content-type': 'application/json' },
+      },
+    ),
   );
 };

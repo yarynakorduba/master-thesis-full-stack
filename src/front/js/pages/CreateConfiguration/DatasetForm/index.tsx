@@ -2,6 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   Controller,
   useFieldArray,
@@ -64,6 +66,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
     const { valueProperties, timeProperty } = config;
     const response = await createConfig({
       ...config,
+      id: uuidv4(),
       data: timeseriesData,
       valueProperties: map(valueProperties, (valueProperty) => ({
         value: valueProperty,

@@ -1,4 +1,16 @@
-import { map, every, reduce, isNil, flow, reverse, sortBy } from 'lodash';
+import {
+  map,
+  every,
+  reduce,
+  isNil,
+  flow,
+  reverse,
+  sortBy,
+  camelCase,
+  mapKeys,
+} from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
+
 import {
   fetchIsWhiteNoise,
   fetchDataStationarityTest,
@@ -8,10 +20,14 @@ import {
 } from '../../apiCalls/analysis';
 import {
   EPredictionMode,
-  THistoryEntry,
-  TValueBounds,
+  type THistoryEntry,
+  type TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
-import { TDataProperty, TTimeseriesData, TWhiteNoiseResult } from '../../types';
+import type {
+  TDataProperty,
+  TTimeseriesData,
+  TWhiteNoiseResult,
+} from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
   SET_DATA,
@@ -31,7 +47,6 @@ import {
   FETCH_VAR_PREDICTION_START,
   FETCH_VAR_PREDICTION_SUCCESS,
   FETCH_VAR_PREDICTION_FAILURE,
-  ADD_ENTRY_TO_PREDICTION_HISTORY,
   SET_PREDICTION_MODE,
   SET_DISPLAYED_PREDICTION,
   SET_TIMESERIES_PROP,
@@ -40,10 +55,21 @@ import {
   FETCH_CONFIGURATION_START,
   FETCH_CONFIGURATION_FAILURE,
   FETCH_CONFIGURATION_SUCCESS,
+  FETCH_PREDICTION_HISTORY_START,
+  FETCH_PREDICTION_HISTORY_SUCCESS,
+  FETCH_PREDICTION_HISTORY_FAILURE,
+  ADD_ENTRY_TO_PREDICTION_HISTORY_START,
+  ADD_ENTRY_TO_PREDICTION_HISTORY_SUCCESS,
+  ADD_ENTRY_TO_PREDICTION_HISTORY_FAILURE,
 } from './actionNames';
-import { TDisplayedPrediction } from '../types';
+import type { TDisplayedPrediction } from '../types';
 import { getSelectedDataByBoundaries } from '../../utils';
-import { fetchConfig } from '../../apiCalls/configuration';
+import {
+  addEntryToPredictionHistory,
+  fetchConfig,
+  fetchPredictionHistoryByConfigId,
+} from '../../apiCalls/configuration';
+import { DEFAULT_CONFIGURATION_STATE } from './currentConfigurationSlice';
 
 export default (set, get) => ({
   fetchConfiguration: async (id: string) => {
@@ -54,39 +80,35 @@ export default (set, get) => ({
       FETCH_CONFIGURATION_START,
     );
     const response = await fetchConfig(id);
-    const {
-      time_property,
-      value_properties,
-      data: dataset,
-      ...responseData
-    } = response?.data || {};
+    if (response.isSuccess) {
+      const config = mapKeys(response.data || {}, (v, key) => camelCase(key));
 
-    const config = {
-      ...responseData,
-      timeProperty: time_property,
-      valueProperties: value_properties,
-      isConfigurationLoading: false,
-    };
+      const mappedJSON = flow(
+        (data) =>
+          map(data, (value) => ({
+            ...value,
+            [config.timeProperty.value]: new Date(
+              value[config.timeProperty.value],
+            ).getTime(),
+          })),
+        (data) => sortBy(data, (d) => d[config.timeProperty.value]),
+        (data) => reverse(data),
+      )(config.data);
 
-    const mappedJSON = flow(
-      (data) =>
-        map(data, (value) => ({
-          ...value,
-          [config.timeProperty.value]: new Date(
-            value[config.timeProperty.value],
-          ).getTime(),
-        })),
-      (data) => sortBy(data, (d) => d[config.timeProperty.value]),
-      (data) => reverse(data),
-    )(dataset);
+      set(
+        () => ({ ...config, data: mappedJSON, isConfigurationLoading: false }),
+        SHOULD_CLEAR_STORE,
+        FETCH_CONFIGURATION_SUCCESS,
+      );
 
-    set(
-      () => ({ ...config, data: mappedJSON }),
-      SHOULD_CLEAR_STORE,
-      response.isSuccess
-        ? FETCH_CONFIGURATION_SUCCESS
-        : FETCH_CONFIGURATION_FAILURE,
-    );
+      get().fetchPredictionHistory();
+    } else {
+      set(
+        () => ({ ...DEFAULT_CONFIGURATION_STATE }),
+        SHOULD_CLEAR_STORE,
+        FETCH_CONFIGURATION_FAILURE,
+      );
+    }
   },
 
   setData: (data: TTimeseriesData) => {
@@ -267,12 +289,34 @@ export default (set, get) => ({
     }
   },
 
-  addEntryToPredictionHistory: (entry: THistoryEntry) => {
+  addEntryToPredictionHistory: async (entry: THistoryEntry) => {
+    const predictionHistoryWithoutEntry = get().predictionHistory;
+    const entryWithConfigId = { ...entry, configurationId: get().id };
     set(
       // most recent first
-      () => ({ predictionHistory: [entry, ...get().predictionHistory] }),
+      () => ({
+        predictionHistory: [
+          entryWithConfigId,
+          ...predictionHistoryWithoutEntry,
+        ],
+        isAddingEntryToPredictionHistory: true,
+      }),
       SHOULD_CLEAR_STORE,
-      ADD_ENTRY_TO_PREDICTION_HISTORY,
+      ADD_ENTRY_TO_PREDICTION_HISTORY_START,
+    );
+    const response = await addEntryToPredictionHistory(entryWithConfigId);
+    set(
+      // most recent first
+      (state) => ({
+        predictionHistory: response.isSuccess
+          ? state.predictionHistory
+          : predictionHistoryWithoutEntry,
+        isAddingEntryToPredictionHistory: false,
+      }),
+      SHOULD_CLEAR_STORE,
+      response.isSuccess
+        ? ADD_ENTRY_TO_PREDICTION_HISTORY_SUCCESS
+        : ADD_ENTRY_TO_PREDICTION_HISTORY_FAILURE,
     );
   },
 
@@ -308,10 +352,10 @@ export default (set, get) => ({
     );
     if (response.isSuccess) {
       get().addEntryToPredictionHistory({
+        id: uuidv4(),
         selectedDataBoundaries: dataBoundaries,
         predictionMode: EPredictionMode.ARIMA,
         timestamp: new Date().toISOString(),
-        id: get().predictionHistory.length,
         ...response.data,
       });
     }
@@ -382,4 +426,31 @@ export default (set, get) => ({
 
   setIsHistoryDrawerOpen: (isOpen: boolean) =>
     set(() => ({ isHistoryDrawerOpen: isOpen })),
+
+  fetchPredictionHistory: async () => {
+    const configurationId = get().id;
+    set(
+      () => ({
+        predictionHistory: undefined,
+        isPredictionHistoryLoading: true,
+      }),
+      SHOULD_CLEAR_STORE,
+      FETCH_PREDICTION_HISTORY_START,
+    );
+
+    const response = await fetchPredictionHistoryByConfigId(configurationId);
+
+    set(
+      () => ({
+        predictionHistory: map(response.data, (datum) =>
+          mapKeys(datum, (v, key) => camelCase(key)),
+        ),
+        isPredictionHistoryLoading: false,
+      }),
+      SHOULD_CLEAR_STORE,
+      response.isSuccess
+        ? FETCH_PREDICTION_HISTORY_SUCCESS
+        : FETCH_PREDICTION_HISTORY_FAILURE,
+    );
+  },
 });

@@ -44,4 +44,5 @@ export const formatNumber = (d: number): string => {
 };
 
 // ARIMA params order
-export const formatOrder = (order?: number[]) => (order ? `[${order.join(', ')}]` : 'N/A');
+export const formatOrder = (order?: number[]) =>
+  order ? `[${order.join(', ')}]` : 'N/A';

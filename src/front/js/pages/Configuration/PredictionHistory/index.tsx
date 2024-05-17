@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import {
   useDisplayedPredictionId,
   useGetPredictionHistory,
-} from '../../../store/configuration/selectors';
+} from '../../../store/currentConfiguration/selectors';
 import HistoryCard from './HistoryCard';
 import { scaleLinear } from '@visx/scale';
 import { getExtent } from '../../../utils';

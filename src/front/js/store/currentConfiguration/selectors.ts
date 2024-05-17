@@ -171,3 +171,11 @@ export const useFetchConfiguration = (): [
   useBoundStore((state) => state.fetchConfiguration),
   useBoundStore((state) => state.isConfigurationLoading),
 ];
+
+export const useFetchConfigPredictionHistory = (): [
+  (configId: string) => Promise<void>,
+  boolean,
+] => [
+  useBoundStore((state) => state.fetchPredictionHistory),
+  useBoundStore((state) => state.isPredictionHistoryLoading),
+];

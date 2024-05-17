@@ -133,7 +133,7 @@ class Arima:
             json.dump(json_result, f, ensure_ascii=False, indent=4)
 
         return {
-            "prediction": json.loads(json_result),\
+            "testPrediction": json.loads(json_result),\
             "realPrediction": json.loads(json_real_prediction_result),\
             "testPredictionParameters": test_prediction_parameters,\
             "realPredictionParameters": real_prediction_parameters,\

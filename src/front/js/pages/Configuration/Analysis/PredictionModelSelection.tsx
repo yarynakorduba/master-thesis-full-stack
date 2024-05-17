@@ -14,7 +14,7 @@ import { EPredictionMode } from './types';
 import {
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
-} from '../../../store/configuration/selectors';
+} from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../shared/InfoOverlay';
 import { isEmpty } from 'lodash';
 

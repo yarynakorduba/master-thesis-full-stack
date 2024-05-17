@@ -36,6 +36,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
   },
 
   isHistoryDrawerOpen: false,
+  isPredictionHistoryLoading: false,
   predictionHistory: [],
 };
 

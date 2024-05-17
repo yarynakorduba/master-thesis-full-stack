@@ -19,7 +19,7 @@ import {
   useSelectedDataBoundaries,
   useStationarityTest,
   useWhiteNoiseTest,
-} from '../../store/configuration/selectors';
+} from '../../store/currentConfiguration/selectors';
 import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
 

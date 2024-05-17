@@ -3,7 +3,6 @@ from api.models import Configuration
 from api.models import db
 from sqlalchemy.sql import text
 
-
 class Configurations:
   def __init__(self):
     self = self

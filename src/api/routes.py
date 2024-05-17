@@ -1,24 +1,25 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+import api
 from api.services.arima import Arima
 from api.services.configurations import Configurations
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
+from api.services.prediction_history_list import  PredictionHistoryList
 from api.utils import generate_sitemap, APIException
 from api.services.statistical_tests import Analysis
 from api.services.var import Predict
 from flask_cors import CORS
 import json
  
-
-api = Blueprint('api', __name__)
-
-# Allow CORS requests to this API
+api = Blueprint('api', __name__) 
 CORS(api, origins=['http://localhost:3000'], \
     methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], \
     supports_credentials=True
 )
+
+# ----- Statistical Test Routes -----
 @api.route('/white-noise', methods=['POST'])
 def test_white_noise():
     requestBody = request.get_json()
@@ -75,7 +76,7 @@ def get_arima_prediction():
     result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
     return result, 200
 
-
+# ----- Configuration Routes -----
 @api.route('/configurations', methods=['GET'])
 def get_configurations():
     config_id = request.args.get('id')
@@ -112,3 +113,17 @@ def delete_configuration():
       return json.dumps({ "message": "Item deleted successfully" }), 200
     else:
       raise Exception('The configuration was not found')
+
+# ----- Prediction History Routes -----
+
+@api.route('/prediction_history', methods=['POST'])
+def add_entry_to_prediction_history():
+    request_body = request.get_json()
+    result = PredictionHistoryList().add_entry_to_prediction_history(request_body)
+    return json.dumps(result), 200
+
+@api.route('/prediction_history', methods=['GET'])
+def get_prediction_history_for_config():
+    config_id = request.args.get('configuration_id')
+    result = PredictionHistoryList().get_prediction_history(config_id)
+    return json.dumps(result), 200

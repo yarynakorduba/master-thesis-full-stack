@@ -17,7 +17,7 @@ import { formatOrder } from '../../../utils/formatters';
 import { red } from '@mui/material/colors';
 import { scaleLinear } from '@visx/scale';
 import { getExtent } from '../../../utils';
-import { useGetPredictionHistory } from '../../../store/configuration/selectors';
+import { useGetPredictionHistory } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../shared/InfoOverlay';
 
 type TProps = {

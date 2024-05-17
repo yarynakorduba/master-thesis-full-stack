@@ -83,9 +83,9 @@ const HistoryCard = ({
             Test data prediction params
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {formatOrder(historyEntry.testPredictionParameters.order)},
+            Order: {formatOrder(historyEntry.testPredictionParameters?.order)},
             Seasonal order:{' '}
-            {formatOrder(historyEntry.testPredictionParameters.seasonal_order)}
+            {formatOrder(historyEntry.testPredictionParameters?.seasonal_order)}
           </Typography>
           <Typography variant="subtitle2" color="text.secondary">
             Real data prediction params
