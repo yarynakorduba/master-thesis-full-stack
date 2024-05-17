@@ -1,21 +1,25 @@
 import { create } from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 import { createConfigurationSlice } from './configuration/configurationSlice';
 import { createConfigurationsSlice } from './configurations/configurationsSlice';
-import { TConfigurationSlice, TConfigurationsSlice } from './types';
+import { TConfigurationSlice, TConfigurationsSlice, TStoreType } from './types';
 
-type TStoreType = TConfigurationSlice; // & TConfigurationsSlice;
 export const useBoundStore = create<TStoreType>()(
   devtools(
-    persist(
-      (...a) => ({
-        ...createConfigurationSlice(...a),
-        // ...createConfigurationsSlice(...a),
-      }),
-      {
-        name: 'timeInsights.predictionHistory',
-        partialize: (state) => ({ predictionHistory: state.predictionHistory }),
-      },
+    immer(
+      persist(
+        subscribeWithSelector((...a) => ({
+          ...createConfigurationSlice(...a),
+          ...createConfigurationsSlice(...a),
+        })),
+        {
+          name: 'timeInsights.predictionHistory',
+          partialize: (state) => ({
+            predictionHistory: state.predictionHistory,
+          }),
+        },
+      ),
     ),
   ),
 );

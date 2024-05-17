@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
-
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteConfig } from '../../apiCalls/configuration';
+
 import { TConfiguration } from '../../../js/store/types';
 import { ERoutePaths } from '../../types/router';
+import { useDeleteConfig } from '../../store/configurations/selectors';
 
 type TProps = {
   readonly config: TConfiguration;
@@ -14,14 +14,16 @@ type TProps = {
 
 const ConfigCard = ({ config }: TProps) => {
   const navigate = useNavigate();
+  const [deleteConfig, isDeleting] = useDeleteConfig();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const handleDeleteConfiguration = async (e) => {
-    e.stopPropagation();
-    setIsLoading(true);
-    const response = await deleteConfig(config.id);
-    setIsLoading(false);
-  };
+  const handleDeleteConfig = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (!config?.id) return;
+      deleteConfig(config.id);
+    },
+    [config.id, deleteConfig],
+  );
 
   return (
     <Card sx={{ height: '100%' }}>
@@ -41,7 +43,8 @@ const ConfigCard = ({ config }: TProps) => {
             <IconButton
               aria-label="delete"
               sx={{ marginLeft: 'auto' }}
-              onClick={handleDeleteConfiguration}
+              onClick={handleDeleteConfig}
+              disabled={isDeleting}
             >
               <DeleteIcon />
             </IconButton>

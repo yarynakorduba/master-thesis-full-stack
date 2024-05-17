@@ -1,29 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button, Grid, Skeleton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { map } from 'lodash';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { Content } from '../Configuration/styles';
-import { fetchConfigs } from '../../apiCalls/configuration';
 import ConfigCard from './ConfigCard';
 import { ERoutePaths } from '../../types/router';
+import { useConfigsList } from '../../store/configurations/selectors';
 
 const ConfigurationList = () => {
-  const navigate = useNavigate();
-  const [configs, setConfigs] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [configs, setConfigs] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
 
-  const handleFetchConfigurations = async () => {
-    setIsLoading(true);
-    const response = await fetchConfigs();
-    if (response.isSuccess) {
-      setConfigs(response.data);
-    }
-    setIsLoading(false);
-  };
+  const [configs, fetchConfigs, isLoading] = useConfigsList();
+
+  // const handleFetchConfigurations = async () => {
+  //   setIsLoading(true);
+  //   const response = await fetchConfigs();
+  //   if (response.isSuccess) {
+  //     setConfigs(response.data);
+  //   }
+  //   setIsLoading(false);
+  // };
   useEffect(() => {
-    handleFetchConfigurations();
+    fetchConfigs();
   }, []);
 
   return (

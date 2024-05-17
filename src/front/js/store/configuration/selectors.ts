@@ -49,7 +49,6 @@ export const useSelectedProps = (): [
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) => {
-    console.log('---->>> ', state);
     return state.displayedPredictionId === 'latestPrediction'
       ? state.latestPrediction?.selectedDataBoundaries
       : find(

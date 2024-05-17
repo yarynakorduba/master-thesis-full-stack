@@ -1,14 +1,20 @@
-import { SHOULD_CLEAR_STORE } from '../consts';
-import { fetchConfigs } from 'front/js/apiCalls/configuration';
+import { filter } from 'lodash';
 
-export const FETCH_CONFIGS_START = 'FETCH_CONFIGS_START';
-export const FETCH_CONFIGS_SUCCESS = 'FETCH_CONFIGS_SUCCESS';
-export const FETCH_CONFIGS_FAILURE = 'FETCH_CONFIGS_FAILURE';
+import { SHOULD_CLEAR_STORE } from '../consts';
+import { deleteConfig, fetchConfigs } from '../../apiCalls/configuration';
+import {
+  FETCH_CONFIGS_START,
+  FETCH_CONFIGS_SUCCESS,
+  FETCH_CONFIGS_FAILURE,
+  DELETE_CONFIG_START,
+  DELETE_CONFIG_SUCCESS,
+  DELETE_CONFIG_FAILURE,
+} from './actionNames';
 
 export default (set, get) => ({
   fetchConfigs: async () => {
     set(
-      () => ({ data: undefined, isLoading: true }),
+      () => ({ configsList: undefined, isLoading: true }),
       SHOULD_CLEAR_STORE,
       FETCH_CONFIGS_START,
     );
@@ -16,14 +22,24 @@ export default (set, get) => ({
     const response = await fetchConfigs();
 
     const isSuccess = response.isSuccess;
-
     set(
-      () => ({
-        data: response,
-        isLoading: false,
-      }),
+      () => ({ configsList: response.data, isLoading: false }),
       SHOULD_CLEAR_STORE,
       isSuccess ? FETCH_CONFIGS_SUCCESS : FETCH_CONFIGS_FAILURE,
+    );
+  },
+
+  deleteConfig: async (id: string) => {
+    set(() => ({ isDeleting: true }), SHOULD_CLEAR_STORE, DELETE_CONFIG_START);
+    const response = await deleteConfig(id);
+    const isSuccess = response.isSuccess;
+    set(
+      (state) => ({
+        configsList: filter(state.configsList, (config) => config.id !== id),
+        isDeleting: false,
+      }),
+      SHOULD_CLEAR_STORE,
+      isSuccess ? DELETE_CONFIG_SUCCESS : DELETE_CONFIG_FAILURE,
     );
   },
 });

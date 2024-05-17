@@ -4,6 +4,7 @@ import {
   TConfigurationSlice,
   TDisplayedPrediction,
   TStoreMiddlewares,
+  TStoreType,
 } from '../types';
 import actions from './actions';
 
@@ -39,7 +40,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
 };
 
 export const createConfigurationSlice: StateCreator<
-  TConfigurationSlice,
+  TStoreType,
   TStoreMiddlewares,
   [],
   TConfigurationSlice

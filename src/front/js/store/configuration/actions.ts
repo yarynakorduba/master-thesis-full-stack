@@ -292,7 +292,6 @@ export default (set, get) => ({
     );
 
     const response = await fetchARIMA(selectedData, parameters);
-    console.log('RESPONSE -- > ', response);
     set(
       () => ({
         latestPrediction: {

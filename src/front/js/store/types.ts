@@ -18,6 +18,8 @@ export type TConfigurationsSlice = {
   readonly configsList: TConfiguration[];
   readonly fetchConfigs: () => Promise<void>;
   readonly isLoading: boolean;
+  readonly deleteConfig: (id: string) => Promise<void>;
+  readonly isDeleting: boolean;
 };
 
 export type TDisplayedPrediction = number | 'latestPrediction';
@@ -98,5 +100,9 @@ export type TConfigurationSlice = {
 
 export type TStoreMiddlewares = [
   ['zustand/devtools', never],
+  ['zustand/immer', never],
   ['zustand/persist', unknown],
+  ['zustand/subscribeWithSelector', never],
 ];
+
+export type TStoreType = TConfigurationSlice & TConfigurationsSlice;
