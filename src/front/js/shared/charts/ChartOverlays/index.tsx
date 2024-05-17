@@ -19,8 +19,14 @@ type TProps = {
   readonly offsetLeft?: number;
 
   readonly onClick?: (datum: TLineChartDatapoint) => void;
-  readonly onHover?: (event: MouseEvent, datum?: TClosestChartPointGroup) => void;
-  readonly onMouseLeave?: (event: MouseEvent, datum?: TClosestChartPointGroup) => void;
+  readonly onHover?: (
+    event: MouseEvent,
+    datum?: TClosestChartPointGroup,
+  ) => void;
+  readonly onMouseLeave?: (
+    event: MouseEvent,
+    datum?: TClosestChartPointGroup,
+  ) => void;
 
   readonly dataSeries: TLineChartData;
   readonly height: number;
@@ -42,9 +48,9 @@ function ChartOverlays(
     onHover = noop,
     onMouseLeave = noop,
     onSelectedAreaChange = noop,
-    isAreaSelectionOn = false
+    isAreaSelectionOn = false,
   }: TProps,
-  selectedAreaRef
+  selectedAreaRef,
 ) {
   const { palette } = useTheme();
   const [mouseEvent, setMouseEvent] = useState();
@@ -54,10 +60,16 @@ function ChartOverlays(
   }>();
   const isLocationDefined = useMemo(
     () => (pointerCoords?.y ?? false) && (pointerCoords?.x ?? false),
-    [pointerCoords?.x, pointerCoords?.y]
+    [pointerCoords?.x, pointerCoords?.y],
   );
 
-  const closestPoints = useClosestPoints(mouseEvent, xScale, yScale, dataSeries, offsetLeft);
+  const closestPoints = useClosestPoints(
+    mouseEvent,
+    xScale,
+    yScale,
+    dataSeries,
+    offsetLeft,
+  );
   const handleHover = useCallback(
     (pointGroup?: TClosestChartPointGroup) => (event) => {
       if (pointGroup) {
@@ -65,18 +77,18 @@ function ChartOverlays(
       }
       const { x, y } = localPoint(event.target, event) || {
         x: undefined,
-        y: undefined
+        y: undefined,
       };
 
       setPointerCoords({
         x: x ? x - offsetLeft : 0,
-        y: y ? y - offsetTop : 0
+        y: y ? y - offsetTop : 0,
       });
 
       setMouseEvent(event);
       onHover(event, pointGroup);
     },
-    [onHover, offsetLeft, offsetTop]
+    [onHover, offsetLeft, offsetTop],
   );
 
   const handleMouseLeave = useCallback(
@@ -84,14 +96,25 @@ function ChartOverlays(
       if (!pointGroup) {
         setPointerCoords({
           x: undefined,
-          y: undefined
+          y: undefined,
         });
       }
       setMouseEvent(event);
       onMouseLeave(event, pointGroup);
     },
-    [onMouseLeave]
+    [onMouseLeave],
   );
+
+  const [isBrushing, setIsBrushing] = useState(false);
+  const handleBrushStart = () => {
+    if (!isAreaSelectionOn) return;
+    setIsBrushing(true);
+  };
+  const handleBrushEnd = (args) => {
+    if (!isAreaSelectionOn) return;
+    setIsBrushing(false);
+    onSelectedAreaChange(args);
+  };
 
   const renderDataPointIndicators = useCallback(
     () =>
@@ -138,7 +161,7 @@ function ChartOverlays(
           </Fragment>
         );
       }),
-    [closestPoints, handleHover, handleMouseLeave]
+    [closestPoints, handleHover, handleMouseLeave],
   );
 
   return (
@@ -150,8 +173,13 @@ function ChartOverlays(
       onMouseMove={handleHover()}
       onMouseLeave={handleMouseLeave()}
     >
-      <Bar width={width} height={height} fill="transparent" pointerEvents="all" />
-      {isLocationDefined && (
+      <Bar
+        width={width}
+        height={height}
+        fill="transparent"
+        pointerEvents={isBrushing ? 'none' : 'all'}
+      />
+      {isLocationDefined && !isBrushing && (
         <Group pointerEvents="none">
           <Line
             from={{ x: pointerCoords?.x, y: 0 }}
@@ -174,7 +202,7 @@ function ChartOverlays(
       <clipPath id="brushAreaClip">
         <rect x="0" width={width} height={height} />
       </clipPath>
-      <Group style={{ clipPath: 'url(#brushAreaClip)' }}>
+      <Group style={{ clipPath: 'url(#brushAreaClip)', zIndex: 100000000 }}>
         <Brush
           brushDirection="horizontal"
           xScale={xScale}
@@ -182,7 +210,8 @@ function ChartOverlays(
           width={width}
           height={height}
           margin={{ left: offsetLeft, top: offsetTop }}
-          onBrushEnd={isAreaSelectionOn ? onSelectedAreaChange : noop}
+          onBrushEnd={handleBrushEnd}
+          onBrushStart={handleBrushStart}
           innerRef={selectedAreaRef}
           selectedBoxStyle={selectedAreaStyle}
           disableDraggingSelection={!isAreaSelectionOn}
@@ -191,7 +220,7 @@ function ChartOverlays(
           resizeTriggerAreas={isAreaSelectionOn ? ['left', 'right'] : []}
         />
       </Group>
-      {isLocationDefined && renderDataPointIndicators()}
+      {isLocationDefined && !isBrushing && renderDataPointIndicators()}
     </Group>
   );
 }
