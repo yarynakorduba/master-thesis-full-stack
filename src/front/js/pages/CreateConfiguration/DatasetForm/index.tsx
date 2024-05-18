@@ -24,7 +24,7 @@ import { redirect } from 'react-router-dom';
 import { Dropzone, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
-import { parseFile } from './hooks';
+import { parseFile } from './utils';
 import { ERoutePaths } from '../../../types/router';
 
 type TProps = {

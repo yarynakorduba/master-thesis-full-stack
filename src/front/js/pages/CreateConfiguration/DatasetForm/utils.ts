@@ -1,8 +1,7 @@
 import Papa from 'papaparse';
-import { useCallback, useEffect } from 'react';
 import { TTimeseriesData } from '../../../types';
 
-const parseCSVFile = (file, setter) => {
+const parseCSVFile = (file: File, setter) => {
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
@@ -12,7 +11,7 @@ const parseCSVFile = (file, setter) => {
   });
 };
 
-const parseJSONFile = (file, setter) =>
+const parseJSONFile = (file: File, setter) =>
   new Promise((resolve, reject) => {
     const fileReader = new FileReader();
 
@@ -28,19 +27,10 @@ const parseJSONFile = (file, setter) =>
     fileReader.readAsText(file);
   });
 
-export const parseFile = (file, setter) => {
+export const parseFile = (file: File, setter) => {
   if (file) {
     if (file.type === 'application/json') return parseJSONFile(file, setter);
     if (file.type === 'text/csv') return parseCSVFile(file, setter);
     throw new Error(`The file type ${file.type} is unsupported`);
   }
 };
-
-// export const useParseDataset = (
-//   file: File,
-//   setTimeseriesData: (data: TTimeseriesData) => void,
-// ) => {
-//   useEffect(() => {
-//     parseFile();
-//   }, [parseFile]);
-// };

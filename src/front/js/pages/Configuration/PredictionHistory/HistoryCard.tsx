@@ -5,7 +5,6 @@ import {
   CardContent,
   Chip,
   Grid,
-  Typography,
   useTheme,
 } from '@mui/material';
 import { noop, round } from 'lodash';
@@ -13,7 +12,7 @@ import { noop, round } from 'lodash';
 import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader, Card } from './styles';
-import { formatDateToDateTime, formatOrder } from '../../../utils/formatters';
+import { formatDateToDateTime } from '../../../utils/formatters';
 import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
 import {
   PREDICTION_TIMESTAMP_PROP,
