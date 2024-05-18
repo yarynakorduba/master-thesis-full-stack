@@ -22,6 +22,7 @@ import {
   mapARIMAPrediction,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
+import { TThresholdData } from '../types';
 
 type TProps = {
   readonly configName: string;
@@ -35,7 +36,7 @@ type TProps = {
   readonly setSelectedDataBoundaries: (data?: TValueBounds) => void;
 
   readonly predictionData?: {
-    readonly prediction: TPredictedPoints;
+    readonly testPrediction: TPredictedPoints;
     readonly realPrediction: TPredictedPoints;
   };
   readonly dataLabels?: TDataLabel[];
@@ -135,19 +136,21 @@ const SparkLineChartsBlock = ({
       (a, b) => a[timeProperty?.value] === b?.[PREDICTION_TIMESTAMP_PROP],
     );
 
-  const thresholdData = testPredictedDataCounterpart
+  const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
     ? [
         {
           id: 'passengers-area-19.43174',
           label: 'passengers',
           belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
           aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
-          datapoints: sortBy(
+          data: sortBy(
             map(testPredictedDataCounterpart, (a) => {
               return {
-                valueX: a[timeProperty.value],
-                valueY0: a[selectedProp.value],
-                valueY1: predictionData?.prediction[a[timeProperty.value]],
+                valueX: a[timeProperty.value] as number,
+                valueY0: a[selectedProp.value] as number,
+                valueY1: predictionData?.testPrediction[
+                  a[timeProperty.value]
+                ] as number,
               };
             }),
             'valueX',
@@ -165,7 +168,6 @@ const SparkLineChartsBlock = ({
       )?.length) ||
     timeseriesData.length;
 
-  const defaultBrushValueBounds = undefined;
   if (
     isEmpty(timeseriesData) ||
     !timeProperty ||
@@ -202,7 +204,6 @@ const SparkLineChartsBlock = ({
           formatYScale={formatNumber}
           height={300}
           padding={{ top: 16, bottom: 30, left: 40, right: 10 }}
-          defaultBrushValueBounds={defaultBrushValueBounds}
           onSelectArea={onSelectedAreaChange}
           isResponsive={true}
           selectedAreaBounds={selectedAreaBounds}

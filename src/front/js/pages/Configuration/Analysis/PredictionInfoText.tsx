@@ -1,27 +1,40 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
+import grey from '@mui/material/colors/grey';
 import { formatDateToDateTime } from '../../../utils/formatters';
 import { THistoryEntry } from './types';
 
 type TProps = {
-  readonly prediction: THistoryEntry;
+  readonly prediction: THistoryEntry | undefined;
   readonly isHistoryPredictionSelected: boolean;
+  readonly handleClearPredictionData: () => void;
 };
 
 const PredictionInfoText = ({
   prediction,
   isHistoryPredictionSelected,
+  handleClearPredictionData,
 }: TProps) => {
   return (
     <Typography
-      sx={{ textAlign: 'left', height: 16, marginTop: -2, marginBottom: 1 }}
+      sx={{
+        textAlign: 'left',
+        height: 32,
+        marginTop: -3.5,
+        display: 'block',
+      }}
+      fontSize={14}
       variant="subtitle2"
-      color="text.secondary"
+      color={grey[500]}
+      component={'em'}
     >
       {isHistoryPredictionSelected && !!prediction && (
         <>
           You are viewing the prediction calculated on{' '}
-          {formatDateToDateTime(prediction.timestamp)}
+          {formatDateToDateTime(prediction?.createdAt)}
+          <Button onClick={handleClearPredictionData} sx={{ ml: 1 }}>
+            Back to draft state
+          </Button>
         </>
       )}
     </Typography>

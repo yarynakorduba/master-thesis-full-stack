@@ -22,7 +22,7 @@ export type TConfigurationsSlice = {
   readonly isDeleting: boolean;
 };
 
-export type TDisplayedPrediction = number | 'latestPrediction';
+export type TDisplayedPrediction = number | string | undefined;
 
 export type TConfigurationSlice = {
   // TODO: remove temporary :?
@@ -66,9 +66,11 @@ export type TConfigurationSlice = {
   ) => void;
 
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly isPredictionLoading: boolean;
   readonly latestPrediction: {
-    readonly prediction?: TARIMAResult | TVARResult;
-    readonly isPredictionLoading: boolean;
+    readonly testPrediction?: TARIMAResult | TVARResult;
+    readonly realPrediction?: TARIMAResult | TVARResult;
+
     readonly predictionMode: EPredictionMode;
     // the data which was selected for training
     readonly selectedDataBoundaries?: TValueBounds;
@@ -84,6 +86,7 @@ export type TConfigurationSlice = {
     dataBoundaries: TValueBounds,
     selectedData: TTimeseriesData,
   ) => Promise<void>;
+
   readonly fetchVARPrediction: (
     params: any,
     dataBoundaries: TValueBounds,

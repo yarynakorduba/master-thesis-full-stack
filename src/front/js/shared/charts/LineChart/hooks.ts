@@ -4,7 +4,7 @@ import { useState, useCallback, useMemo } from 'react';
 
 import { TDataLabel } from 'front/js/types';
 import { TLinScale } from './types';
-import { TFormatXScale, TFormatYScale, TPadding } from '../types';
+import { TFormatXScale, TFormatYScale } from '../types';
 import { TAxisTooltip, TPointTooltip } from '../ChartTooltips/types';
 import {
   CHART_HEADING_HEIGHT,
@@ -13,6 +13,7 @@ import {
   BRUSH_HEIGHT,
   BRUSH_Y_PADDING,
 } from './consts';
+import { TPadding } from '../../../types/styles';
 
 type TTooltipConfigsResult = {
   readonly pointTooltip: TPointTooltip | undefined;

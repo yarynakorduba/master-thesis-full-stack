@@ -3,13 +3,13 @@ import { AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
-import { flatMap, flow, isNil, noop, uniq } from 'lodash';
+import { flatMap, flow, isNil, uniq } from 'lodash';
 
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, SparkLineChartHeading } from './styles';
 import { TLineChartData } from 'front/js/types';
-import { TPadding } from '../types';
+import { TPadding } from '../../../types/styles';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -45,6 +45,7 @@ type TProps = {
   readonly padding?: TPadding;
   readonly variant?: ChartVariant;
   readonly onClick?: () => void;
+  readonly numTicks?: number;
 };
 
 const LineChart = ({
@@ -53,6 +54,7 @@ const LineChart = ({
   heading,
   data,
   formatYScale,
+  numTicks = 2,
   padding = {
     top: CHART_TOP_PADDING,
     bottom: CHART_BOTTOM_PADDING,
@@ -117,7 +119,7 @@ const LineChart = ({
               tickLabelProps={
                 getAxisTickLabelProps(AxisVariant.left, '0.75rem') as any
               }
-              numTicks={2}
+              numTicks={numTicks}
             />
             {data?.map(renderLine)}
           </Group>
@@ -140,6 +142,7 @@ export default function ResponsiveLineChart({
     left: CHART_LEFT_PADDING,
     right: CHART_RIGHT_PADDING,
   },
+  numTicks = 2,
   onClick,
 }: TProps) {
   const renderChart = useCallback(
@@ -153,9 +156,10 @@ export default function ResponsiveLineChart({
         formatYScale={formatYScale}
         padding={padding}
         onClick={onClick}
+        numTicks={numTicks}
       />
     ),
-    [data, formatYScale, heading, variant, padding, onClick],
+    [heading, variant, data, formatYScale, padding, onClick, numTicks],
   );
 
   const renderResponsiveChart = useCallback(

@@ -7,6 +7,7 @@ import {
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPrediction } from '../types';
+import { getSelectedDataBoundaries } from '../../utils';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetConfigName = (): string =>
@@ -49,12 +50,7 @@ export const useSelectedProps = (): [
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) => {
-    return state.displayedPredictionId === 'latestPrediction'
-      ? state.latestPrediction?.selectedDataBoundaries
-      : find(
-          state.predictionHistory,
-          ({ id }) => id === state.displayedPredictionId,
-        )?.selectedDataBoundaries;
+    return getSelectedDataBoundaries(state);
   });
 export const useSetSelectedDataBoundaries = () =>
   useBoundStore((state) => state.setSelectedDataBoundaries);
@@ -63,29 +59,30 @@ export const useSelectedDataBoundaries = (): [
   (data: TValueBounds | undefined) => void,
 ] => [useGetSelectedDataBoundaries(), useSetSelectedDataBoundaries()];
 
-export const useFetchPrediction = () =>
-  useBoundStore((state) => state.fetchPrediction);
-export const useGetPrediction = () =>
+export const useFetchPrediction = (): ((
+  params: any,
+  timeProperty: TDataProperty,
+) => Promise<void>) => useBoundStore((state) => state.fetchPrediction);
+
+export const useGetPrediction = (): THistoryEntry | undefined =>
   useBoundStore((state) =>
-    state.displayedPredictionId === 'latestPrediction'
-      ? state.latestPrediction.prediction
-      : find(
-          state.predictionHistory,
-          ({ id }) => id === state.displayedPredictionId,
-        ),
+    find(
+      state.predictionHistory,
+      ({ id }) => id === state.displayedPredictionId,
+    ),
   );
 
 export const useIsHistoryPredictionSelected = () =>
   useBoundStore((state) => state.displayedPredictionId !== 'latestPrediction');
 
-export const useIsPredictionLoading = () =>
-  useBoundStore((state) => state.latestPrediction.isPredictionLoading);
+export const useIsPredictionLoading = (): boolean =>
+  useBoundStore((state) => state.isPredictionLoading);
 
-export const usePrediction = () => [
-  useGetPrediction(),
-  useFetchPrediction(),
-  useIsPredictionLoading(),
-];
+export const usePrediction = (): [
+  THistoryEntry | undefined,
+  (params: any, timeProperty: TDataProperty) => Promise<void>,
+  boolean,
+] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
 
 export const useGetPredictionMode = (): EPredictionMode =>
   useBoundStore((state) => state.latestPrediction.predictionMode);

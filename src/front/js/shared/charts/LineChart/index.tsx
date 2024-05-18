@@ -30,13 +30,20 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
 import { TDataLabel, TLineChartData, TLineChartSerie } from '../../../types';
 import Legend from '../Legend';
-import { TFormatXScale, TFormatYScale, TPadding } from '../types';
+import {
+  TChartThresholdDatapoint,
+  TFormatXScale,
+  TFormatYScale,
+  TThresholdData,
+} from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
+import { TPadding } from '../../../types/styles';
+import { ThresholdProps } from '@visx/threshold/lib/Threshold';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -50,7 +57,7 @@ type TProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
-  readonly thresholdData?: any;
+  readonly thresholdData?: Array<TThresholdData>;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: TFormatXScale;
@@ -135,7 +142,7 @@ const LineChart = ({
   useEffect(() => {
     // set default values if they exist and the width & height of the graph
     // are prepared
-    if (xyAreaWidth && xyAreaHeight && selectedAreaBounds) {
+    if (xyAreaWidth && xyAreaHeight) {
       setSelectedAreaValueBounds(selectedAreaBounds);
     }
   }, [selectedAreaBounds, xyAreaWidth, xyAreaHeight]);
@@ -325,13 +332,10 @@ const LineChart = ({
 
   return (
     <>
-      <Stack
-        direction="row"
-        alignItems={'baseline'}
-        spacing={2}
-        sx={{ height: 38 }}
-      >
-        <Typography variant="h5">{heading} </Typography>
+      <Stack direction="row" alignItems={'center'} gap={2} sx={{ height: 38 }}>
+        <Typography variant="h5" marginRight="auto">
+          {heading}{' '}
+        </Typography>
         {!isTrainingDataSelectionOn && (
           <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
             Limit data for analysis
@@ -345,7 +349,12 @@ const LineChart = ({
         {isTrainingDataSelectionOn &&
           selectedAreaValueBounds &&
           !isNil(selectedDataLength) && (
-            <Typography variant="body1" color={palette.text.secondary}>
+            <Typography
+              variant="body1"
+              color={palette.text.secondary}
+              marginLeft="auto"
+              component="div"
+            >
               Selected {selectedDataLength} entries
             </Typography>
           )}
@@ -355,6 +364,7 @@ const LineChart = ({
               onSelectedAreaChange(null);
               setIsTrainingDataSelectionOn(false);
             }}
+            sx={{ justifySelf: 'flex-end' }}
           >
             Cancel selection
           </Button>
@@ -405,12 +415,12 @@ const LineChart = ({
               />
             ))}
             {thresholdData.map((dataItem) => (
-              <Threshold<any>
+              <Threshold<TChartThresholdDatapoint>
                 id={dataItem.id}
                 key={dataItem.id}
                 clipAboveTo={0}
                 clipBelowTo={xyAreaHeight}
-                data={dataItem?.datapoints}
+                data={dataItem?.data}
                 x={({ valueX }) => xScale(valueX)}
                 y0={({ valueY0 }) => yScale(valueY0)}
                 y1={({ valueY1 }) => yScale(valueY1)}
@@ -531,6 +541,7 @@ export default function ResponsiveLineChart({
       padding,
       defaultBrushValueBounds,
       selectedDataLength,
+      thresholdData,
       defaultIsTrainingDataSelectionOn,
     ],
   );

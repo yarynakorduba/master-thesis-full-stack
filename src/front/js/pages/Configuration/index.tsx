@@ -9,16 +9,12 @@ import SparkLineChartsBlock from '../../shared/charts/SparkLineChartsBlock';
 import { TDataProperty } from 'front/js/types';
 import Analysis from './Analysis';
 import {
-  useCausalityTest,
   useConfigData,
   useDisplayedPredictionId,
-  useGetPredictionHistory,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
-  useStationarityTest,
-  useWhiteNoiseTest,
 } from '../../store/currentConfiguration/selectors';
 import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
@@ -43,30 +39,9 @@ const Configuration = () => {
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
 
-  const [
-    stationarityTestResult,
-    handleFetchDataStationarityTest,
-    isStationarityTestLoading,
-  ] = useStationarityTest();
-
-  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] =
-    useWhiteNoiseTest();
-
-  const [
-    causalityTestResult,
-    handleFetchGrangerDataCausalityTest,
-    isCausalityTestLoading,
-  ] = useCausalityTest();
-
   const [predictionResult, handleFetchPrediction, isPredictionLoading] =
     usePrediction();
-  const predictionHistory = useGetPredictionHistory();
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
-  useEffect(() => {
-    if (predictionHistory.length) {
-      setDisplayedPredictionId(predictionHistory?.[0]?.id);
-    }
-  }, []);
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const dataLabels =
@@ -90,6 +65,10 @@ const Configuration = () => {
         <PredictionInfoText
           prediction={predictionResult}
           isHistoryPredictionSelected={isHistoryPredictionSelected}
+          handleClearPredictionData={() => {
+            setDisplayedPredictionId(undefined);
+            setSelectedDataBoundaries(undefined);
+          }}
         />
 
         <SparkLineChartsBlock
@@ -113,26 +92,8 @@ const Configuration = () => {
         <Grid container justifyContent="start" gap={3} wrap="nowrap">
           <Grid item md={6}>
             <Analysis
-              isConfigurationLoading={isConfigurationLoading}
-              stationarityTestResult={stationarityTestResult}
-              valueProperties={valueProperties}
-              timeseriesData={timeseriesData}
-              handleFetchDataStationarityTest={() =>
-                handleFetchDataStationarityTest(valueProperties)
-              }
-              isStationarityTestLoading={isStationarityTestLoading}
-              whiteNoiseResult={whiteNoiseResult}
-              isWhiteNoiseLoading={isWhiteNoiseLoading}
-              handleFetchIsWhiteNoise={() =>
-                handleFetchIsWhiteNoise(valueProperties)
-              }
               predictionResult={predictionResult}
               isPredictionLoading={isPredictionLoading}
-              isCausalityTestLoading={isCausalityTestLoading}
-              causalityTestResult={causalityTestResult}
-              handleFetchGrangerDataCausalityTest={
-                handleFetchGrangerDataCausalityTest
-              }
               handleFetchPrediction={(params) =>
                 handleFetchPrediction(params, timeProperty)
               }

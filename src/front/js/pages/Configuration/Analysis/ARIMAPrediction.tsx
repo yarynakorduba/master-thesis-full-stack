@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { round } from 'lodash';
+import { isEqual, round } from 'lodash';
 import { Card, CardContent, Chip, Stack } from '@mui/material';
 
 import Loader from '../../../shared/Loader';
@@ -19,6 +19,7 @@ import { scaleLinear } from '@visx/scale';
 import { getExtent } from '../../../utils';
 import { useGetPredictionHistory } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../shared/InfoOverlay';
+import ARIMAPredictionParams from './ARIMAPredictionParams';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -240,34 +241,7 @@ const ARIMAPrediction = ({
         {arimaResult ? (
           <Card variant="outlined">
             <CardContent>
-              <Typography variant="subtitle2" color="text.secondary">
-                Test data prediction params
-              </Typography>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.primary"
-                gutterBottom
-              >
-                Order: {formatOrder(arimaResult.testPredictionParameters.order)}
-                , Seasonal order:{' '}
-                {formatOrder(
-                  arimaResult.testPredictionParameters.seasonal_order,
-                )}
-              </Typography>
-              <Typography variant="subtitle2" color="text.secondary">
-                Real data prediction params
-              </Typography>
-              <Typography
-                sx={{ fontSize: 14 }}
-                color="text.primary"
-                gutterBottom
-              >
-                Order: {formatOrder(arimaResult.realPredictionParameters.order)}
-                , Seasonal order:{' '}
-                {formatOrder(
-                  arimaResult.realPredictionParameters.seasonal_order,
-                )}
-              </Typography>
+              <ARIMAPredictionParams arimaResult={arimaResult} />
               <Typography
                 variant="subtitle2"
                 color="text.secondary"
@@ -279,7 +253,7 @@ const ARIMAPrediction = ({
                 <Chip
                   size="small"
                   label={
-                    <> MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>
+                    <>MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>
                   }
                   sx={{ mr: 1 }}
                 />
@@ -289,7 +263,7 @@ const ARIMAPrediction = ({
                     background: mapeLinearScale(arimaResult.evaluation.mape),
                   }}
                   label={
-                    <> MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>
+                    <>MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>
                   }
                 />
               </Typography>

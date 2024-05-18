@@ -11,8 +11,9 @@ import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
 import { BRUSH_HEIGHT, selectedAreaStyle, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
-import { TPadding } from '../types';
 import { TLineChartData } from 'front/js/types';
+import { TPadding } from '../../../types/styles';
+import { TChartThresholdDatapoint, TThresholdData } from '../types';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -24,7 +25,7 @@ type TProps = {
 
   readonly onChange: (domain: Bounds | null) => void;
   readonly data: TLineChartData;
-  readonly thresholdData?: any;
+  readonly thresholdData?: Array<TThresholdData>;
   readonly padding: TPadding;
 };
 const CustomBrush = ({
@@ -71,12 +72,12 @@ const CustomBrush = ({
         />
       ))}
       {thresholdData.map((dataItem) => (
-        <Threshold<any>
+        <Threshold<TChartThresholdDatapoint>
           id={`brush-${dataItem.id}`}
           key={dataItem.id}
           clipAboveTo={0}
           clipBelowTo={BRUSH_HEIGHT}
-          data={dataItem?.datapoints}
+          data={dataItem?.data}
           x={({ valueX }) => xBrushScale(valueX)}
           y0={({ valueY0 }) => yBrushScale(valueY0)}
           y1={({ valueY1 }) => yBrushScale(valueY1)}

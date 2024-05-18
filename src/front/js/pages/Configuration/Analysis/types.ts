@@ -1,6 +1,6 @@
 export enum EPredictionMode {
   ARIMA = 'ARIMA',
-  VAR = 'VAR'
+  VAR = 'VAR',
 }
 
 export type TValueBounds = {
@@ -25,7 +25,15 @@ export type TResponseARIMAParams = {
   readonly seasonal_order?: [number, number, number, number];
   // rest of params which are not used on the client side atm
   readonly maxiter: number;
-  readonly method: 'newton' | 'nm' | 'bfgs' | 'lbfgs' | 'powell' | 'cg' | 'ncg' | 'basinhopping'; // The method determines which solver from scipy.optimize is used
+  readonly method:
+    | 'newton'
+    | 'nm'
+    | 'bfgs'
+    | 'lbfgs'
+    | 'powell'
+    | 'cg'
+    | 'ncg'
+    | 'basinhopping'; // The method determines which solver from scipy.optimize is used
   readonly out_of_sample_size: number;
   readonly scoring?: 'mse' | 'mae';
   readonly scoring_args?: {};
@@ -45,9 +53,11 @@ export type TPredictionEvaluation = {
 
 export type THistoryEntry = {
   readonly id: number;
+  readonly createdAt: string; // ISO date string
   readonly predictionMode: EPredictionMode;
-  readonly timestamp: string; // ISO date string
-  readonly prediction: TPredictedPoints;
+  readonly testPrediction: TPredictedPoints;
+  readonly realPrediction: TPredictedPoints;
+
   readonly lastTrainPoint: TLastTrainPoint;
 
   readonly realPredictionParameters: TResponseARIMAParams;
@@ -69,7 +79,7 @@ export type TPredictedPoints = { [msTimestamp: string]: number };
 
 export type TARIMAResult = {
   readonly lastTrainPoint: TLastTrainPoint;
-  readonly prediction: TPredictedPoints;
+  readonly testPrediction: TPredictedPoints;
   readonly realPrediction: TPredictedPoints;
   readonly realPredictionParameters: any;
 };

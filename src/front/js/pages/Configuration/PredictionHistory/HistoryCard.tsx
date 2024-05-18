@@ -14,7 +14,6 @@ import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime, formatOrder } from '../../../utils/formatters';
-import LineChart from '../../../shared/charts/LineChart';
 import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
 import {
   PREDICTION_TIMESTAMP_PROP,
@@ -22,6 +21,7 @@ import {
   mapARIMAPrediction,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
+import ARIMAPredictionParams from '../Analysis/ARIMAPredictionParams';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -76,25 +76,10 @@ const HistoryCard = ({
               />
             </Grid>
             <CardDate color="text.secondary">
-              {formatDateToDateTime(new Date(historyEntry.timestamp))}
+              {formatDateToDateTime(new Date(historyEntry.createdAt))}
             </CardDate>
           </CardHeader>
-          <Typography variant="subtitle2" color="text.secondary">
-            Test data prediction params
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {formatOrder(historyEntry.testPredictionParameters?.order)},
-            Seasonal order:{' '}
-            {formatOrder(historyEntry.testPredictionParameters?.seasonal_order)}
-          </Typography>
-          <Typography variant="subtitle2" color="text.secondary">
-            Real data prediction params
-          </Typography>
-          <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-            Order: {formatOrder(historyEntry.realPredictionParameters.order)},
-            Seasonal order:{' '}
-            {formatOrder(historyEntry.realPredictionParameters.seasonal_order)}
-          </Typography>
+          <ARIMAPredictionParams arimaResult={historyEntry} />
           <Box width="100%">
             <SparkLineChart
               heading={''}
@@ -106,7 +91,8 @@ const HistoryCard = ({
               height={50}
               width={300}
               onClick={noop}
-              padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+              padding={{ top: 8, bottom: 8, left: 0, right: 0 }}
+              numTicks={0}
             />
           </Box>
         </CardContent>

@@ -13,48 +13,48 @@ import ARIMAPrediction from './ARIMAPrediction';
 import { EPredictionMode, TARIMAResult, TVARResult } from './types';
 import { useStepper } from './hooks';
 import PredictionModelSelection from './PredictionModelSelection';
-import { TTimeseriesData } from '../../../types';
-import { usePredictionMode } from '../../../store/currentConfiguration/selectors';
+import {
+  useCausalityTest,
+  useConfigData,
+  usePredictionMode,
+  useStationarityTest,
+  useWhiteNoiseTest,
+} from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
-  readonly stationarityTestResult;
-  readonly valueProperties;
-  readonly timeseriesData: TTimeseriesData;
-  readonly handleFetchDataStationarityTest;
-  readonly isStationarityTestLoading: boolean;
-  readonly whiteNoiseResult;
-  readonly isWhiteNoiseLoading: boolean;
-  readonly handleFetchIsWhiteNoise;
   readonly predictionResult?: TARIMAResult | TVARResult; // tvarresult
   readonly isPredictionLoading: boolean;
   readonly handleFetchPrediction;
-
-  readonly causalityTestResult?;
-  readonly isCausalityTestLoading: boolean;
-  readonly handleFetchGrangerDataCausalityTest?;
-  readonly isConfigurationLoading: boolean;
 };
 
 const Analysis = ({
-  isConfigurationLoading,
-  stationarityTestResult,
-  valueProperties,
-  timeseriesData,
-  handleFetchDataStationarityTest,
-  isStationarityTestLoading,
-  whiteNoiseResult,
-  isWhiteNoiseLoading,
-  handleFetchIsWhiteNoise,
   predictionResult,
   isPredictionLoading,
   handleFetchPrediction,
-
-  causalityTestResult,
-  isCausalityTestLoading,
-  handleFetchGrangerDataCausalityTest,
 }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
+
+  const {
+    data: timeseriesData,
+    isConfigurationLoading,
+    valueProperties,
+  } = useConfigData();
+
+  const [
+    stationarityTestResult,
+    handleFetchDataStationarityTest,
+    isStationarityTestLoading,
+  ] = useStationarityTest();
+
+  const [whiteNoiseResult, handleFetchIsWhiteNoise, isWhiteNoiseLoading] =
+    useWhiteNoiseTest();
+
+  const [
+    causalityTestResult,
+    handleFetchGrangerDataCausalityTest,
+    isCausalityTestLoading,
+  ] = useCausalityTest();
 
   if (isConfigurationLoading) return null;
 
@@ -68,7 +68,9 @@ const Analysis = ({
         stationarityTestResult={stationarityTestResult}
         propertiesToTest={valueProperties}
         timeseriesData={timeseriesData}
-        handleFetchDataStationarityTest={handleFetchDataStationarityTest}
+        handleFetchDataStationarityTest={() =>
+          handleFetchDataStationarityTest(valueProperties)
+        }
         isStationarityTestLoading={isStationarityTestLoading}
       />
     ),
@@ -80,7 +82,7 @@ const Analysis = ({
         index={key}
         whiteNoiseResult={whiteNoiseResult}
         isWhiteNoiseLoading={isWhiteNoiseLoading}
-        handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
+        handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
       />
     ),
     predictionMode === EPredictionMode.VAR
