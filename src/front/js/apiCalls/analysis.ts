@@ -1,14 +1,5 @@
-import { TARIMAUserParams } from '../pages/App/Analysis/types';
-
-export const handleFetch = async (fetchRequest): Promise<any> => {
-  try {
-    const result = await fetchRequest;
-    const resultJSON = await result.json();
-    return { isSuccess: true, data: resultJSON };
-  } catch (e) {
-    return { isSuccess: false, data: null, error: e };
-  }
-};
+import { TARIMAUserParams } from '../pages/Configuration/Analysis/types';
+import { handleFetch } from './utils';
 
 export const fetchIsWhiteNoise = async (data) => {
   return handleFetch(
@@ -62,10 +53,6 @@ export const fetchVAR = async (
 };
 
 export const fetchARIMA = async (data, parameters: TARIMAUserParams) => {
-  console.log(
-    '--- >>> ',
-    `${process.env.BACKEND_URL}/api/get-arima-prediction`,
-  );
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/get-arima-prediction`, {
       method: 'POST',

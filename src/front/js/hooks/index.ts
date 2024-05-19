@@ -3,20 +3,24 @@ import { useEffect, useState } from 'react';
 
 type TUseInputStateResult<T> = [
   value: T,
-  setInputValue: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>,
-  setValue: (value: T) => void
+  setInputValue: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  >,
+  setValue: (value: T) => void,
 ];
 
 export const useInputState = <T>(
   defaultValue: T,
-  minMaxParams: any = {}
+  minMaxParams: any = {},
 ): TUseInputStateResult<T> => {
   const [value, setValue] = useState<T>();
   useEffect(() => {
     setValue(defaultValue);
   }, [defaultValue]);
 
-  const setInputValue: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (e) => {
+  const setInputValue: React.ChangeEventHandler<
+    HTMLInputElement | HTMLTextAreaElement
+  > = (e) => {
     if (e.target.value === '') return setValue('' as T);
     if (typeof defaultValue === 'number') {
       const newValue = +e.target.value as T;
