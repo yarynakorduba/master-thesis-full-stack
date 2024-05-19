@@ -7,14 +7,14 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
 
-import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../../shared/Loader';
-import InfoOverlay from '../../../shared/InfoOverlay';
-import LineChart from '../../../shared/charts/LineChart';
+import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../sharedComponents/Loader';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import LineChart from '../../../sharedComponents/charts/LineChart';
 
 import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
 import { formatNumber } from '../../../utils/formatters';
-import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
+import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import { useTheme } from '@mui/material/styles';
 
 type TProps = {

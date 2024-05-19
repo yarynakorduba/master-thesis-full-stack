@@ -2,13 +2,14 @@ import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@emotion/react';
 import Container from '@mui/material/Container';
-import ScrollToTop from './components/scrollToTop';
-import { Navbar } from './components/Navbar/Navbar';
+import ScrollToTop from './sharedComponents/scrollToTop';
+import { Navbar } from './sharedComponents/Navbar/Navbar';
 import Configuration from './pages/Configuration';
 import { theme } from '../styles/theme';
 import ConfigurationList from './pages/ConfigurationList';
 import CreateConfiguration from './pages/CreateConfiguration';
 import { ERoutePaths } from './types/router';
+import Notifications from './sharedComponents/Notifications';
 
 const Layout = () => {
   //the basename is used when your project is published in a subdirectory and not in the root of the domain
@@ -40,6 +41,7 @@ const Layout = () => {
               />
               <Route element={<h1>Not found!</h1>} />
             </Routes>
+            <Notifications />
           </Container>
         </ScrollToTop>
       </BrowserRouter>

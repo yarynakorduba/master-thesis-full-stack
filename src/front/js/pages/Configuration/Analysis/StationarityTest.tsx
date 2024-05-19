@@ -7,15 +7,15 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 
 import Box from '@mui/material/Box';
-import { ButtonContainer } from '../../../shared/charts/SparkLineChartsBlock/styles';
-import Loader from '../../../shared/Loader';
+import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
+import Loader from '../../../sharedComponents/Loader';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-} from '../../../shared/Accordion';
+} from '../../../sharedComponents/Accordion';
 import { TTimeseriesData } from '../../../types';
-import InfoOverlay from '../../../shared/InfoOverlay';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 
 type TProps = {
   readonly isVisible: boolean;

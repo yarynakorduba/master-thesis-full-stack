@@ -10,22 +10,11 @@ import { ERoutePaths } from '../../types/router';
 import { useConfigsList } from '../../store/configurations/selectors';
 
 const ConfigurationList = () => {
-  // const [configs, setConfigs] = useState([]);
-  // const [isLoading, setIsLoading] = useState(false);
-
   const [configs, fetchConfigs, isLoading] = useConfigsList();
 
-  // const handleFetchConfigurations = async () => {
-  //   setIsLoading(true);
-  //   const response = await fetchConfigs();
-  //   if (response.isSuccess) {
-  //     setConfigs(response.data);
-  //   }
-  //   setIsLoading(false);
-  // };
   useEffect(() => {
     fetchConfigs();
-  }, []);
+  }, [fetchConfigs]);
 
   return (
     <Content>
@@ -43,8 +32,8 @@ const ConfigurationList = () => {
 
       <Grid spacing={2} container>
         {isLoading
-          ? map(Array(3), () => (
-              <Grid item xs={6} lg={4}>
+          ? map(Array(3), (v, index) => (
+              <Grid item xs={6} lg={4} key={index}>
                 <Skeleton
                   variant="rounded"
                   animation="wave"
@@ -54,7 +43,7 @@ const ConfigurationList = () => {
               </Grid>
             ))
           : map(configs, (config) => (
-              <Grid item xs={6} lg={4}>
+              <Grid item xs={6} lg={4} key={config.id}>
                 <ConfigCard config={config} />
               </Grid>
             ))}

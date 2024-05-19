@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
 import { v4 as uuidv4 } from 'uuid';
-
+import { useNavigate } from 'react-router-dom';
 import {
   Controller,
   useFieldArray,
@@ -19,13 +19,13 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material';
-import { redirect } from 'react-router-dom';
 
 import { Dropzone, FormContainer } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './utils';
 import { ERoutePaths } from '../../../types/router';
+import { useOpenErrorNotification } from '../../../store/notifications/selectors';
 
 type TProps = {
   readonly timeseriesData: TTimeseriesData;
@@ -39,13 +39,17 @@ enum EConfigurationFormFields {
 }
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
+  const navigate = useNavigate();
   const formMethods = useFormContext();
+
+  const openErrorNotification = useOpenErrorNotification();
 
   const {
     control,
     register,
     formState: { isSubmitting },
     handleSubmit,
+    getValues,
   } = formMethods;
 
   const { fields, append } = useFieldArray({
@@ -53,8 +57,10 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
     name: EConfigurationFormFields.valueProperties,
   });
 
+  const valueProps = getValues(EConfigurationFormFields.valueProperties);
+
   const addField = () => {
-    append({ value: undefined, label: undefined });
+    append(undefined);
   };
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -74,10 +80,16 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
       })),
       timeProperty: { value: timeProperty, label: timeProperty },
     });
-
     if (response.isSuccess && response.data?.id) {
       // navigate to config view mode
-      redirect(`${ERoutePaths.CONFIGURATIONS}/${response.data.id}`);
+      navigate(`${ERoutePaths.CONFIGURATIONS}/${response.data.id}`, {
+        replace: true,
+      });
+    } else {
+      openErrorNotification(
+        'CREATE_CONFIGURATION_FAILURE',
+        response?.error?.message || 'Failed to create configuration',
+      );
     }
   };
 
@@ -208,10 +220,10 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
               item
               md={6}
               sx={{ marginBottom: 1 }}
-              key={`${EConfigurationFormFields.valueProperties}[${index}]`}
+              key={`${EConfigurationFormFields.valueProperties}[${index + 1}]`}
             >
               <Controller
-                name={`${EConfigurationFormFields.valueProperties}[${index}]`}
+                name={`${EConfigurationFormFields.valueProperties}[${index + 1}]`}
                 control={control}
                 render={(valueProperties) => (
                   <FormControl
@@ -241,7 +253,12 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             </Grid>
           ))}
 
-        <Button onClick={addField} disabled={!acceptedFile}>
+        <Button
+          onClick={addField}
+          disabled={
+            !acceptedFile || valueProps[valueProps.length - 1] === undefined
+          }
+        >
           + Add a variable
         </Button>
         <Button type="submit" sx={{ mt: 2 }} disabled={isSubmitting}>

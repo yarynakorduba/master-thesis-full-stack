@@ -6,7 +6,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 const CreateConfiguration = () => {
   const [timeseriesData, setTimeseriesData] = useState<TTimeseriesData>([]);
-
   const formMethods = useForm({ defaultValues: { valueProperties: [] } });
 
   return (

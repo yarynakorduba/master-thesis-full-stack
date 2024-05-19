@@ -61,20 +61,24 @@ def test_var():
 
 @api.route('/get-arima-prediction', methods=['POST'])
 def get_arima_prediction():
-    requestBody = request.get_json()
-    data_serie = requestBody["data"]
-    # lag_order = requestBody["parameters"]["lag_order"]
-    horizon = requestBody["parameters"]["horizon"]
-    is_seasonal = requestBody["parameters"]["isSeasonal"]
+    try:
+        requestBody = request.get_json()
+        data_serie = requestBody["data"]
+        # lag_order = requestBody["parameters"]["lag_order"]
+        horizon = requestBody["parameters"]["horizon"]
+        is_seasonal = requestBody["parameters"]["isSeasonal"]
 
-    min_p = requestBody["parameters"]["minP"]
-    max_p = requestBody["parameters"]["maxP"]
-    min_q = requestBody["parameters"]["minQ"]
-    max_q = requestBody["parameters"]["maxQ"]
-    periods_in_season = requestBody["parameters"]["periodsInSeason"]
-
-    result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
-    return result, 200
+        min_p = requestBody["parameters"]["minP"]
+        max_p = requestBody["parameters"]["maxP"]
+        min_q = requestBody["parameters"]["minQ"]
+        max_q = requestBody["parameters"]["maxQ"]
+        periods_in_season = requestBody["parameters"]["periodsInSeason"]
+        result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
+        return result, 200
+    except APIException as e:
+        raise e
+    except Exception as e:
+        raise APIException('Failed to make a prediction')
 
 # ----- Configuration Routes -----
 @api.route('/configurations', methods=['GET'])
@@ -89,21 +93,23 @@ def get_configurations():
 
 @api.route('/configurations', methods=['POST'])
 def create_configuration():
-    config_id = request.form["id"]
-    file = request.form["data"]
-    name = request.form["name"]
-    time_property = request.form["time_property"]
-    value_properties = request.form["value_properties"]
+    try:
+        config_id = request.form["id"]
+        file = request.form["data"]
+        name = request.form["name"]
+        time_property = request.form["time_property"]
+        value_properties = request.form["value_properties"]
+        result = Configurations().create_configuration({
+            "id": config_id,
+            "data": file,
+            "name": name,
+            "time_property": time_property,
+            "value_properties": value_properties
+        })
 
-    result = Configurations().create_configuration({
-        "id": config_id,
-        "data": file,
-        "name": name,
-        "time_property": time_property,
-        "value_properties": value_properties
-    })
-
-    return result, 200
+        return result, 200
+    except Exception as e: 
+        raise APIException("Failed to create configuration", 400)
 
 @api.route('/configurations', methods=['DELETE'])
 def delete_configuration():
@@ -112,7 +118,7 @@ def delete_configuration():
     if (result > 0):
       return json.dumps({ "message": "Item deleted successfully" }), 200
     else:
-      raise Exception('The configuration was not found')
+      raise APIException('The configuration was not found', 404)
 
 # ----- Prediction History Routes -----
 

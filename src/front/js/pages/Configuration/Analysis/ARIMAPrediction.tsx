@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { isEqual, round } from 'lodash';
 import { Card, CardContent, Chip, Stack } from '@mui/material';
 
-import Loader from '../../../shared/Loader';
+import Loader from '../../../sharedComponents/Loader';
 import { useInputState } from '../../../hooks';
 import { PRECISION } from '../../../consts';
 import { formatOrder } from '../../../utils/formatters';
@@ -18,7 +18,7 @@ import { red } from '@mui/material/colors';
 import { scaleLinear } from '@visx/scale';
 import { getExtent } from '../../../utils';
 import { useGetPredictionHistory } from '../../../store/currentConfiguration/selectors';
-import InfoOverlay from '../../../shared/InfoOverlay';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
 
 type TProps = {

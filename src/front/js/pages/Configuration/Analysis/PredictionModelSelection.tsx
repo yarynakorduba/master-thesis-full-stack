@@ -15,7 +15,7 @@ import {
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
 } from '../../../store/currentConfiguration/selectors';
-import InfoOverlay from '../../../shared/InfoOverlay';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { isEmpty } from 'lodash';
 
 type TProps = {

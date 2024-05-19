@@ -3,6 +3,8 @@ import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { createConfigurationSlice } from './currentConfiguration/currentConfigurationSlice';
 import { createConfigurationsSlice } from './configurations/configurationsSlice';
+import { createNotificationsSlice } from './notifications/notificationsSlice';
+
 import { TStoreType } from './types';
 
 export const useBoundStore = create<TStoreType>()(
@@ -12,6 +14,7 @@ export const useBoundStore = create<TStoreType>()(
         subscribeWithSelector((...a) => ({
           ...createConfigurationSlice(...a),
           ...createConfigurationsSlice(...a),
+          ...createNotificationsSlice(...a),
         })),
         {
           name: 'timeInsights.predictionHistory',

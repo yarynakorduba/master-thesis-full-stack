@@ -13,7 +13,7 @@ import { THistoryEntry } from '../Analysis/types';
 import { PRECISION } from '../../../consts';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime } from '../../../utils/formatters';
-import SparkLineChart from '../../../shared/charts/LineChart/SparkLineChart';
+import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,

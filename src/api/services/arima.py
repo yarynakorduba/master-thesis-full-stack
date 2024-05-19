@@ -4,6 +4,8 @@ import json
 from api.services.statistical_tests import Analysis
 import pmdarima as pm
 
+from api.utils import APIException
+
 def stringify_nan(value):
     if (np.isnan(value)):
         return ''
@@ -66,80 +68,94 @@ class Arima:
     #                     stepwise=True)
     
     def arima_predict(self, data, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
-        # TODO: if data empty -> exit with error
-        df_input = pd.DataFrame.from_records(data)
-        df_input["date"] = pd.to_datetime(df_input['date'], unit='ms')
-        df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
-        df_input = df_input.drop(columns=['date'])
-        print(df_input)
-        train_data_size = int(round(len(df_input) * 0.9))
-        train, test = df_input['value'][0:train_data_size], df_input['value'][train_data_size:len(df_input)]
+        if len(data) == 0:
+            raise APIException('The data for prediction is empty')
+        if len(data) < horizon:
+            raise APIException('Prediction horizon cannot be higher than the length of the analyzed data')
+        try:
+            df_input = pd.DataFrame.from_records(data)
 
-        # Seasonal - fit stepwise auto-ARIMA
-        smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
-            test='adf',
-            # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
-            max_p=max_p, # lag order - the number of lag observations to include
-            max_q=max_q, # the size of moving average window
-            m=periods_in_season, # the number of periods in each season
-            start_P=0,
-            seasonal=is_seasonal,
-            # The order of first-differencing.
-            # If None (by default), the value will automatically be selected
-            # based on the results of the test
-            d=None,
-            # The order of the seasonal differencing.
-            # If None (by default, the value will automatically be selected based on the results of the seasonal_test.
-            # Must be a positive integer or None.
-            D=None,
-            trace=True,
-            error_action='ignore',
-            suppress_warnings=True, 
-            stepwise=True
-        )
-        # Forecast
-        test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)
+            df_input["date"] = pd.to_datetime(df_input['date'], unit='ms')
+            df_input = df_input.set_index(df_input['date']).sort_index(ascending=True, inplace=False)
+            df_input = df_input.drop(columns=['date'])
+            print(df_input)
+            train_data_size = int(round(len(df_input) * 0.9))
+            train, test = df_input['value'][0:train_data_size], df_input['value'][train_data_size:len(df_input)]
+            print(f"Train size: {train.size}, test size: {test.size}")
+            if (train.size == 0 or test.size == 0):
+                print("AAAAAAA")
+                raise APIException('Too little data to predict')
+            # Seasonal - fit stepwise auto-ARIMA
+            smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
+                test='adf',
+                # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
+                max_p=max_p, # lag order - the number of lag observations to include
+                max_q=max_q, # the size of moving average window
+                m=periods_in_season, # the number of periods in each season
+                start_P=0,
+                seasonal=is_seasonal,
+                # The order of first-differencing.
+                # If None (by default), the value will automatically be selected
+                # based on the results of the test
+                d=None,
+                # The order of the seasonal differencing.
+                # If None (by default, the value will automatically be selected based on the results of the seasonal_test.
+                # Must be a positive integer or None.
+                D=None,
+                trace=True,
+                error_action='ignore',
+                suppress_warnings=True, 
+                stepwise=True
+            )
+            # Forecast
+            test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)
 
-        # smodel.get_prediction()
-        # TODO: move frequency to configurable params
-        print(f"Frequency: {train.index.freq}")
-        inferred_freq = pd.infer_freq(df_input.index)
-        test_indexes = pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency
-        # make series for plotting purpose
-        print(test_prediction)
-        print(smodel.summary())
-        test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
-        
-        json_result = test_predicted_series.to_json()
-        test_prediction_parameters = smodel.get_params()
-        print(f"Parameters: {test_prediction_parameters}")
-        print(json_result)
-        # --------------------------------------
+            # smodel.get_prediction()
+            # TODO: move frequency to configurable params
+            print(f"Frequency: {train.index.freq}")
+            inferred_freq = pd.infer_freq(df_input.index)
+            test_indexes = pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency
+            # make series for plotting purpose
+            print(test_prediction)
+            print(smodel.summary())
+            test_predicted_series = pd.Series(test_prediction, index=test_indexes).dropna()
+            
+            json_result = test_predicted_series.to_json()
+            test_prediction_parameters = smodel.get_params()
+            print(f"Parameters: {test_prediction_parameters}")
+            print(json_result)
+            # --------------------------------------
 
-        smodel.update(test)
-        real_prediction, new_conf_int = smodel.predict(n_periods=horizon, return_conf_int=True)
-        real_prediction_parameters = smodel.get_params()
-        print(f"real data Parameters: {real_prediction_parameters}")
-        real_indexes = pd.date_range(test.index[-1], periods = horizon+1, freq=inferred_freq) # month start frequency
+            smodel.update(test)
+            real_prediction, new_conf_int = smodel.predict(n_periods=horizon, return_conf_int=True)
+            real_prediction_parameters = smodel.get_params()
+            print(f"real data Parameters: {real_prediction_parameters}")
+            real_indexes = pd.date_range(test.index[-1], periods = horizon+1, freq=inferred_freq) # month start frequency
 
-        real_indexes = real_indexes[1:]
-        real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
-        json_real_prediction_result = real_predicted_series.to_json()
+            real_indexes = real_indexes[1:]
+            real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
+            json_real_prediction_result = real_predicted_series.to_json()
 
-        evaluation = self.forecast_accuracy(test_prediction, test)
+            evaluation = self.forecast_accuracy(test_prediction, test)
 
-        # --------------------------------------
-        with open('data.json', 'w', encoding='utf-8') as f:
-            json.dump(json_result, f, ensure_ascii=False, indent=4)
+            # --------------------------------------
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(json_result, f, ensure_ascii=False, indent=4)
 
-        return {
-            "testPrediction": json.loads(json_result),\
-            "realPrediction": json.loads(json_real_prediction_result),\
-            "testPredictionParameters": test_prediction_parameters,\
-            "realPredictionParameters": real_prediction_parameters,\
-            "lastTrainPoint": {\
-                "dateTime": df_input.index[train_data_size-1],\
-                "value": df_input['value'][train_data_size-1]\
-            },\
-            "evaluation": evaluation
-        }
+            return {
+                "testPrediction": json.loads(json_result),\
+                "realPrediction": json.loads(json_real_prediction_result),\
+                "testPredictionParameters": test_prediction_parameters,\
+                "realPredictionParameters": real_prediction_parameters,\
+                "lastTrainPoint": {\
+                    "dateTime": df_input.index[train_data_size-1],\
+                    "value": df_input['value'][train_data_size-1]\
+                },\
+                "evaluation": evaluation
+            }
+        except APIException as e:
+            print(f"ARIMA prediction error: {e.message}")
+            raise e
+        except Exception as e:
+            print(f"ARIMA prediction error: {str(e)}")
+            raise APIException(str(e))

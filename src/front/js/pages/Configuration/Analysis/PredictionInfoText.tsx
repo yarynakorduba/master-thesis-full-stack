@@ -5,7 +5,7 @@ import { formatDateToDateTime } from '../../../utils/formatters';
 import { THistoryEntry } from './types';
 
 type TProps = {
-  readonly prediction: THistoryEntry | undefined;
+  readonly prediction?: THistoryEntry;
   readonly isHistoryPredictionSelected: boolean;
   readonly handleClearPredictionData: () => void;
 };
@@ -19,9 +19,10 @@ const PredictionInfoText = ({
     <Typography
       sx={{
         textAlign: 'left',
-        height: 32,
-        marginTop: -3.5,
-        display: 'block',
+        height: 36.5,
+        marginTop: -3,
+        lineHeight: '36.5px',
+        display: 'flex',
       }}
       fontSize={14}
       variant="subtitle2"

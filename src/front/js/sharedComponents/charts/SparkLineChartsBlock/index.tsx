@@ -23,6 +23,7 @@ import {
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 import { TThresholdData } from '../types';
+import { isConfigurationDataIncomplete } from '../../../pages/Configuration/utils';
 
 type TProps = {
   readonly configName: string;
@@ -59,11 +60,6 @@ const SparkLineChartsBlock = ({
 }: TProps) => {
   const theme = useTheme();
   const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
-
-  useEffect(() => {
-    // if timeseries data updates, reset the selection
-    setSelectedDataBoundaries(undefined);
-  }, [timeseriesData]);
 
   const onSelectedAreaChange = useCallback(
     (domain) => {
@@ -169,9 +165,11 @@ const SparkLineChartsBlock = ({
     timeseriesData.length;
 
   if (
-    isEmpty(timeseriesData) ||
-    !timeProperty ||
-    isEmpty(valueProperties) ||
+    isConfigurationDataIncomplete(
+      timeseriesData,
+      timeProperty,
+      valueProperties,
+    ) ||
     isConfigurationLoading
   ) {
     return (
@@ -216,11 +214,12 @@ const SparkLineChartsBlock = ({
           {map(valueProperties, (prop) => {
             const chartData = constructLineChartDataFromTs(
               prop.value,
-              timeProperty.value,
+              timeProperty!.value,
               timeseriesData,
               theme.palette.charts.chartBlue,
               prop.label,
             );
+
             return (
               <SparkLineChart
                 key={prop.label}

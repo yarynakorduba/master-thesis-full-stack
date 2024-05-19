@@ -1,3 +1,4 @@
+import { AlertColor } from '@mui/material';
 import {
   EPredictionMode,
   TARIMAResult,
@@ -28,6 +29,7 @@ export type TConfigurationSlice = {
   // TODO: remove temporary :?
   readonly id?: string;
   readonly name?: string;
+  readonly configurationError?: Error;
   readonly isConfigurationLoading: boolean;
   readonly timeProperty?: TDataProperty;
   readonly valueProperties?: TDataProperty[];
@@ -67,13 +69,15 @@ export type TConfigurationSlice = {
 
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
   readonly isPredictionLoading: boolean;
+
+  readonly selectedDataBoundaries?: TValueBounds;
+
   readonly latestPrediction: {
     readonly testPrediction?: TARIMAResult | TVARResult;
     readonly realPrediction?: TARIMAResult | TVARResult;
 
     readonly predictionMode: EPredictionMode;
     // the data which was selected for training
-    readonly selectedDataBoundaries?: TValueBounds;
 
     readonly horizon: number;
   };
@@ -104,6 +108,19 @@ export type TConfigurationSlice = {
   readonly isPredictionHistoryLoading: boolean;
 };
 
+export type TNotification = {
+  readonly id: string;
+  readonly message: string;
+  readonly isOpen: boolean;
+  readonly autoHideDuration: number | undefined;
+  readonly severity: AlertColor;
+};
+export type TNotificationsSlice = {
+  readonly notifications: TNotification[];
+  readonly setNotification: (notification: TNotification) => void;
+  readonly openErrorNotification: (id: string, message: string) => void;
+};
+
 export type TStoreMiddlewares = [
   ['zustand/devtools', never],
   ['zustand/immer', never],
@@ -111,4 +128,6 @@ export type TStoreMiddlewares = [
   ['zustand/subscribeWithSelector', never],
 ];
 
-export type TStoreType = TConfigurationSlice & TConfigurationsSlice;
+export type TStoreType = TConfigurationSlice &
+  TConfigurationsSlice &
+  TNotificationsSlice;

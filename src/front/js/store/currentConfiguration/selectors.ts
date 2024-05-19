@@ -7,7 +7,6 @@ import {
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPrediction } from '../types';
-import { getSelectedDataBoundaries } from '../../utils';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetConfigName = (): string =>
@@ -27,6 +26,7 @@ export const useConfigData = (): any =>
       timeProperty: state.timeProperty,
       valueProperties: state.valueProperties,
       setData: state.setData,
+      configurationError: state.configurationError,
     } as any;
   });
 
@@ -50,7 +50,7 @@ export const useSelectedProps = (): [
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
   useBoundStore((state) => {
-    return getSelectedDataBoundaries(state);
+    return state.selectedDataBoundaries;
   });
 export const useSetSelectedDataBoundaries = () =>
   useBoundStore((state) => state.setSelectedDataBoundaries);
