@@ -161,7 +161,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                   disabled={!acceptedFile}
                 >
                   <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                    <label htmlFor="name">Timestamp variable</label>
+                    <label htmlFor="name">Timestamp field</label>
                   </Typography>
                   <Select {...valueProperties.field}>
                     {map(timeseriesProps, (option: string) => {
@@ -194,7 +194,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                 disabled={!acceptedFile}
               >
                 <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                  <label htmlFor="name">Variable to analyse</label>
+                  <label htmlFor="name">Field to analyse</label>
                 </Typography>
                 <Select {...valueProperties.field}>
                   {map(timeseriesProps, (option: string) => (

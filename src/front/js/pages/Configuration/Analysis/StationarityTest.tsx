@@ -5,15 +5,10 @@ import StepButton from '@mui/material/StepButton';
 import StepContent from '@mui/material/StepContent';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-
 import Box from '@mui/material/Box';
+
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-} from '../../../sharedComponents/Accordion';
 import { TTimeseriesData } from '../../../types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 
@@ -75,15 +70,6 @@ const StationarityTest = ({
         </Box>
       </StepButton>{' '}
       <StepContent sx={{ paddingTop: 1 }}>
-        {/* <Grid sx={{ paddingTop: 1 }}>
-          <TextField
-            label="Periods in season"
-            value={periodsInSeason}
-            onChange={setPeriodsInSeason}
-            size="small"
-            type="number"
-          />
-        </Grid> */}
         <ButtonContainer>
           {isStationarityTestLoading && <Loader />}
           {!isStationarityTestLoading && (
@@ -96,12 +82,24 @@ const StationarityTest = ({
             </Button>
           )}
         </ButtonContainer>
-        <Typography variant="body1">
-          {stationarityTestResult &&
-            map(stationarityTestResult, (val, propName) => {
-              return `${propName} data ${val?.isStationary ? 'are stationary' : 'are not stationary'}`;
-            }).join('; ')}
-        </Typography>
+        {stationarityTestResult &&
+          map(stationarityTestResult, (val, propName) => {
+            return (
+              <div>
+                {propName}:
+                <ul>
+                  <li>
+                    KPSS test:{' '}
+                    {val.kpss?.isStationary ? 'stationary' : 'not stationary'}
+                  </li>
+                  <li>
+                    ADF test:{' '}
+                    {val.adf?.isStationary ? 'stationary' : 'not stationary'}
+                  </li>
+                </ul>
+              </div>
+            );
+          })}
       </StepContent>
     </>
   );

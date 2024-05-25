@@ -3,7 +3,7 @@ import { TTimeseriesDatum } from '../types';
 
 export const PREDICTION_TIMESTAMP_PROP = 'timestamp';
 export const PREDICTION_VALUE_PROP = 'value';
-export const mapARIMAPrediction = (predictionData) => {
+export const mapARIMAPrediction = (predictionData, selectedProp) => {
   const convertARIMADatapoint = (value, index): TTimeseriesDatum => {
     return {
       [PREDICTION_TIMESTAMP_PROP]: +index,
@@ -11,7 +11,13 @@ export const mapARIMAPrediction = (predictionData) => {
     };
   };
   return [
-    map(predictionData?.testPrediction, convertARIMADatapoint),
-    map(predictionData?.realPrediction, convertARIMADatapoint),
+    map(
+      predictionData?.testPrediction?.[selectedProp.value],
+      convertARIMADatapoint,
+    ),
+    map(
+      predictionData?.realPrediction?.[selectedProp.value],
+      convertARIMADatapoint,
+    ),
   ];
 };

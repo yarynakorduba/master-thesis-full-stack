@@ -6,15 +6,15 @@ import Typography from '@mui/material/Typography';
 type TInfoOverlayProps = {
   readonly variant?;
   readonly children: ReactNode | ReactNode[];
-  id;
-  label;
+  readonly id: string;
+  readonly label: string;
   sx?;
 };
-const InfoOverlayPopover = ({
-  children,
-}: {
+
+type TInfoOverlayPopoverProps = {
   readonly children: ReactNode | ReactNode[];
-}) => {
+};
+const InfoOverlayPopover = ({ children }: TInfoOverlayPopoverProps) => {
   return <Typography sx={{ p: 2, maxWidth: 500 }}>{children}</Typography>;
 };
 

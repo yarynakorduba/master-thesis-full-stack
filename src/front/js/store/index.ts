@@ -10,19 +10,11 @@ import { TStoreType } from './types';
 export const useBoundStore = create<TStoreType>()(
   devtools(
     immer(
-      persist(
-        subscribeWithSelector((...a) => ({
-          ...createConfigurationSlice(...a),
-          ...createConfigurationsSlice(...a),
-          ...createNotificationsSlice(...a),
-        })),
-        {
-          name: 'timeInsights.predictionHistory',
-          partialize: (state) => ({
-            // predictionHistory: state.predictionHistory,
-          }),
-        },
-      ),
+      subscribeWithSelector((...a) => ({
+        ...createConfigurationSlice(...a),
+        ...createConfigurationsSlice(...a),
+        ...createNotificationsSlice(...a),
+      })),
     ),
   ),
 );

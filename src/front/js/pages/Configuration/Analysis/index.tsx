@@ -24,14 +24,9 @@ import {
 type TProps = {
   readonly predictionResult?: TARIMAResult | TVARResult; // tvarresult
   readonly isPredictionLoading: boolean;
-  readonly handleFetchPrediction;
 };
 
-const Analysis = ({
-  predictionResult,
-  isPredictionLoading,
-  handleFetchPrediction,
-}: TProps) => {
+const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
 
@@ -108,7 +103,7 @@ const Analysis = ({
           handleSelectStep={handleSelectStep}
           varResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          handleFetchVAR={handleFetchPrediction}
+          // handlePredict={handleFetchPrediction}
         />
       ) : (
         <ARIMAPrediction
@@ -117,7 +112,7 @@ const Analysis = ({
           handleSelectStep={handleSelectStep}
           arimaResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          handlePredict={handleFetchPrediction}
+          // handlePredict={handleFetchPrediction}
         />
       ),
   ].filter(identity);

@@ -12,7 +12,7 @@ class PredictionHistoryList:
       id=data["id"],
       configuration_id=data["configuration_id"],
       prediction_mode=data["prediction_mode"],
-      selected_data_boundaries=data["selected_data_boundaries"],
+      selected_data_boundaries= getattr(data, "selected_data_boundaries", None),
       test_prediction_parameters=data["test_prediction_parameters"],
       real_prediction_parameters=data["real_prediction_parameters"],
       test_prediction=data["test_prediction"],
@@ -21,19 +21,18 @@ class PredictionHistoryList:
       evaluation=data["evaluation"],
     )
 
-    print(f"ENTRY -> {entry}")
-
     db.session.add(entry)
     db.session.commit()
     return PredictionHistory.serialize(entry)
   
 
   def get_prediction_history(self, configuration_id):
-    history_items = PredictionHistory.query.filter(PredictionHistory.configuration_id == configuration_id)
+    history_items = PredictionHistory\
+      .query.filter(PredictionHistory.configuration_id == configuration_id)\
+      .order_by(PredictionHistory.created_at.desc())
     response = []
     for history_item in history_items:
       response.append(PredictionHistory.serialize(history_item))
-    print(response)
     return response
     
   

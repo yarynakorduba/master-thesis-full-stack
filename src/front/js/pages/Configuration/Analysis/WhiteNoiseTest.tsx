@@ -10,10 +10,8 @@ import Box from '@mui/material/Box';
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
-import LineChart from '../../../sharedComponents/charts/LineChart';
 
 import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
-import { formatNumber } from '../../../utils/formatters';
 import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import { useTheme } from '@mui/material/styles';
 

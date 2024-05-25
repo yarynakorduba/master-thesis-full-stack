@@ -49,11 +49,19 @@ export const createConfig = async (config) => {
 };
 
 export const addEntryToPredictionHistory = async (prediction) => {
+  console.log('--->>> prediction 0- > ', prediction);
+  const body = {
+    test_prediction_parameters: [],
+    real_prediction_parameters: [],
+    last_train_point: {},
+
+    ...mapKeys(prediction, (v, key) => snakeCase(key)),
+  };
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/prediction_history`, {
       method: 'POST',
       headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify(mapKeys(prediction, (value, key) => snakeCase(key))),
+      body: JSON.stringify(body),
     }),
   );
 };

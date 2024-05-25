@@ -1,4 +1,4 @@
-import { find } from 'lodash';
+import { find, isNil } from 'lodash';
 import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import {
@@ -31,7 +31,7 @@ export const useConfigData = (): any =>
   });
 
 export const useGetTimeseriesProp = () =>
-  useBoundStore((state) => state.timeseriesProp);
+  useBoundStore((state) => state.timeProperty);
 export const useSetTimeseriesProp = () =>
   useBoundStore((state) => state.setTimeseriesProp);
 export const useTimeProperty = (): [
@@ -39,13 +39,13 @@ export const useTimeProperty = (): [
   (data: TDataProperty) => void,
 ] => [useGetTimeseriesProp(), useSetTimeseriesProp()];
 
-export const useGetSelectedProps = () =>
-  useBoundStore((state) => state.selectedProps);
-export const useSetSelectedProps = () =>
+export const useGetSelectedProps = (): TDataProperty | undefined =>
+  useBoundStore((state) => state.selectedProp);
+export const useSetSelectedProps = (): ((data: TDataProperty) => void) =>
   useBoundStore((state) => state.setSelectedProps);
 export const useSelectedProps = (): [
-  TDataProperty[] | undefined,
-  (data: TDataProperty[]) => void,
+  TDataProperty | undefined,
+  (data: TDataProperty) => void,
 ] => [useGetSelectedProps(), useSetSelectedProps()];
 
 export const useGetSelectedDataBoundaries = (): TValueBounds | undefined =>
@@ -59,10 +59,8 @@ export const useSelectedDataBoundaries = (): [
   (data: TValueBounds | undefined) => void,
 ] => [useGetSelectedDataBoundaries(), useSetSelectedDataBoundaries()];
 
-export const useFetchPrediction = (): ((
-  params: any,
-  timeProperty: TDataProperty,
-) => Promise<void>) => useBoundStore((state) => state.fetchPrediction);
+export const useFetchPrediction = (): ((params: any) => Promise<void>) =>
+  useBoundStore((state) => state.fetchPrediction);
 
 export const useGetPrediction = (): THistoryEntry | undefined =>
   useBoundStore((state) =>
@@ -73,7 +71,7 @@ export const useGetPrediction = (): THistoryEntry | undefined =>
   );
 
 export const useIsHistoryPredictionSelected = () =>
-  useBoundStore((state) => state.displayedPredictionId !== 'latestPrediction');
+  useBoundStore((state) => !isNil(state.displayedPredictionId));
 
 export const useIsPredictionLoading = (): boolean =>
   useBoundStore((state) => state.isPredictionLoading);

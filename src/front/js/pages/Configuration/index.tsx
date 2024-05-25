@@ -15,6 +15,7 @@ import {
   useIsHistoryPredictionSelected,
   usePrediction,
   useSelectedDataBoundaries,
+  useSelectedProps,
 } from '../../store/currentConfiguration/selectors';
 import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
@@ -45,7 +46,7 @@ const Configuration = () => {
     }
   }, [configurationError, navigate]);
 
-  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+  const [selectedProp, setSelectedProp] = useSelectedProps();
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
 
@@ -114,9 +115,6 @@ const Configuration = () => {
               <Analysis
                 predictionResult={predictionResult}
                 isPredictionLoading={isPredictionLoading}
-                handleFetchPrediction={(params) =>
-                  handleFetchPrediction(params, timeProperty)
-                }
               />
             </Grid>
             <Grid item md={6}></Grid>

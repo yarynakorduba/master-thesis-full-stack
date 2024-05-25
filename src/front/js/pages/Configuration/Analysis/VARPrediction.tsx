@@ -9,12 +9,12 @@ import Box from '@mui/material/Box';
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import { useInputState } from '../../../hooks';
+import { useFetchPrediction } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly varResult;
   readonly isVARLoading: boolean;
-  readonly handleFetchVAR;
   readonly index;
   readonly handleSelectStep;
 };
@@ -22,12 +22,15 @@ const VARPrediction = ({
   isVisible,
   varResult,
   isVARLoading,
-  handleFetchVAR,
   index,
   handleSelectStep,
 }: TProps) => {
   const [lagOrder, setLagOrder] = useInputState<number>(2);
   const [horizon, setHorizon] = useInputState<number>(2);
+
+  const handlePredict = useFetchPrediction();
+
+  console.log('---AAA>>> -', varResult);
 
   if (!isVisible) return null;
   return (
@@ -66,7 +69,7 @@ const VARPrediction = ({
           {!isVARLoading ? (
             <Button
               size="small"
-              onClick={() => handleFetchVAR(lagOrder, horizon)}
+              onClick={() => handlePredict({ lagOrder, horizon })}
             >
               Run the prediction model
             </Button>

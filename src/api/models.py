@@ -57,7 +57,7 @@ class PredictionHistory(db.Model):
     created_at = db.Column(db.DateTime, default=func.now())
     prediction_mode = db.Column(db.String(10), nullable=False)
 
-    selected_data_boundaries = db.Column(JSON, nullable=False)
+    selected_data_boundaries = db.Column(JSON, nullable=True)
 
     test_prediction_parameters = db.Column(JSON, nullable=False)
     real_prediction_parameters = db.Column(JSON, nullable=False) # limit 255MB

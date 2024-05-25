@@ -3,10 +3,7 @@ from pmdarima.arima.utils import ndiffs
 import statsmodels.stats.diagnostic as diag
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import grangercausalitytests
-from statsmodels.tsa.vector_ar.var_model import VAR
-import pandas as pd
-from sklearn.preprocessing import StandardScaler
-from pmdarima.arima.stationarity import ADFTest, KPSSTest
+from itertools import combinations
 
 SIGNIFICANT_P = 0.05
 
@@ -24,34 +21,24 @@ class Analysis():
     # p < 0.05 - we reject H0, it means that the data is stationary
     # p >= 0.05 - we prove H0, it means that the data is NOT stationary
 
-    def test_stationarity_pmdarima(self, data):
-        print("--------AAA!!! ----")
-
-        print(np.array(data))
-        adf_test = ADFTest(k=7)
-        print(f"params: {adf_test.get_params()}, {np.trunc(np.power(np.array(data).shape[0] - 1, 1 / 3.0))}")
-        p_value, is_non_stationary = adf_test.is_stationary(np.array(data))
-        should_diff_result = adf_test.should_diff(np.array(data))
+    def test_stationarity_adf_pmdarima(self, data):
         # Estimate the number of differences using an ADF test:
-        n_adf = ndiffs(np.array(data), test='adf')  # -> 0
-        print(f"{p_value} is non stationary: {is_non_stationary} {n_adf}, should diff: {should_diff_result[1]}")
+        n_diffs = ndiffs(np.array(data), test='adf')  # -> 0
+        print(f"Stationarity: ADF Test result: should be differenced {n_diffs}")
+        return { "isStationary": n_diffs > 0, "ndiffs": n_diffs }
 
-        return { "isStationary": not(should_diff_result[1]), "ndiffs": n_adf }
-
-    def test_stationarity_kpss_pmdarima(self, data):
-        print("--------AAA!!! ----")
-
-        print(np.array(data))
-        adf_test = KPSSTest()
-        # print(f"params: {adf_test.get_params()}")
-        p_value, is_non_stationary = adf_test.is_stationary(np.array(data))
-        print("yyyyy")
-        should_diff_result = adf_test.should_diff(data)
+    def test_stationarity_kpss_adf(self, data):
         # Estimate the number of differences using an ADF test:
-        # n_adf = ndiffs(np.array(data), test='adf')  # -> 0
-        print(f"{p_value} is non stationary: {is_non_stationary}, should diff: {should_diff_result[1]}")
+        kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=5)  # -> 0
+        print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
 
-        return { "isStationary": not(should_diff_result[1]) }
+        adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=5)  # -> 0
+        print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
+
+        return {
+                 "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
+                 "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
+            }
 
 
     def test_stationarity(self, data):
@@ -61,7 +48,7 @@ class Analysis():
         # ct - ct: It stands for "constant and trend."
         # The regression model includes both a constant (intercept) and a linear trend term.
         # H0: data is not stationary
-        result = adfuller(data, autolag="AIC", regression='ctt')
+        result = adfuller(data, autolag="AIC", regression='ct')
         print(result)
         isStationary = False
         if (
@@ -73,8 +60,12 @@ class Analysis():
         
         return { "stationarity": result, "isStationary": isStationary }
     
-    def test_granger_causality(self, data, dataKeys):
+    # The Null hypothesis for grangercausalitytests is that the time series in
+    # the second column, x2, does NOT Granger cause the time series in the first
+    # column, x1.
+    def test_granger_causality(self, data, data_key_pair):
         maxlag = 24
+    
         data_opposite_direction = [[x[1], x[0]] for x in data]
         # The data for testing whether the time series in the second column Granger
         # causes the time series in the first column
@@ -82,8 +73,19 @@ class Analysis():
         result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[maxlag])
         # flip
         return [
-                { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "dataKeys": dataKeys }, \
-                { "isCausal": (result_opposite_direction[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "dataKeys": [dataKeys[1], dataKeys[0]] } \
+                { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
+                { "isCausal": (result_opposite_direction[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
             ]
+    
+    def multitest_granger_causality(self, data, data_keys):
+        data_pairs = list(combinations(data_keys, 2))
+        results = []
+        for pair in data_pairs:
+            data_for_pair = [[datum[pair[0]], datum[pair[1]]] for datum in data]
+            print(data_for_pair)
+            result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]])
+            print(f'Result: {result}')
+            results.append(result)
+        return results
 
 

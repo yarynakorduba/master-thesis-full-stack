@@ -38,11 +38,10 @@ export type TConfigurationSlice = {
   readonly setData: (data: TTimeseriesData) => void;
   readonly fetchConfiguration: (id: string) => Promise<void>;
 
-  readonly timeseriesProp?: TDataProperty;
-  readonly setTimeseriesProp: (timeseriesProp: TDataProperty) => void;
+  readonly setTimeseriesProp: (timeProperty: TDataProperty) => void;
 
-  readonly selectedProps?: TDataProperty[];
-  readonly setSelectedProps: (selectedProps: TDataProperty[]) => void;
+  readonly selectedProp?: TDataProperty;
+  readonly setSelectedProps: (selectedProp: TDataProperty) => void;
 
   readonly setSelectedDataBoundaries: (boundaries?: TValueBounds) => void;
 
@@ -58,9 +57,7 @@ export type TConfigurationSlice = {
 
   readonly causalityTest;
   readonly isCausalityTestLoading: boolean;
-  readonly fetchCausalityTest: (
-    selectedProps: TDataProperty[],
-  ) => Promise<void>;
+  readonly fetchCausalityTest: (selectedProp: TDataProperty[]) => Promise<void>;
 
   readonly displayedPredictionId: TDisplayedPrediction; // latest prediction or id of history item
   readonly setDisplayedPredictionId: (
@@ -96,10 +93,7 @@ export type TConfigurationSlice = {
     dataBoundaries: TValueBounds,
     selectedData: TTimeseriesData,
   ) => Promise<void>;
-  readonly fetchPrediction: (
-    params: TARIMAUserParams | any,
-    timeProperty: TDataProperty,
-  ) => Promise<void>;
+  readonly fetchPrediction: (params: TARIMAUserParams | any) => Promise<void>;
 
   readonly isHistoryDrawerOpen: boolean;
   readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;
@@ -124,7 +118,6 @@ export type TNotificationsSlice = {
 export type TStoreMiddlewares = [
   ['zustand/devtools', never],
   ['zustand/immer', never],
-  ['zustand/persist', unknown],
   ['zustand/subscribeWithSelector', never],
 ];
 

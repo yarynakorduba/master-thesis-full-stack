@@ -131,11 +131,11 @@ export default (set, get) => ({
     );
   },
 
-  setTimeseriesProp: (timeseriesProp: TDataProperty) =>
-    set(() => ({ timeseriesProp }), SHOULD_CLEAR_STORE, SET_TIMESERIES_PROP),
+  setTimeseriesProp: (timeProperty: TDataProperty) =>
+    set(() => ({ timeProperty }), SHOULD_CLEAR_STORE, SET_TIMESERIES_PROP),
 
-  setSelectedProps: (selectedProps: TDataProperty[]) =>
-    set(() => ({ selectedProps }), SHOULD_CLEAR_STORE, SET_SELECTED_PROPS),
+  setSelectedProps: (selectedProp: TDataProperty) =>
+    set(() => ({ selectedProp }), SHOULD_CLEAR_STORE, SET_SELECTED_PROPS),
 
   setHorizon: (horizon: number) =>
     set(
@@ -171,7 +171,7 @@ export default (set, get) => ({
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
-      get().timeseriesProp,
+      get().timeProperty,
       dataBoundaries,
     );
 
@@ -217,7 +217,7 @@ export default (set, get) => ({
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
-      get().timeseriesProp,
+      get().timeProperty,
       dataBoundaries,
     );
 
@@ -255,31 +255,38 @@ export default (set, get) => ({
     );
   },
 
-  fetchCausalityTest: async (selectedProps) => {
+  fetchCausalityTest: async (selectedProp) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
-      get().timeseriesProp,
+      get().timeProperty,
       dataBoundaries,
     );
 
-    if (selectedProps?.[0]?.value && selectedProps?.[1]?.value) {
-      const dataForAnalysis = map(selectedData, (datum) => [
-        datum[selectedProps[0].value],
-        datum[selectedProps[1].value],
-      ]);
+    const properties = map(get().valueProperties, (prop) => prop.value);
 
-      if (dataForAnalysis) {
+    console.log('selectedProp ------ > ', properties);
+
+    if (properties?.[0] && properties?.[1]) {
+      // const dataForAnalysis = map(selectedData, (datum) => [
+      //   datum[properties[0]],
+      //   datum[properties[1]],
+      // ]);
+      // console.log('dataForAnalysis - > ', dataForAnalysis);
+
+      if (selectedData) {
         set(
           () => ({ causalityTest: undefined, isCausalityTestLoading: true }),
           SHOULD_CLEAR_STORE,
           FETCH_CAUSALITY_TEST_START,
         );
 
-        const response = await fetchGrangerDataCausalityTest(dataForAnalysis, [
-          selectedProps[0].value,
-          selectedProps[1].value,
-        ]);
+        const response = await fetchGrangerDataCausalityTest(
+          selectedData,
+          properties,
+        );
+
+        console.log('RESPONSE --- > ', response);
 
         set(
           () => ({
@@ -347,7 +354,10 @@ export default (set, get) => ({
       FETCH_ARIMA_PREDICTION_START,
     );
 
-    const response = await fetchARIMA(selectedData, parameters);
+    const response = await fetchARIMA(selectedData, parameters, {
+      date_key: get().timeProperty.value,
+      value_key: get().selectedProp.value,
+    });
     set(
       () => ({
         isPredictionLoading: false,
@@ -394,7 +404,10 @@ export default (set, get) => ({
       FETCH_VAR_PREDICTION_START,
     );
 
-    const response = await fetchVAR(selectedData, parameters);
+    const response = await fetchVAR(selectedData, parameters, {
+      date_key: get().timeProperty.value,
+      value_keys: map(get().valueProperties, (prop) => prop.value),
+    });
 
     set(
       () => ({
@@ -412,16 +425,22 @@ export default (set, get) => ({
     );
     if (response.isSuccess) {
       get().addEntryToPredictionHistory({
-        id: get().predictionHistory.length,
+        id: uuidv4(),
         predictionMode: EPredictionMode.VAR,
         selectedDataBoundaries: dataBoundaries,
         createdAt: new Date().toISOString(),
         ...response.data,
       });
+    } else {
+      get().openErrorNotification(
+        FETCH_VAR_PREDICTION_FAILURE,
+        response?.error?.message || 'Failed to make prediction',
+      );
     }
   },
 
-  fetchPrediction: async (parameters, timeProperty) => {
+  fetchPrediction: async (parameters) => {
+    const timeProperty = get().timeProperty;
     const predictionMode = get().latestPrediction.predictionMode;
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
@@ -461,14 +480,14 @@ export default (set, get) => ({
       (state) => {
         const predictionHistory = map(response.data, (datum) =>
           mapKeys(datum, (v, key) => camelCase(key)),
-        );
+        ) as THistoryEntry[];
         return {
           predictionHistory,
           isPredictionHistoryLoading: false,
-          displayedPredictionId: response.data[0]?.id,
+          displayedPredictionId: response.data?.[0]?.id,
           selectedDataBoundaries:
             state.selectedDataBoundaries ||
-            getDisplayedPrediction(predictionHistory, response.data[0]?.id)
+            getDisplayedPrediction(predictionHistory, response.data?.[0]?.id)
               ?.selectedDataBoundaries,
         };
       },

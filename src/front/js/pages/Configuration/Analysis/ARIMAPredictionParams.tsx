@@ -1,7 +1,8 @@
 import { Typography } from '@mui/material';
-import { formatOrder } from '../../../utils/formatters';
 import React from 'react';
-import { isEqual } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import { formatOrder } from '../../../utils/formatters';
 
 type TProps = {
   readonly arimaResult: any;
@@ -15,26 +16,41 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
       testPredictionParams?.seasonal_order,
       realPredictionParams?.seasonal_order,
     );
-  const renderOrders = (params) => (
-    <>
-      <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-        Order: {formatOrder(params.order)}, Seasonal order:{' '}
-        {formatOrder(params.seasonal_order)}
-      </Typography>
-    </>
-  );
+  const renderOrders = (params) => {
+    if (isEmpty(params)) return null;
+    return (
+      <>
+        <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
+          Order: {formatOrder(params.order)}, Seasonal order:{' '}
+          {formatOrder(params.seasonal_order)}
+        </Typography>
+      </>
+    );
+  };
   return (
     <>
-      <Typography variant="subtitle2" color="text.secondary">
-        {areARIMAPredictionParamsSimilar
-          ? 'Data prediction params'
-          : 'Test data prediction params'}
+      <Typography variant="subtitle1" color="text.secondary">
+        <InfoOverlay
+          id="prediction-params"
+          label={
+            areARIMAPredictionParamsSimilar
+              ? 'Data prediction params'
+              : 'Test data prediction params'
+          }
+        >
+          <InfoOverlay.Popover>A</InfoOverlay.Popover>
+        </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
       {!areARIMAPredictionParamsSimilar && (
         <>
           <Typography variant="subtitle2" color="text.secondary">
-            Real data prediction params
+            <InfoOverlay
+              id="prediction-params"
+              label="Real data prediction params"
+            >
+              <InfoOverlay.Popover>A</InfoOverlay.Popover>
+            </InfoOverlay>
           </Typography>
           {renderOrders(realPredictionParams)}
         </>

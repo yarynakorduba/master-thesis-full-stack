@@ -59,7 +59,10 @@ const SparkLineChartsBlock = ({
   configName,
 }: TProps) => {
   const theme = useTheme();
-  const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
+  const mappedARIMAPrediction = mapARIMAPrediction(
+    predictionData,
+    selectedProp,
+  );
 
   const onSelectedAreaChange = useCallback(
     (domain) => {
@@ -135,18 +138,18 @@ const SparkLineChartsBlock = ({
   const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
     ? [
         {
-          id: 'passengers-area-19.43174',
-          label: 'passengers',
+          id: `${selectedProp?.value}-19.43174`,
+          label: selectedProp.label,
           belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
           aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
           data: sortBy(
             map(testPredictedDataCounterpart, (a) => {
               return {
                 valueX: a[timeProperty.value] as number,
-                valueY0: a[selectedProp.value] as number,
-                valueY1: predictionData?.testPrediction[
-                  a[timeProperty.value]
-                ] as number,
+                valueY0: a[selectedProp?.value] as number,
+                valueY1: predictionData?.testPrediction?.[
+                  selectedProp?.value
+                ]?.[a[timeProperty.value]] as number,
               };
             }),
             'valueX',
@@ -228,7 +231,8 @@ const SparkLineChartsBlock = ({
                 height={90}
                 width={300}
                 onClick={handleSparklineClick(prop)}
-                padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+                padding={{ top: 24, bottom: 18, left: 36, right: 0 }}
+                formatYScale={formatNumber}
               />
             );
           })}

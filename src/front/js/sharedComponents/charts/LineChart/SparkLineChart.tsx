@@ -10,6 +10,7 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, SparkLineChartHeading } from './styles';
 import { TLineChartData } from 'front/js/types';
 import { TPadding } from '../../../types/styles';
+import { TFormatXScale, TFormatYScale } from '../types';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -31,17 +32,13 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TAxisFormatter<Input = string | number, Output = string> = (
-  value: Input,
-) => Output;
-
 type TProps = {
   readonly data: TLineChartData;
   readonly heading: string;
   readonly width?: number;
   readonly height?: number;
-  readonly formatXScale?: TAxisFormatter;
-  readonly formatYScale?: TAxisFormatter;
+  readonly formatXScale?: TFormatXScale;
+  readonly formatYScale?: TFormatYScale;
   readonly padding?: TPadding;
   readonly variant?: ChartVariant;
   readonly onClick?: () => void;
