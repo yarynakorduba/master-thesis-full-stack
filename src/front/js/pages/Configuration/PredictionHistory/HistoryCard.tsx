@@ -8,7 +8,7 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { map, mapValues, noop } from 'lodash';
+import { map, noop, reduce } from 'lodash';
 import * as d3Scale from 'd3-scale';
 
 import { THistoryEntry } from '../Analysis/types';
@@ -41,33 +41,16 @@ const HistoryCard = ({
   isSelected,
   errorColorScale,
 }: TProps) => {
-  const theme = useTheme();
+  const { valueProperties } = useConfigData();
 
-  const { timeProperty, valueProperties } = useConfigData();
-
-  const mappedARIMAPredictions = map(valueProperties, (prop) =>
-    convertPredictionData(historyEntry, prop),
+  const mappedARIMAPredictions = reduce(
+    valueProperties,
+    (accum, prop) => ({
+      ...accum,
+      [prop.value]: convertPredictionData(historyEntry, prop.value),
+    }),
+    {},
   );
-  // console.log('---res> ', res);
-
-  // const mappedARIMAPredictions = [];
-
-  const testPredictedData = constructLineChartDataFromTs(
-    PREDICTION_VALUE_PROP,
-    PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPredictions?.[0]?.testPrediction,
-    theme.palette.charts.chartPink,
-    `test data prediction`,
-  );
-  const realPredictedData = constructLineChartDataFromTs(
-    PREDICTION_VALUE_PROP,
-    PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPredictions?.[0]?.realPrediction,
-    theme.palette.charts.chartFuchsia,
-    `real data prediction`,
-  );
-
-  console.log('AAA!!!! >>> ', realPredictedData, mappedARIMAPredictions);
 
   return (
     <Card
@@ -93,23 +76,9 @@ const HistoryCard = ({
           <EvaluationIndicators
             evaluation={historyEntry.evaluation}
             errorColorScale={errorColorScale}
+            predictions={mappedARIMAPredictions}
           />
           <ARIMAPredictionParams arimaResult={historyEntry} />
-          <Box width="100%">
-            <SparkLineChart
-              heading={''}
-              data={
-                testPredictedData && realPredictedData
-                  ? [testPredictedData, realPredictedData]
-                  : []
-              }
-              height={50}
-              width={300}
-              onClick={noop}
-              padding={{ top: 8, bottom: 8, left: 0, right: 0 }}
-              numTicks={0}
-            />
-          </Box>
         </CardContent>
       </CardActionArea>
     </Card>

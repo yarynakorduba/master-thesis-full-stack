@@ -34,7 +34,7 @@ const getUniqueFlatValues = (prop, data): number[] =>
 
 type TProps = {
   readonly data: TLineChartData;
-  readonly heading: string;
+  readonly heading?: string;
   readonly width?: number;
   readonly height?: number;
   readonly formatXScale?: TFormatXScale;
@@ -48,7 +48,7 @@ type TProps = {
 const LineChart = ({
   width = 900,
   height = 200,
-  heading,
+  heading = '',
   data,
   formatYScale,
   numTicks = 2,
@@ -129,7 +129,7 @@ const LineChart = ({
 export default function ResponsiveLineChart({
   width = 900,
   height = 200,
-  heading,
+  heading = '',
   variant = ChartVariant.vertical,
   data,
   formatYScale,

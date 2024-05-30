@@ -56,13 +56,11 @@ const SparkLineChartsBlock = ({
   selectedProp,
   setSelectedProp,
   defaultIsTrainingDataSelectionOn = false,
-  configName,
 }: TProps) => {
-  console.log('PREDICTION DATA -- > ', predictionData);
   const theme = useTheme();
   const mappedARIMAPrediction = convertPredictionData(
     predictionData,
-    selectedProp,
+    selectedProp?.value,
   );
 
   const onSelectedAreaChange = useCallback(

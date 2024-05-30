@@ -239,10 +239,10 @@ const ARIMAPrediction = ({
           <Card variant="outlined">
             <CardContent>
               <ARIMAPredictionParams arimaResult={arimaResult} />
-              <EvaluationIndicators
+              {/* <EvaluationIndicators
                 evaluation={arimaResult.evaluation}
                 errorColorScale={errorColorScale}
-              />
+              /> */}
             </CardContent>
           </Card>
         ) : null}
