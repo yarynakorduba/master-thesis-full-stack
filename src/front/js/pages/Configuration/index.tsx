@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Grid } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../sharedComponents/charts/SparkLineChartsBlock';
-// import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
-import { TDataProperty } from 'front/js/types';
 import Analysis from './Analysis';
 import {
   useConfigData,
@@ -57,11 +55,9 @@ const Configuration = () => {
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const dataLabels =
     (selectedProp?.value &&
-      predictionResult && [
+      predictionResult?.lastTrainPoint?.dateTime && [
         {
-          valueX: new Date(
-            predictionResult?.lastTrainPoint?.dateTime,
-          ).getTime(),
+          valueX: new Date(predictionResult.lastTrainPoint.dateTime).getTime(),
           label: 'Train data threshold',
         },
       ]) ||

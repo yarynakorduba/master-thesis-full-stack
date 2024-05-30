@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
-import { isNumber } from 'lodash';
+import { isNumber, round } from 'lodash';
+import { PRECISION } from '../consts';
 
 export const formatUnixToDate = (d) => {
   try {
@@ -28,19 +29,19 @@ export const formatNumber = (d: number): string => {
   const TRILLION = 1000 * BILLION;
 
   if (d >= TRILLION) {
-    return `${d / TRILLION}T`;
+    return `${round(d / TRILLION, PRECISION)}T`;
   }
   if (d >= BILLION) {
-    return `${d / BILLION}B`;
+    return `${round(d / BILLION, PRECISION)}B`;
   }
   if (d >= MILLION) {
     // one million
-    return `${d / MILLION}MM`;
+    return `${round(d / MILLION, PRECISION)}MM`;
   }
   if (d >= 1000) {
-    return `${d / 1000}K`;
+    return `${round(d / 1000, PRECISION)}K`;
   }
-  return `${Math.round(d * 100) / 100}`;
+  return `${round(d, PRECISION)}`;
 };
 
 // ARIMA params order

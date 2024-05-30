@@ -77,12 +77,12 @@ const HistoryCard = ({
                   {formatDateToDateTime(new Date(historyEntry.createdAt))}
                 </CardDate>
               </Stack>
-              <EvaluationIndicators
-                evaluation={historyEntry.evaluation}
-                errorColorScale={errorColorScale}
-              />
             </Grid>
           </CardHeader>
+          <EvaluationIndicators
+            evaluation={historyEntry.evaluation}
+            errorColorScale={errorColorScale}
+          />
           <ARIMAPredictionParams arimaResult={historyEntry} />
           <Box width="100%">
             <SparkLineChart

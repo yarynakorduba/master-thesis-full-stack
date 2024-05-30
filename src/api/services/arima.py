@@ -42,6 +42,7 @@ class ARIMAPrediction:
         return df_diff, diff_order
     
     def arima_predict(self, data, data_keys, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
+        print("I am here")
         if len(data) == 0:
             raise APIException('The data for prediction is empty')
         if len(data) < horizon:
@@ -124,7 +125,8 @@ class ARIMAPrediction:
             json_real_prediction_result = real_predicted_series.to_json()
             print(f"test {test_predicted_series}")
             evaluation = forecast_accuracy(test_predicted_series, test)
-
+            print(f"AAAA!!! {df_input.index[train_data_size-1].now()}")
+            # print(f"EVALUATION 0--- > {df_input.index[0].dtype}")
             # --------------------------------------
             return {
                 "testPrediction": { value_key: json.loads(json_result) },\
@@ -133,8 +135,8 @@ class ARIMAPrediction:
                 "realPredictionParameters": real_prediction_parameters,\
                 "lastTrainPoint": {\
                     "dateTime": df_input.index[train_data_size-1],\
-                    "value": df_input[value_key][train_data_size-1]\
-                },\
+                    "value": float(df_input[value_key][train_data_size-1])\
+                },
                 "evaluation": { value_key: evaluation },
                 
             }

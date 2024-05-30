@@ -4,6 +4,7 @@ import { includes, keys, map, slice } from 'lodash';
 import Button from '@mui/material/Button';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import grey from '@mui/material/colors/grey';
 import {
   Controller,
   useFieldArray,
@@ -181,7 +182,6 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
 
         <Grid item md={6} sx={{ marginBottom: 1 }}>
           <Controller
-            // name={`${EConfigurationFormFields.valueProperties}[0]`}
             {...register(
               `${EConfigurationFormFields.valueProperties}[0].value`,
             )}
@@ -282,7 +282,16 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
         >
           + Add a variable
         </Button>
-        <Button type="submit" sx={{ mt: 2 }} disabled={isSubmitting}>
+        <Typography
+          sx={{ textAlign: 'center', mt: 2 }}
+          fontSize={14}
+          variant="subtitle2"
+          color={grey[500]}
+        >
+          Note: You will not be able to change these settings after saving. If
+          needed, consider creating a new dataset.
+        </Typography>
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && (
             <CircularProgress size="0.875rem" sx={{ mr: 1 }} color="inherit" />
           )}

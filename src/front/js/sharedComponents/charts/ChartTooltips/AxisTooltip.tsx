@@ -8,7 +8,11 @@ type TProps = {
   readonly styles: { [styleRule: string]: string | number };
 };
 export default function AxisTooltip({ tooltip, styles }: TProps) {
-  if (isNil(tooltip?.tooltipData) || isNil(tooltip?.tooltipTop) || isNil(tooltip?.tooltipLeft)) {
+  if (
+    isNil(tooltip?.tooltipData) ||
+    isNil(tooltip?.tooltipTop) ||
+    isNil(tooltip?.tooltipLeft)
+  ) {
     return null;
   }
   return (

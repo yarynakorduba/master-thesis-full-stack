@@ -5,21 +5,21 @@ import { map } from 'lodash';
 
 import AxisTooltip from './AxisTooltip';
 import PointTooltip from './PointTooltip';
-import { TFormatXScale } from '../types';
+import { TFormatXScale, TFormatYScale } from '../types';
 import { TAxisTooltip, TPointTooltip } from './types';
 
 const sharedStyles = {
   ...defaultStyles,
   minWidth: '2rem',
   fontSize: '0.75rem',
-  pointerEvents: 'none'
+  pointerEvents: 'none',
 };
 
 const pointTooltipStyles = {
   ...sharedStyles,
   maxWidth: '20rem',
   textAlign: 'center',
-  pointerEvents: 'none'
+  pointerEvents: 'none',
 };
 
 export const xAxisTooltipStyles = {
@@ -27,7 +27,7 @@ export const xAxisTooltipStyles = {
   maxWidth: '7rem',
   textAlign: 'center',
   color: 'white',
-  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
+  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)',
 };
 
 export const dataLabelTooltipStyles = {
@@ -37,8 +37,7 @@ export const dataLabelTooltipStyles = {
   color: 'white',
   width: 'fit-content',
   whiteSpace: 'pre-wrap',
-  // display: 'inline-block',
-  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)'
+  transform: 'translate(calc(-50% - 0.6rem), -0.5rem)',
 };
 
 const yAxisTooltipStyles = {
@@ -48,7 +47,7 @@ const yAxisTooltipStyles = {
   width: 'fit-content',
   textAlign: 'center',
   color: 'white',
-  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))'
+  transform: 'translate(calc(-100% - 0.75rem), calc(-50% - 0.6rem))',
 };
 
 type TProps = {
@@ -64,7 +63,7 @@ export default function ChartTooltips({
   xTooltip,
   yTooltip,
   formatXScale,
-  dataLabelTooltips
+  dataLabelTooltips,
 }: TProps) {
   const { palette } = useTheme();
 
@@ -91,7 +90,7 @@ export default function ChartTooltips({
             background: palette.secondary.main,
             top: 0,
             transform: 'translate(calc(-50% - 0.6rem), -50%)',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
           }}
         />
       ))}

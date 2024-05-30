@@ -80,6 +80,7 @@ def get_arima_prediction():
     except APIException as e:
         raise e
     except Exception as e:
+        print(f"APIException: {e}")
         raise APIException('Failed to make a prediction')
 
 # ----- Configuration Routes -----

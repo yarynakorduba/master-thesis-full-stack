@@ -21,7 +21,13 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
     return (
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-          Order: {formatOrder(params.order)}, Seasonal order:{' '}
+          <InfoOverlay id="Order" label="Order:">
+            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          </InfoOverlay>{' '}
+          {formatOrder(params.order)},{' '}
+          <InfoOverlay id="Seasonal Order" label="Seasonal order:">
+            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          </InfoOverlay>{' '}
           {formatOrder(params.seasonal_order)}
         </Typography>
       </>
