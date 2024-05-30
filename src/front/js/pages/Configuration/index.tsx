@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Grid } from '@mui/material';
+import { Divider, Grid, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
@@ -74,7 +74,11 @@ const Configuration = () => {
 
   return (
     <>
-      <Content isOpen={isHistoryDrawerOpen}>
+      <Typography
+        variant="h1"
+        sx={{ fontSize: '2rem', display: 'flex', gap: 1, alignItems: 'center' }}
+      >
+        {configName} <Divider flexItem sx={{ height: '36px', width: '1px' }} />
         <PredictionInfoText
           prediction={
             isDataIncomplete || isConfigurationLoading
@@ -87,6 +91,8 @@ const Configuration = () => {
             setSelectedDataBoundaries(undefined);
           }}
         />
+      </Typography>
+      <Content isOpen={isHistoryDrawerOpen}>
         <SparkLineChartsBlock
           isConfigurationLoading={isConfigurationLoading}
           configName={configName}
@@ -124,7 +130,7 @@ const Configuration = () => {
         anchor="right"
         variant="persistent"
       >
-        <Sidebar>
+        <Sidebar isOpen={isHistoryDrawerOpen}>
           <PredictionHistory />
         </Sidebar>
       </HistoryDrawer>

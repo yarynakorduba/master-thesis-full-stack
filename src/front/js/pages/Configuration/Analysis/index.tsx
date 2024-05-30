@@ -3,7 +3,7 @@ import React from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import Box from '@mui/material/Box';
-import { identity } from 'lodash';
+import { identity, noop } from 'lodash';
 
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
@@ -29,6 +29,8 @@ type TProps = {
 const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
   const [predictionMode, setPredictionMode] = usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
+
+  console.log('PREDICTION RESULT -- > ', predictionResult);
 
   const {
     data: timeseriesData,
@@ -96,14 +98,14 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
       : undefined,
 
     (key: number) =>
-      predictionMode === EPredictionMode.VAR ? (
+      (!predictionResult && predictionMode === EPredictionMode.VAR) ||
+      predictionResult?.predictionMode === EPredictionMode.VAR ? (
         <Prediction
           index={key}
           isVisible
           handleSelectStep={handleSelectStep}
           varResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          // handlePredict={handleFetchPrediction}
         />
       ) : (
         <ARIMAPrediction
@@ -112,7 +114,6 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
           handleSelectStep={handleSelectStep}
           arimaResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          // handlePredict={handleFetchPrediction}
         />
       ),
   ].filter(identity);
@@ -120,8 +121,12 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
   return (
     <Box>
       <PredictionModelSelection
-        predictionMode={predictionMode}
-        setPredictionMode={setPredictionMode}
+        predictionMode={
+          predictionResult ? predictionMode : predictionResult?.predictionMode
+        }
+        setPredictionMode={
+          predictionResult?.predictionMode ? noop : setPredictionMode
+        }
       />
 
       <Stepper activeStep={activeStep} orientation="vertical" nonLinear>

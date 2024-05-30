@@ -20,7 +20,7 @@ const PredictionInfoText = ({
       sx={{
         textAlign: 'left',
         height: 36.5,
-        marginTop: -3,
+        marginTop: -1,
         lineHeight: '36.5px',
         display: 'flex',
       }}

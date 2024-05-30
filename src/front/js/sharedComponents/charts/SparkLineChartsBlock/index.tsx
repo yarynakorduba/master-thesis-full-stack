@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -19,7 +19,7 @@ import { getSelectedDataByBoundaries } from '../../../utils';
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,
-  mapARIMAPrediction,
+  convertPredictionData,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 import { TThresholdData } from '../types';
@@ -39,7 +39,7 @@ type TProps = {
   readonly predictionData?: {
     readonly testPrediction: TPredictedPoints;
     readonly realPrediction: TPredictedPoints;
-  };
+  } & any;
   readonly dataLabels?: TDataLabel[];
   readonly defaultIsTrainingDataSelectionOn?: boolean;
   readonly isConfigurationLoading?: boolean;
@@ -58,8 +58,9 @@ const SparkLineChartsBlock = ({
   defaultIsTrainingDataSelectionOn = false,
   configName,
 }: TProps) => {
+  console.log('PREDICTION DATA -- > ', predictionData);
   const theme = useTheme();
-  const mappedARIMAPrediction = mapARIMAPrediction(
+  const mappedARIMAPrediction = convertPredictionData(
     predictionData,
     selectedProp,
   );
@@ -90,7 +91,7 @@ const SparkLineChartsBlock = ({
     const testPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.[0],
+      mappedARIMAPrediction?.testPrediction,
       theme.palette.charts.chartPink,
       `${selectedProp?.label} test data prediction`,
     );
@@ -98,9 +99,9 @@ const SparkLineChartsBlock = ({
     const realPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.[1],
+      mappedARIMAPrediction?.realPrediction,
       theme.palette.charts.chartFuchsia,
-      `${selectedProp?.label} real data prediction`,
+      `${selectedProp?.label} real data prediction ${predictionData?.predictionMode}`,
     );
 
     const mainChartData = constructLineChartDataFromTs(
@@ -117,11 +118,12 @@ const SparkLineChartsBlock = ({
     ) as TLineChartSerie[];
   }, [
     selectedProp,
-    timeProperty,
     mappedARIMAPrediction,
     theme.palette.charts.chartPink,
     theme.palette.charts.chartFuchsia,
     theme.palette.charts.chartBlue,
+    predictionData?.predictionMode,
+    timeProperty?.value,
     timeseriesData,
   ]);
 
@@ -195,7 +197,7 @@ const SparkLineChartsBlock = ({
     <LineChartContainer>
       <Box width="100%" minHeight="300px">
         <LineChart
-          heading={configName}
+          heading={selectedProp?.label}
           data={chartData}
           thresholdData={thresholdData}
           dataLabels={dataLabels}

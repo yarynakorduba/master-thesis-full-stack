@@ -8,7 +8,7 @@ import {
   Stack,
   useTheme,
 } from '@mui/material';
-import { noop } from 'lodash';
+import { map, mapValues, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
 
 import { THistoryEntry } from '../Analysis/types';
@@ -18,10 +18,12 @@ import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLine
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,
+  convertPredictionData,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 import ARIMAPredictionParams from '../Analysis/ARIMAPredictionParams';
 import EvaluationIndicators from '../Analysis/EvaluationIndicators';
+import { useConfigData } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -40,23 +42,32 @@ const HistoryCard = ({
   errorColorScale,
 }: TProps) => {
   const theme = useTheme();
-  const mappedARIMAPrediction = []; //mapARIMAPrediction(historyEntry);
+
+  const { timeProperty, valueProperties } = useConfigData();
+
+  const mappedARIMAPredictions = map(valueProperties, (prop) =>
+    convertPredictionData(historyEntry, prop),
+  );
+  // console.log('---res> ', res);
+
+  // const mappedARIMAPredictions = [];
 
   const testPredictedData = constructLineChartDataFromTs(
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPrediction?.[0],
+    mappedARIMAPredictions?.[0]?.testPrediction,
     theme.palette.charts.chartPink,
     `test data prediction`,
   );
-
   const realPredictedData = constructLineChartDataFromTs(
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPrediction?.[1],
+    mappedARIMAPredictions?.[0]?.realPrediction,
     theme.palette.charts.chartFuchsia,
     `real data prediction`,
   );
+
+  console.log('AAA!!!! >>> ', realPredictedData, mappedARIMAPredictions);
 
   return (
     <Card
