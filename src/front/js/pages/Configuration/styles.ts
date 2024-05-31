@@ -28,11 +28,18 @@ export const Content = styled('div')<{ readonly isOpen?: boolean }>`
 
 export const HistoryDrawer = styled(MuiDrawer)`
   width: 0;
+  overflow-x: hidden;
+
   ${({ open }) =>
     open &&
     `& .MuiDrawer-paper {
       height: 100vh;
       width: ${SIDEBAR_WIDTH_SMALL_SCREEN};
+      overflow-x: hidden;
+      
+      &>div {
+        border-right: none;
+      }
     }
 
     @media (width >= 2000px) {
@@ -52,9 +59,9 @@ export const Sidebar = styled('div')<{ readonly isOpen?: boolean }>`
   width: 0;
   ${({ isOpen }) =>
     isOpen &&
-    `width: calc(${SIDEBAR_WIDTH_SMALL_SCREEN} - 1.5rem); // 1.5rem is sum of the paddings
+    `width: calc(${SIDEBAR_WIDTH_SMALL_SCREEN} - 1px); // 1.5rem is sum of the paddings
 
     @media (width >= 2000px) {
-      width: calc(${SIDEBAR_WIDTH_BIG_SCREEN} - 1.5rem); // 1.5rem is sum of the paddings
+      width: calc(${SIDEBAR_WIDTH_BIG_SCREEN} - 1px); // 1.5rem is sum of the paddings
     }`}
 `;

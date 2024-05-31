@@ -74,25 +74,32 @@ const Configuration = () => {
 
   return (
     <>
-      <Typography
-        variant="h1"
-        sx={{ fontSize: '2rem', display: 'flex', gap: 1, alignItems: 'center' }}
-      >
-        {configName} <Divider flexItem sx={{ height: '36px', width: '1px' }} />
-        <PredictionInfoText
-          prediction={
-            isDataIncomplete || isConfigurationLoading
-              ? undefined
-              : predictionResult
-          }
-          isHistoryPredictionSelected={isHistoryPredictionSelected}
-          handleClearPredictionData={() => {
-            setDisplayedPredictionId(undefined);
-            setSelectedDataBoundaries(undefined);
-          }}
-        />
-      </Typography>
       <Content isOpen={isHistoryDrawerOpen}>
+        <Typography
+          variant="h1"
+          sx={{
+            fontSize: '2rem',
+            mb: 2.5,
+            display: 'flex',
+            gap: 1,
+            alignItems: 'end',
+          }}
+        >
+          {configName}{' '}
+          <Divider flexItem sx={{ height: '36px', width: '1px' }} />
+          <PredictionInfoText
+            prediction={
+              isDataIncomplete || isConfigurationLoading
+                ? undefined
+                : predictionResult
+            }
+            isHistoryPredictionSelected={isHistoryPredictionSelected}
+            handleClearPredictionData={() => {
+              setDisplayedPredictionId(undefined);
+              setSelectedDataBoundaries(undefined);
+            }}
+          />
+        </Typography>
         <SparkLineChartsBlock
           isConfigurationLoading={isConfigurationLoading}
           configName={configName}

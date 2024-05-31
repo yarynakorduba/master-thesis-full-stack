@@ -44,9 +44,7 @@ const EvaluationIndicators = ({
   return (
     <>
       <Typography variant="subtitle1" component="div" color="text.secondary">
-        <InfoOverlay label="Errors" id="Errors">
-          <InfoOverlay.Popover>A</InfoOverlay.Popover>
-        </InfoOverlay>
+        Prediction
       </Typography>
       {map(evaluation, (values, key) => {
         const chartTestData = getChartData(key, 'testPrediction');
@@ -56,16 +54,16 @@ const EvaluationIndicators = ({
             <Stack
               direction="row"
               columnGap={0.5}
-              flexWrap="nowrap"
+              flexWrap="wrap"
               justifyContent="space-between"
             >
               <Typography variant="subtitle2">{key}</Typography>
               <Stack
-                width="60%"
+                flexBasis="100%"
+                flexGrow={1}
                 direction="row"
                 gap={0.25}
                 flexWrap="nowrap"
-                justifyContent="flex-end"
               >
                 {map(values, (indicatorValue, indicatorKey) => {
                   const background = errorColorScale(
@@ -75,7 +73,12 @@ const EvaluationIndicators = ({
                     <Chip
                       size="small"
                       sx={{ background }}
-                      label={`${upperCase(indicatorKey)}: ${round(indicatorValue, PRECISION)}`}
+                      label={
+                        <Typography noWrap>
+                          {upperCase(indicatorKey)}:{' '}
+                          {round(indicatorValue, PRECISION)}
+                        </Typography>
+                      }
                     />
                   );
                 })}
@@ -88,10 +91,10 @@ const EvaluationIndicators = ({
                     ? [chartTestData, chartRealData]
                     : []
                 }
-                height={50}
+                height={45}
                 width={300}
                 onClick={noop}
-                padding={{ top: 8, bottom: 8, left: 0, right: 0 }}
+                padding={{ top: 4, bottom: 8, left: 0, right: 0 }}
                 numTicks={0}
               />
             </Box>

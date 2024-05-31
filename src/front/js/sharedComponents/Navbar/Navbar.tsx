@@ -7,13 +7,14 @@ import { Button } from '@mui/material';
 import { Link, useMatch } from 'react-router-dom';
 
 import { ERoutePaths } from '../../types/router';
+import { HORIZONTAL_LAYOUT_GUTTER } from '../../layout';
 
 export const Navbar = () => {
   const configPageMatch = useMatch('configurations/:id');
   const isConfigPage = !!configPageMatch;
   return (
     <AppBar position="static" color="default">
-      <Toolbar variant="dense">
+      <Toolbar variant="dense" sx={{ marginX: HORIZONTAL_LAYOUT_GUTTER }}>
         <Typography
           variant="h6"
           sx={{ marginRight: 2, height: 34, alignSelf: 'center' }}

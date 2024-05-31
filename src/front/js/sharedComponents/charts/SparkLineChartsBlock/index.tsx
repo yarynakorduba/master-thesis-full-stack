@@ -91,7 +91,7 @@ const SparkLineChartsBlock = ({
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.testPrediction,
       theme.palette.charts.chartPink,
-      `${selectedProp?.label} test data prediction`,
+      `test data prediction (${predictionData?.predictionMode || ''})`,
     );
 
     const realPredictedData = constructLineChartDataFromTs(
@@ -99,7 +99,7 @@ const SparkLineChartsBlock = ({
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.realPrediction,
       theme.palette.charts.chartFuchsia,
-      `${selectedProp?.label} real data prediction ${predictionData?.predictionMode}`,
+      `future data prediction (${predictionData?.predictionMode || ''})`,
     );
 
     const mainChartData = constructLineChartDataFromTs(
@@ -193,7 +193,7 @@ const SparkLineChartsBlock = ({
 
   return (
     <LineChartContainer>
-      <Box width="100%" minHeight="300px">
+      <Box width="calc(100% - 300px - 16px)" minHeight="300px">
         <LineChart
           heading={selectedProp?.label}
           data={chartData}
@@ -206,7 +206,7 @@ const SparkLineChartsBlock = ({
           height={300}
           padding={{ top: 16, bottom: 30, left: 48, right: 10 }}
           onSelectArea={onSelectedAreaChange}
-          isResponsive={true}
+          isResponsive
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}
           defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}

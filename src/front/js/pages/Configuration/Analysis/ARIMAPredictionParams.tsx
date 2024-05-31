@@ -33,6 +33,9 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
       </>
     );
   };
+
+  if (isEmpty(testPredictionParams)) return null;
+
   return (
     <>
       <Typography variant="subtitle1" color="text.secondary">
@@ -40,7 +43,7 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
           id="prediction-params"
           label={
             areARIMAPredictionParamsSimilar
-              ? 'Data prediction params'
+              ? 'Prediction params'
               : 'Test data prediction params'
           }
         >

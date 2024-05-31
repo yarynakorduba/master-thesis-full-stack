@@ -1,10 +1,11 @@
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const LineChartContainer = styled(Box)`
-  padding-bottom: 32px;
-  display: flex;
+export const LineChartContainer = styled(Stack)`
   flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 16px;
+  padding-bottom: 32px;
   min-height: 300px;
   width: 100%;
   align-items: center;
