@@ -139,29 +139,34 @@ export default (set, get) => ({
 
   setHorizon: (horizon: number) =>
     set(
-      (state) => ({ latestPrediction: { ...state.latestPrediction, horizon } }),
+      (state) => ({ draft: { ...state.draft, horizon } }),
       SHOULD_CLEAR_STORE,
       SET_HORIZON,
     ),
 
-  setPredictionMode: (predictionMode: EPredictionMode) =>
+  setPredictionMode: (displayedPredictionMode: EPredictionMode) =>
     set(
-      () => ({ latestPrediction: { predictionMode } }),
+      () => ({ displayedPredictionMode }),
       SHOULD_CLEAR_STORE,
       SET_PREDICTION_MODE,
     ),
 
   setDisplayedPredictionId: (itemId: TDisplayedPrediction) => {
     return set(
-      (state) => ({
-        displayedPredictionId: itemId,
-        selectedDataBoundaries: isNil(itemId)
-          ? undefined
-          : getDisplayedPrediction(
-              state.predictionHistory,
-              state.displayedPredictionId,
-            )?.selectedDataBoundaries,
-      }),
+      (state) => {
+        const displayedPrediction = getDisplayedPrediction(
+          state.predictionHistory,
+          state.displayedPredictionId,
+        );
+        return {
+          displayedPredictionId: itemId,
+          selectedDataBoundaries: isNil(itemId)
+            ? undefined
+            : displayedPrediction?.selectedDataBoundaries,
+          displayedPredictionMode:
+            displayedPrediction?.predictionMode || EPredictionMode.ARIMA,
+        };
+      },
       SHOULD_CLEAR_STORE,
       SET_DISPLAYED_PREDICTION,
     );
@@ -344,10 +349,10 @@ export default (set, get) => ({
     set(
       (state) => ({
         isPredictionLoading: true,
-        latestPrediction: {
-          ...state.latestPrediction,
+        displayedPredictionMode: EPredictionMode.ARIMA,
+        draft: {
+          ...state.draft,
           selectedDataBoundaries: dataBoundaries,
-          predictionMode: EPredictionMode.ARIMA,
         },
       }),
       SHOULD_CLEAR_STORE,
@@ -361,9 +366,9 @@ export default (set, get) => ({
     set(
       () => ({
         isPredictionLoading: false,
-        latestPrediction: {
+        displayedPredictionMode: EPredictionMode.ARIMA,
+        draft: {
           selectedDataBoundaries: dataBoundaries,
-          predictionMode: EPredictionMode.ARIMA,
           prediction: response.data,
         },
       }),
@@ -391,12 +396,12 @@ export default (set, get) => ({
   fetchVARPrediction: async (parameters, dataBoundaries, selectedData) => {
     set(
       (state) => ({
-        displayedPredictionId: 'latestPrediction',
+        displayedPredictionId: 'draft',
+        displayedPredictionMode: EPredictionMode.VAR,
 
-        latestPrediction: {
-          ...state.latestPrediction,
+        draft: {
+          ...state.draft,
           selectedDataBoundaries: dataBoundaries,
-          predictionMode: EPredictionMode.VAR,
           isPredictionLoading: true,
         },
       }),
@@ -411,9 +416,9 @@ export default (set, get) => ({
 
     set(
       () => ({
-        latestPrediction: {
+        displayedPredictionMode: EPredictionMode.VAR,
+        draft: {
           selectedDataBoundaries: dataBoundaries,
-          predictionMode: EPredictionMode.VAR,
           prediction: response.data,
           isPredictionLoading: false,
         },
@@ -441,7 +446,7 @@ export default (set, get) => ({
 
   fetchPrediction: async (parameters) => {
     const timeProperty = get().timeProperty;
-    const predictionMode = get().latestPrediction.predictionMode;
+    const predictionMode = get().displayedPredictionMode;
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
@@ -481,14 +486,20 @@ export default (set, get) => ({
         const predictionHistory = map(response.data, (datum) =>
           mapKeys(datum, (v, key) => camelCase(key)),
         ) as THistoryEntry[];
+
+        const displayedPrediction = getDisplayedPrediction(
+          predictionHistory,
+          response.data?.[0]?.id,
+        );
         return {
           predictionHistory,
           isPredictionHistoryLoading: false,
           displayedPredictionId: response.data?.[0]?.id,
+          displayedPredictionMode:
+            displayedPrediction?.predictionMode || EPredictionMode.ARIMA,
           selectedDataBoundaries:
             state.selectedDataBoundaries ||
-            getDisplayedPrediction(predictionHistory, response.data?.[0]?.id)
-              ?.selectedDataBoundaries,
+            displayedPrediction?.selectedDataBoundaries,
         };
       },
       SHOULD_CLEAR_STORE,

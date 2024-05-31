@@ -64,18 +64,16 @@ export type TConfigurationSlice = {
     predictionItemId: TDisplayedPrediction,
   ) => void;
 
+  readonly displayedPredictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+
   readonly isPredictionLoading: boolean;
 
   readonly selectedDataBoundaries?: TValueBounds;
 
-  readonly latestPrediction: {
+  readonly draft: {
     readonly testPrediction?: TARIMAResult | TVARResult;
     readonly realPrediction?: TARIMAResult | TVARResult;
-
-    readonly predictionMode: EPredictionMode;
-    // the data which was selected for training
-
     readonly horizon: number;
   };
 

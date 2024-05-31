@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Divider, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
@@ -12,6 +12,7 @@ import {
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   usePrediction,
+  usePredictionMode,
   useSelectedDataBoundaries,
   useSelectedProps,
 } from '../../store/currentConfiguration/selectors';
@@ -19,6 +20,7 @@ import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
 import { isConfigurationDataIncomplete } from './utils';
 import { ERoutePaths } from '../../types/router';
+import { EPredictionMode } from './Analysis/types';
 
 const Configuration = () => {
   const { id } = useParams();
@@ -33,6 +35,7 @@ const Configuration = () => {
     valueProperties,
     configurationError,
   } = useConfigData();
+  const [, setDisplayedPredictionMode] = usePredictionMode();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);
@@ -77,6 +80,7 @@ const Configuration = () => {
       <Content isOpen={isHistoryDrawerOpen}>
         <Typography
           variant="h1"
+          fontWeight={400}
           sx={{
             fontSize: '2rem',
             mb: 2.5,
@@ -85,21 +89,20 @@ const Configuration = () => {
             alignItems: 'end',
           }}
         >
-          {configName}{' '}
-          <Divider flexItem sx={{ height: '36px', width: '1px' }} />
-          <PredictionInfoText
-            prediction={
-              isDataIncomplete || isConfigurationLoading
-                ? undefined
-                : predictionResult
-            }
-            isHistoryPredictionSelected={isHistoryPredictionSelected}
-            handleClearPredictionData={() => {
-              setDisplayedPredictionId(undefined);
-              setSelectedDataBoundaries(undefined);
-            }}
-          />
+          {configName}
         </Typography>
+        <PredictionInfoText
+          prediction={
+            isDataIncomplete || isConfigurationLoading
+              ? undefined
+              : predictionResult
+          }
+          isHistoryPredictionSelected={isHistoryPredictionSelected}
+          handleClearPredictionData={() => {
+            setDisplayedPredictionId(undefined);
+            setSelectedDataBoundaries(undefined);
+          }}
+        />
         <SparkLineChartsBlock
           isConfigurationLoading={isConfigurationLoading}
           configName={configName}

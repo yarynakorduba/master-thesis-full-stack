@@ -27,10 +27,9 @@ type TProps = {
 };
 
 const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
-  const [predictionMode, setPredictionMode] = usePredictionMode();
+  const [displayedPredictionMode, setDisplayedPredictionMode] =
+    usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
-
-  console.log('PREDICTION RESULT -- > ', predictionResult);
 
   const {
     data: timeseriesData,
@@ -82,7 +81,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
       />
     ),
-    predictionMode === EPredictionMode.VAR
+    displayedPredictionMode === EPredictionMode.VAR
       ? (key: number) => (
           <CausalityTest
             isVisible
@@ -98,8 +97,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
       : undefined,
 
     (key: number) =>
-      (!predictionResult && predictionMode === EPredictionMode.VAR) ||
-      predictionResult?.predictionMode === EPredictionMode.VAR ? (
+      displayedPredictionMode === EPredictionMode.VAR ? (
         <Prediction
           index={key}
           isVisible
@@ -121,12 +119,11 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
   return (
     <Box>
       <PredictionModelSelection
-        predictionMode={
-          predictionResult ? predictionMode : predictionResult?.predictionMode
-        }
+        predictionMode={displayedPredictionMode}
         setPredictionMode={
-          predictionResult?.predictionMode ? noop : setPredictionMode
+          predictionResult?.predictionMode ? noop : setDisplayedPredictionMode
         }
+        isDisabled={predictionResult?.predictionMode}
       />
 
       <Stepper activeStep={activeStep} orientation="vertical" nonLinear>

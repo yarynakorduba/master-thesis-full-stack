@@ -29,8 +29,8 @@ export const DEFAULT_CONFIGURATION_STATE = {
   displayedPredictionId: undefined as TDisplayedPrediction,
 
   isPredictionLoading: false,
-  latestPrediction: {
-    predictionMode: EPredictionMode.ARIMA,
+  displayedPredictionMode: EPredictionMode.ARIMA,
+  draft: {
     testPrediction: undefined,
     realPrediction: undefined,
     horizon: DEFAULT_HORIZON,

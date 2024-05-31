@@ -15,14 +15,16 @@ const PredictionInfoText = ({
   isHistoryPredictionSelected,
   handleClearPredictionData,
 }: TProps) => {
+  if (!isHistoryPredictionSelected || !prediction) return null;
   return (
     <Typography
       sx={{
         textAlign: 'left',
         height: 36.5,
-        marginTop: -1,
-        lineHeight: '36.5px',
+        marginTop: -3,
         display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
       }}
       fontSize={14}
       variant="subtitle2"

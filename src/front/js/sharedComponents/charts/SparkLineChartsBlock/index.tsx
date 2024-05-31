@@ -86,11 +86,19 @@ const SparkLineChartsBlock = ({
 
   const chartData: TLineChartData = useMemo(() => {
     if (!selectedProp) return [];
+    const mainChartData = constructLineChartDataFromTs(
+      selectedProp?.value,
+      timeProperty?.value,
+      timeseriesData,
+      theme.palette.charts.chartRealData,
+      selectedProp?.label,
+    );
+
     const testPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.testPrediction,
-      theme.palette.charts.chartPink,
+      theme.palette.charts.chartTestPrediction,
       `test data prediction (${predictionData?.predictionMode || ''})`,
     );
 
@@ -98,16 +106,8 @@ const SparkLineChartsBlock = ({
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
       mappedARIMAPrediction?.realPrediction,
-      theme.palette.charts.chartFuchsia,
+      theme.palette.charts.chartRealPrediction,
       `future data prediction (${predictionData?.predictionMode || ''})`,
-    );
-
-    const mainChartData = constructLineChartDataFromTs(
-      selectedProp?.value,
-      timeProperty?.value,
-      timeseriesData,
-      theme.palette.charts.chartBlue,
-      selectedProp?.label,
     );
 
     return filter(
@@ -117,9 +117,9 @@ const SparkLineChartsBlock = ({
   }, [
     selectedProp,
     mappedARIMAPrediction,
-    theme.palette.charts.chartPink,
-    theme.palette.charts.chartFuchsia,
-    theme.palette.charts.chartBlue,
+    theme.palette.charts.chartTestPrediction,
+    theme.palette.charts.chartRealPrediction,
+    theme.palette.charts.chartRealData,
     predictionData?.predictionMode,
     timeProperty?.value,
     timeseriesData,
@@ -219,7 +219,7 @@ const SparkLineChartsBlock = ({
               prop.value,
               timeProperty!.value,
               timeseriesData,
-              theme.palette.charts.chartBlue,
+              theme.palette.charts.chartRealData,
               prop.label,
             );
 

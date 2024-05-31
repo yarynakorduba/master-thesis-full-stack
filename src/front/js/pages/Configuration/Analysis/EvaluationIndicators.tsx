@@ -35,8 +35,8 @@ const EvaluationIndicators = ({
         ? prediction?.testPrediction
         : prediction?.realPrediction,
       type === 'testPrediction'
-        ? theme.palette.charts.chartPink
-        : theme.palette.charts.chartFuchsia,
+        ? theme.palette.charts.chartTestPrediction
+        : theme.palette.charts.chartRealPrediction,
       '',
     );
   };

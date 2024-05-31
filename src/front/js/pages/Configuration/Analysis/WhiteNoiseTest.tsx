@@ -35,7 +35,7 @@ const WhiteNoiseTest = ({
   const { palette } = useTheme();
   const whiteNoiseDemoDatapoints = {
     id: 'white-noise',
-    color: palette.charts.chartBlue,
+    color: palette.charts.chartRealData,
     label: '',
     datapoints: whiteNoiseData.map((element, index) => ({
       valueX: index,

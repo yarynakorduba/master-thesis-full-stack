@@ -83,7 +83,7 @@ export const usePrediction = (): [
 ] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
 
 export const useGetPredictionMode = (): EPredictionMode =>
-  useBoundStore((state) => state.latestPrediction.predictionMode);
+  useBoundStore((state) => state.displayedPredictionMode);
 export const useSetPredictionMode = () =>
   useBoundStore((state) => state.setPredictionMode);
 export const usePredictionMode = (): [
@@ -122,6 +122,7 @@ export const useFetchCausalityTest = () =>
   useBoundStore((state) => state.fetchCausalityTest);
 export const useIsCausalityTestLoading = () =>
   useBoundStore((state) => state.isCausalityTestLoading);
+
 export const useCausalityTest = () => [
   useGetCausalityTest(),
   useFetchCausalityTest(),
@@ -146,7 +147,7 @@ export const useDisplayedPredictionId = (): [
 ] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];
 
 export const useGetHorizon = () =>
-  useBoundStore((state): number => state.latestPrediction.horizon);
+  useBoundStore((state): number => state.draft.horizon);
 export const useSetHorizon = () => useBoundStore((state) => state.setHorizon);
 
 export const useHorizon = () => [useGetHorizon(), useSetHorizon()];

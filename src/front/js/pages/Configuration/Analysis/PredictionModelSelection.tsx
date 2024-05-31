@@ -21,10 +21,12 @@ import { isEmpty } from 'lodash';
 type TProps = {
   readonly predictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly isDisabled: boolean;
 };
 const PredictionModelSelection = ({
   predictionMode,
   setPredictionMode,
+  isDisabled,
 }: TProps) => {
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
   const predictionHistory = useGetPredictionHistory();
@@ -56,6 +58,7 @@ const PredictionModelSelection = ({
         aria-label="text alignment"
         size="small"
         sx={{ marginBottom: 1 }}
+        disabled={isDisabled}
       >
         <ToggleButton
           value={EPredictionMode.ARIMA}
