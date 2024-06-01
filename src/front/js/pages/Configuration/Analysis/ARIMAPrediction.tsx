@@ -6,26 +6,24 @@ import StepContent from '@mui/material/StepContent';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { isEqual, round } from 'lodash';
-import { Card, CardContent, Chip, Stack } from '@mui/material';
+import { Card, CardContent, Stack } from '@mui/material';
+import { red } from '@mui/material/colors';
 
 import Loader from '../../../sharedComponents/Loader';
 import { useInputState } from '../../../hooks';
-import { PRECISION } from '../../../consts';
-import { formatOrder } from '../../../utils/formatters';
-import { red } from '@mui/material/colors';
-import { scaleLinear } from '@visx/scale';
-import { getExtent } from '../../../utils';
-import { useGetPredictionHistory } from '../../../store/currentConfiguration/selectors';
+import { getLinearValueScale } from '../../../utils';
+import {
+  useFetchPrediction,
+  useGetPredictionHistory,
+} from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
+import EvaluationIndicators from './EvaluationIndicators';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly arimaResult;
   readonly isVARLoading: boolean;
-  readonly handlePredict;
   readonly index: number;
   readonly handleSelectStep: (stepIndex: number) => () => void;
 };
@@ -34,10 +32,11 @@ const ARIMAPrediction = ({
   isVisible,
   arimaResult,
   isVARLoading,
-  handlePredict,
   handleSelectStep,
   index,
 }: TProps) => {
+  const handlePredict = useFetchPrediction();
+
   const [horizon, setHorizon] = useInputState<number>(20, { min: 1 });
   const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
 
@@ -64,24 +63,22 @@ const ARIMAPrediction = ({
   };
 
   const predictionHistory = useGetPredictionHistory();
-  const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
-  const mapeLinearScale = scaleLinear({
-    domain: mapeExtent,
-    range: [red[50], red[200]],
-  });
+  const errorColorScale = getLinearValueScale(predictionHistory, [
+    red[50],
+    red[200],
+  ]);
 
   if (!isVisible) return null;
   return (
     <>
       <StepButton onClick={handleSelectStep(index)}>
         <Box sx={{ fontSize: 16 }}>
-          {' '}
           What is the prediction for the future? (ARIMA)
         </Box>
       </StepButton>
       <StepContent>
         <Grid container columnSpacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
-          <Grid item md={6} sx={{ marginBottom: 1 }}>
+          <Grid item md={6}>
             <InfoOverlay
               id="periods-in-season"
               label="Horizon"
@@ -104,7 +101,7 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="periods-in-season"
-              label="Min P"
+              label="Min lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >
@@ -129,7 +126,7 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="periods-in-season"
-              label="Max P"
+              label="Max lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >
@@ -242,31 +239,10 @@ const ARIMAPrediction = ({
           <Card variant="outlined">
             <CardContent>
               <ARIMAPredictionParams arimaResult={arimaResult} />
-              <Typography
-                variant="subtitle2"
-                color="text.secondary"
-                sx={{ marginBottom: 0.75 }}
-              >
-                Evaluation
-              </Typography>
-              <Typography sx={{ lineBreak: 'auto', fontSize: 14 }}>
-                <Chip
-                  size="small"
-                  label={
-                    <>MAE: {round(arimaResult.evaluation.mae, PRECISION)}</>
-                  }
-                  sx={{ mr: 1 }}
-                />
-                <Chip
-                  size="small"
-                  sx={{
-                    background: mapeLinearScale(arimaResult.evaluation.mape),
-                  }}
-                  label={
-                    <>MAPE: {round(arimaResult.evaluation.mape, PRECISION)}</>
-                  }
-                />
-              </Typography>
+              {/* <EvaluationIndicators
+                evaluation={arimaResult.evaluation}
+                errorColorScale={errorColorScale}
+              /> */}
             </CardContent>
           </Card>
         ) : null}

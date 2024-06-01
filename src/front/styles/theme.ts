@@ -6,6 +6,10 @@ declare module '@mui/material/styles' {
       chartBlue: string;
       chartFuchsia: string;
       chartPink: string;
+      chartOverlayPink: string;
+      chartRealData: string;
+      chartTestPrediction: string;
+      chartRealPrediction: string;
     };
   }
   interface PaletteOptions {
@@ -14,6 +18,9 @@ declare module '@mui/material/styles' {
       chartFuchsia: string;
       chartPink: string;
       chartOverlayPink: string;
+      chartRealData: string;
+      chartTestPrediction: string;
+      chartRealPrediction: string;
     };
   }
 }
@@ -24,6 +31,9 @@ export const theme = createTheme({
       chartBlue: '#3948A4',
       chartFuchsia: '#FF00FF',
       chartPink: '#FF69B4',
+      chartRealData: '#3448C2',
+      chartTestPrediction: '#FFB000',
+      chartRealPrediction: '#D700F5',
 
       chartOverlayPink: '#ffc0cb36',
     },

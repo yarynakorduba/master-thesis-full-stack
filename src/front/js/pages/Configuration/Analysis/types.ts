@@ -63,7 +63,7 @@ export type THistoryEntry = {
   readonly realPredictionParameters: TResponseARIMAParams;
   readonly testPredictionParameters: TResponseARIMAParams;
 
-  readonly evaluation: TPredictionEvaluation;
+  readonly evaluation: { readonly [prop: string]: TPredictionEvaluation };
 
   // the data which was selected for training
   readonly selectedDataBoundaries?: TValueBounds;

@@ -6,133 +6,148 @@ import pandas as pd
 import numpy as np
 import json
 from sklearn.preprocessing import StandardScaler
-from api.services.statistical_tests import Analysis
+from api.services.statistical_tests import StatisticalTests
 
+from api.utils import APIException, forecast_accuracy
 
-class Predict:
+TRAIN_TEST_SPLIT_PROPORTION = 0.9
+
+class VARPrediction:
     def __init__(self):
         self = self
-
-    def forecast_accuracy(self, forecast, actual):
-        print(forecast)
-        print("------------")
-        print(actual)
-        mape = np.mean(np.abs(forecast - actual)/np.abs(actual))  # MAPE
-        me = np.mean(forecast - actual)             # ME
-        mae = np.mean(np.abs(forecast - actual))    # MAE
-        mpe = np.mean((forecast - actual)/actual)   # MPE
-        rmse = np.mean((forecast - actual)**2)**.5  # RMSE
-        # corr = np.corrcoef(forecast, actual)[0,1]   # corr
-        # mins = np.amin(np.hstack([forecast[:,None], 
-        #                         actual[:,None]]), axis=1)
-        # maxs = np.amax(np.hstack([forecast[:,None], 
-        #                         actual[:,None]]), axis=1)
-        # minmax = 1 - np.mean(mins/maxs)             # minmax
-        return({'mape':mape, 'me':me, 'mae': mae, 
-                'mpe': mpe, 'rmse':rmse })
-
     
-    def convert_data_to_stationary(self, df, max_diff_order=5):
-        # how to deal with non linear non stationarity?
-        # put an upper limit on the order
-        df_diff = df.copy()
-        print(df_diff.shape)
-        diff_order = -1
-        is_stationary = False
-        while is_stationary == False and diff_order <= max_diff_order:
-            diff_order += 1
-            for i in range(len(df_diff.columns)):
+    def df_test_transformation(self, df, scaler):  
+        df_transformed, diff_order, is_stationary, first_elements = StatisticalTests().convert_data_to_stationary(df)
 
-                stationarityTestResult = Analysis().test_stationarity(df_diff[df_diff.columns[i]])
-                is_stationary = stationarityTestResult["isStationary"]
-                print(f'{df_diff.columns[i]} is_stationary -> {is_stationary}')
-                if is_stationary == False:
-                    break
-            # Apply differencing to make data stationary
-            df_diff = df_diff.diff().dropna()
-        if not is_stationary:
-            raise Exception(f"Differenced {max_diff_order} times and still non-stationary")
-        return df_diff, diff_order
-
-    def df_test_transformation(self, df, scaler):
-        
-        # df_diff, diff_order = self.convert_data_to_stationary(df)
-        df_diff = df
         # Scale data using the previously defined scaler
-        df_scaled = pd.DataFrame(scaler.fit_transform(df_diff.copy()), 
-                            columns=df_diff.columns, 
-                            index=df_diff.index)
+        df_transformed = pd.DataFrame(scaler.transform(df_transformed.copy()), 
+                            columns=df_transformed.columns, 
+                            index=df_transformed.index)
         
-        return df_scaled, 0 #diff_order
+        return df_transformed, diff_order, first_elements
     
-    def df_inv_transformation(self, pred, df_original, scaler):
-        forecast = pred.copy()
-        df_diff = pd.DataFrame(scaler.inverse_transform(forecast, copy=True), 
-                        columns=forecast.columns, 
-                        index=forecast.index)
-        # columns = df_original.columns
-        # for col in columns:
-        #     df_diff[str(col)] = df_original[col][df_original.index < pred.index[0]].iloc[-1] + \
-        #         df_diff[str(col)].cumsum()
-        return df_diff
-    
-    def test_var(self, data, lag_order = 5, horizon=1):
-        print("here")
-        df_input = pd.DataFrame.from_records(data, columns=['timestamp', 'oxygen', 'co2'])
+    def inverse_diff(self, s, last_observation):
+        series_undifferenced = s.copy()
+        print(f"LAST OBS")
+        print(last_observation.to_frame().transpose())
+        series_undifferenced = pd.concat([last_observation.to_frame().transpose(), series_undifferenced], axis=0)
+        print(f"CONCATENATED")
+        print(series_undifferenced)
 
-        df_input.index = pd.to_datetime(df_input['timestamp'], unit = 'ms')
-        df_input = df_input.drop(columns=['timestamp'])
-        print(df_input.head())
+        series_undifferenced = series_undifferenced.cumsum()
+
+        return series_undifferenced
+    
+    def df_inv_transformation(self, pred, scaler, diff_order, first_elements):
+        df_transformed = pred.copy()
+        df_transformed = pd.DataFrame(scaler.inverse_transform(df_transformed), 
+                        columns=df_transformed.columns, 
+                        index=df_transformed.index)
+        print(f"Scaling back diff order {diff_order}")
+      
+        for i in range(diff_order):
+            df_transformed = self.inverse_diff(df_transformed, first_elements[-1-i])
+
+        return df_transformed
+    
+    # Estimate the model (VAR) and show summary
+    # Forecast next two weeks
+    def run_forecast(self, df_to_run_forecast_on, steps, maxlags, ic=None):
         # Is this ts unique? (check with pandas)
         scaler = StandardScaler()
+        scaler.fit(df_to_run_forecast_on)
+        # Apply function to our data
+        df_scaled, diff_order, first_elements = self.df_test_transformation(df_to_run_forecast_on, scaler)
 
-        # # Apply function to our data
-        df_scaled, diff_order = self.df_test_transformation(df_input, scaler)
-        cutoff_index = int(df_scaled.shape[0] * 0.9)
-        df_train = df_scaled.iloc[:cutoff_index]
-        df_test = df_scaled.iloc[cutoff_index:]
+        model = VAR(df_scaled)
 
-        model = VAR(df_train)
-        # Get optimal lag order based on the four criteria
-        optimal_lags = model.select_order()
+        if (ic != None):
+            # Get optimal lag order based on the four criteria
+            optimal_lags = model.select_order(maxlags=maxlags, trend="ct")
+            print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
+            # Fit the model after selecting the lag order
+            maxlags = optimal_lags.selected_orders[ic]
+        # print(f"Model fit to lag order {optimal_lags}")
+        results = model.fit(maxlags=maxlags)
+        print(f"After fitting {results.k_ar}")
+        # print(f"MODEL INFO {results.summary()}")
+        total_horizon = steps
+        # Do we need to add one more index here?
+        inferred_freq = pd.infer_freq(df_scaled.index)
+        print(f"Inferred frequency: {inferred_freq}")
+        idx = pd.date_range(start=pd.to_datetime(df_scaled.iloc[-1:].index.item(), unit='ms'), periods=total_horizon + 1, freq=inferred_freq).delete(0) 
+        print(f"predict STEPS {steps}")
+        lag_order = results.k_ar
+        forecast = results.forecast(y=df_scaled.values[-lag_order:], steps=total_horizon)
+        print(forecast)
+        # Convert to dataframe
+        df_forecast = pd.DataFrame(forecast, 
+                        columns=df_scaled.columns, 
+                        index=idx)
+        # # Invert the transformations to bring it back to the original scale
+        ## diff_order
+        print(f"Applied differencing order: {diff_order}")
+        df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements)
 
-        print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
-        # Fit the model after selecting the lag order
-        # lag_order = 62 # optimal_lags.selected_orders['aic']
-        results = model.fit(lag_order)
-
-        # Estimate the model (VAR) and show summary
-        # Forecast next two weeks
-        def run_forecast(df_to_run_forecast_on, df_original):
-            forecast = results.forecast(df_to_run_forecast_on.values[-lag_order:], steps=horizon)
-            # Do we need to add one more index here?
-            idx = pd.date_range(pd.to_datetime(df_to_run_forecast_on.iloc[-1:].index.item(), unit='ms'), periods=horizon + 1, freq='120s').delete(0) 
-            print(idx)
-            # Convert to dataframe
-            df_forecast = pd.DataFrame(forecast, 
-                            columns=df_to_run_forecast_on.columns, 
-                            index=idx)
-            # # Invert the transformations to bring it back to the original scale
-            df_forecast_original = self.df_inv_transformation(df_forecast, df_original, scaler)
-
-            return df_forecast_original
-        
-        run_forecast(df_train, df_input)
-
-        df_forecast_test_data = run_forecast(df_test, df_input)
+        return df_forecast_original, results
     
-        df_forecast_future_data = run_forecast(df_scaled, df_input)
+    def test_var(self, data, data_keys, lag_order = 5, horizon=1):
+        if len(data) == 0:
+            raise APIException('The data for prediction is empty')
+        if len(data) < horizon:
+            raise APIException('Prediction horizon cannot be higher than the length of the analyzed data')
+        if not(data_keys) or "date_key" not in data_keys or "value_keys" not in data_keys or len(data_keys["value_keys"]) == 0:
+            raise APIException('Data fields for the analysis are not specified')
+        try:
+            date_key = data_keys["date_key"]
+            value_keys = data_keys["value_keys"]
+            df_input = pd.DataFrame.from_records(data, columns=[date_key] + value_keys)
 
-        predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]]
-        actual_values_df = df_input[df_input.index.isin(predicted_values.index)] 
-        actual_values = actual_values_df[actual_values_df.columns[0]]
+            print(f"Duplicates: {df_input.duplicated().sum()} {len(df_input[date_key])}")
+            df_input = df_input.drop_duplicates(subset=[date_key], keep='first')
+            df_input.index = pd.DatetimeIndex(pd.to_datetime(df_input[date_key], unit="ms")) #.sort_index(ascending=True, inplace=False)
+            df_input = df_input.drop(columns=[date_key])
+            print(df_input)
+            # ----
+            cutoff_index = int(df_input.shape[0] * TRAIN_TEST_SPLIT_PROPORTION)
+            df_train = df_input.iloc[:cutoff_index]
+            df_test = df_input.iloc[cutoff_index:]
+            print(f"Train data length: {df_train.shape}, test data length: {df_test.shape}")
 
-        evaluation_result = self.forecast_accuracy(predicted_values, actual_values)
-
-        print("Evaluate: ")
-        print(evaluation_result)
         
-        json_result = df_forecast_future_data.to_json()
-        with open('data.json', 'w', encoding='utf-8') as f:
-            json.dump(json_result, f, ensure_ascii=False, indent=4)
-        return json_result
+            df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, 'aic')
+            optimal_order = train_fit_model.k_ar
+            print(f"Optimal order: {optimal_order}")
+            df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order)
+            print("DF FORECAST FUTURE DATA")
+            print(df_forecast_future_data)
+            predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
+
+            print(f"Evaluate:   {df_forecast_test_data.columns[0]} {df_test[df_forecast_test_data.columns[0]].to_numpy()} {predicted_values}")
+            
+            evaluation = {}
+            for column in df_forecast_test_data.columns:
+                predicted_values = df_forecast_test_data[column] #.to_numpy()
+                test_values = df_test[column] #.to_numpy()
+                evaluation[column] = forecast_accuracy(predicted_values, test_values)
+
+            print(f"evaluation {evaluation}")
+
+            test_json_result = df_forecast_test_data.to_json()
+            real_json_result = df_forecast_future_data.to_json()
+
+            print("REAL JSON RESULT: ")
+            print(real_json_result)
+
+            return {
+                "testPrediction": json.loads(test_json_result),\
+                "realPrediction": json.loads(real_json_result),\
+                "evaluation": evaluation
+            }
+    
+        except APIException as e:
+            print(f"VAR prediction error: {e}")
+            raise e
+        except Exception as e:
+            print(f"VAR prediction error: {str(e)}")
+            raise APIException(str(e))

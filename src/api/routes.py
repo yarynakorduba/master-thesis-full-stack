@@ -2,14 +2,14 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import api
-from api.services.arima import Arima
+from api.services.arima import ARIMAPrediction
 from api.services.configurations import Configurations
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User
 from api.services.prediction_history_list import  PredictionHistoryList
 from api.utils import generate_sitemap, APIException
-from api.services.statistical_tests import Analysis
-from api.services.var import Predict
+from api.services.statistical_tests import StatisticalTests
+from api.services.var import VARPrediction
 from flask_cors import CORS
 import json
  
@@ -22,62 +22,65 @@ CORS(api, origins=['http://localhost:3000'], \
 # ----- Statistical Test Routes -----
 @api.route('/white-noise', methods=['POST'])
 def test_white_noise():
-    requestBody = request.get_json()
-    data_serie = requestBody["data"]
+    request_body = request.get_json()
+    data_serie = request_body["data"]
 
-    result = Analysis().test_white_noise(data_serie)
+    result = StatisticalTests().test_white_noise(data_serie)
 
     return json.dumps(result), 200
 
 
 @api.route('/stationarity-test', methods=['POST'])
 def test_stationarity():
-    print("--------------HERE!!!")
-    requestBody = request.get_json()
-    data_serie = requestBody["data"]
-    result = Analysis().test_stationarity_kpss_pmdarima(data_serie)
+    request_body = request.get_json()
+    data_serie = request_body["data"]
+    result = StatisticalTests().test_stationarity_kpss_adf(data_serie)
 
     return json.dumps(result), 200
 
 @api.route('/granger-causality-test', methods=['POST'])
-def test_grander_causality():
-    requestBody = request.get_json()
-    data_serie = requestBody["data"]
-    data_keys = requestBody["dataKeys"]
+def test_granger_causality():
+    request_body = request.get_json()
+    data_serie = request_body["data"]
+    data_keys = request_body["dataKeys"]
     print(data_keys)
-    result = Analysis().test_granger_causality(data_serie, data_keys)
+    result = StatisticalTests().multitest_granger_causality(data_serie, data_keys)
     return result, 200
 
 
-@api.route('/test-var', methods=['POST'])
+@api.route('/var-prediction', methods=['POST'])
 def test_var():
-    requestBody = request.get_json()
-    data_serie = requestBody["data"]
-    lag_order = requestBody["lagOrder"]
-    horizon = requestBody["horizon"]
+    request_body = request.get_json()
+    data_serie = request_body["data"]
+    lag_order = request_body["parameters"]["lagOrder"]
+    horizon = request_body["parameters"]["horizon"]
+    data_keys = request_body["data_keys"]
 
-    result = Predict().test_var(data_serie, lag_order, horizon)
+    result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon)
     return result, 200
 
-@api.route('/get-arima-prediction', methods=['POST'])
+@api.route('/arima-prediction', methods=['POST'])
 def get_arima_prediction():
     try:
-        requestBody = request.get_json()
-        data_serie = requestBody["data"]
-        # lag_order = requestBody["parameters"]["lag_order"]
-        horizon = requestBody["parameters"]["horizon"]
-        is_seasonal = requestBody["parameters"]["isSeasonal"]
+        request_body = request.get_json()
+        data_serie = request_body["data"]
+        # lag_order = request_body["parameters"]["lag_order"]
+        horizon = request_body["parameters"]["horizon"]
+        is_seasonal = request_body["parameters"]["isSeasonal"]
 
-        min_p = requestBody["parameters"]["minP"]
-        max_p = requestBody["parameters"]["maxP"]
-        min_q = requestBody["parameters"]["minQ"]
-        max_q = requestBody["parameters"]["maxQ"]
-        periods_in_season = requestBody["parameters"]["periodsInSeason"]
-        result = Arima().arima_predict(data_serie, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
+        min_p = request_body["parameters"]["minP"]
+        max_p = request_body["parameters"]["maxP"]
+        min_q = request_body["parameters"]["minQ"]
+        max_q = request_body["parameters"]["maxQ"]
+        periods_in_season = request_body["parameters"]["periodsInSeason"]
+        data_keys = request_body["data_keys"]
+
+        result = ARIMAPrediction().arima_predict(data_serie, data_keys, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
         return result, 200
     except APIException as e:
         raise e
     except Exception as e:
+        print(f"APIException: {e}")
         raise APIException('Failed to make a prediction')
 
 # ----- Configuration Routes -----
@@ -108,8 +111,10 @@ def create_configuration():
         })
 
         return result, 200
-    except Exception as e: 
-        raise APIException("Failed to create configuration", 400)
+    except APIException as e:
+        raise e
+    except Exception as e:
+        raise APIException('Failed to create a configuration')
 
 @api.route('/configurations', methods=['DELETE'])
 def delete_configuration():

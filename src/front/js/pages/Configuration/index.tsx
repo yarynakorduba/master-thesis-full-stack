@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Grid, Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
 import { Content, Sidebar, HistoryDrawer } from './styles';
 import SparkLineChartsBlock from '../../sharedComponents/charts/SparkLineChartsBlock';
-// import json from '../../../../api/data/test_data/ArimaV2Dataset.json';
-import { TDataProperty } from 'front/js/types';
 import Analysis from './Analysis';
 import {
   useConfigData,
@@ -14,12 +12,15 @@ import {
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   usePrediction,
+  usePredictionMode,
   useSelectedDataBoundaries,
+  useSelectedProps,
 } from '../../store/currentConfiguration/selectors';
 import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
 import { isConfigurationDataIncomplete } from './utils';
 import { ERoutePaths } from '../../types/router';
+import { EPredictionMode } from './Analysis/types';
 
 const Configuration = () => {
   const { id } = useParams();
@@ -34,6 +35,7 @@ const Configuration = () => {
     valueProperties,
     configurationError,
   } = useConfigData();
+  const [, setDisplayedPredictionMode] = usePredictionMode();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);
@@ -45,7 +47,7 @@ const Configuration = () => {
     }
   }, [configurationError, navigate]);
 
-  const [selectedProp, setSelectedProp] = useState<TDataProperty | undefined>();
+  const [selectedProp, setSelectedProp] = useSelectedProps();
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
 
@@ -56,11 +58,9 @@ const Configuration = () => {
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const dataLabels =
     (selectedProp?.value &&
-      predictionResult && [
+      predictionResult?.lastTrainPoint?.dateTime && [
         {
-          valueX: new Date(
-            predictionResult?.lastTrainPoint?.dateTime,
-          ).getTime(),
+          valueX: new Date(predictionResult.lastTrainPoint.dateTime).getTime(),
           label: 'Train data threshold',
         },
       ]) ||
@@ -78,6 +78,19 @@ const Configuration = () => {
   return (
     <>
       <Content isOpen={isHistoryDrawerOpen}>
+        <Typography
+          variant="h1"
+          fontWeight={400}
+          sx={{
+            fontSize: '2rem',
+            mb: 2.5,
+            display: 'flex',
+            gap: 1,
+            alignItems: 'end',
+          }}
+        >
+          {configName}
+        </Typography>
         <PredictionInfoText
           prediction={
             isDataIncomplete || isConfigurationLoading
@@ -114,9 +127,6 @@ const Configuration = () => {
               <Analysis
                 predictionResult={predictionResult}
                 isPredictionLoading={isPredictionLoading}
-                handleFetchPrediction={(params) =>
-                  handleFetchPrediction(params, timeProperty)
-                }
               />
             </Grid>
             <Grid item md={6}></Grid>
@@ -130,7 +140,7 @@ const Configuration = () => {
         anchor="right"
         variant="persistent"
       >
-        <Sidebar>
+        <Sidebar isOpen={isHistoryDrawerOpen}>
           <PredictionHistory />
         </Sidebar>
       </HistoryDrawer>

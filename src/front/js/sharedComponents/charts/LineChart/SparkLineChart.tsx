@@ -10,6 +10,7 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, SparkLineChartHeading } from './styles';
 import { TLineChartData } from 'front/js/types';
 import { TPadding } from '../../../types/styles';
+import { TFormatXScale, TFormatYScale } from '../types';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -31,17 +32,13 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TAxisFormatter<Input = string | number, Output = string> = (
-  value: Input,
-) => Output;
-
 type TProps = {
   readonly data: TLineChartData;
-  readonly heading: string;
+  readonly heading?: string;
   readonly width?: number;
   readonly height?: number;
-  readonly formatXScale?: TAxisFormatter;
-  readonly formatYScale?: TAxisFormatter;
+  readonly formatXScale?: TFormatXScale;
+  readonly formatYScale?: TFormatYScale;
   readonly padding?: TPadding;
   readonly variant?: ChartVariant;
   readonly onClick?: () => void;
@@ -51,7 +48,7 @@ type TProps = {
 const LineChart = ({
   width = 900,
   height = 200,
-  heading,
+  heading = '',
   data,
   formatYScale,
   numTicks = 2,
@@ -132,7 +129,7 @@ const LineChart = ({
 export default function ResponsiveLineChart({
   width = 900,
   height = 200,
-  heading,
+  heading = '',
   variant = ChartVariant.vertical,
   data,
   formatYScale,
@@ -178,7 +175,7 @@ export default function ResponsiveLineChart({
 
   return (
     <ParentSize
-      parentSizeStyles={{ maxHeight: height, maxWidth: width, height }}
+      parentSizeStyles={{ maxHeight: height, maxWidth: width, width, height }}
       onClick={onClick}
     >
       {renderResponsiveChart}

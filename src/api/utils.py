@@ -1,4 +1,5 @@
-from flask import jsonify, url_for
+from flask import url_for
+import numpy as np
 
 class APIException(Exception):
     status_code = 400
@@ -39,3 +40,17 @@ def generate_sitemap(app):
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
         <p>Remember to specify a real endpoint path like: </p>
         <ul style="text-align: left;">"""+links_html+"</ul></div>"
+
+def stringify_nan(value):
+    if (np.isnan(value)):
+        return ''
+    else:
+        return value
+    
+def forecast_accuracy(forecast, actual):
+    mae = np.mean(np.abs(forecast - actual))    # MAE
+    rmse = np.mean((forecast - actual)**2)**.5  # RMSE
+
+    return({ 'mae': stringify_nan(mae), 'rmse': stringify_nan(rmse) })
+
+    

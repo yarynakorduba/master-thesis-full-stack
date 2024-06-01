@@ -3,7 +3,15 @@ import React from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import Box from '@mui/material/Box';
-import { identity } from 'lodash';
+import { identity, noop } from 'lodash';
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
 
 import StationarityTest from './StationarityTest';
 import CausalityTest from './CausalityTest';
@@ -20,19 +28,16 @@ import {
   useStationarityTest,
   useWhiteNoiseTest,
 } from '../../../store/currentConfiguration/selectors';
+import { FormContainer } from '../../CreateConfiguration/DatasetForm/styles';
 
 type TProps = {
   readonly predictionResult?: TARIMAResult | TVARResult; // tvarresult
   readonly isPredictionLoading: boolean;
-  readonly handleFetchPrediction;
 };
 
-const Analysis = ({
-  predictionResult,
-  isPredictionLoading,
-  handleFetchPrediction,
-}: TProps) => {
-  const [predictionMode, setPredictionMode] = usePredictionMode();
+const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
+  const [displayedPredictionMode, setDisplayedPredictionMode] =
+    usePredictionMode();
   const { activeStep, handleSelectStep } = useStepper();
 
   const {
@@ -55,6 +60,9 @@ const Analysis = ({
     handleFetchGrangerDataCausalityTest,
     isCausalityTestLoading,
   ] = useCausalityTest();
+
+  console.log('predictionResult -- > ', predictionResult);
+  const formMethods = useForm({ defaultValues: { valueProperties: [] } });
 
   if (isConfigurationLoading) return null;
 
@@ -85,7 +93,7 @@ const Analysis = ({
         handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
       />
     ),
-    predictionMode === EPredictionMode.VAR
+    displayedPredictionMode === EPredictionMode.VAR
       ? (key: number) => (
           <CausalityTest
             isVisible
@@ -101,14 +109,13 @@ const Analysis = ({
       : undefined,
 
     (key: number) =>
-      predictionMode === EPredictionMode.VAR ? (
+      displayedPredictionMode === EPredictionMode.VAR ? (
         <Prediction
           index={key}
           isVisible
           handleSelectStep={handleSelectStep}
           varResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          handleFetchVAR={handleFetchPrediction}
         />
       ) : (
         <ARIMAPrediction
@@ -117,23 +124,31 @@ const Analysis = ({
           handleSelectStep={handleSelectStep}
           arimaResult={predictionResult}
           isVARLoading={isPredictionLoading}
-          handlePredict={handleFetchPrediction}
         />
       ),
   ].filter(identity);
 
   return (
     <Box>
-      <PredictionModelSelection
-        predictionMode={predictionMode}
-        setPredictionMode={setPredictionMode}
-      />
+      <FormProvider {...formMethods}>
+        <FormContainer onSubmit={noop}>
+          <PredictionModelSelection
+            predictionMode={displayedPredictionMode}
+            setPredictionMode={
+              predictionResult?.predictionMode
+                ? noop
+                : setDisplayedPredictionMode
+            }
+            isDisabled={predictionResult?.predictionMode}
+          />
 
-      <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
-        {steps.map((renderStep, index: number) => (
-          <Step key={index}>{renderStep!(index)}</Step>
-        ))}
-      </Stepper>
+          <Stepper activeStep={activeStep} orientation="vertical" nonLinear>
+            {steps.map((renderStep, index: number) => (
+              <Step key={index}>{renderStep!(index)}</Step>
+            ))}
+          </Stepper>
+        </FormContainer>
+      </FormProvider>
     </Box>
   );
 };

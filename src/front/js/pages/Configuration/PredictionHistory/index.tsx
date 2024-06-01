@@ -10,19 +10,17 @@ import {
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
 import HistoryCard from './HistoryCard';
-import { scaleLinear } from '@visx/scale';
-import { getExtent } from '../../../utils';
+import { getLinearValueScale } from '../../../utils';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
   const [displayedPredictionId, setDisplayedPredictionId] =
     useDisplayedPredictionId();
 
-  const mapeExtent = getExtent(predictionHistory, 'evaluation.mape');
-  const mapeLinearScale = scaleLinear({
-    domain: mapeExtent,
-    range: [red[50], red[200]],
-  });
+  const errorColorScale = getLinearValueScale(predictionHistory, [
+    red[50],
+    red[200],
+  ]);
 
   if (isEmpty(predictionHistory)) return null;
   return (
@@ -47,7 +45,7 @@ const PredictionHistory = () => {
                 isLatest={index === 0}
                 isSelected={displayedPredictionId === historyEntry.id}
                 onClick={(entry) => setDisplayedPredictionId(entry.id)}
-                mapeColor={mapeLinearScale(historyEntry.evaluation.mape)}
+                errorColorScale={errorColorScale}
               />
             </Grid>
           );

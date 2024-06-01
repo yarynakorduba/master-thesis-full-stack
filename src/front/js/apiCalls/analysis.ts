@@ -40,11 +40,12 @@ export const fetchGrangerDataCausalityTest = async (data, dataKeys) => {
 export const fetchVAR = async (
   data,
   parameters: { lagOrder: number; horizon: number },
+  dataKeys: { date_key: string; value_keys: string[] },
 ) => {
   return handleFetch(
-    fetch(`${process.env.BACKEND_URL}/api/test-var`, {
+    fetch(`${process.env.BACKEND_URL}/api/var-prediction`, {
       method: 'POST',
-      body: JSON.stringify({ data, ...parameters }),
+      body: JSON.stringify({ data, parameters, data_keys: dataKeys }),
       headers: {
         'Content-type': 'application/json',
       },
@@ -52,11 +53,15 @@ export const fetchVAR = async (
   );
 };
 
-export const fetchARIMA = async (data, parameters: TARIMAUserParams) => {
+export const fetchARIMA = async (
+  data,
+  parameters: TARIMAUserParams,
+  dataKeys,
+) => {
   return handleFetch(
-    fetch(`${process.env.BACKEND_URL}/api/get-arima-prediction`, {
+    fetch(`${process.env.BACKEND_URL}/api/arima-prediction`, {
       method: 'POST',
-      body: JSON.stringify({ data, parameters }),
+      body: JSON.stringify({ data, parameters, data_keys: dataKeys }),
       headers: {
         'Content-type': 'application/json',
       },

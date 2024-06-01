@@ -13,9 +13,9 @@ export const DEFAULT_HORIZON = 1;
 export const DEFAULT_CONFIGURATION_STATE = {
   isConfigurationLoading: false,
   data: [],
-  timeseriesProp: { value: 'date', label: 'date' },
-  selectedProps: [{ value: 'value', label: 'passengers' }],
+  timeProperty: undefined,
   selectedDataBoundaries: undefined,
+  selectedProp: undefined,
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
@@ -29,8 +29,8 @@ export const DEFAULT_CONFIGURATION_STATE = {
   displayedPredictionId: undefined as TDisplayedPrediction,
 
   isPredictionLoading: false,
-  latestPrediction: {
-    predictionMode: EPredictionMode.ARIMA,
+  displayedPredictionMode: EPredictionMode.ARIMA,
+  draft: {
     testPrediction: undefined,
     realPrediction: undefined,
     horizon: DEFAULT_HORIZON,

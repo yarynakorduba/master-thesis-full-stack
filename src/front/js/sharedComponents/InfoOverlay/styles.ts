@@ -3,6 +3,8 @@ import { styled } from '@mui/material/styles';
 
 export const OverlayTrigger = styled(Typography)`
   cursor: pointer;
+  font-size: inherit;
+  font-weight: inherit;
   text-decoration: underline;
   text-decoration-style: dashed;
   text-decoration-thickness: 0.5px;

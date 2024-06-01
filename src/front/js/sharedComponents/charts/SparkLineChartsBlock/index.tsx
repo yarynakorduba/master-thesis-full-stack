@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 import { useTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
@@ -19,7 +19,7 @@ import { getSelectedDataByBoundaries } from '../../../utils';
 import {
   PREDICTION_TIMESTAMP_PROP,
   PREDICTION_VALUE_PROP,
-  mapARIMAPrediction,
+  convertPredictionData,
 } from '../../../utils/prediction';
 import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
 import { TThresholdData } from '../types';
@@ -39,7 +39,7 @@ type TProps = {
   readonly predictionData?: {
     readonly testPrediction: TPredictedPoints;
     readonly realPrediction: TPredictedPoints;
-  };
+  } & any;
   readonly dataLabels?: TDataLabel[];
   readonly defaultIsTrainingDataSelectionOn?: boolean;
   readonly isConfigurationLoading?: boolean;
@@ -56,10 +56,12 @@ const SparkLineChartsBlock = ({
   selectedProp,
   setSelectedProp,
   defaultIsTrainingDataSelectionOn = false,
-  configName,
 }: TProps) => {
   const theme = useTheme();
-  const mappedARIMAPrediction = mapARIMAPrediction(predictionData);
+  const mappedARIMAPrediction = convertPredictionData(
+    predictionData,
+    selectedProp?.value,
+  );
 
   const onSelectedAreaChange = useCallback(
     (domain) => {
@@ -84,28 +86,28 @@ const SparkLineChartsBlock = ({
 
   const chartData: TLineChartData = useMemo(() => {
     if (!selectedProp) return [];
+    const mainChartData = constructLineChartDataFromTs(
+      selectedProp?.value,
+      timeProperty?.value,
+      timeseriesData,
+      theme.palette.charts.chartRealData,
+      selectedProp?.label,
+    );
+
     const testPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.[0],
-      theme.palette.charts.chartPink,
-      `${selectedProp?.label} test data prediction`,
+      mappedARIMAPrediction?.testPrediction,
+      theme.palette.charts.chartTestPrediction,
+      `test data prediction (${predictionData?.predictionMode || ''})`,
     );
 
     const realPredictedData = constructLineChartDataFromTs(
       PREDICTION_VALUE_PROP,
       PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.[1],
-      theme.palette.charts.chartFuchsia,
-      `${selectedProp?.label} real data prediction`,
-    );
-
-    const mainChartData = constructLineChartDataFromTs(
-      selectedProp?.value,
-      timeProperty?.value,
-      timeseriesData,
-      theme.palette.charts.chartBlue,
-      selectedProp?.label,
+      mappedARIMAPrediction?.realPrediction,
+      theme.palette.charts.chartRealPrediction,
+      `future data prediction (${predictionData?.predictionMode || ''})`,
     );
 
     return filter(
@@ -114,11 +116,12 @@ const SparkLineChartsBlock = ({
     ) as TLineChartSerie[];
   }, [
     selectedProp,
-    timeProperty,
     mappedARIMAPrediction,
-    theme.palette.charts.chartPink,
-    theme.palette.charts.chartFuchsia,
-    theme.palette.charts.chartBlue,
+    theme.palette.charts.chartTestPrediction,
+    theme.palette.charts.chartRealPrediction,
+    theme.palette.charts.chartRealData,
+    predictionData?.predictionMode,
+    timeProperty?.value,
     timeseriesData,
   ]);
 
@@ -135,18 +138,18 @@ const SparkLineChartsBlock = ({
   const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
     ? [
         {
-          id: 'passengers-area-19.43174',
-          label: 'passengers',
+          id: `${selectedProp?.value}-19.43174`,
+          label: selectedProp.label,
           belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
           aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
           data: sortBy(
             map(testPredictedDataCounterpart, (a) => {
               return {
                 valueX: a[timeProperty.value] as number,
-                valueY0: a[selectedProp.value] as number,
-                valueY1: predictionData?.testPrediction[
-                  a[timeProperty.value]
-                ] as number,
+                valueY0: a[selectedProp?.value] as number,
+                valueY1: predictionData?.testPrediction?.[
+                  selectedProp?.value
+                ]?.[a[timeProperty.value]] as number,
               };
             }),
             'valueX',
@@ -190,9 +193,9 @@ const SparkLineChartsBlock = ({
 
   return (
     <LineChartContainer>
-      <Box width="100%" minHeight="300px">
+      <Box width="calc(100% - 300px - 16px)" minHeight="300px">
         <LineChart
-          heading={configName}
+          heading={selectedProp?.label}
           data={chartData}
           thresholdData={thresholdData}
           dataLabels={dataLabels}
@@ -201,9 +204,9 @@ const SparkLineChartsBlock = ({
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={300}
-          padding={{ top: 16, bottom: 30, left: 40, right: 10 }}
+          padding={{ top: 16, bottom: 30, left: 48, right: 10 }}
           onSelectArea={onSelectedAreaChange}
-          isResponsive={true}
+          isResponsive
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}
           defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
@@ -216,7 +219,7 @@ const SparkLineChartsBlock = ({
               prop.value,
               timeProperty!.value,
               timeseriesData,
-              theme.palette.charts.chartBlue,
+              theme.palette.charts.chartRealData,
               prop.label,
             );
 
@@ -228,7 +231,8 @@ const SparkLineChartsBlock = ({
                 height={90}
                 width={300}
                 onClick={handleSparklineClick(prop)}
-                padding={{ top: 8, bottom: 8, left: 24, right: 0 }}
+                padding={{ top: 24, bottom: 18, left: 36, right: 0 }}
+                formatYScale={formatNumber}
               />
             );
           })}

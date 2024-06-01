@@ -4,14 +4,6 @@ import MuiDrawer from '@mui/material/Drawer';
 const SIDEBAR_WIDTH_SMALL_SCREEN = '400px';
 const SIDEBAR_WIDTH_BIG_SCREEN = '20vw';
 
-export const Sidebar = styled('div')`
-  grid-column: 1;
-  grid-row: 1;
-  border-right: 1px solid ${({ theme }) => theme.palette.grey[800]};
-  padding: 0.75rem;
-  height: 100vh;
-`;
-
 export const Content = styled('div')<{ readonly isOpen?: boolean }>`
   position: relative;
   grid-column: 2;
@@ -35,12 +27,19 @@ export const Content = styled('div')<{ readonly isOpen?: boolean }>`
 `;
 
 export const HistoryDrawer = styled(MuiDrawer)`
+  width: 0;
+  overflow-x: hidden;
+
   ${({ open }) =>
     open &&
-    `
-    & .MuiDrawer-paper {
+    `& .MuiDrawer-paper {
       height: 100vh;
       width: ${SIDEBAR_WIDTH_SMALL_SCREEN};
+      overflow-x: hidden;
+      
+      &>div {
+        border-right: none;
+      }
     }
 
     @media (width >= 2000px) {
@@ -49,4 +48,20 @@ export const HistoryDrawer = styled(MuiDrawer)`
       }
     }
 `}
+`;
+
+export const Sidebar = styled('div')<{ readonly isOpen?: boolean }>`
+  grid-column: 1;
+  grid-row: 1;
+  border-right: 1px solid ${({ theme }) => theme.palette.grey[800]};
+  padding: 0.75rem;
+  height: 100vh;
+  width: 0;
+  ${({ isOpen }) =>
+    isOpen &&
+    `width: calc(${SIDEBAR_WIDTH_SMALL_SCREEN} - 1px); // 1.5rem is sum of the paddings
+
+    @media (width >= 2000px) {
+      width: calc(${SIDEBAR_WIDTH_BIG_SCREEN} - 1px); // 1.5rem is sum of the paddings
+    }`}
 `;

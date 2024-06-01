@@ -559,7 +559,9 @@ export default function ResponsiveLineChart({
 
   if (!isResponsive) return renderChart(width, 400);
   return (
-    <ParentSize parentSizeStyles={{ width: 'auto', minHeight: '300px' }}>
+    <ParentSize
+      parentSizeStyles={{ width: 'auto', maxWidth: '100%', minHeight: 300 }}
+    >
       {renderResponsiveChart}
     </ParentSize>
   );

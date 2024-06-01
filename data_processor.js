@@ -27,17 +27,17 @@
 //   },
 // );
 
-const json = require('./src/api/data/globalEarthTemperatures.json');
+const json = require('./src/api/data/gaussianDataset.json');
 const fs = require('node:fs');
-const res = json.map((datum) => {
+const res = json.map((datum, index) => {
   return {
-    date: datum.dt,
-    value: datum.LandAverageTemperature,
+    date: new Date('2013-01-01').getTime() + index * 1000,
+    value: datum,
   };
 });
 
 fs.writeFile(
-  './src/api/data/globalEarthTemperaturesPreparedForApp.json',
+  './src/api/data/gaussianDatasetWithDate.json',
   JSON.stringify(res),
   (err) => {
     if (err) {

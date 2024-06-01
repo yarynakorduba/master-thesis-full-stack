@@ -21,10 +21,12 @@ import { isEmpty } from 'lodash';
 type TProps = {
   readonly predictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
+  readonly isDisabled: boolean;
 };
 const PredictionModelSelection = ({
   predictionMode,
   setPredictionMode,
+  isDisabled,
 }: TProps) => {
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
   const predictionHistory = useGetPredictionHistory();
@@ -56,6 +58,7 @@ const PredictionModelSelection = ({
         aria-label="text alignment"
         size="small"
         sx={{ marginBottom: 1 }}
+        disabled={isDisabled}
       >
         <ToggleButton
           value={EPredictionMode.ARIMA}
@@ -83,6 +86,7 @@ const PredictionModelSelection = ({
                   </Link>{' '}
                   (AutoRegressive Integrated Moving Average) model is a widely
                   used statistical method for analyzing and forecasting time
+                  series data. It is primarily designed to predict linear time
                   series data. It can be broken down into 3 components:
                 </Typography>
                 <List
@@ -127,9 +131,11 @@ const PredictionModelSelection = ({
                 </Link>{' '}
                 (Vector AutoRegression) model is a statistical model used to
                 analyze the dynamic relationships among multiple time series
-                variables. In a VAR model, each variable is modeled as a linear
-                function of past values of itself and past values of all the
-                other variables in the system.
+                variables. This model is useful when the variables in the time
+                series influence each other. In a VAR model, each variable is
+                modeled as a linear function of past values of itself and past
+                values of all the other variables in the system.
+                {/* VAR is bidirectional. */}
               </div>
             )}
           </InfoOverlay.Popover>
