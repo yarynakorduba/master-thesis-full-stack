@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import json
-from api.services.statistical_tests import Analysis
+from api.services.statistical_tests import StatisticalTests
 import pmdarima as pm
 
 from api.utils import APIException, forecast_accuracy
@@ -11,35 +11,6 @@ TRAIN_TEST_SPLIT_PROPORTION = 0.9
 class ARIMAPrediction:
     def __init__(self):
         self = self
-
-    def convert_data_to_stationary(df):
-        # how to deal with non linear non stationarity?
-        # put an upper limit on the order
-        df_diff = df.copy()
-        diff_order = 0
-        is_stationary = False
-        diffs = [df_diff]
-        while is_stationary == False:
-            for i in range(len(df_diff.columns)):
-
-                stationarityTestResult = Analysis.test_stationarity(df_diff[df_diff.columns[i]])
-                is_stationary = stationarityTestResult["isStationary"]
-                print('Column {0} stationarity: {1}'.format(df_diff.columns[i], is_stationary))
-                if is_stationary == False:
-                    break
-            if is_stationary == False:
-                print("is_stationary -> {0}, differenced {1} times".format(is_stationary, diff_order))
-                diff_order += 1
-                # Apply differencing to make data stationary
-                df_diff = df_diff.copy().diff().dropna()
-                diffs.append(df_diff)
-            print(f"Diff order: {diff_order}")
-            df_diff.plot()
-        return df_diff, diff_order, diffs
-
-    def df_test_transformation(self, df):
-        df_diff, diff_order = self.convert_data_to_stationary(df)
-        return df_diff, diff_order
     
     def arima_predict(self, data, data_keys, horizon=40, is_seasonal=False, min_p=0, max_p=0, min_q=0, max_q=0, periods_in_season=1):
         print("I am here")

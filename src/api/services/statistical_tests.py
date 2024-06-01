@@ -7,14 +7,14 @@ from itertools import combinations
 
 SIGNIFICANT_P = 0.05
 
-class Analysis():
+class StatisticalTests():
     def __init__(self):
         self = self
 
     def test_white_noise(self, data):
         # If lags is None: The test will include autocorrelation up to a default maximum lag.
         # The default maximum lag is often determined based on the size of the data.
-        result = diag.acorr_ljungbox(data, boxpierce=True, model_df=0, period=None, return_df=None)
+        result = diag.acorr_ljungbox(data, model_df=0, period=None, return_df=None)
         return { "isWhiteNoise": bool(result.iloc[-1, 1] >= SIGNIFICANT_P) }
     
     # H0: The time series has a unit root (is non-stationary)
@@ -29,15 +29,15 @@ class Analysis():
 
     def test_stationarity_kpss_adf(self, data):
         # Estimate the number of differences using an ADF test:
-        kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=5)  # -> 0
+        kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
         print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
 
-        adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=5)  # -> 0
+        adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
         print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
 
         return {
-                 "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
-                 "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
+            "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
+            "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
             }
 
 
@@ -87,5 +87,34 @@ class Analysis():
             print(f'Result: {result}')
             results.append(result)
         return results
+    
+    def convert_data_to_stationary(self, df):
+        df_diff = df.copy()
+        first_elements = []
+
+        def check_all_stationarities(df):
+            selected_ndiffs = 0
+            is_stationary = False
+            for i in range(len(df.columns)):
+                stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]])
+                is_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
+                selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
+                print(f'{df.columns[i]} is_stationary -> {is_stationary} {selected_ndiffs}')
+            return is_stationary, selected_ndiffs
+        
+        is_stationary, selected_ndiffs = check_all_stationarities(df_diff)
+        print(f"Selected ndiffs {selected_ndiffs}")
+        # Apply differencing to make data stationary
+        for i in range(selected_ndiffs):
+            first_elements.append(df_diff.iloc[-1-i])
+            df_diff = df_diff.diff().dropna()
+
+        is_stationary = check_all_stationarities(df_diff)
+
+        if not is_stationary:
+            warning = f"Differenced {selected_ndiffs} times and still non-stationary"
+            print(f"Warn: {warning}")
+
+        return df_diff, selected_ndiffs, is_stationary, first_elements
 
 

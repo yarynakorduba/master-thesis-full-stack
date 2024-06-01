@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 import json
 from sklearn.preprocessing import StandardScaler
-from api.services.statistical_tests import Analysis
+from api.services.statistical_tests import StatisticalTests
 
 from api.utils import APIException, forecast_accuracy
 
@@ -16,40 +16,8 @@ class VARPrediction:
     def __init__(self):
         self = self
     
-    def convert_data_to_stationary(self, df, max_diff_order=5):
-        # how to deal with non linear non stationarity?
-        # put an upper limit on the order
-        df_diff = df.copy()
-        diff_order = 0
-        is_stationary = False
-        first_elements = []
-        while is_stationary == False and diff_order <= max_diff_order:
-            selected_ndiffs = 0
-            for i in range(len(df_diff.columns)):
-                stationarityTestResult = Analysis().test_stationarity_kpss_adf(df_diff[df_diff.columns[i]])
-                is_stationary = stationarityTestResult["kpss"]["isStationary"] and stationarityTestResult["adf"]["isStationary"]
-                selected_ndiffs = np.max([stationarityTestResult["kpss"]["ndiffs"], stationarityTestResult["adf"]["ndiffs"]])
-                print(f'{df_diff.columns[i]} is_stationary -> {is_stationary} {selected_ndiffs}')
-                if is_stationary == False:
-                    break
-            print(f"Selected ndiffs {selected_ndiffs}")
-            # Apply differencing to make data stationary
-       
-            for i in range(selected_ndiffs):
-                first_elements.append(df_diff.iloc[-1-i])
-                df_diff = df_diff.diff().dropna()
-
-            diff_order += selected_ndiffs
-        if not is_stationary:
-            raise Exception(f"Differenced {max_diff_order} times and still non-stationary")
-        print("AAAAAA11111")
-        return df_diff, diff_order, first_elements
-
     def df_test_transformation(self, df, scaler):  
-        df_transformed = df.copy()  
-        print("BBBBBBBBBBBB")
-        print(df_transformed.head())    
-        df_transformed, diff_order, first_elements = self.convert_data_to_stationary(df_transformed)
+        df_transformed, diff_order, is_stationary, first_elements = StatisticalTests().convert_data_to_stationary(df)
 
         # Scale data using the previously defined scaler
         df_transformed = pd.DataFrame(scaler.transform(df_transformed.copy()), 
@@ -70,7 +38,7 @@ class VARPrediction:
 
         return series_undifferenced
     
-    def df_inv_transformation(self, pred, df_original, scaler, diff_order, first_elements):
+    def df_inv_transformation(self, pred, scaler, diff_order, first_elements):
         df_transformed = pred.copy()
         df_transformed = pd.DataFrame(scaler.inverse_transform(df_transformed), 
                         columns=df_transformed.columns, 
@@ -119,7 +87,7 @@ class VARPrediction:
         # # Invert the transformations to bring it back to the original scale
         ## diff_order
         print(f"Applied differencing order: {diff_order}")
-        df_forecast_original = self.df_inv_transformation(df_forecast, df_to_run_forecast_on, scaler, diff_order, first_elements)
+        df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements)
 
         return df_forecast_original, results
     
@@ -131,7 +99,6 @@ class VARPrediction:
         if not(data_keys) or "date_key" not in data_keys or "value_keys" not in data_keys or len(data_keys["value_keys"]) == 0:
             raise APIException('Data fields for the analysis are not specified')
         try:
-            # data_keys["value_keys"] = ["rain(mm)", "mosquito_Indicator"]
             date_key = data_keys["date_key"]
             value_keys = data_keys["value_keys"]
             df_input = pd.DataFrame.from_records(data, columns=[date_key] + value_keys)

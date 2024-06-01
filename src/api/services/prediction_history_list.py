@@ -19,6 +19,7 @@ class PredictionHistoryList:
       real_prediction=data["real_prediction"],
       last_train_point=data["last_train_point"],
       evaluation=data["evaluation"],
+      input_data=data["input_data"]
     )
 
     db.session.add(entry)

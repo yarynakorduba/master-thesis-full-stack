@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  Box,
-  CardActionArea,
-  CardContent,
-  Chip,
-  Grid,
-  Stack,
-  useTheme,
-} from '@mui/material';
-import { map, noop, reduce } from 'lodash';
+import { CardActionArea, CardContent, Chip, Grid, Stack } from '@mui/material';
+import { reduce } from 'lodash';
 import * as d3Scale from 'd3-scale';
 
 import { THistoryEntry } from '../Analysis/types';

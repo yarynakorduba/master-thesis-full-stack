@@ -73,6 +73,7 @@ import {
   fetchPredictionHistoryByConfigId,
 } from '../../apiCalls/configuration';
 import { DEFAULT_CONFIGURATION_STATE } from './currentConfigurationSlice';
+import { processConfiguration } from './utils';
 
 export default (set, get) => ({
   fetchConfiguration: async (id: string) => {
@@ -84,21 +85,10 @@ export default (set, get) => ({
     );
     const response = await fetchConfig(id);
     if (response.isSuccess) {
-      const config = mapKeys(response.data || {}, (v, key) => camelCase(key));
-
-      const mappedJSON = flow(
-        (data) =>
-          map(data, (value) => ({
-            ...value,
-            [config.timeProperty.value]: new Date(
-              value[config.timeProperty.value],
-            ).getTime(),
-          })),
-        (data) => sortBy(data, (d) => d[config.timeProperty.value]),
-      )(config.data);
+      const config = processConfiguration(response.data);
 
       set(
-        () => ({ ...config, data: mappedJSON, isConfigurationLoading: false }),
+        () => ({ ...config, isConfigurationLoading: false }),
         SHOULD_CLEAR_STORE,
         FETCH_CONFIGURATION_SUCCESS,
       );
@@ -272,13 +262,7 @@ export default (set, get) => ({
 
     console.log('selectedProp ------ > ', properties);
 
-    if (properties?.[0] && properties?.[1]) {
-      // const dataForAnalysis = map(selectedData, (datum) => [
-      //   datum[properties[0]],
-      //   datum[properties[1]],
-      // ]);
-      // console.log('dataForAnalysis - > ', dataForAnalysis);
-
+    if (properties?.length) {
       if (selectedData) {
         set(
           () => ({ causalityTest: undefined, isCausalityTestLoading: true }),
@@ -345,7 +329,7 @@ export default (set, get) => ({
     }
   },
 
-  fetchARIMAPrediction: async (parameters, dataBoundaries, selectedData) => {
+  fetchARIMAPrediction: async (inputData, dataBoundaries, selectedData) => {
     set(
       (state) => ({
         isPredictionLoading: true,
@@ -359,7 +343,7 @@ export default (set, get) => ({
       FETCH_ARIMA_PREDICTION_START,
     );
 
-    const response = await fetchARIMA(selectedData, parameters, {
+    const response = await fetchARIMA(selectedData, inputData, {
       date_key: get().timeProperty.value,
       value_key: get().selectedProp.value,
     });
@@ -380,9 +364,10 @@ export default (set, get) => ({
     if (response.isSuccess) {
       get().addEntryToPredictionHistory({
         id: uuidv4(),
+        createdAt: new Date().toISOString(),
         selectedDataBoundaries: dataBoundaries,
         predictionMode: EPredictionMode.ARIMA,
-        createdAt: new Date().toISOString(),
+        inputData,
         ...response.data,
       });
     } else {
@@ -393,7 +378,7 @@ export default (set, get) => ({
     }
   },
 
-  fetchVARPrediction: async (parameters, dataBoundaries, selectedData) => {
+  fetchVARPrediction: async (inputData, dataBoundaries, selectedData) => {
     set(
       (state) => ({
         displayedPredictionId: 'draft',
@@ -409,7 +394,7 @@ export default (set, get) => ({
       FETCH_VAR_PREDICTION_START,
     );
 
-    const response = await fetchVAR(selectedData, parameters, {
+    const response = await fetchVAR(selectedData, inputData, {
       date_key: get().timeProperty.value,
       value_keys: map(get().valueProperties, (prop) => prop.value),
     });
@@ -431,9 +416,10 @@ export default (set, get) => ({
     if (response.isSuccess) {
       get().addEntryToPredictionHistory({
         id: uuidv4(),
+        createdAt: new Date().toISOString(),
         predictionMode: EPredictionMode.VAR,
         selectedDataBoundaries: dataBoundaries,
-        createdAt: new Date().toISOString(),
+        inputData,
         ...response.data,
       });
     } else {

@@ -101,7 +101,7 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="periods-in-season"
-              label="Min P"
+              label="Min lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >
@@ -126,7 +126,7 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="periods-in-season"
-              label="Max P"
+              label="Max lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >

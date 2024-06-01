@@ -39,7 +39,6 @@ class Configuration(db.Model):
             "name": self.name
         }
 
-
     def serialize(self):
         return {
             "id": self.id,
@@ -58,6 +57,9 @@ class PredictionHistory(db.Model):
     prediction_mode = db.Column(db.String(10), nullable=False)
 
     selected_data_boundaries = db.Column(JSON, nullable=True)
+    # Contains the input parameters, such as desired max lag order, horizon etc.
+    # Input data depends on the model selection (ARIMA / VAR).
+    input_data =  db.Column(JSON, nullable=False)
 
     test_prediction_parameters = db.Column(JSON, nullable=False)
     real_prediction_parameters = db.Column(JSON, nullable=False) # limit 255MB
@@ -87,5 +89,6 @@ class PredictionHistory(db.Model):
             "real_prediction": self.real_prediction, # limit 255MB
 
             "last_train_point": self.last_train_point, # limit 255MB
-            "evaluation": self.evaluation # limit 255MB
+            "evaluation": self.evaluation, # limit 255MB
+            "input_data": self.input_data
     }
