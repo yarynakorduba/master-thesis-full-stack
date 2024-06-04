@@ -50,6 +50,7 @@ const HistoryCard = ({
             </Grid>
           </CardHeader>
           <EvaluationIndicators
+            historyEntry={historyEntry}
             evaluation={historyEntry.evaluation}
             errorColorScale={errorColorScale}
             predictions={historyEntry}

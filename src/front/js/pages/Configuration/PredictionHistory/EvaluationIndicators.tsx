@@ -1,26 +1,25 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Typography, Stack, Chip, Box } from '@mui/material';
 import { map, upperCase, round, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
 import { PRECISION } from '../../../consts';
-import { TPredictionEvaluation } from '../Analysis/types';
+import { THistoryEntry } from '../Analysis/types';
 import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import { getHistoryLineChartData } from './utils';
 
 type TProps = {
-  readonly evaluation: { readonly [property: string]: TPredictionEvaluation };
+  readonly historyEntry: THistoryEntry;
   readonly errorColorScale: (
     key: string,
   ) => d3Scale.ScaleLinear<number | string, number | string>;
 } & any;
 
 const EvaluationIndicators = ({
+  historyEntry,
   timeseriesData,
-  evaluation,
   errorColorScale,
-  predictions,
   timeProperty,
 }: TProps) => {
   const { palette } = useTheme();
@@ -30,24 +29,17 @@ const EvaluationIndicators = ({
       <Typography variant="subtitle1" component="div" color="text.secondary">
         Prediction
       </Typography>
-      {map(evaluation, (values, analyzedPropKey) => {
-        // const mappedARIMAPredictions = reduce(
-        //   valueProperties,
-        //   (accum, prop) => ({
-        //     ...accum,
-        //     [prop.value]: convertPredictionData(historyEntry, prop.value),
-        //   }),
-        //   {},
-        // );
+      {map(historyEntry.evaluation, (values, analyzedPropKey) => {
         const { lineData, thresholdData } = getHistoryLineChartData(
+          historyEntry.id,
           palette,
           timeseriesData,
-          predictions,
+          historyEntry,
           timeProperty.value,
           analyzedPropKey,
         );
         return (
-          <>
+          <Fragment key={analyzedPropKey}>
             <Stack
               direction="row"
               columnGap={0.5}
@@ -63,11 +55,11 @@ const EvaluationIndicators = ({
                 flexWrap="nowrap"
               >
                 {map(values, (indicatorValue, indicatorKey) => {
-                  const background = errorColorScale(
-                    `evaluation.${analyzedPropKey}.${indicatorKey}`,
-                  )(indicatorValue);
+                  const keyPath = `evaluation.${analyzedPropKey}.${indicatorKey}`;
+                  const background = errorColorScale(keyPath)(indicatorValue);
                   return (
                     <Chip
+                      key={keyPath}
                       size="small"
                       sx={{ background }}
                       label={
@@ -92,7 +84,7 @@ const EvaluationIndicators = ({
                 numTicks={0}
               />
             </Box>
-          </>
+          </Fragment>
         );
       })}
     </>

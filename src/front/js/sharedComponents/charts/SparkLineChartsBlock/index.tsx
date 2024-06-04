@@ -95,6 +95,7 @@ const SparkLineChartsBlock = ({
   };
 
   const mainChartData = getCompleteLineChartData(
+    'selectedChart',
     palette,
     timeseriesData,
     predictionData,
@@ -149,16 +150,18 @@ const SparkLineChartsBlock = ({
         <SparkLineChartsContainer>
           {map(valueProperties, (prop) => {
             const chartData = getCompleteLineChartData(
+              'sparkline',
               palette,
               timeseriesData,
               predictionData,
               prop!,
               timeProperty!,
             );
+            console.log('chartData chartData chartData', prop, chartData);
             if (!chartData) return null;
             return (
               <SparkLineChart
-                key={prop.label}
+                key={`sparkline-${prop.label}`}
                 heading={prop?.label || ''}
                 data={chartData.lineData}
                 thresholdData={chartData.thresholdData}

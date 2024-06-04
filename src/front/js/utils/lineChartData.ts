@@ -6,6 +6,7 @@ import {
 } from '../types';
 
 export const constructLineChartDataFromTs = (
+  seriesId: string,
   valueProperty: string | undefined,
   timeProperty: string | undefined,
   data: TTimeseriesData = [],
@@ -22,7 +23,7 @@ export const constructLineChartDataFromTs = (
     (d) => sortBy(d, 'valueX'),
   ])(data);
   return {
-    id: `${label}-${data?.[0]?.[valueProperty]}`,
+    id: seriesId,
     label,
     color: lineColor,
     datapoints,

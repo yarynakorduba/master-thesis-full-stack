@@ -4,6 +4,7 @@ import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
 import { ParentSize } from '@visx/responsive';
 import { flatMap, flow, isNil, uniq } from 'lodash';
+import { Threshold } from '@visx/threshold';
 
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
@@ -16,7 +17,6 @@ import {
   TFormatYScale,
   TThresholdData,
 } from '../types';
-import { Threshold } from '@visx/threshold';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -100,7 +100,7 @@ const LineChart = ({
       };
       return (
         <LinePath
-          key={lineData?.label}
+          key={lineData?.id}
           data={lineData?.datapoints}
           x={getX}
           y={getY}
@@ -188,6 +188,7 @@ export default function ResponsiveLineChart({
       heading,
       variant,
       data,
+      thresholdData,
       formatYScale,
       padding,
       onClick,

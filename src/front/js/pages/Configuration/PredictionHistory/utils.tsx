@@ -13,6 +13,7 @@ import { TPredictedPoints } from '../Analysis/types';
 import { TThresholdData } from '../../../sharedComponents/charts/types';
 
 export const getHistoryLineChartData = (
+  id: string,
   palette: Palette,
   timeseriesData: TTimeseriesData,
   predictionData?: {
@@ -41,6 +42,7 @@ export const getHistoryLineChartData = (
     );
 
   const mainChartData = constructLineChartDataFromTs(
+    'history-pred-main-data',
     analyzedPropKey,
     timePropKey,
     testPredictedDataCounterpart,
@@ -49,6 +51,7 @@ export const getHistoryLineChartData = (
   );
 
   const testPredictedData = constructLineChartDataFromTs(
+    `history-pred-test-${PREDICTION_VALUE_PROP}`,
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
     mappedPrediction?.testPrediction,
@@ -57,6 +60,7 @@ export const getHistoryLineChartData = (
   );
 
   const realPredictedData = constructLineChartDataFromTs(
+    `history-pred-real-${PREDICTION_VALUE_PROP}`,
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
     mappedPrediction?.realPrediction,
@@ -72,7 +76,7 @@ export const getHistoryLineChartData = (
   const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
     ? [
         {
-          id: analyzedPropKey,
+          id: `${id}-${analyzedPropKey}`,
           label: '',
           belowAreaProps: thresholdFillStyle,
           aboveAreaProps: thresholdFillStyle,

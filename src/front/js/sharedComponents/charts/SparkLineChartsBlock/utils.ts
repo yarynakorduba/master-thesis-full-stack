@@ -16,6 +16,7 @@ import { Palette } from '@mui/material';
 import { TPredictedPoints } from 'front/js/pages/Configuration/Analysis/types';
 
 export const getCompleteLineChartData = (
+  id: string, // should be unique
   palette: Palette,
   timeseriesData: TTimeseriesData,
   predictionData?: {
@@ -34,6 +35,7 @@ export const getCompleteLineChartData = (
   );
 
   const mainChartData = constructLineChartDataFromTs(
+    `sparkline-main-data`,
     analyzedProp?.value,
     timeProp?.value,
     timeseriesData,
@@ -42,6 +44,7 @@ export const getCompleteLineChartData = (
   );
 
   const testPredictedData = constructLineChartDataFromTs(
+    `sparkline-pred-test-${PREDICTION_VALUE_PROP}`,
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.testPrediction,
@@ -50,6 +53,7 @@ export const getCompleteLineChartData = (
   );
 
   const realPredictedData = constructLineChartDataFromTs(
+    `sparkline-pred-real-${PREDICTION_VALUE_PROP}`,
     PREDICTION_VALUE_PROP,
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.realPrediction,
@@ -74,7 +78,7 @@ export const getCompleteLineChartData = (
   const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
     ? [
         {
-          id: `${analyzedProp?.value}-${analyzedProp.label}`,
+          id: `${id}-${analyzedProp?.value}-${analyzedProp.label}`,
           label: analyzedProp.label,
           belowAreaProps: thresholdFillStyle,
           aboveAreaProps: thresholdFillStyle,
