@@ -5,13 +5,12 @@ import {
   Typography,
   IconButton,
   Grid,
-  alpha,
-  useTheme,
   Tooltip,
 } from '@mui/material';
-import { CloseOutlined, ArrowUpward, ArrowDownward } from '@mui/icons-material';
+import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { map } from 'lodash';
 import React, { useRef, useState } from 'react';
+import { SorterOption, SorterPopoverHeader } from './styles';
 
 type TProps = {
   readonly sortOptions;
@@ -20,15 +19,22 @@ type TProps = {
 };
 
 const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
-  const { palette } = useTheme();
   const popoverAnchor = useRef<any>();
-
   const [isSortPopoverOpen, setIsSortPopoverOpen] = useState(false);
 
   return (
-    <Box>
-      <Button ref={popoverAnchor} onClick={() => setIsSortPopoverOpen(true)}>
-        Sort{' '}
+    <>
+      <Button
+        ref={popoverAnchor}
+        onClick={() => setIsSortPopoverOpen(true)}
+        sx={{ maxWidth: 'calc(100% - 94px)' }}
+      >
+        <Typography noWrap>{sorter.label}</Typography>
+        {sorter.direction === 'asc' ? (
+          <ArrowUpward fontSize="small" />
+        ) : (
+          <ArrowDownward fontSize="small" />
+        )}
       </Button>
       <Popover
         open={isSortPopoverOpen}
@@ -37,27 +43,21 @@ const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
         disableScrollLock
       >
         <Box sx={{ p: 2, width: 400 }}>
-          <Typography
-            variant="subtitle2"
-            sx={{ display: 'flex', alignItems: 'center' }}
-          >
+          <SorterPopoverHeader variant="subtitle2">
             Sort by{' '}
-            <IconButton size="small" sx={{ marginLeft: 'auto' }}>
-              <CloseOutlined />
-            </IconButton>
-          </Typography>
+            <Button size="small" onClick={() => setIsSortPopoverOpen(false)}>
+              Close
+            </Button>
+          </SorterPopoverHeader>
           {map(sortOptions, ({ label, value }) => {
             const isPropSelected = sorter.propPath === value;
             return (
-              <Grid
+              <SorterOption
                 container
-                sx={{
-                  background: isPropSelected
-                    ? alpha(palette.info.light, 0.15)
-                    : 'none',
-                  paddingX: 1,
-                  alignItems: 'center',
-                  flexWrap: 'nowrap',
+                isPropSelected={isPropSelected}
+                onClick={() => {
+                  setSorter({ label, propPath: value, direction: 'asc' });
+                  setIsSortPopoverOpen(false);
                 }}
               >
                 <Grid item md={9}>
@@ -65,7 +65,7 @@ const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
                     <Typography noWrap>{label}</Typography>
                   </Tooltip>
                 </Grid>
-                <Grid item md={3}>
+                <Grid item md={3} display="flex" justifyContent="flex-end">
                   <IconButton
                     size="small"
                     color={
@@ -73,9 +73,11 @@ const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
                         ? 'primary'
                         : 'default'
                     }
-                    onClick={() =>
-                      setSorter({ propPath: value, direction: 'asc' })
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSorter({ label, propPath: value, direction: 'asc' });
+                      setIsSortPopoverOpen(false);
+                    }}
                   >
                     <ArrowUpward />
                   </IconButton>
@@ -86,19 +88,21 @@ const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
                         ? 'primary'
                         : 'default'
                     }
-                    onClick={() =>
-                      setSorter({ propPath: value, direction: 'desc' })
-                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSorter({ label, propPath: value, direction: 'desc' });
+                      setIsSortPopoverOpen(false);
+                    }}
                   >
                     <ArrowDownward />
                   </IconButton>
                 </Grid>
-              </Grid>
+              </SorterOption>
             );
           })}
         </Box>
       </Popover>
-    </Box>
+    </>
   );
 };
 

@@ -39,16 +39,16 @@ const PredictionHistory = () => {
     })),
     ...map(valueProperties, (prop) => ({
       label: `MRSE of ${prop.label}`,
-      value: `evaluation.["${prop.value}"].mrse`,
+      value: `evaluation.["${prop.value}"].rmse`,
     })),
   ];
-  console.log('Sort options -> ', sortOptions);
   const errorColorScale = getLinearValueScale(predictionHistory, [
     red[50],
     red[200],
   ]);
 
   const [sorter, setSorter] = useState<any>({
+    label: 'Date',
     propPath: 'createdAt',
     direction: 'desc',
   });
@@ -62,6 +62,7 @@ const PredictionHistory = () => {
       predictionHistory,
       (historyItem) => !isNil(get(historyItem, propPath)),
     );
+
     if (!isEmpty(historyToSort)) {
       const sorted = flow(
         (h) => sortBy(h, (historyItem) => get(historyItem, propPath)),
@@ -75,7 +76,7 @@ const PredictionHistory = () => {
   if (isEmpty(predictionHistory)) return null;
   return (
     <Box sx={{ height: 'auto', paddingY: 2, paddingX: 1 }}>
-      <Typography variant="h5" sx={{ mb: 1 }}>
+      <Typography variant="h5" sx={{ mb: 1, display: 'flex', gap: 1 }}>
         History
         <SorterPopover
           sorter={sorter}
