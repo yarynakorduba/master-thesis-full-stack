@@ -84,6 +84,7 @@ const EvaluationIndicators = ({
             <Box width="100%" sx={{ mb: 1 }}>
               <SparkLineChart
                 data={lineData}
+                thresholdData={thresholdData}
                 height={45}
                 width={300}
                 onClick={noop}

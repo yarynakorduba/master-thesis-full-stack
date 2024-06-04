@@ -43,7 +43,6 @@ import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
 import { TPadding } from '../../../types/styles';
-import { ThresholdProps } from '@visx/threshold/lib/Threshold';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.

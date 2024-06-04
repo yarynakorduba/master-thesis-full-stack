@@ -10,7 +10,13 @@ import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, SparkLineChartHeading } from './styles';
 import { TLineChartData } from 'front/js/types';
 import { TPadding } from '../../../types/styles';
-import { TFormatXScale, TFormatYScale } from '../types';
+import {
+  TChartThresholdDatapoint,
+  TFormatXScale,
+  TFormatYScale,
+  TThresholdData,
+} from '../types';
+import { Threshold } from '@visx/threshold';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -34,6 +40,7 @@ const getUniqueFlatValues = (prop, data): number[] =>
 
 type TProps = {
   readonly data: TLineChartData;
+  readonly thresholdData?: Array<TThresholdData>;
   readonly heading?: string;
   readonly width?: number;
   readonly height?: number;
@@ -43,13 +50,16 @@ type TProps = {
   readonly variant?: ChartVariant;
   readonly onClick?: () => void;
   readonly numTicks?: number;
+  readonly strokeWidth?: number;
 };
 
 const LineChart = ({
   width = 900,
   height = 200,
+  strokeWidth = 1,
   heading = '',
   data,
+  thresholdData = [],
   formatYScale,
   numTicks = 2,
   padding = {
@@ -95,11 +105,11 @@ const LineChart = ({
           x={getX}
           y={getY}
           stroke={lineData?.color}
-          strokeWidth={1}
+          strokeWidth={strokeWidth}
         />
       );
     },
-    [xScale, yScale],
+    [xScale, yScale, strokeWidth],
   );
 
   return (
@@ -119,6 +129,20 @@ const LineChart = ({
               numTicks={numTicks}
             />
             {data?.map(renderLine)}
+            {thresholdData.map((dataItem) => (
+              <Threshold<TChartThresholdDatapoint>
+                id={dataItem.id}
+                key={dataItem.id}
+                clipAboveTo={0}
+                clipBelowTo={cleanHeight}
+                data={dataItem?.data}
+                x={({ valueX }) => xScale(valueX)}
+                y0={({ valueY0 }) => yScale(valueY0)}
+                y1={({ valueY1 }) => yScale(valueY1)}
+                belowAreaProps={dataItem.belowAreaProps}
+                aboveAreaProps={dataItem.aboveAreaProps}
+              />
+            ))}
           </Group>
         </svg>
       </ChartWrapper>
@@ -129,9 +153,11 @@ const LineChart = ({
 export default function ResponsiveLineChart({
   width = 900,
   height = 200,
+  strokeWidth = 1,
   heading = '',
   variant = ChartVariant.vertical,
   data,
+  thresholdData = [],
   formatYScale,
   padding = {
     top: CHART_TOP_PADDING,
@@ -150,13 +176,24 @@ export default function ResponsiveLineChart({
         heading={heading}
         variant={variant}
         data={data}
+        thresholdData={thresholdData}
         formatYScale={formatYScale}
         padding={padding}
         onClick={onClick}
         numTicks={numTicks}
+        strokeWidth={strokeWidth}
       />
     ),
-    [heading, variant, data, formatYScale, padding, onClick, numTicks],
+    [
+      heading,
+      variant,
+      data,
+      formatYScale,
+      padding,
+      onClick,
+      numTicks,
+      strokeWidth,
+    ],
   );
 
   const renderResponsiveChart = useCallback(
