@@ -9,11 +9,12 @@ import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
-import { BRUSH_HEIGHT, selectedAreaStyle, selectedBrushStyle } from './consts';
+import { BRUSH_HEIGHT, selectedBrushStyle } from './consts';
 import { TLinScale } from './types';
 import { TLineChartData } from 'front/js/types';
 import { TPadding } from '../../../types/styles';
 import { TChartThresholdDatapoint, TThresholdData } from '../types';
+import { useTheme } from '@mui/material';
 
 type TProps = {
   readonly xBrushScale: TLinScale;
@@ -40,6 +41,9 @@ const CustomBrush = ({
   selectedAreaOnBrushRef,
   brushRef,
 }: TProps) => {
+  const { palette } = useTheme();
+  const selectedAreaStyle = { fill: palette.charts.chartOverlaySelectedArea };
+
   if (xBrushScale.range()?.[1] === 0) return null;
   return (
     <Group

@@ -85,3 +85,14 @@ export type TARIMAResult = {
 };
 
 export type TVARResult = any;
+
+export enum EAnalysisFormFields {
+  isSeasonal = 'isSeasonal',
+  periodsInSeason = 'periodsInSeason',
+  lagOrder = 'lagOrder',
+  minQ = 'minQ',
+  maxQ = 'maxQ',
+  minP = 'minP',
+  maxP = 'maxP',
+  horizon = 'horizon',
+}

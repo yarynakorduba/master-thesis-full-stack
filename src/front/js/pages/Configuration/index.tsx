@@ -122,15 +122,10 @@ const Configuration = () => {
         />
 
         {!isDataIncomplete && !isConfigurationLoading && (
-          <Grid container justifyContent="start" gap={3} wrap="nowrap">
-            <Grid item md={6}>
-              <Analysis
-                predictionResult={predictionResult}
-                isPredictionLoading={isPredictionLoading}
-              />
-            </Grid>
-            <Grid item md={6}></Grid>
-          </Grid>
+          <Analysis
+            predictionResult={predictionResult}
+            isPredictionLoading={isPredictionLoading}
+          />
         )}
       </Content>
       <HistoryDrawer

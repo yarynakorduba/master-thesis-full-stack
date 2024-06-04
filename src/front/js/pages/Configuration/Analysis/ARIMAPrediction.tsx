@@ -1,8 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import StepButton from '@mui/material/StepButton';
-import StepContent from '@mui/material/StepContent';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -18,21 +16,22 @@ import {
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
-import EvaluationIndicators from './EvaluationIndicators';
+import EvaluationIndicators from '../PredictionHistory/EvaluationIndicators';
+import { EAnalysisFormFields } from './types';
+import { useFormContext } from 'react-hook-form';
+import AnalysisSection from './AnalysisSection';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly arimaResult;
   readonly isVARLoading: boolean;
-  readonly index: number;
-  readonly handleSelectStep: (stepIndex: number) => () => void;
+  readonly index?: number;
 };
 
 const ARIMAPrediction = ({
   isVisible,
   arimaResult,
   isVARLoading,
-  handleSelectStep,
   index,
 }: TProps) => {
   const handlePredict = useFetchPrediction();
@@ -50,14 +49,25 @@ const ARIMAPrediction = ({
     min: 0,
   });
 
+  const formMethods = useFormContext();
+  const {
+    control,
+    register,
+    formState: { isSubmitting },
+    handleSubmit,
+    getValues,
+    watch,
+  } = formMethods;
+
   const handleClick = () => {
+    const values = getValues();
     handlePredict({
-      horizon,
-      isSeasonal,
-      minP,
-      maxP,
-      minQ,
-      maxQ,
+      horizon: +values.horizon,
+      isSeasonal: values.isSeasonal,
+      minP: +values.minP,
+      maxP: +values.maxP,
+      minQ: +values.minQ,
+      maxQ: +values.maxQ,
       periodsInSeason,
     });
   };
@@ -71,13 +81,11 @@ const ARIMAPrediction = ({
   if (!isVisible) return null;
   return (
     <>
-      <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>
+      <AnalysisSection md={6}>
+        <AnalysisSection.Header>
           What is the prediction for the future? (ARIMA)
-        </Box>
-      </StepButton>
-      <StepContent>
-        <Grid container columnSpacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
+        </AnalysisSection.Header>
+        <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
           <Grid item md={6}>
             <InfoOverlay
               id="periods-in-season"
@@ -90,48 +98,49 @@ const ARIMAPrediction = ({
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
-              value={horizon}
-              onChange={setHorizon}
               size="small"
               type="number"
-              InputProps={{ inputProps: { min: 1 } }}
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.horizon)}
+              // required
             />
           </Grid>
           <Grid item md={6} />
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
-              id="periods-in-season"
+              id="min-lag-order"
               label="Min lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                P variable, or lag order, helps you control how much the model
+                Lag order (or P variable), helps you control how much the model
                 relies on past values to predict the current one. It&apos;s like
                 adjusting how far back you want to look to make a good guess
                 about today&apos;s weather.
                 <br />
                 <br />
-                Setting min P helps to avoid considering overly simple models
-                that might not predict future values well.
+                Setting min lag order helps to avoid considering overly simple
+                models that might not predict future values well.
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
-              value={minP}
-              onChange={setMinP}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.minP)}
+              // required
             />
           </Grid>
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
-              id="periods-in-season"
+              id="max-lag-order"
               label="Max lag order (P)"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
             >
               <InfoOverlay.Popover>
-                P variable, or lag order, helps you control how much the model
+                Lag order (or P variable), helps you control how much the model
                 relies on past values to predict the current one. It&apos;s like
                 adjusting how far back you want to look to make a good guess
                 about today&apos;s weather.
@@ -142,15 +151,16 @@ const ARIMAPrediction = ({
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
-              value={maxP}
-              onChange={setMaxP}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.maxP)}
+              // required
             />
           </Grid>
           <Grid item md={6}>
             <InfoOverlay
-              id="periods-in-season"
+              id="min-q"
               label="Min Q"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
@@ -162,15 +172,16 @@ const ARIMAPrediction = ({
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
-              value={minQ}
-              onChange={setMinQ}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.minQ)}
+              // required
             />
           </Grid>
           <Grid item md={6}>
             <InfoOverlay
-              id="periods-in-season"
+              id="max-q"
               label="Max Q"
               variant="subtitle2"
               sx={{ fontSize: 12 }}
@@ -182,10 +193,11 @@ const ARIMAPrediction = ({
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
-              value={maxQ}
-              onChange={setMaxQ}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.maxQ)}
+              // required
             />
           </Grid>
         </Grid>
@@ -235,6 +247,8 @@ const ARIMAPrediction = ({
             </Button>
           ) : null}
         </Box>
+      </AnalysisSection>
+      <AnalysisSection md={6}>
         {arimaResult ? (
           <Card variant="outlined">
             <CardContent>
@@ -246,7 +260,7 @@ const ARIMAPrediction = ({
             </CardContent>
           </Card>
         ) : null}
-      </StepContent>
+      </AnalysisSection>
     </>
   );
 };

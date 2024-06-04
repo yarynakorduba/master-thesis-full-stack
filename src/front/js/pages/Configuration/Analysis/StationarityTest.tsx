@@ -1,108 +1,123 @@
 import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
-import StepButton from '@mui/material/StepButton';
-import StepContent from '@mui/material/StepContent';
+
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
+import { Box, Grid, alpha, useTheme } from '@mui/material';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import { TTimeseriesData } from '../../../types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import AnalysisSection from './AnalysisSection';
 
 type TProps = {
+  readonly index: number;
   readonly isVisible: boolean;
   readonly stationarityTestResult;
   readonly propertiesToTest;
   readonly timeseriesData: TTimeseriesData;
   readonly handleFetchDataStationarityTest;
   readonly isStationarityTestLoading: boolean;
-  readonly handleSelectStep: (stepIndex: number) => () => void;
-  readonly index: number;
 };
 
 const StationarityTest = ({
+  index,
   isVisible,
   stationarityTestResult,
   handleFetchDataStationarityTest,
   isStationarityTestLoading,
-  handleSelectStep,
-  index,
 }: TProps) => {
+  const { palette } = useTheme();
+  const getStationaryTxt = (isStationary: boolean) => (
+    <Typography
+      component="span"
+      sx={{
+        background: isStationary
+          ? alpha(palette.success.light, 0.2)
+          : alpha(palette.warning.light, 0.2),
+      }}
+    >
+      {isStationary ? '' : 'not '}stationary
+    </Typography>
+  );
+
   if (!isVisible) return null;
   return (
-    <>
-      <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>
-          Is the data{' '}
-          <InfoOverlay id="stationary" label="stationary">
-            <InfoOverlay.Popover>
-              <Typography variant="body1">
-                A time series is stationary when its statistical properties,
-                such as mean, variance, and autocorrelation, remain constant
-                over time. In simpler terms, it does not exhibit trends,
-                seasonal effects, or any other systematic patterns that change
-                over time.
-              </Typography>
-              <Typography variant="body1">
-                To test the data stationarity, we run the{' '}
-                <Link href="https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test">
-                  Augmented Dickey-Fuller statistical test
-                </Link>{' '}
-                with the lag order automatically detected by Akaike Information
-                Criterion (autolag=&quot;AIC&quot;).
-              </Typography>
-              <Typography>
-                Many time-series methods may perform better when a time-series
-                is stationary, since forecasting values becomes a far easier
-                task for a stationary time series. ARIMAs that include
-                differencing (i.e., &gt; 0) assume that the data becomes
-                stationary after differencing. This is called
-                difference-stationary. Note that Auto ARIMA will automatically
-                determine the appropriate differencing term for you by default.
-                {/* https://alkaline-ml.com/pmdarima/tips_and_tricks.html#enforcing-stationarity */}
-              </Typography>
-            </InfoOverlay.Popover>
-          </InfoOverlay>
-          ?
-        </Box>
-      </StepButton>{' '}
-      <StepContent sx={{ paddingTop: 1 }}>
-        <ButtonContainer>
-          {isStationarityTestLoading && <Loader />}
-          {!isStationarityTestLoading && (
-            <Button
-              size="small"
-              onClick={handleFetchDataStationarityTest}
-              sx={{ marginTop: 0.75 }}
-            >
-              Run stationarity test
-            </Button>
-          )}
-        </ButtonContainer>
-        {stationarityTestResult &&
-          map(stationarityTestResult, (val, propName) => {
-            return (
-              <div>
-                {propName}:
-                <ul>
-                  <li>
-                    KPSS test:{' '}
-                    {val.kpss?.isStationary ? 'stationary' : 'not stationary'}
-                  </li>
-                  <li>
-                    ADF test:{' '}
-                    {val.adf?.isStationary ? 'stationary' : 'not stationary'}
-                  </li>
-                </ul>
-              </div>
-            );
-          })}
-      </StepContent>
-    </>
+    <AnalysisSection md={6}>
+      <AnalysisSection.Header index={index}>
+        Is data stationary?
+      </AnalysisSection.Header>
+      <ButtonContainer>
+        {isStationarityTestLoading && <Loader />}
+        {!isStationarityTestLoading && (
+          <Button size="small" onClick={handleFetchDataStationarityTest}>
+            Run stationarity test
+          </Button>
+        )}
+      </ButtonContainer>
+      <Typography variant="body1">
+        {map(stationarityTestResult, (val, propName) => {
+          return (
+            <Box>
+              {propName}:
+              <ul>
+                <li>
+                  <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
+                    KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                  </InfoOverlay>{' '}
+                  test:{getStationaryTxt(val.kpss?.isStationary)}
+                </li>
+                <li>
+                  {' '}
+                  <InfoOverlay id={`ADF-${propName}`} label="ADF">
+                    ADF<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                  </InfoOverlay>{' '}
+                  test: {getStationaryTxt(val.adf?.isStationary)}
+                </li>
+              </ul>
+            </Box>
+          );
+        })}
+      </Typography>
+    </AnalysisSection>
   );
 };
 
 export default StationarityTest;
+
+// {/* <StepButton onClick={handleSelectStep(index)}> */}
+// <Box sx={{ fontSize: 16 }}>
+//   Is the data{' '}
+//   <InfoOverlay id="stationary" label="stationary">
+//     <InfoOverlay.Popover>
+//       <Typography variant="body1">
+//         A time series is stationary when its statistical properties, such
+//         as mean, variance, and autocorrelation, remain constant over time.
+//         In simpler terms, it does not exhibit trends, seasonal effects, or
+//         any other systematic patterns that change over time.
+//       </Typography>
+//       <Typography variant="body1">
+//         To test the data stationarity, we run the{' '}
+//         <Link href="https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test">
+//           Augmented Dickey-Fuller statistical test
+//         </Link>{' '}
+//         with the lag order automatically detected by Akaike Information
+//         Criterion (autolag=&quot;AIC&quot;).
+//       </Typography>
+//       <Typography>
+//         Many time-series methods may perform better when a time-series is
+//         stationary, since forecasting values becomes a far easier task for
+//         a stationary time series. ARIMAs that include differencing (i.e.,
+//         &gt; 0) assume that the data becomes stationary after
+//         differencing. This is called difference-stationary. Note that Auto
+//         ARIMA will automatically determine the appropriate differencing
+//         term for you by default.
+//         {/* https://alkaline-ml.com/pmdarima/tips_and_tricks.html#enforcing-stationarity */}
+//       </Typography>
+//     </InfoOverlay.Popover>
+//   </InfoOverlay>
+//   ?
+// </Box>
+// {/* </StepButton>{' '} */}
+// {/* <StepContent sx={{ paddingTop: 1 }}> */}

@@ -1,29 +1,43 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
+import React, { useCallback, useEffect } from 'react';
+import { map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import LineChart from '../LineChart';
 import SparkLineChart from '../LineChart/SparkLineChart';
-import { TDataLabel, TLineChartData, TTimeseriesData } from '../../../types';
+import { TDataLabel, TTimeseriesData } from '../../../types';
 
-import { TDataProperty, TLineChartSerie } from '../../../types';
+import { TDataProperty } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
 import {
   TPredictedPoints,
   TValueBounds,
 } from '../../../pages/Configuration/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
-import {
-  PREDICTION_TIMESTAMP_PROP,
-  PREDICTION_VALUE_PROP,
-  convertPredictionData,
-} from '../../../utils/prediction';
-import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
-import { TThresholdData } from '../types';
 import { isConfigurationDataIncomplete } from '../../../pages/Configuration/utils';
+import { getCompleteLineChartData } from './utils';
+
+type TEmptySparkLineChartsBlockProps = {
+  readonly isLoading: boolean;
+};
+const EmptySparkLineChartsBlock = ({
+  isLoading,
+}: TEmptySparkLineChartsBlockProps) => (
+  <LineChartContainer>
+    {isLoading ? (
+      <Skeleton
+        variant="rounded"
+        animation="wave"
+        width="100%"
+        height="300px"
+      />
+    ) : (
+      'Some or all the data for this configuration is missing. Please create a new configuration.'
+    )}
+  </LineChartContainer>
+);
 
 type TProps = {
   readonly configName: string;
@@ -57,11 +71,7 @@ const SparkLineChartsBlock = ({
   setSelectedProp,
   defaultIsTrainingDataSelectionOn = false,
 }: TProps) => {
-  const theme = useTheme();
-  const mappedARIMAPrediction = convertPredictionData(
-    predictionData,
-    selectedProp?.value,
-  );
+  const { palette } = useTheme();
 
   const onSelectedAreaChange = useCallback(
     (domain) => {
@@ -84,79 +94,13 @@ const SparkLineChartsBlock = ({
     setSelectedProp(chartProp);
   };
 
-  const chartData: TLineChartData = useMemo(() => {
-    if (!selectedProp) return [];
-    const mainChartData = constructLineChartDataFromTs(
-      selectedProp?.value,
-      timeProperty?.value,
-      timeseriesData,
-      theme.palette.charts.chartRealData,
-      selectedProp?.label,
-    );
-
-    const testPredictedData = constructLineChartDataFromTs(
-      PREDICTION_VALUE_PROP,
-      PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.testPrediction,
-      theme.palette.charts.chartTestPrediction,
-      `test data prediction (${predictionData?.predictionMode || ''})`,
-    );
-
-    const realPredictedData = constructLineChartDataFromTs(
-      PREDICTION_VALUE_PROP,
-      PREDICTION_TIMESTAMP_PROP,
-      mappedARIMAPrediction?.realPrediction,
-      theme.palette.charts.chartRealPrediction,
-      `future data prediction (${predictionData?.predictionMode || ''})`,
-    );
-
-    return filter(
-      [mainChartData, testPredictedData, realPredictedData],
-      (d) => !isEmpty(d?.datapoints),
-    ) as TLineChartSerie[];
-  }, [
-    selectedProp,
-    mappedARIMAPrediction,
-    theme.palette.charts.chartTestPrediction,
-    theme.palette.charts.chartRealPrediction,
-    theme.palette.charts.chartRealData,
-    predictionData?.predictionMode,
-    timeProperty?.value,
+  const mainChartData = getCompleteLineChartData(
+    palette,
     timeseriesData,
-  ]);
-
-  const testPredictedDataCounterpart =
-    predictionData &&
-    selectedProp &&
-    timeProperty &&
-    intersectionWith(
-      timeseriesData,
-      mappedARIMAPrediction?.[0] || [],
-      (a, b) => a[timeProperty?.value] === b?.[PREDICTION_TIMESTAMP_PROP],
-    );
-
-  const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
-    ? [
-        {
-          id: `${selectedProp?.value}-19.43174`,
-          label: selectedProp.label,
-          belowAreaProps: { fill: 'violet', fillOpacity: 0.4 },
-          aboveAreaProps: { fill: 'violet', fillOpacity: 0.4 },
-          data: sortBy(
-            map(testPredictedDataCounterpart, (a) => {
-              return {
-                valueX: a[timeProperty.value] as number,
-                valueY0: a[selectedProp?.value] as number,
-                valueY1: predictionData?.testPrediction?.[
-                  selectedProp?.value
-                ]?.[a[timeProperty.value]] as number,
-              };
-            }),
-            'valueX',
-          ),
-        },
-      ]
-    : [];
+    predictionData,
+    selectedProp!,
+    timeProperty!,
+  );
 
   const selectedDataLength =
     (timeProperty &&
@@ -173,31 +117,20 @@ const SparkLineChartsBlock = ({
       timeProperty,
       valueProperties,
     ) ||
-    isConfigurationLoading
+    !selectedProp ||
+    isConfigurationLoading ||
+    !mainChartData
   ) {
-    return (
-      <LineChartContainer>
-        {isConfigurationLoading ? (
-          <Skeleton
-            variant="rounded"
-            animation="wave"
-            width="100%"
-            height="300px"
-          />
-        ) : (
-          'Some or all the data for this configuration is missing. Please create a new configuration.'
-        )}
-      </LineChartContainer>
-    );
+    return <EmptySparkLineChartsBlock isLoading={!!isConfigurationLoading} />;
   }
 
   return (
     <LineChartContainer>
-      <Box width="calc(100% - 300px - 16px)" minHeight="300px">
+      <Box width="calc(100% - 300px - 16px)" flexGrow={1} minHeight="300px">
         <LineChart
           heading={selectedProp?.label}
-          data={chartData}
-          thresholdData={thresholdData}
+          data={mainChartData.lineData}
+          thresholdData={mainChartData.thresholdData}
           dataLabels={dataLabels}
           numXAxisTicks={6}
           numYAxisTicks={4}
@@ -212,22 +145,22 @@ const SparkLineChartsBlock = ({
           defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
         />
       </Box>
-      {valueProperties.length > 1 ? (
+      {valueProperties.length > 1 && (
         <SparkLineChartsContainer>
           {map(valueProperties, (prop) => {
-            const chartData = constructLineChartDataFromTs(
-              prop.value,
-              timeProperty!.value,
+            const chartData = getCompleteLineChartData(
+              palette,
               timeseriesData,
-              theme.palette.charts.chartRealData,
-              prop.label,
+              predictionData,
+              prop!,
+              timeProperty!,
             );
-
+            if (!chartData) return null;
             return (
               <SparkLineChart
                 key={prop.label}
                 heading={prop?.label || ''}
-                data={chartData ? [chartData] : []}
+                data={chartData.lineData}
                 height={90}
                 width={300}
                 onClick={handleSparklineClick(prop)}
@@ -237,7 +170,7 @@ const SparkLineChartsBlock = ({
             );
           })}
         </SparkLineChartsContainer>
-      ) : null}
+      )}
     </LineChartContainer>
   );
 };

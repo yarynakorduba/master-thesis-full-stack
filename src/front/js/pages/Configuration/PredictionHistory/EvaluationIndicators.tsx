@@ -2,16 +2,12 @@ import React from 'react';
 import { Typography, Stack, Chip, Box } from '@mui/material';
 import { map, upperCase, round, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
+import { useTheme } from '@mui/material';
+
 import { PRECISION } from '../../../consts';
-import { TPredictionEvaluation } from './types';
-import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import { TPredictionEvaluation } from '../Analysis/types';
 import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
-import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
-import {
-  PREDICTION_VALUE_PROP,
-  PREDICTION_TIMESTAMP_PROP,
-} from '../../../utils/prediction';
-import { theme } from '../../../../styles/theme';
+import { getHistoryLineChartData } from './utils';
 
 type TProps = {
   readonly evaluation: { readonly [property: string]: TPredictionEvaluation };
@@ -21,34 +17,35 @@ type TProps = {
 } & any;
 
 const EvaluationIndicators = ({
+  timeseriesData,
   evaluation,
   errorColorScale,
   predictions,
+  timeProperty,
 }: TProps) => {
-  const getChartData = (key, type: 'testPrediction' | 'realPrediction') => {
-    const prediction = predictions?.[key];
-    if (!prediction) return undefined;
-    return constructLineChartDataFromTs(
-      PREDICTION_VALUE_PROP,
-      PREDICTION_TIMESTAMP_PROP,
-      type === 'testPrediction'
-        ? prediction?.testPrediction
-        : prediction?.realPrediction,
-      type === 'testPrediction'
-        ? theme.palette.charts.chartTestPrediction
-        : theme.palette.charts.chartRealPrediction,
-      '',
-    );
-  };
+  const { palette } = useTheme();
 
   return (
     <>
       <Typography variant="subtitle1" component="div" color="text.secondary">
         Prediction
       </Typography>
-      {map(evaluation, (values, key) => {
-        const chartTestData = getChartData(key, 'testPrediction');
-        const chartRealData = getChartData(key, 'realPrediction');
+      {map(evaluation, (values, analyzedPropKey) => {
+        // const mappedARIMAPredictions = reduce(
+        //   valueProperties,
+        //   (accum, prop) => ({
+        //     ...accum,
+        //     [prop.value]: convertPredictionData(historyEntry, prop.value),
+        //   }),
+        //   {},
+        // );
+        const { lineData, thresholdData } = getHistoryLineChartData(
+          palette,
+          timeseriesData,
+          predictions,
+          timeProperty.value,
+          analyzedPropKey,
+        );
         return (
           <>
             <Stack
@@ -57,7 +54,7 @@ const EvaluationIndicators = ({
               flexWrap="wrap"
               justifyContent="space-between"
             >
-              <Typography variant="subtitle2">{key}</Typography>
+              <Typography variant="subtitle2">{analyzedPropKey}</Typography>
               <Stack
                 flexBasis="100%"
                 flexGrow={1}
@@ -67,7 +64,7 @@ const EvaluationIndicators = ({
               >
                 {map(values, (indicatorValue, indicatorKey) => {
                   const background = errorColorScale(
-                    `evaluation.${key}.${indicatorKey}`,
+                    `evaluation.${analyzedPropKey}.${indicatorKey}`,
                   )(indicatorValue);
                   return (
                     <Chip
@@ -86,11 +83,7 @@ const EvaluationIndicators = ({
             </Stack>
             <Box width="100%" sx={{ mb: 1 }}>
               <SparkLineChart
-                data={
-                  chartTestData && chartRealData
-                    ? [chartTestData, chartRealData]
-                    : []
-                }
+                data={lineData}
                 height={45}
                 width={300}
                 onClick={noop}

@@ -38,10 +38,9 @@ type TProps = {
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   const navigate = useNavigate();
-  const formMethods = useFormContext();
-
   const openErrorNotification = useOpenErrorNotification();
 
+  const formMethods = useFormContext();
   const {
     control,
     register,
@@ -134,7 +133,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             </Typography>
           </Dropzone>
         </Grid>
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
+        <Grid item md={6} sx={{ mb: 1 }}>
           <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
             <label htmlFor="name">Dataset name</label>
           </Typography>
@@ -147,7 +146,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             required
           />
         </Grid>
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
+        <Grid item md={6} sx={{ mb: 1 }}>
           <Controller
             control={control}
             {...register(EConfigurationFormFields.timeProperty)}
@@ -180,7 +179,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
           />
         </Grid>
 
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
+        <Grid item md={6} sx={{ mb: 1 }}>
           <Controller
             {...register(
               `${EConfigurationFormFields.valueProperties}[0].value`,
@@ -216,7 +215,6 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
         </Grid>
         {!!fields.length &&
           slice(fields, 1).map((f, index) => {
-            console.log(f);
             return (
               <Grid
                 item

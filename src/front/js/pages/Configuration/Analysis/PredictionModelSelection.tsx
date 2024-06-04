@@ -7,7 +7,7 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Box } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
@@ -32,7 +32,17 @@ const PredictionModelSelection = ({
   const predictionHistory = useGetPredictionHistory();
 
   return (
-    <>
+    <Grid
+      item
+      md={12}
+      alignItems="flex-start"
+      justifyContent="flex-start"
+      flexDirection="column"
+      display="flex"
+      spacing={1}
+      gap={1}
+      sx={{ mb: 1 }}
+    >
       <Typography variant="h5">
         Prediction
         {!isEmpty(predictionHistory) && (
@@ -51,32 +61,36 @@ const PredictionModelSelection = ({
       <Typography variant="subtitle2" sx={{ marginTop: 1, marginBottom: 1 }}>
         Select a model for prediction
       </Typography>
-      <ToggleButtonGroup
-        value={predictionMode}
-        exclusive
-        onChange={(e, value) => setPredictionMode(value)}
-        aria-label="text alignment"
-        size="small"
-        sx={{ marginBottom: 1 }}
-        disabled={isDisabled}
-      >
-        <ToggleButton
-          value={EPredictionMode.ARIMA}
-          aria-label="left aligned"
-          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+      <Box sx={{ display: 'inline' }}>
+        <ToggleButtonGroup
+          value={predictionMode}
+          exclusive
+          onChange={(e, value) => setPredictionMode(value)}
+          aria-label="text alignment"
+          size="small"
+          sx={{ marginBottom: 1 }}
+          disabled={isDisabled}
         >
-          ARIMA
-        </ToggleButton>
-        <ToggleButton
-          value={EPredictionMode.VAR}
-          aria-label="right aligned"
-          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+          <ToggleButton
+            value={EPredictionMode.ARIMA}
+            aria-label="left aligned"
+            sx={{ paddingTop: 0.5, paddingBottom: 0.5 }}
+          >
+            ARIMA
+          </ToggleButton>
+          <ToggleButton
+            value={EPredictionMode.VAR}
+            aria-label="right aligned"
+            sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+          >
+            VAR
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <InfoOverlay
+          id="More about the model"
+          label="More about the model"
+          sx={{ ml: 2 }}
         >
-          VAR
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Box sx={{ display: 'inline', ml: 2 }}>
-        <InfoOverlay id="More about the model" label="More about the model">
           <InfoOverlay.Popover>
             {predictionMode === EPredictionMode.ARIMA ? (
               <div>
@@ -141,11 +155,7 @@ const PredictionModelSelection = ({
           </InfoOverlay.Popover>
         </InfoOverlay>
       </Box>
-
-      <Typography variant="body2" sx={{ marginBottom: 1 }}>
-        To make a prediction, we need to know a few characteristics of the data
-      </Typography>
-    </>
+    </Grid>
   );
 };
 

@@ -1,23 +1,21 @@
 import React from 'react';
+import { find, map } from 'lodash';
 import Button from '@mui/material/Button';
-import StepButton from '@mui/material/StepButton';
-import StepContent from '@mui/material/StepContent';
 import Box from '@mui/material/Box';
+import { Grid, Typography } from '@mui/material';
+import { TrendingFlatSharp, SyncAltSharp } from '@mui/icons-material';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
-import { Typography } from '@mui/material';
-import { find, map } from 'lodash';
-import { TrendingFlatSharp, SyncAltSharp } from '@mui/icons-material';
+import AnalysisSection from './AnalysisSection';
 
 type TProps = {
+  readonly index: number;
   readonly isVisible: boolean;
   readonly causalityTestResult;
   readonly isCausalityTestLoading: boolean;
   readonly handleFetchGrangerDataCausalityTest;
-  readonly index: number;
-  readonly handleSelectStep: (stepIndex: number) => () => void;
 };
 
 // Granger’s causality test can be used to identify the relationship between variables prior to model building.
@@ -25,15 +23,12 @@ type TProps = {
 // Conversely, if a relationship exists, the variables must be considered in the modeling phase.
 
 const CausalityTest = ({
+  index,
   isVisible,
   causalityTestResult,
   isCausalityTestLoading,
   handleFetchGrangerDataCausalityTest,
-  index,
-  handleSelectStep,
 }: TProps) => {
-  console.log('CAUSALITY TEST RESULT -- > ', { causalityTestResult });
-
   const causalityTexts = map(causalityTestResult, (keyPair) => {
     const first = keyPair[0];
     const second = keyPair[1];
@@ -58,30 +53,26 @@ const CausalityTest = ({
 
   if (!isVisible) return null;
   return (
-    <>
-      <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>
-          Do selected variables have a{' '}
-          <InfoOverlay id="whiteNoise" label="causal relautionship">
-            <InfoOverlay.Popover>
-              <Typography></Typography>
-            </InfoOverlay.Popover>
-          </InfoOverlay>
-          ?
-        </Box>
-      </StepButton>
-      <StepContent sx={{ paddingTop: 1 }}>
-        <ButtonContainer>
-          {isCausalityTestLoading && <Loader />}
-          {!isCausalityTestLoading && !causalityTestResult && (
-            <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
-              Run the causality test
-            </Button>
-          )}
-        </ButtonContainer>
-        <div>{causalityTestResult ? causalityTexts : null}</div>
-      </StepContent>
-    </>
+    <AnalysisSection md={6}>
+      <AnalysisSection.Header index={index}>
+        Do selected variables have a{' '}
+        <InfoOverlay id="causal-relationship" label="causal relautionship">
+          <InfoOverlay.Popover>
+            <Typography></Typography>
+          </InfoOverlay.Popover>
+        </InfoOverlay>
+        ?
+      </AnalysisSection.Header>
+      <ButtonContainer>
+        {isCausalityTestLoading && <Loader />}
+        <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+          Run the causality test
+        </Button>
+      </ButtonContainer>
+      <Typography variant="body1">
+        {causalityTestResult ? causalityTexts : null}
+      </Typography>
+    </AnalysisSection>
   );
 };
 

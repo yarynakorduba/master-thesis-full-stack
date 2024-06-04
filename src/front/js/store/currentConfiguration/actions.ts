@@ -1,14 +1,4 @@
-import {
-  map,
-  every,
-  reduce,
-  isNil,
-  flow,
-  sortBy,
-  camelCase,
-  mapKeys,
-} from 'lodash';
-
+import { map, every, reduce, isNil, camelCase, mapKeys } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -260,8 +250,6 @@ export default (set, get) => ({
 
     const properties = map(get().valueProperties, (prop) => prop.value);
 
-    console.log('selectedProp ------ > ', properties);
-
     if (properties?.length) {
       if (selectedData) {
         set(
@@ -274,8 +262,6 @@ export default (set, get) => ({
           selectedData,
           properties,
         );
-
-        console.log('RESPONSE --- > ', response);
 
         set(
           () => ({

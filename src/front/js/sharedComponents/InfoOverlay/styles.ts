@@ -9,6 +9,7 @@ export const OverlayTrigger = styled(Typography)`
   text-decoration-style: dashed;
   text-decoration-thickness: 0.5px;
   text-underline-offset: 0.25em;
+
   color: ${({ theme }) => theme.palette.info.dark};
   display: inline;
   &:hover {
