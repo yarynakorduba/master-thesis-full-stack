@@ -52,7 +52,7 @@ export type TPredictionEvaluation = {
 };
 
 export type THistoryEntry = {
-  readonly id: number;
+  readonly id: string; // uuid
   readonly createdAt: string; // ISO date string
   readonly predictionMode: EPredictionMode;
   readonly testPrediction: TPredictedPoints;

@@ -23,7 +23,7 @@ export type TConfigurationsSlice = {
   readonly isDeleting: boolean;
 };
 
-export type TDisplayedPrediction = number | string | undefined;
+export type TDisplayedPredictionId = string | undefined;
 
 export type TConfigurationSlice = {
   // TODO: remove temporary :?
@@ -59,9 +59,9 @@ export type TConfigurationSlice = {
   readonly isCausalityTestLoading: boolean;
   readonly fetchCausalityTest: (selectedProp: TDataProperty[]) => Promise<void>;
 
-  readonly displayedPredictionId: TDisplayedPrediction; // latest prediction or id of history item
+  readonly displayedPredictionId: TDisplayedPredictionId; // latest prediction or id of history item
   readonly setDisplayedPredictionId: (
-    predictionItemId: TDisplayedPrediction,
+    predictionItemId: TDisplayedPredictionId,
   ) => void;
 
   readonly displayedPredictionMode: EPredictionMode;

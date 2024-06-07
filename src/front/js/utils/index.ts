@@ -1,16 +1,21 @@
 import { find, get, isEmpty, maxBy, minBy } from 'lodash';
+import { scaleLinear } from '@visx/scale';
+import * as d3Scale from 'd3-scale';
+
 import {
   THistoryEntry,
   TValueBounds,
 } from '../pages/Configuration/Analysis/types';
 import { TDataProperty } from '../types';
-import { scaleLinear } from '@visx/scale';
-import * as d3Scale from 'd3-scale';
+import { TDisplayedPredictionId } from '../store/types';
 
 export const getDisplayedPrediction = (
   predictionHistory: THistoryEntry[],
-  predictionId: number,
-) => find(predictionHistory, ({ id }) => id === predictionId);
+  predictionId: TDisplayedPredictionId, // uuid
+) => {
+  console.log('QQQQQQ >>>', { predictionHistory, predictionId });
+  return find(predictionHistory, ({ id }) => id === predictionId);
+};
 
 export const getSelectedDataByBoundaries = (
   data,

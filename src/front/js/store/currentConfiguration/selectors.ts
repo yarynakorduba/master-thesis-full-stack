@@ -6,7 +6,7 @@ import {
   THistoryEntry,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
-import { TDisplayedPrediction } from '../types';
+import { TDisplayedPredictionId } from '../types';
 
 // export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetConfigName = (): string =>
@@ -133,17 +133,17 @@ export const useGetPredictionHistory = () =>
   useBoundStore((state): THistoryEntry[] => state.predictionHistory);
 
 export const useGetDisplayedPredictionId = () =>
-  useBoundStore((state): TDisplayedPrediction => state.displayedPredictionId);
+  useBoundStore((state): TDisplayedPredictionId => state.displayedPredictionId);
 
 export const useSetDisplayedPredictionId = () =>
   useBoundStore(
-    (state): ((predictionItemId: TDisplayedPrediction) => void) =>
+    (state): ((predictionItemId: TDisplayedPredictionId) => void) =>
       state.setDisplayedPredictionId,
   );
 
 export const useDisplayedPredictionId = (): [
-  TDisplayedPrediction,
-  (predictionItemId: TDisplayedPrediction) => void,
+  TDisplayedPredictionId,
+  (predictionItemId: TDisplayedPredictionId) => void,
 ] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];
 
 export const useGetHorizon = () =>

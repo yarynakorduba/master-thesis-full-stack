@@ -52,7 +52,7 @@ import {
   ADD_ENTRY_TO_PREDICTION_HISTORY_SUCCESS,
   ADD_ENTRY_TO_PREDICTION_HISTORY_FAILURE,
 } from './actionNames';
-import type { TDisplayedPrediction } from '../types';
+import type { TDisplayedPredictionId } from '../types';
 import {
   getDisplayedPrediction,
   getSelectedDataByBoundaries,
@@ -131,12 +131,20 @@ export default (set, get) => ({
       SET_PREDICTION_MODE,
     ),
 
-  setDisplayedPredictionId: (itemId: TDisplayedPrediction) => {
+  setDisplayedPredictionId: (itemId: TDisplayedPredictionId) => {
+    const predictionHistory = get().predictionHistory;
     return set(
       (state) => {
+        console.log('--->>>predictionHistory ', state);
         const displayedPrediction = getDisplayedPrediction(
+          predictionHistory,
+          itemId,
+        );
+
+        console.log(
+          'DISPLAYED PREDI -> ',
           state.predictionHistory,
-          state.displayedPredictionId,
+          displayedPrediction,
         );
         return {
           displayedPredictionId: itemId,
@@ -294,11 +302,12 @@ export default (set, get) => ({
       ADD_ENTRY_TO_PREDICTION_HISTORY_START,
     );
     const response = await addEntryToPredictionHistory(entryWithConfigId);
+    const newEntry = mapKeys(response.data || {}, (v, key) => camelCase(key));
     set(
       // most recent first
-      (state) => ({
+      () => ({
         predictionHistory: response.isSuccess
-          ? state.predictionHistory
+          ? [newEntry, ...predictionHistoryWithoutEntry]
           : predictionHistoryWithoutEntry,
         isAddingEntryToPredictionHistory: false,
       }),
@@ -320,10 +329,8 @@ export default (set, get) => ({
       (state) => ({
         isPredictionLoading: true,
         displayedPredictionMode: EPredictionMode.ARIMA,
-        draft: {
-          ...state.draft,
-          selectedDataBoundaries: dataBoundaries,
-        },
+        selectedDataBoundaries: dataBoundaries,
+        draft: { ...state.draft },
       }),
       SHOULD_CLEAR_STORE,
       FETCH_ARIMA_PREDICTION_START,
@@ -337,10 +344,8 @@ export default (set, get) => ({
       () => ({
         isPredictionLoading: false,
         displayedPredictionMode: EPredictionMode.ARIMA,
-        draft: {
-          selectedDataBoundaries: dataBoundaries,
-          prediction: response.data,
-        },
+        selectedDataBoundaries: dataBoundaries,
+        draft: { prediction: response.data },
       }),
       SHOULD_CLEAR_STORE,
       response.isSuccess
@@ -369,10 +374,9 @@ export default (set, get) => ({
       (state) => ({
         displayedPredictionId: 'draft',
         displayedPredictionMode: EPredictionMode.VAR,
-
+        selectedDataBoundaries: dataBoundaries,
         draft: {
           ...state.draft,
-          selectedDataBoundaries: dataBoundaries,
           isPredictionLoading: true,
         },
       }),
@@ -388,8 +392,8 @@ export default (set, get) => ({
     set(
       () => ({
         displayedPredictionMode: EPredictionMode.VAR,
+        selectedDataBoundaries: dataBoundaries,
         draft: {
-          selectedDataBoundaries: dataBoundaries,
           prediction: response.data,
           isPredictionLoading: false,
         },

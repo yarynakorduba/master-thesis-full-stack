@@ -8,11 +8,12 @@ class PredictionHistoryList:
     self = self
 
   def add_entry_to_prediction_history(self, data):
+
     entry = PredictionHistory(
       id=data["id"],
       configuration_id=data["configuration_id"],
       prediction_mode=data["prediction_mode"],
-      selected_data_boundaries= getattr(data, "selected_data_boundaries", None),
+      selected_data_boundaries=data.get("selected_data_boundaries", None),
       test_prediction_parameters=data["test_prediction_parameters"],
       real_prediction_parameters=data["real_prediction_parameters"],
       test_prediction=data["test_prediction"],
@@ -21,6 +22,8 @@ class PredictionHistoryList:
       evaluation=data["evaluation"],
       input_data=data["input_data"]
     )
+    print("--------------- AAAA!!!!----")
+    print(getattr(data, "selected_data_boundaries", None))
 
     db.session.add(entry)
     db.session.commit()

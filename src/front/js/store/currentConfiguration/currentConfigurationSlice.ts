@@ -2,7 +2,7 @@ import { StateCreator } from 'zustand';
 import { EPredictionMode } from '../../pages/Configuration/Analysis/types';
 import {
   TConfigurationSlice,
-  TDisplayedPrediction,
+  TDisplayedPredictionId,
   TStoreMiddlewares,
   TStoreType,
 } from '../types';
@@ -26,7 +26,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
   causalityTest: undefined,
   isCausalityTestLoading: false,
 
-  displayedPredictionId: undefined as TDisplayedPrediction,
+  displayedPredictionId: undefined as TDisplayedPredictionId,
 
   isPredictionLoading: false,
   displayedPredictionMode: EPredictionMode.ARIMA,

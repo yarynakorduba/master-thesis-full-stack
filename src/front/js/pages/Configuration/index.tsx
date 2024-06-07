@@ -51,8 +51,7 @@ const Configuration = () => {
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
 
-  const [predictionResult, handleFetchPrediction, isPredictionLoading] =
-    usePrediction();
+  const [predictionResult, , isPredictionLoading] = usePrediction();
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();

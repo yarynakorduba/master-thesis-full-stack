@@ -26,7 +26,7 @@ import SorterPopover from './SorterPopover';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
-
+  console.log('-->> prediction hist', predictionHistory);
   const [displayedPredictionId, setDisplayedPredictionId] =
     useDisplayedPredictionId();
 
@@ -62,7 +62,7 @@ const PredictionHistory = () => {
       predictionHistory,
       (historyItem) => !isNil(get(historyItem, propPath)),
     );
-
+    console.log('PREDICTION HISTORY --- >>> ', historyToSort);
     if (!isEmpty(historyToSort)) {
       const sorted = flow(
         (h) => sortBy(h, (historyItem) => get(historyItem, propPath)),
