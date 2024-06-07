@@ -1,13 +1,13 @@
 import React, { Fragment } from 'react';
 import { Typography, Stack, Chip, Box } from '@mui/material';
-import { map, upperCase, round, noop } from 'lodash';
+import { map, upperCase, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
-import { PRECISION } from '../../../consts';
 import { THistoryEntry } from '../Analysis/types';
 import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import { getHistoryLineChartData } from './utils';
+import { formatNumber } from '../../../utils/formatters';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -46,12 +46,15 @@ const EvaluationIndicators = ({
               flexWrap="wrap"
               justifyContent="space-between"
             >
-              <Typography variant="subtitle2">{analyzedPropKey}</Typography>
+              <Typography variant="subtitle2" sx={{ marginBottom: 0.5 }}>
+                {analyzedPropKey}
+              </Typography>
               <Stack
                 flexBasis="100%"
                 flexGrow={1}
                 direction="row"
-                gap={0.25}
+                gap={0.5}
+                sx={{ marginBottom: 0.5 }}
                 flexWrap="nowrap"
               >
                 {map(values, (indicatorValue, indicatorKey) => {
@@ -65,7 +68,7 @@ const EvaluationIndicators = ({
                       label={
                         <Typography noWrap>
                           {upperCase(indicatorKey)}:{' '}
-                          {round(indicatorValue, PRECISION)}
+                          {formatNumber(indicatorValue)}
                         </Typography>
                       }
                     />
