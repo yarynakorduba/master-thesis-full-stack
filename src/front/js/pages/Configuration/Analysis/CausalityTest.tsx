@@ -1,5 +1,5 @@
 import React from 'react';
-import { find, map } from 'lodash';
+import { find, flatMap, keyBy, map, reduce } from 'lodash';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Grid, Typography } from '@mui/material';
@@ -9,6 +9,8 @@ import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChart
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
+import Example from '../../../sharedComponents/charts/NetworkChart';
+import { useConfigData } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
   readonly index: number;
@@ -29,6 +31,23 @@ const CausalityTest = ({
   isCausalityTestLoading,
   handleFetchGrangerDataCausalityTest,
 }: TProps) => {
+  const { valueProperties } = useConfigData();
+  const nodes = map(valueProperties, (prop, index: number) => ({
+    id: prop.value,
+    label: prop.label,
+    x: 20,
+    y: 200 * index,
+  }));
+  const indexedNodes = keyBy(nodes, 'id');
+
+  const edges = flatMap(causalityTestResult, (keyPair) => {
+    return map(keyPair, (result) => ({
+      source: indexedNodes[result.source],
+      target: indexedNodes[result.target],
+    }));
+  });
+  console.log('NODES', nodes, edges, causalityTestResult);
+
   const causalityTexts = map(causalityTestResult, (keyPair) => {
     const first = keyPair[0];
     const second = keyPair[1];
@@ -72,6 +91,9 @@ const CausalityTest = ({
       <Typography variant="body1">
         {causalityTestResult ? causalityTexts : null}
       </Typography>
+      {causalityTestResult && (
+        <Example width={500} height={500} nodes={nodes} edges={edges} />
+      )}
     </AnalysisSection>
   );
 };

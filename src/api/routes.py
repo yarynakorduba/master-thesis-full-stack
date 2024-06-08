@@ -23,9 +23,11 @@ CORS(api, origins=['http://localhost:3000'], \
 @api.route('/white-noise', methods=['POST'])
 def test_white_noise():
     request_body = request.get_json()
-    data_serie = request_body["data"]
-
-    result = StatisticalTests().test_white_noise(data_serie)
+    data = request_body["data"]
+    data_keys = request_body["data_keys"]
+    max_lag_order = request_body["max_lag_order"]
+    print(f"Max Lag Order: {max_lag_order}")
+    result = StatisticalTests().multitest_white_noise(data, data_keys, max_lag_order)
 
     return json.dumps(result), 200
 
@@ -41,10 +43,10 @@ def test_stationarity():
 @api.route('/granger-causality-test', methods=['POST'])
 def test_granger_causality():
     request_body = request.get_json()
-    data_serie = request_body["data"]
-    data_keys = request_body["dataKeys"]
+    data = request_body["data"]
+    data_keys = request_body["data_keys"]
     print(data_keys)
-    result = StatisticalTests().multitest_granger_causality(data_serie, data_keys)
+    result = StatisticalTests().multitest_granger_causality(data, data_keys)
     return result, 200
 
 
@@ -62,20 +64,8 @@ def test_var():
 @api.route('/arima-prediction', methods=['POST'])
 def get_arima_prediction():
     try:
-        request_body = request.get_json()
-        data_serie = request_body["data"]
-        # lag_order = request_body["parameters"]["lag_order"]
-        horizon = request_body["parameters"]["horizon"]
-        is_seasonal = request_body["parameters"]["isSeasonal"]
-
-        min_p = request_body["parameters"]["minP"]
-        max_p = request_body["parameters"]["maxP"]
-        min_q = request_body["parameters"]["minQ"]
-        max_q = request_body["parameters"]["maxQ"]
-        periods_in_season = request_body["parameters"]["periodsInSeason"]
-        data_keys = request_body["data_keys"]
-
-        result = ARIMAPrediction().arima_predict(data_serie, data_keys, horizon, is_seasonal, min_p, max_p, min_q, max_q, periods_in_season)
+        data = request.get_json()
+        result = ARIMAPrediction().arima_predict(data)
         return result, 200
     except APIException as e:
         raise e

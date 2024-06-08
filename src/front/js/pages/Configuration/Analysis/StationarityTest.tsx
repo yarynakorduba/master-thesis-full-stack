@@ -1,9 +1,8 @@
 import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
-
 import Typography from '@mui/material/Typography';
-import { Box, Grid, alpha, useTheme } from '@mui/material';
+import { Box, alpha, useTheme } from '@mui/material';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';

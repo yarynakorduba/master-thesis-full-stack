@@ -95,4 +95,5 @@ export enum EAnalysisFormFields {
   minP = 'minP',
   maxP = 'maxP',
   horizon = 'horizon',
+  whiteNoiseMaxLagOrder = 'whiteNoiseMaxLagOrder',
 }

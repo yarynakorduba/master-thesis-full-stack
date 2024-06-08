@@ -16,6 +16,7 @@ const Seasonality = ({ index }) => {
 
   const isDataSeasonal = watch(EAnalysisFormFields.isSeasonal);
 
+  console.log('WATCHI  !!! > ', watch());
   return (
     <AnalysisSection>
       <AnalysisSection.Header index={index}>
@@ -24,7 +25,7 @@ const Seasonality = ({ index }) => {
       <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
         <Grid item md={6} sx={{ height: 66 }}>
           <InfoOverlay
-            id="periods-in-season"
+            id="is-seasonal"
             label="Data is seasonal"
             variant="subtitle2"
             sx={{ fontSize: 12, display: 'block' }}
@@ -53,7 +54,7 @@ const Seasonality = ({ index }) => {
               {...register(EAnalysisFormFields.periodsInSeason)}
               size="small"
               type="number"
-              id="periods"
+              id="periodsInSeason"
               sx={{ width: '100%' }}
               required={isDataSeasonal}
             />

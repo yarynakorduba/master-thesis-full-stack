@@ -33,13 +33,16 @@ const WhiteNoiseTest = ({
 
   const formMethods = useFormContext();
   const {
-    control,
     register,
     formState: { isSubmitting },
-    handleSubmit,
     getValues,
-    watch,
   } = formMethods;
+
+  const handleClick = () => {
+    const values = getValues();
+    console.log('VALUES ---- >>> ', values);
+    handleFetchIsWhiteNoise({ maxLagOrder: +values.whiteNoiseMaxLagOrder });
+  };
 
   const whiteNoiseDemoDatapoints = {
     id: 'white-noise',
@@ -90,30 +93,31 @@ const WhiteNoiseTest = ({
           size="small"
           type="number"
           sx={{ width: '100%' }}
-          {...register(EAnalysisFormFields.periodsInSeason)}
-          // required
+          {...register(EAnalysisFormFields.whiteNoiseMaxLagOrder)}
+          required
         />
       </Box>
       <ButtonContainer>
         {isWhiteNoiseLoading && <Loader />}
-        <Button size="small" onClick={handleFetchIsWhiteNoise}>
+        <Button size="small" onClick={handleClick}>
           Run white-noise test
         </Button>
       </ButtonContainer>
       <Typography variant="body1">
-        {map(whiteNoiseResult, (val, propName) => {
+        {map(whiteNoiseResult, (resultForKey) => {
+          const { key, isWhiteNoise } = resultForKey;
           return (
             <Box>
-              {propName}:{' '}
+              {key}:{' '}
               <Typography
                 component="span"
                 sx={{
-                  background: !val?.isWhiteNoise
+                  background: !isWhiteNoise
                     ? alpha(palette.success.light, 0.2)
                     : alpha(palette.warning.light, 0.2),
                 }}
               >
-                {val?.isWhiteNoise ? '' : 'not '}white noise
+                {isWhiteNoise ? '' : 'not '}white noise
               </Typography>
             </Box>
           );

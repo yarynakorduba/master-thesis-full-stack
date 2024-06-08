@@ -36,39 +36,24 @@ const ARIMAPrediction = ({
 }: TProps) => {
   const handlePredict = useFetchPrediction();
 
-  const [horizon, setHorizon] = useInputState<number>(20, { min: 1 });
-  const [isSeasonal, setIsSeasonal] = useInputState<boolean>(false);
-
-  const [minP, setMinP] = useInputState<number>(0, { min: 0 });
-  const [maxP, setMaxP] = useInputState<number>(1, { min: 0 });
-
-  const [minQ, setMinQ] = useInputState<number>(0, { min: 0 });
-  const [maxQ, setMaxQ] = useInputState<number>(1, { min: 0 });
-
-  const [periodsInSeason, setPeriodsInSeason] = useInputState<number>(1, {
-    min: 0,
-  });
-
   const formMethods = useFormContext();
   const {
-    control,
     register,
     formState: { isSubmitting },
-    handleSubmit,
     getValues,
-    watch,
   } = formMethods;
 
   const handleClick = () => {
     const values = getValues();
+    console.log('VALUES ---- >>> ', values);
     handlePredict({
       horizon: +values.horizon,
       isSeasonal: values.isSeasonal,
+      periodsInSeason: values.isSeasonal ? +values.periodsInSeason : undefined,
       minP: +values.minP,
       maxP: +values.maxP,
       minQ: +values.minQ,
       maxQ: +values.maxQ,
-      periodsInSeason,
     });
   };
 
@@ -201,44 +186,6 @@ const ARIMAPrediction = ({
             />
           </Grid>
         </Grid>
-        <Stack direction="row" alignItems="center" justifyContent="flex-start">
-          <Switch checked={isSeasonal} onChange={setIsSeasonal} />
-          <InfoOverlay
-            id="periods-in-season"
-            label="Data is seasonal"
-            variant="subtitle2"
-            sx={{ fontSize: 12, display: 'block' }}
-          >
-            <InfoOverlay.Popover>aaa</InfoOverlay.Popover>
-          </InfoOverlay>
-        </Stack>
-        {isSeasonal ? (
-          <Grid item md={6} sx={{ paddingTop: 1 }}>
-            <InfoOverlay
-              id="periods-in-season"
-              label="Periods in season"
-              variant="subtitle2"
-              sx={{ fontSize: 12, display: 'block' }}
-            >
-              <InfoOverlay.Popover>
-                This number indicates how many data points one seasonal pattern
-                contains. <br />
-                <br />
-                Example: you have a dataset of daily temperatures for a city
-                over several years. You notice that the temperature tends to be
-                higher in the summer months and lower in the winter months,
-                creating a seasonal pattern. For daily data, the seasonal period
-                could be 365 (one year).
-              </InfoOverlay.Popover>
-            </InfoOverlay>
-            <TextField
-              value={periodsInSeason}
-              onChange={setPeriodsInSeason}
-              size="small"
-              type="number"
-            />
-          </Grid>
-        ) : null}
         <Box sx={{ marginTop: 1, marginBottom: 1 }}>
           {isVARLoading ? <Loader /> : null}
           {!isVARLoading ? (

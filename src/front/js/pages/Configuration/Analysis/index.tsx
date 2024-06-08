@@ -85,7 +85,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         index={key}
         whiteNoiseResult={whiteNoiseResult}
         isWhiteNoiseLoading={isWhiteNoiseLoading}
-        handleFetchIsWhiteNoise={() => handleFetchIsWhiteNoise(valueProperties)}
+        handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
       />
     ),
     (key) => (

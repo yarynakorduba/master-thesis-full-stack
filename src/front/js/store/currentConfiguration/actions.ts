@@ -160,7 +160,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchWhiteNoiseTest: async (valueProperties) => {
+  fetchWhiteNoiseTest: async ({ maxLagOrder }) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
@@ -174,31 +174,18 @@ export default (set, get) => ({
       FETCH_WHITE_NOISE_TEST_START,
     );
 
-    const responses = await Promise.all(
-      map(valueProperties, async (selectedProp) => {
-        const dataForAnalysis = selectedProp?.value
-          ? map(selectedData, (datum) => datum[selectedProp.value])
-          : undefined;
-        if (dataForAnalysis) {
-          return await fetchIsWhiteNoise(dataForAnalysis);
-        }
-      }),
+    const properties = map(get().valueProperties, (prop) => prop.value);
+
+    const response = await fetchIsWhiteNoise(
+      selectedData,
+      properties,
+      maxLagOrder,
     );
 
-    const isSuccess = every(responses, 'isSuccess');
-    const mappedResponse = reduce(
-      responses,
-      (accum, response, index) => {
-        return { ...accum, [valueProperties?.[index]?.value]: response?.data };
-      },
-      {} as TWhiteNoiseResult,
-    );
+    const isSuccess = response.isSuccess;
 
     set(
-      () => ({
-        whiteNoiseTest: mappedResponse,
-        isWhiteNoiseTestLoading: false,
-      }),
+      () => ({ whiteNoiseTest: response.data, isWhiteNoiseTestLoading: false }),
       SHOULD_CLEAR_STORE,
       isSuccess
         ? FETCH_WHITE_NOISE_TEST_SUCCESS
@@ -248,7 +235,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchCausalityTest: async (selectedProp) => {
+  fetchCausalityTest: async () => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
