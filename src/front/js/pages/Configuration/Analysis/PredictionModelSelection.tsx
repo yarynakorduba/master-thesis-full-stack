@@ -1,4 +1,5 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,7 +8,7 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Box, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
@@ -16,7 +17,6 @@ import {
   useIsHistoryDrawerOpen,
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
-import { isEmpty } from 'lodash';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
@@ -32,17 +32,7 @@ const PredictionModelSelection = ({
   const predictionHistory = useGetPredictionHistory();
 
   return (
-    <Grid
-      item
-      md={12}
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      flexDirection="column"
-      display="flex"
-      spacing={1}
-      gap={1}
-      sx={{ mb: 1 }}
-    >
+    <>
       <Typography variant="h5">
         Prediction
         {!isEmpty(predictionHistory) && (
@@ -58,7 +48,7 @@ const PredictionModelSelection = ({
           </ToggleButton>
         )}
       </Typography>
-      <Box sx={{ display: 'inline' }}>
+      <Grid item md={12}>
         <Typography variant="subtitle2" sx={{ marginBottom: 0.5 }}>
           Select a model for prediction
         </Typography>
@@ -103,13 +93,7 @@ const PredictionModelSelection = ({
                   series data. It is primarily designed to predict linear time
                   series data. It can be broken down into 3 components:
                 </Typography>
-                <List
-                  sx={{
-                    width: '100%',
-                    maxWidth: 'lg',
-                    bgcolor: 'background.paper',
-                  }}
-                >
+                <List sx={{ width: '100%', maxWidth: 'lg' }}>
                   <ListItem disableGutters>
                     <ListItemText>
                       AR: This component represents the relationship between an
@@ -154,8 +138,8 @@ const PredictionModelSelection = ({
             )}
           </InfoOverlay.Popover>
         </InfoOverlay>
-      </Box>
-    </Grid>
+      </Grid>
+    </>
   );
 };
 

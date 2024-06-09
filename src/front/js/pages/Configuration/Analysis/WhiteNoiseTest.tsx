@@ -87,7 +87,7 @@ const WhiteNoiseTest = ({
       </AnalysisSection.Header>
       <Grid item md={12}>
         <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-          <label htmlFor="name">Max lag order</label>
+          <label htmlFor="name">Max lag order (optional)</label>
         </Typography>
         <TextField
           size="small"

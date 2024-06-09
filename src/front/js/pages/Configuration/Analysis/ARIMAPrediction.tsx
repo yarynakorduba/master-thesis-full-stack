@@ -1,14 +1,12 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import { Card, CardContent, Stack } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import { red } from '@mui/material/colors';
+import { useFormContext } from 'react-hook-form';
 
 import Loader from '../../../sharedComponents/Loader';
-import { useInputState } from '../../../hooks';
 import { getLinearValueScale } from '../../../utils';
 import {
   useFetchPrediction,
@@ -16,9 +14,7 @@ import {
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
-import EvaluationIndicators from '../PredictionHistory/EvaluationIndicators';
 import { EAnalysisFormFields } from './types';
-import { useFormContext } from 'react-hook-form';
 import AnalysisSection from './AnalysisSection';
 
 type TProps = {
@@ -70,7 +66,12 @@ const ARIMAPrediction = ({
         What is the prediction for the future? (ARIMA)
       </AnalysisSection.Header>
       <Grid item md={6}>
-        <Grid container columnSpacing={2} rowSpacing={1}>
+        <Grid
+          container
+          columnSpacing={2}
+          rowSpacing={1}
+          sx={{ mb: 1, maxWidth: 400 }}
+        >
           <Grid item md={6}>
             <InfoOverlay
               id="periods-in-season"

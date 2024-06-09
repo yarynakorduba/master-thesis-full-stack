@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
@@ -46,51 +46,66 @@ const VARPrediction = ({
       <AnalysisSection.Header>
         What is the prediction for the future? (VAR)
       </AnalysisSection.Header>
-      <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
-        <Grid item md={6}>
-          <Typography
-            variant="subtitle2"
-            sx={{ fontSize: 12 }}
-            component="label"
-            htmlFor="name"
-          >
-            Max lag order
-          </Typography>
-          <TextField
-            size="small"
-            type="number"
-            sx={{ width: '100%' }}
-            {...register(EAnalysisFormFields.lagOrder)}
-            // required
-          />
+      <Grid item md={6}>
+        <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
+          <Grid item md={6}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+              component="label"
+              htmlFor="name"
+            >
+              Max lag order
+            </Typography>
+            <TextField
+              size="small"
+              type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.lagOrder)}
+              // required
+            />
+          </Grid>
+          <Grid item md={6}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+              component="label"
+              htmlFor="name"
+            >
+              Horizon
+            </Typography>
+            <TextField
+              size="small"
+              type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.horizon)}
+              // required
+            />
+          </Grid>
         </Grid>
-        <Grid item md={6}>
-          <Typography
-            variant="subtitle2"
-            sx={{ fontSize: 12 }}
-            component="label"
-            htmlFor="name"
-          >
-            Horizon
-          </Typography>
-          <TextField
-            size="small"
-            type="number"
-            sx={{ width: '100%' }}
-            {...register(EAnalysisFormFields.horizon)}
-            // required
-          />
-        </Grid>
+        <ButtonContainer>
+          {isVARLoading ? (
+            <Loader />
+          ) : (
+            <Button size="small" onClick={handleClick}>
+              Run the prediction model
+            </Button>
+          )}
+        </ButtonContainer>
       </Grid>
-      <ButtonContainer>
-        {isVARLoading ? (
-          <Loader />
-        ) : (
-          <Button size="small" onClick={handleClick}>
-            Run the prediction model
-          </Button>
-        )}
-      </ButtonContainer>
+      <Grid item md={6}>
+        {varResult ? (
+          <Card variant="outlined">
+            <CardContent>
+              {/* <ARIMAPredictionParams arimaResult={arimaResult} /> */}
+              {/* <EvaluationIndicators
+                evaluation={arimaResult.evaluation}
+                errorColorScale={errorColorScale}
+              /> */}
+            </CardContent>
+          </Card>
+        ) : null}
+      </Grid>
     </AnalysisSection>
   );
 };
