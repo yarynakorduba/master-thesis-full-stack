@@ -58,10 +58,10 @@ const PredictionModelSelection = ({
           </ToggleButton>
         )}
       </Typography>
-      <Typography variant="subtitle2" sx={{ marginTop: 1, marginBottom: 1 }}>
-        Select a model for prediction
-      </Typography>
       <Box sx={{ display: 'inline' }}>
+        <Typography variant="subtitle2" sx={{ marginBottom: 0.5 }}>
+          Select a model for prediction
+        </Typography>
         <ToggleButtonGroup
           value={predictionMode}
           exclusive

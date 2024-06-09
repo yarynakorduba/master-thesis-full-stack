@@ -65,12 +65,12 @@ const ARIMAPrediction = ({
 
   if (!isVisible) return null;
   return (
-    <>
-      <AnalysisSection md={6}>
-        <AnalysisSection.Header>
-          What is the prediction for the future? (ARIMA)
-        </AnalysisSection.Header>
-        <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
+    <AnalysisSection>
+      <AnalysisSection.Header>
+        What is the prediction for the future? (ARIMA)
+      </AnalysisSection.Header>
+      <Grid item md={6}>
+        <Grid container columnSpacing={2} rowSpacing={1}>
           <Grid item md={6}>
             <InfoOverlay
               id="periods-in-season"
@@ -185,17 +185,17 @@ const ARIMAPrediction = ({
               // required
             />
           </Grid>
+          <Grid item sx={{ marginTop: 1, marginBottom: 1 }}>
+            {isVARLoading ? <Loader /> : null}
+            {!isVARLoading ? (
+              <Button size="small" onClick={handleClick}>
+                Run the prediction model
+              </Button>
+            ) : null}
+          </Grid>
         </Grid>
-        <Box sx={{ marginTop: 1, marginBottom: 1 }}>
-          {isVARLoading ? <Loader /> : null}
-          {!isVARLoading ? (
-            <Button size="small" onClick={handleClick}>
-              Run the prediction model
-            </Button>
-          ) : null}
-        </Box>
-      </AnalysisSection>
-      <AnalysisSection md={6}>
+      </Grid>
+      <Grid item md={6}>
         {arimaResult ? (
           <Card variant="outlined">
             <CardContent>
@@ -207,8 +207,8 @@ const ARIMAPrediction = ({
             </CardContent>
           </Card>
         ) : null}
-      </AnalysisSection>
-    </>
+      </Grid>
+    </AnalysisSection>
   );
 };
 

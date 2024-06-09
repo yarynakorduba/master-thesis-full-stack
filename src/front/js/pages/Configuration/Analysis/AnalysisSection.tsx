@@ -5,13 +5,15 @@ import React, { ReactNode } from 'react';
 type TAnalysisSectionHeaderProps = {
   readonly index?: number;
   readonly children: ReactNode | ReactNode[] | string;
+  readonly sx?: any;
 };
 const AnalysisSectionHeader = ({
   index,
   children,
+  sx,
 }: TAnalysisSectionHeaderProps) => {
   return (
-    <Typography variant="h6" sx={{ ml: !isNil(index) ? -3 : 0 }}>
+    <Typography variant="h6" sx={{ width: '100%', ...sx }}>
       {index ? `${index}. ` : ''}
       {children}
     </Typography>
@@ -25,26 +27,19 @@ type TProps = {
   readonly flexDirection?: 'row' | 'column';
 };
 
-const AnalysisSection = ({
-  md = 12,
-  children,
-  container,
-  flexDirection = 'column',
-}: TProps) => {
+const AnalysisSection = ({ md = 12, children }: TProps) => {
   return (
-    <Grid
-      item
-      md={md}
-      container={container}
-      alignItems="flex-start"
-      justifyContent="flex-start"
-      flexDirection={flexDirection}
-      display="flex"
-      spacing={1}
-      gap={1}
-      sx={{ mb: 1, pl: 3 }}
-    >
-      {children}
+    <Grid item md={md} sx={{ paddingLeft: 3 }}>
+      <Grid
+        container
+        alignItems="flex-start"
+        justifyContent="flex-start"
+        rowSpacing={1}
+        columnSpacing={3}
+        sx={{ mb: 1 }}
+      >
+        {children}
+      </Grid>
     </Grid>
   );
 };

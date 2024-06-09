@@ -1,5 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DefaultNode, Graph } from '@visx/network';
+import {
+  forceLink,
+  forceSimulation,
+  forceCenter,
+  forceManyBody,
+  forceCollide,
+} from 'd3-force';
+import { ParentSize } from '@visx/responsive';
 
 export type NetworkProps = {
   width: number;
@@ -9,8 +17,8 @@ export type NetworkProps = {
 };
 
 interface CustomNode {
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
   id: string | number;
   label: string;
   color?: string;
@@ -21,6 +29,12 @@ interface CustomLink {
   target: CustomNode;
   dashed?: boolean;
 }
+
+const RADIUS = 8;
+const LINK_WIDTH = 3;
+const LINK_DISTANCE = 100;
+const FORCE_RADIUS_FACTOR = 2.5;
+const NODE_STRENGTH = 250;
 
 // const nodes: CustomNode[] = [
 //   { x: 50, y: 20 },
@@ -34,7 +48,38 @@ interface CustomLink {
 //   { source: nodes[2], target: nodes[0], dashed: true },
 // ];
 
-const Example = ({ width, height, nodes, edges }: NetworkProps) => {
+const Example = ({
+  width,
+  height,
+  nodes: initNodes,
+  edges: initEdges,
+}: NetworkProps) => {
+  const [nodes, setNodes] = useState(initNodes);
+  const [edges, setEdges] = useState(initEdges);
+
+  useEffect(() => {
+    const simulation = forceSimulation<CustomNode, CustomLink>(initNodes)
+      .force(
+        'link',
+        forceLink<CustomNode, CustomLink>(initEdges)
+          .id((d) => d.id)
+          .distance(LINK_DISTANCE),
+      )
+      .force('center', forceCenter(width / 3, height / 2))
+      .force('charge', forceManyBody().strength(-NODE_STRENGTH))
+      .force('collision', forceCollide(RADIUS * FORCE_RADIUS_FACTOR));
+
+    // update state on every frame
+    simulation.on('tick', () => {
+      setNodes([...simulation.nodes()]);
+      setEdges([...initEdges]);
+    });
+
+    return () => {
+      simulation.stop();
+    };
+  }, [width, height, initEdges, initNodes]);
+
   const graph = { nodes, links: edges };
   return width < 10 ? null : (
     <svg width={width} height={height}>
@@ -63,4 +108,14 @@ const Example = ({ width, height, nodes, edges }: NetworkProps) => {
   );
 };
 
-export default Example;
+const ResponsiveExample = (props) => (
+  <ParentSize
+    parentSizeStyles={{ width: 'auto', maxWidth: '100%', minHeight: 300 }}
+  >
+    {(parent) => (
+      <Example {...props} width={parent.width} height={parent.height} />
+    )}
+  </ParentSize>
+);
+
+export default ResponsiveExample;

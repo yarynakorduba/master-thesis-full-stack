@@ -94,6 +94,7 @@
     "@visx/threshold": "3.5.0",
     "@visx/tooltip": "3.3.0",
     "arima": "0.2.5",
+    "d3-force": "^3.0.0",
     "date-fns": "3.2.0",
     "eslint-plugin-react-hooks": "4.6.0",
     "i": "^0.3.7",

@@ -3,7 +3,7 @@ import { identity, map } from 'lodash';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import { Box, TextField, alpha } from '@mui/material';
+import { Box, Grid, TextField, alpha } from '@mui/material';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
@@ -85,44 +85,46 @@ const WhiteNoiseTest = ({
         </InfoOverlay>
         ?
       </AnalysisSection.Header>
-      <Box>
+      <Grid item md={12}>
         <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
           <label htmlFor="name">Max lag order</label>
         </Typography>
         <TextField
           size="small"
           type="number"
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', maxWidth: 172 }}
           {...register(EAnalysisFormFields.whiteNoiseMaxLagOrder)}
           required
         />
-      </Box>
-      <ButtonContainer>
+      </Grid>
+      <Grid item md={12}>
         {isWhiteNoiseLoading && <Loader />}
         <Button size="small" onClick={handleClick}>
           Run white-noise test
         </Button>
-      </ButtonContainer>
-      <Typography variant="body1">
-        {map(whiteNoiseResult, (resultForKey) => {
-          const { key, isWhiteNoise } = resultForKey;
-          return (
-            <Box>
-              {key}:{' '}
-              <Typography
-                component="span"
-                sx={{
-                  background: !isWhiteNoise
-                    ? alpha(palette.success.light, 0.2)
-                    : alpha(palette.warning.light, 0.2),
-                }}
-              >
-                {isWhiteNoise ? '' : 'not '}white noise
-              </Typography>
-            </Box>
-          );
-        })}
-      </Typography>
+      </Grid>
+      <Grid item md={12}>
+        <Typography variant="body1">
+          {map(whiteNoiseResult, (resultForKey) => {
+            const { key, isWhiteNoise } = resultForKey;
+            return (
+              <Box>
+                {key}:{' '}
+                <Typography
+                  component="span"
+                  sx={{
+                    background: !isWhiteNoise
+                      ? alpha(palette.success.light, 0.2)
+                      : alpha(palette.warning.light, 0.2),
+                  }}
+                >
+                  {isWhiteNoise ? '' : 'not '}white noise
+                </Typography>
+              </Box>
+            );
+          })}
+        </Typography>
+      </Grid>
     </AnalysisSection>
   );
 };

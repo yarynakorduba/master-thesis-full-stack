@@ -2,7 +2,7 @@ import React from 'react';
 import { map } from 'lodash';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Box, alpha, useTheme } from '@mui/material';
+import { Box, Grid, alpha, useTheme } from '@mui/material';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
@@ -47,38 +47,42 @@ const StationarityTest = ({
       <AnalysisSection.Header index={index}>
         Is data stationary?
       </AnalysisSection.Header>
-      <ButtonContainer>
-        {isStationarityTestLoading && <Loader />}
-        {!isStationarityTestLoading && (
-          <Button size="small" onClick={handleFetchDataStationarityTest}>
-            Run stationarity test
-          </Button>
-        )}
-      </ButtonContainer>
-      <Typography variant="body1">
-        {map(stationarityTestResult, (val, propName) => {
-          return (
-            <Box>
-              {propName}:
-              <ul>
-                <li>
-                  <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
-                    KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
-                  </InfoOverlay>{' '}
-                  test:{getStationaryTxt(val.kpss?.isStationary)}
-                </li>
-                <li>
-                  {' '}
-                  <InfoOverlay id={`ADF-${propName}`} label="ADF">
-                    ADF<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
-                  </InfoOverlay>{' '}
-                  test: {getStationaryTxt(val.adf?.isStationary)}
-                </li>
-              </ul>
-            </Box>
-          );
-        })}
-      </Typography>
+      <Grid item md={12}>
+        <ButtonContainer>
+          {isStationarityTestLoading && <Loader />}
+          {!isStationarityTestLoading && (
+            <Button size="small" onClick={handleFetchDataStationarityTest}>
+              Run stationarity test
+            </Button>
+          )}
+        </ButtonContainer>
+      </Grid>
+      <Grid item md={12}>
+        <Typography variant="body1">
+          {map(stationarityTestResult, (val, propName) => {
+            return (
+              <Box>
+                {propName}:
+                <ul>
+                  <li>
+                    <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
+                      KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                    </InfoOverlay>{' '}
+                    test:{getStationaryTxt(val.kpss?.isStationary)}
+                  </li>
+                  <li>
+                    {' '}
+                    <InfoOverlay id={`ADF-${propName}`} label="ADF">
+                      ADF<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                    </InfoOverlay>{' '}
+                    test: {getStationaryTxt(val.adf?.isStationary)}
+                  </li>
+                </ul>
+              </Box>
+            );
+          })}
+        </Typography>
+      </Grid>
     </AnalysisSection>
   );
 };

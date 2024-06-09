@@ -1,5 +1,5 @@
 import React from 'react';
-import { find, flatMap, keyBy, map, reduce } from 'lodash';
+import { filter, find, flatMap, flow, map } from 'lodash';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Grid, Typography } from '@mui/material';
@@ -32,21 +32,18 @@ const CausalityTest = ({
   handleFetchGrangerDataCausalityTest,
 }: TProps) => {
   const { valueProperties } = useConfigData();
-  const nodes = map(valueProperties, (prop, index: number) => ({
-    id: prop.value,
-    label: prop.label,
-    x: 20,
-    y: 200 * index,
+  const nodes = map(valueProperties, ({ value, label }) => ({
+    id: value,
+    label,
   }));
-  const indexedNodes = keyBy(nodes, 'id');
 
   const edges = flatMap(causalityTestResult, (keyPair) => {
-    return map(keyPair, (result) => ({
-      source: indexedNodes[result.source],
-      target: indexedNodes[result.target],
-    }));
+    console.log('RSU SOURCE', keyPair);
+    return flow(
+      (pair) => filter(pair, 'isCausal'),
+      (pair) => map(pair, ({ source, target }) => ({ source, target })),
+    )(keyPair);
   });
-  console.log('NODES', nodes, edges, causalityTestResult);
 
   const causalityTexts = map(causalityTestResult, (keyPair) => {
     const first = keyPair[0];
@@ -72,7 +69,7 @@ const CausalityTest = ({
 
   if (!isVisible) return null;
   return (
-    <AnalysisSection md={6}>
+    <AnalysisSection container md={12} flexDirection="column">
       <AnalysisSection.Header index={index}>
         Do selected variables have a{' '}
         <InfoOverlay id="causal-relationship" label="causal relautionship">
@@ -82,18 +79,23 @@ const CausalityTest = ({
         </InfoOverlay>
         ?
       </AnalysisSection.Header>
-      <ButtonContainer>
-        {isCausalityTestLoading && <Loader />}
-        <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
-          Run the causality test
-        </Button>
-      </ButtonContainer>
-      <Typography variant="body1">
-        {causalityTestResult ? causalityTexts : null}
-      </Typography>
-      {causalityTestResult && (
-        <Example width={500} height={500} nodes={nodes} edges={edges} />
-      )}
+
+      <Grid item md={6}>
+        <ButtonContainer>
+          {isCausalityTestLoading && <Loader />}
+          <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+            Run the causality test
+          </Button>
+        </ButtonContainer>
+        <Typography variant="body1">
+          {causalityTestResult ? causalityTexts : null}
+        </Typography>
+      </Grid>
+      <Grid item md={6} flexGrow={1}>
+        {causalityTestResult && (
+          <Example width={500} height={500} nodes={nodes} edges={edges} />
+        )}
+      </Grid>
     </AnalysisSection>
   );
 };

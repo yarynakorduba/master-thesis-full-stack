@@ -26,7 +26,6 @@ import SorterPopover from './SorterPopover';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
-  console.log('-->> prediction hist', predictionHistory);
   const [displayedPredictionId, setDisplayedPredictionId] =
     useDisplayedPredictionId();
 
