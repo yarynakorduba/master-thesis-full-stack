@@ -9,7 +9,7 @@ import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChart
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
-import Example from '../../../sharedComponents/charts/NetworkChart';
+import NetworkChart from '../../../sharedComponents/charts/NetworkChart';
 import { useConfigData } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
@@ -79,21 +79,35 @@ const CausalityTest = ({
         </InfoOverlay>
         ?
       </AnalysisSection.Header>
-
+      <Grid item md={12}>
+        {isCausalityTestLoading && <Loader />}
+        <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+          Run the causality test
+        </Button>
+      </Grid>
       <Grid item md={6}>
-        <ButtonContainer>
-          {isCausalityTestLoading && <Loader />}
-          <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
-            Run the causality test
-          </Button>
-        </ButtonContainer>
-        <Typography variant="body1">
-          {causalityTestResult ? causalityTexts : null}
-        </Typography>
+        {causalityTestResult && (
+          <>
+            <Typography variant="subtitle1">
+              Found causal relationships:
+            </Typography>
+            <Typography variant="body1">{causalityTexts}</Typography>
+          </>
+        )}
       </Grid>
       <Grid item md={6} flexGrow={1}>
         {causalityTestResult && (
-          <Example width={500} height={500} nodes={nodes} edges={edges} />
+          <>
+            <Typography variant="subtitle1">
+              Network of pairwise Granger causalities:
+            </Typography>
+            <NetworkChart
+              width={500}
+              height={500}
+              nodes={nodes}
+              edges={edges}
+            />
+          </>
         )}
       </Grid>
     </AnalysisSection>

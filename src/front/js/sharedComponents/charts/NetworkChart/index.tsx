@@ -31,22 +31,9 @@ interface CustomLink {
 }
 
 const RADIUS = 50;
-const LINK_WIDTH = 3;
-const LINK_DISTANCE = 50;
+const LINK_DISTANCE = 70;
 const FORCE_RADIUS_FACTOR = 1.5;
-const NODE_STRENGTH = 20;
-
-// const nodes: CustomNode[] = [
-//   { x: 50, y: 20 },
-//   { x: 200, y: 250 },
-//   { x: 300, y: 40, color: '#26deb0' },
-// ];
-
-// const links: CustomLink[] = [
-//   { source: nodes[0], target: nodes[1] },
-//   { source: nodes[1], target: nodes[2] },
-//   { source: nodes[2], target: nodes[0], dashed: true },
-// ];
+const NODE_STRENGTH = 5;
 
 const NetworkChart = ({
   width,
@@ -72,15 +59,14 @@ const NetworkChart = ({
     // update state on every frame
     simulation.on('tick', () => {
       setNodes([
-        ...simulation.nodes(),
-        // .map((node) => ({
-        //   ...node,
-        //   x: Math.max(
-        //     (node.label * 8) / 2,
-        //     Math.min(width - (node.label * 8) / 2, node.x),
-        //   ),
-        //   y: Math.max(16, Math.min(height - 16, node.y)),
-        // })),
+        ...simulation.nodes().map((node) => ({
+          ...node,
+          x: Math.max(
+            (node.label.length * 8) / 2,
+            Math.min(width - (node.label.length * 8) / 2, node.x),
+          ),
+          y: Math.max(16, Math.min(height - 16, node.y)),
+        })),
       ]);
       setEdges([...initEdges]);
     });
@@ -120,7 +106,7 @@ const NetworkChart = ({
           console.log('PROPS -- > ', props);
           return color ? (
             <text stroke="black" fill="black">
-              {trimText(label, 30)}
+              {trimText(label, 300)}
             </text>
           ) : (
             <>
@@ -129,7 +115,7 @@ const NetworkChart = ({
                 fill="black"
                 transform={`translate(-${(8 * label.length) / 2} 0)`}
               >
-                {trimText(label, 30)}
+                {trimText(label, 300)}
               </text>
             </>
           );
