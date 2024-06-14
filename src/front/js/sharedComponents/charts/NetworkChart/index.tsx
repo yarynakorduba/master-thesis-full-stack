@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DefaultNode, Graph } from '@visx/network';
+import { Graph } from '@visx/network';
 import {
   forceLink,
   forceSimulation,
@@ -8,6 +8,7 @@ import {
   forceCollide,
 } from 'd3-force';
 import { ParentSize } from '@visx/responsive';
+import { isEqual } from 'lodash';
 
 export type NetworkProps = {
   width: number;
@@ -70,6 +71,10 @@ const NetworkChart = ({
       ]);
       setEdges([...initEdges]);
     });
+
+    setTimeout(() => {
+      simulation.stop();
+    }, 2000);
 
     return () => {
       simulation.stop();
@@ -155,4 +160,8 @@ const ResponsiveNetworkChart = (props) => (
   </ParentSize>
 );
 
-export default ResponsiveNetworkChart;
+export default React.memo(
+  ResponsiveNetworkChart,
+  (prev, current) =>
+    isEqual(prev.nodes, current.nodes) && isEqual(prev.edges, current.edges),
+);

@@ -45,8 +45,10 @@ def test_granger_causality():
     request_body = request.get_json()
     data = request_body["data"]
     data_keys = request_body["data_keys"]
-    print(data_keys)
-    result = StatisticalTests().multitest_granger_causality(data, data_keys)
+    max_lag_order = request_body["max_lag_order"]
+    
+    print(f"eee -- eee -- eee {max_lag_order}")
+    result = StatisticalTests().multitest_granger_causality(data, data_keys, max_lag_order)
     return result, 200
 
 

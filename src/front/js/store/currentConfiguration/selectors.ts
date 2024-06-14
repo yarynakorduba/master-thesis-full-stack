@@ -3,12 +3,12 @@ import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
+  TCausalityResult,
   THistoryEntry,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPredictionId } from '../types';
 
-// export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetConfigName = (): string =>
   useBoundStore((state) => state.name || '');
 export const useGetData = (): TTimeseriesData =>
@@ -117,13 +117,18 @@ export const useStationarityTest = () => [
 ];
 
 export const useGetCausalityTest = () =>
-  useBoundStore((state) => state.causalityTest);
-export const useFetchCausalityTest = () =>
-  useBoundStore((state) => state.fetchCausalityTest);
+  useBoundStore((state): TCausalityResult | undefined => state.causalityTest);
+export const useFetchCausalityTest = (): ((
+  selectedProp: TDataProperty[],
+) => Promise<void>) => useBoundStore((state) => state.fetchCausalityTest);
 export const useIsCausalityTestLoading = () =>
   useBoundStore((state) => state.isCausalityTestLoading);
 
-export const useCausalityTest = () => [
+export const useCausalityTest = (): [
+  TCausalityResult | undefined,
+  (selectedProp: TDataProperty[]) => Promise<void>,
+  boolean,
+] => [
   useGetCausalityTest(),
   useFetchCausalityTest(),
   useIsCausalityTestLoading(),

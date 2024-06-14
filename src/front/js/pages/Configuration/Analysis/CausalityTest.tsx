@@ -1,21 +1,26 @@
 import React from 'react';
-import { filter, find, flatMap, flow, map } from 'lodash';
+import { find, map } from 'lodash';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, TextField } from '@mui/material';
 import { TrendingFlatSharp, SyncAltSharp } from '@mui/icons-material';
+import { useFormContext } from 'react-hook-form';
 
-import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
+import {
+  EAnalysisFormFields,
+  TCausalityResult,
+  TCausalityResultItem,
+} from './types';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
 import NetworkChart from '../../../sharedComponents/charts/NetworkChart';
-import { useConfigData } from '../../../store/currentConfiguration/selectors';
+import { useCausalityDataForNetworkGraph } from './hooks';
 
 type TProps = {
   readonly index: number;
   readonly isVisible: boolean;
-  readonly causalityTestResult;
+  readonly causalityTestResult: TCausalityResult | undefined;
   readonly isCausalityTestLoading: boolean;
   readonly handleFetchGrangerDataCausalityTest;
 };
@@ -31,38 +36,40 @@ const CausalityTest = ({
   isCausalityTestLoading,
   handleFetchGrangerDataCausalityTest,
 }: TProps) => {
-  const { valueProperties } = useConfigData();
-  const nodes = map(valueProperties, ({ value, label }) => ({
-    id: value,
-    label,
-  }));
+  const formMethods = useFormContext();
+  const {
+    register,
+    formState: { isSubmitting },
+    getValues,
+  } = formMethods;
 
-  const edges = flatMap(causalityTestResult, (keyPair) => {
-    console.log('RSU SOURCE', keyPair);
-    return flow(
-      (pair) => filter(pair, 'isCausal'),
-      (pair) => map(pair, ({ source, target }) => ({ source, target })),
-    )(keyPair);
-  });
+  const graphData = useCausalityDataForNetworkGraph(causalityTestResult);
 
-  const causalityTexts = map(causalityTestResult, (keyPair) => {
+  const handleClick = () => {
+    const values = getValues();
+    handleFetchGrangerDataCausalityTest({
+      maxLagOrder: +values.causalityMaxLagOrder,
+    });
+  };
+
+  const causalityTexts = map(causalityTestResult || [], (keyPair) => {
     const first = keyPair[0];
     const second = keyPair[1];
 
-    const elementWithCausality = find(keyPair, 'isCausal');
+    const elementWithCausality = find<TCausalityResultItem>(
+      keyPair,
+      'isCausal',
+    ) as TCausalityResultItem | undefined;
     if (!elementWithCausality) return null;
     return (
       <Box sx={{ mt: 1, mb: 1 }}>
+        {elementWithCausality.source}{' '}
         {first.isCausal && second.isCausal ? (
-          <>
-            {first.source} <SyncAltSharp /> {first.target}
-          </>
+          <SyncAltSharp />
         ) : (
-          <>
-            {elementWithCausality.source} <TrendingFlatSharp />{' '}
-            {elementWithCausality.target}
-          </>
-        )}
+          <TrendingFlatSharp />
+        )}{' '}
+        {elementWithCausality.target}
       </Box>
     );
   });
@@ -80,36 +87,46 @@ const CausalityTest = ({
         ?
       </AnalysisSection.Header>
       <Grid item md={12}>
+        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+          <label htmlFor="name">Max lag order</label>
+        </Typography>
+        <TextField
+          size="small"
+          type="number"
+          sx={{ width: '100%', maxWidth: 172 }}
+          {...register(EAnalysisFormFields.causalityMaxLagOrder)}
+          required
+        />
+      </Grid>
+      <Grid item md={12}>
         {isCausalityTestLoading && <Loader />}
-        <Button size="small" onClick={handleFetchGrangerDataCausalityTest}>
+        <Button size="small" onClick={handleClick}>
           Run the causality test
         </Button>
       </Grid>
-      <Grid item md={6}>
-        {causalityTestResult && (
-          <>
+      {causalityTestResult && (
+        <>
+          <Grid item md={6}>
             <Typography variant="subtitle1">
               Found causal relationships:
             </Typography>
-            <Typography variant="body1">{causalityTexts}</Typography>
-          </>
-        )}
-      </Grid>
-      <Grid item md={6} flexGrow={1}>
-        {causalityTestResult && (
-          <>
+            <Typography variant="body1">
+              {causalityTexts || 'No relationships detected'}
+            </Typography>
+          </Grid>
+          <Grid item md={6} flexGrow={1}>
             <Typography variant="subtitle1">
               Network of pairwise Granger causalities:
             </Typography>
             <NetworkChart
               width={500}
               height={500}
-              nodes={nodes}
-              edges={edges}
+              nodes={graphData.nodes}
+              edges={graphData.edges}
             />
-          </>
-        )}
-      </Grid>
+          </Grid>
+        </>
+      )}
     </AnalysisSection>
   );
 };

@@ -32,14 +32,17 @@ export const fetchDataStationarityTest = async (data) => {
 export const fetchGrangerDataCausalityTest = async (
   data,
   dataKeys: string[],
+  maxLagOrder: number,
 ) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/granger-causality-test`, {
       method: 'POST',
-      body: JSON.stringify({ data, data_keys: dataKeys }),
-      headers: {
-        'Content-type': 'application/json',
-      },
+      body: JSON.stringify({
+        data,
+        data_keys: dataKeys,
+        max_lag_order: maxLagOrder,
+      }),
+      headers: { 'Content-type': 'application/json' },
     }),
   );
 };
@@ -53,9 +56,7 @@ export const fetchVAR = async (
     fetch(`${process.env.BACKEND_URL}/api/var-prediction`, {
       method: 'POST',
       body: JSON.stringify({ data, parameters, data_keys: dataKeys }),
-      headers: {
-        'Content-type': 'application/json',
-      },
+      headers: { 'Content-type': 'application/json' },
     }),
   );
 };
@@ -69,9 +70,7 @@ export const fetchARIMA = async (
     fetch(`${process.env.BACKEND_URL}/api/arima-prediction`, {
       method: 'POST',
       body: JSON.stringify({ data, parameters, data_keys: dataKeys }),
-      headers: {
-        'Content-type': 'application/json',
-      },
+      headers: { 'Content-type': 'application/json' },
     }),
   );
 };

@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { useConfigData } from '../../../store/currentConfiguration/selectors';
+import { filter, flatMap, flow, map } from 'lodash';
+import { TCausalityResult } from './types';
 
-type TWhiteNoiseResponse = { readonly isWhiteNoise: boolean };
-export type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
-type TWhiteNoiseInfo = {
-  readonly whiteNoiseResult: TWhiteNoiseResult;
-  readonly isWhiteNoiseLoading: boolean;
-  readonly handleFetchIsWhiteNoise: () => Promise<void>;
+// type TWhiteNoiseInfo = {
+//   readonly whiteNoiseResult: TWhiteNoiseResult;
+//   readonly isWhiteNoiseLoading: boolean;
+//   readonly handleFetchIsWhiteNoise: () => Promise<void>;
+// };
+
+type TStationarityResponse = {
+  readonly stationarity: number[];
+  readonly isStationary: boolean;
 };
 
-type TStationarityResponse = { readonly stationarity: number[]; readonly isStationary: boolean };
 type TStationarityResult = { [key: string]: TStationarityResponse } | undefined;
 type TStationarityInfo = {
   readonly stationarityTestResult: TStationarityResult;
@@ -16,20 +21,29 @@ type TStationarityInfo = {
   readonly handleFetchDataStationarityTest: () => Promise<void>;
 };
 
-type TUSeStepperResult = {
-  readonly activeStep: number;
-  readonly handleSelectStep: (stepIndex: number) => () => void;
-  readonly handleNext: () => void;
-};
+export const useCausalityDataForNetworkGraph = (
+  causalityTestResult: TCausalityResult | undefined,
+) => {
+  const { valueProperties } = useConfigData();
 
-export const useStepper = (): TUSeStepperResult => {
-  const [activeStep, setActiveStep] = useState<number>(0);
+  const nodes = useMemo(
+    () =>
+      map(valueProperties, ({ value, label }) => ({
+        id: value,
+        label,
+      })),
+    [valueProperties],
+  );
+  const edges = useMemo(
+    () =>
+      flatMap(causalityTestResult, (keyPair) => {
+        return flow(
+          (pair) => filter(pair, 'isCausal'),
+          (pair) => map(pair, ({ source, target }) => ({ source, target })),
+        )(keyPair);
+      }),
+    [causalityTestResult],
+  );
 
-  const handleSelectStep = (index: number) => () => {
-    setActiveStep(index);
-  };
-  const handleNext = () => {
-    setActiveStep((prevActiveStep: number) => prevActiveStep + 1);
-  };
-  return { activeStep, handleSelectStep, handleNext };
+  return { nodes, edges };
 };

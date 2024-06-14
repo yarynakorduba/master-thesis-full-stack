@@ -3,6 +3,7 @@ import {
   EPredictionMode,
   TARIMAResult,
   TARIMAUserParams,
+  TCausalityResult,
   THistoryEntry,
   TVARResult,
   TValueBounds,
@@ -55,7 +56,7 @@ export type TConfigurationSlice = {
   readonly isStationarityTestLoading: boolean;
   readonly fetchStationarityTest;
 
-  readonly causalityTest;
+  readonly causalityTest?: TCausalityResult;
   readonly isCausalityTestLoading: boolean;
   readonly fetchCausalityTest: (selectedProp: TDataProperty[]) => Promise<void>;
 

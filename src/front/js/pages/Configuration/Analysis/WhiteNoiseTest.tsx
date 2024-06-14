@@ -4,14 +4,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import { Box, Grid, TextField, alpha } from '@mui/material';
+import { useFormContext } from 'react-hook-form';
 
-import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
 import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
 import { EAnalysisFormFields } from './types';
-import { useFormContext } from 'react-hook-form';
 import AnalysisSection from './AnalysisSection';
 
 type TProps = {

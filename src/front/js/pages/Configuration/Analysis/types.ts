@@ -96,4 +96,12 @@ export enum EAnalysisFormFields {
   maxP = 'maxP',
   horizon = 'horizon',
   whiteNoiseMaxLagOrder = 'whiteNoiseMaxLagOrder',
+  causalityMaxLagOrder = 'causalityMaxLagOrder',
 }
+
+export type TCausalityResultItem = {
+  readonly source: string;
+  readonly target: string;
+  readonly isCausal: boolean;
+};
+export type TCausalityResult = TCausalityResultItem[];

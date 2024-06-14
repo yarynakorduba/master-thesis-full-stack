@@ -13,11 +13,7 @@ import {
   type THistoryEntry,
   type TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
-import type {
-  TDataProperty,
-  TTimeseriesData,
-  TWhiteNoiseResult,
-} from '../../types';
+import type { TDataProperty, TTimeseriesData } from '../../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 import {
   SET_DATA,
@@ -235,7 +231,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchCausalityTest: async () => {
+  fetchCausalityTest: async (params) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
@@ -256,6 +252,7 @@ export default (set, get) => ({
         const response = await fetchGrangerDataCausalityTest(
           selectedData,
           properties,
+          params.maxLagOrder,
         );
 
         set(

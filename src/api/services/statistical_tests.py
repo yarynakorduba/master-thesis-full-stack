@@ -60,28 +60,27 @@ class StatisticalTests():
     # The Null hypothesis for grangercausalitytests is that the time series in
     # the second column, x2, does NOT Granger cause the time series in the first
     # column, x1.
-    def test_granger_causality(self, data, data_key_pair):
-        maxlag = 24
+    def test_granger_causality(self, data, data_key_pair, max_lag_order):
     
         data_opposite_direction = [[x[1], x[0]] for x in data]
         # The data for testing whether the time series in the second column Granger
         # causes the time series in the first column
-        result = grangercausalitytests(data, maxlag=[maxlag])
-        result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[maxlag])
+        result = grangercausalitytests(data, maxlag=[max_lag_order])
+        result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[max_lag_order])
         # flip
         return [
-                { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
-                { "isCausal": (result_opposite_direction[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
+                { "isCausal": (result[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
+                { "isCausal": (result_opposite_direction[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
             ]
     
-    def multitest_granger_causality(self, data, data_keys):
+    def multitest_granger_causality(self, data, data_keys, max_lag_order):
         data_df = pd.DataFrame(data)[data_keys]
         stationary_data = self.convert_data_to_stationary(data_df)
         data_pairs = list(combinations(data_keys, 2))
         results = []
         for pair in data_pairs:
             data_for_pair = stationary_data[0][[pair[0], pair[1]]].values
-            result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]])
+            result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]], max_lag_order)
             results.append(result)
         return results
     

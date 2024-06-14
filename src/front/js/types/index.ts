@@ -28,4 +28,6 @@ export type TDataLabel = Pick<TLineChartDatapoint, 'valueX'> & {
 ///////////////
 
 export type TWhiteNoiseResponse = { readonly isWhiteNoise: boolean };
-export type TWhiteNoiseResult = { [key: string]: TWhiteNoiseResponse } | undefined;
+export type TWhiteNoiseResult =
+  | { [key: string]: TWhiteNoiseResponse }
+  | undefined;
