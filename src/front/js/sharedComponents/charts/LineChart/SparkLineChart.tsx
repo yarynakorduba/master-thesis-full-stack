@@ -122,10 +122,11 @@ const LineChart = ({
               scale={yScale}
               hideTicks
               hideAxisLine
-              tickFormat={formatAxisTick(formatYScale) as any}
-              tickLabelProps={
-                getAxisTickLabelProps(AxisVariant.left, '0.75rem') as any
-              }
+              tickFormat={formatAxisTick(formatYScale)}
+              tickLabelProps={getAxisTickLabelProps(
+                AxisVariant.left,
+                '0.75rem',
+              )}
               numTicks={numTicks}
             />
             {data?.map(renderLine)}

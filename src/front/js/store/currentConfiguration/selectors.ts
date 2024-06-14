@@ -3,10 +3,10 @@ import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
-  TARIMAHistoryEntry,
+  TARIMAUserParams,
   TCausalityResult,
   THistoryEntry,
-  TVARHistoryEntry,
+  TVARUserParams,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPredictionId } from '../types';
@@ -61,8 +61,9 @@ export const useSelectedDataBoundaries = (): [
   (data: TValueBounds | undefined) => void,
 ] => [useGetSelectedDataBoundaries(), useSetSelectedDataBoundaries()];
 
-export const useFetchPrediction = (): ((params: any) => Promise<void>) =>
-  useBoundStore((state) => state.fetchPrediction);
+export const useFetchPrediction = (): ((
+  params: TARIMAUserParams | TVARUserParams,
+) => Promise<void>) => useBoundStore((state) => state.fetchPrediction);
 
 export const useGetPrediction = (): THistoryEntry | undefined =>
   useBoundStore((state) =>
@@ -80,7 +81,10 @@ export const useIsPredictionLoading = (): boolean =>
 
 export const usePrediction = (): [
   THistoryEntry | undefined,
-  (params: any, timeProperty: TDataProperty) => Promise<void>,
+  (
+    params: TARIMAUserParams | TVARUserParams,
+    timeProperty: TDataProperty,
+  ) => Promise<void>,
   boolean,
 ] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
 

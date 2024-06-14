@@ -6,6 +6,7 @@ import {
   TCausalityResult,
   THistoryEntry,
   TVARResult,
+  TVARUserParams,
   TValueBounds,
 } from '../pages/Configuration/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
@@ -54,7 +55,9 @@ export type TConfigurationSlice = {
 
   readonly stationarityTest;
   readonly isStationarityTestLoading: boolean;
-  readonly fetchStationarityTest;
+  readonly fetchStationarityTest: (
+    valueProperties: TDataProperty[],
+  ) => Promise<void>;
 
   readonly causalityTest?: TCausalityResult;
   readonly isCausalityTestLoading: boolean;
@@ -88,11 +91,13 @@ export type TConfigurationSlice = {
   ) => Promise<void>;
 
   readonly fetchVARPrediction: (
-    params: any,
+    params: TVARUserParams,
     dataBoundaries: TValueBounds,
     selectedData: TTimeseriesData,
   ) => Promise<void>;
-  readonly fetchPrediction: (params: TARIMAUserParams | any) => Promise<void>;
+  readonly fetchPrediction: (
+    params: TARIMAUserParams | TVARUserParams,
+  ) => Promise<void>;
 
   readonly isHistoryDrawerOpen: boolean;
   readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;

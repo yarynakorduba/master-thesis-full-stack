@@ -385,16 +385,16 @@ const LineChart = ({
               scale={xScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatXScale) as any}
-              tickLabelProps={getAxisTickLabelProps() as any}
+              tickFormat={formatAxisTick(formatXScale)}
+              tickLabelProps={getAxisTickLabelProps()}
               numTicks={numXAxisTicks}
             />
             <AxisLeft
               scale={yScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatYScale) as any}
-              tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
+              tickFormat={formatAxisTick(formatYScale)}
+              tickLabelProps={getAxisTickLabelProps(AxisVariant.left)}
               numTicks={numYAxisTicks}
             />
             {map(dataLabels, (dataLabel) => (

@@ -5,7 +5,7 @@ import { map } from 'lodash';
 
 import AxisTooltip from './AxisTooltip';
 import PointTooltip from './PointTooltip';
-import { TFormatXScale, TFormatYScale } from '../types';
+import { TFormatXScale } from '../types';
 import { TAxisTooltip, TPointTooltip } from './types';
 
 const sharedStyles = {

@@ -12,7 +12,7 @@ import { TDataLabel, TTimeseriesData } from '../../../types';
 import { TDataProperty } from '../../../types';
 import { LineChartContainer, SparkLineChartsContainer } from './styles';
 import {
-  TPredictedPoints,
+  TPredictionResult,
   TValueBounds,
 } from '../../../pages/Configuration/Analysis/types';
 import { getSelectedDataByBoundaries } from '../../../utils';
@@ -50,10 +50,7 @@ type TProps = {
   readonly selectedAreaBounds?: TValueBounds;
   readonly setSelectedDataBoundaries: (data?: TValueBounds) => void;
 
-  readonly predictionData?: {
-    readonly testPrediction: TPredictedPoints;
-    readonly realPrediction: TPredictedPoints;
-  } & any;
+  readonly predictionData?: TPredictionResult;
   readonly dataLabels?: TDataLabel[];
   readonly defaultIsTrainingDataSelectionOn?: boolean;
   readonly isConfigurationLoading?: boolean;

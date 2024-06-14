@@ -3,7 +3,7 @@ import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { formatOrder } from '../../../utils/formatters';
-import { TARIMAHistoryEntry, TARIMAResult, THistoryEntry } from './types';
+import { TARIMAResult } from './types';
 
 type TProps = {
   readonly arimaResult: TARIMAResult;

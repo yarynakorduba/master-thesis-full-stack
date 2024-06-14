@@ -121,7 +121,7 @@ function ChartOverlays(
     () =>
       map(closestPoints, (pointGroup) => {
         if (!pointGroup) return null;
-        const { points, x: pX, y: pY } = pointGroup as any;
+        const { points, x: pX, y: pY } = pointGroup;
         const lastPointColor = points?.[points?.length - 1]?.color;
         const hover = handleHover(pointGroup);
         const leave = handleMouseLeave(pointGroup);

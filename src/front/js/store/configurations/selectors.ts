@@ -1,6 +1,11 @@
 import { useBoundStore } from '..';
+import { TConfiguration } from '../types';
 
-export const useConfigsList = (): [any[], () => Promise<void>, boolean] => [
+export const useConfigsList = (): [
+  TConfiguration[],
+  () => Promise<void>,
+  boolean,
+] => [
   useBoundStore((state) => state.configsList),
   useBoundStore((state) => state.fetchConfigs),
   useBoundStore((state) => state.isLoading),

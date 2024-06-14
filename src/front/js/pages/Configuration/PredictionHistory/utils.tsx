@@ -9,17 +9,14 @@ import {
   convertPredictionData,
 } from '../../../utils/prediction';
 import { theme } from '../../../../styles/theme';
-import { TPredictedPoints } from '../Analysis/types';
+import { TPredictionResult } from '../Analysis/types';
 import { TThresholdData } from '../../../sharedComponents/charts/types';
 
 export const getHistoryLineChartData = (
   id: string,
   palette: Palette,
   timeseriesData: TTimeseriesData,
-  predictionData?: {
-    readonly testPrediction: TPredictedPoints;
-    readonly realPrediction: TPredictedPoints;
-  } & any,
+  predictionData?: TPredictionResult,
   timePropKey?: string,
   analyzedPropKey?: string,
 ) => {
@@ -41,14 +38,16 @@ export const getHistoryLineChartData = (
       (a, b) => a[timePropKey] === b?.[PREDICTION_TIMESTAMP_PROP],
     );
 
-  const mainChartData = constructLineChartDataFromTs(
-    'history-pred-main-data',
-    analyzedPropKey,
-    timePropKey,
-    testPredictedDataCounterpart,
-    palette.charts.chartRealData,
-    '',
-  );
+  const mainChartData = testPredictedDataCounterpart
+    ? constructLineChartDataFromTs(
+        'history-pred-main-data',
+        analyzedPropKey,
+        timePropKey,
+        testPredictedDataCounterpart,
+        palette.charts.chartRealData,
+        '',
+      )
+    : [];
 
   const testPredictedData = constructLineChartDataFromTs(
     `history-pred-test-${PREDICTION_VALUE_PROP}`,
@@ -99,20 +98,8 @@ export const getHistoryLineChartData = (
   return {
     lineData: filter(
       [mainChartData, testPredictedData, realPredictedData],
-      (d) => !isEmpty(d?.datapoints),
+      (d?: TLineChartSerie) => !isEmpty(d?.datapoints),
     ) as TLineChartSerie[],
     thresholdData,
   };
-  // if (!prediction) return undefined;
-  // return constructLineChartDataFromTs(
-  //   PREDICTION_VALUE_PROP,
-  //   PREDICTION_TIMESTAMP_PROP,
-  //   type === 'testPrediction'
-  //     ? prediction?.testPrediction
-  //     : prediction?.realPrediction,
-  //   type === 'testPrediction'
-  //     ? theme.palette.charts.chartTestPrediction
-  //     : theme.palette.charts.chartRealPrediction,
-  //   '',
-  // );
 };

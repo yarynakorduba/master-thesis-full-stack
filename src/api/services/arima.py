@@ -121,6 +121,7 @@ class ARIMAPrediction:
                     "value": float(df_input[value_key][train_data_size-1])\
                 },
                 "evaluation": { value_key: evaluation },
+                "predictionMode": 'ARIMA'
                 
             }
         except APIException as e:

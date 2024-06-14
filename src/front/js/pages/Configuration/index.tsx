@@ -20,7 +20,6 @@ import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
 import { isConfigurationDataIncomplete } from './utils';
 import { ERoutePaths } from '../../types/router';
-import { EPredictionMode } from './Analysis/types';
 
 const Configuration = () => {
   const { id } = useParams();
@@ -35,7 +34,6 @@ const Configuration = () => {
     valueProperties,
     configurationError,
   } = useConfigData();
-  const [, setDisplayedPredictionMode] = usePredictionMode();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);

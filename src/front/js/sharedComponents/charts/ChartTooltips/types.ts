@@ -6,7 +6,11 @@ export type TAxisTooltip = {
 
 export type TPointTooltipDatum = {
   readonly color: string;
-  readonly data: { readonly id: string; readonly valueX: number; readonly valueY: number };
+  readonly data: {
+    readonly id: string;
+    readonly valueX: number;
+    readonly valueY: number;
+  };
 };
 
 export type TPointTooltip = {

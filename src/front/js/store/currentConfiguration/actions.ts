@@ -134,7 +134,7 @@ export default (set, get) => ({
   setDisplayedPredictionId: (itemId: TDisplayedPredictionId) => {
     const predictionHistory = get().predictionHistory;
     return set(
-      (state) => {
+      () => {
         const displayedPrediction = getDisplayedPrediction(
           predictionHistory,
           itemId,
@@ -186,7 +186,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchStationarityTest: async (valueProperties) => {
+  fetchStationarityTest: async (valueProperties: TDataProperty[]) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,

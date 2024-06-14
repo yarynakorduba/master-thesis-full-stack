@@ -1,5 +1,4 @@
 import { StateCreator } from 'zustand';
-import { EPredictionMode } from '../../pages/Configuration/Analysis/types';
 import {
   TConfigurationSlice,
   TDisplayedPredictionId,

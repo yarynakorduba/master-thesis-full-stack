@@ -136,7 +136,8 @@ class VARPrediction:
                 "testPrediction": json.loads(test_json_result),\
                 "realPrediction": json.loads(real_json_result),\
                 "evaluation": evaluation,
-                "testPredictionParameters": { "order": optimal_order }
+                "testPredictionParameters": { "order": optimal_order },
+                "predictionMode": 'VAR'
             }
     
         except APIException as e:

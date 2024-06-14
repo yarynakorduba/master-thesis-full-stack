@@ -9,26 +9,7 @@ import {
 } from 'd3-force';
 import { ParentSize } from '@visx/responsive';
 import { isEqual } from 'lodash';
-
-export type NetworkProps = {
-  width: number;
-  height: number;
-  nodes: any;
-  edges: any;
-};
-
-interface CustomNode {
-  x?: number;
-  y?: number;
-  id: string | number;
-  label: string;
-  color?: string;
-}
-
-interface CustomLink {
-  source: CustomNode;
-  target: CustomNode;
-}
+import { CustomLink, CustomNode, NetworkProps } from './types';
 
 const RADIUS = 50;
 const LINK_DISTANCE = 70;
@@ -106,7 +87,7 @@ const NetworkChart = ({
         graph={graph}
         top={0}
         left={0}
-        nodeComponent={({ node: { color, x, y, label, ...props } }) => {
+        nodeComponent={({ node: { color, label } }) => {
           return color ? (
             <text stroke="black" fill="black">
               {trimText(label, 300)}

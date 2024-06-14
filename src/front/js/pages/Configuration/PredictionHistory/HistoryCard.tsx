@@ -6,7 +6,6 @@ import {
   EPredictionMode,
   TARIMAHistoryEntry,
   THistoryEntry,
-  TPredictionResult,
   TVARHistoryEntry,
 } from '../Analysis/types';
 import { CardDate, CardHeader, Card } from './styles';

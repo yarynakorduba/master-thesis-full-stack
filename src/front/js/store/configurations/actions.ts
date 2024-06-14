@@ -11,7 +11,7 @@ import {
   DELETE_CONFIG_FAILURE,
 } from './actionNames';
 
-export default (set, get) => ({
+export default (set) => ({
   fetchConfigs: async () => {
     set(
       () => ({ configsList: undefined, isLoading: true }),

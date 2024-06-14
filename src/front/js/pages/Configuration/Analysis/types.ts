@@ -10,7 +10,6 @@ export type TValueBounds = {
 
 // params which are passed to the model from the UI
 export type TARIMAUserParams = {
-  readonly lagOrder: number;
   readonly horizon: number;
   readonly isSeasonal: boolean;
   readonly minP: number;
@@ -43,6 +42,10 @@ export type TResponseARIMAParams = {
   readonly trend: null;
 };
 
+export type TVARUserParams = {
+  readonly lagOrder: number;
+  readonly horizon: number;
+};
 export type TResponseVARParams = {
   readonly order: number;
 };
@@ -66,13 +69,13 @@ export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
   readonly evaluation: { readonly [prop: string]: TPredictionEvaluation };
   // the data which was selected for training
   readonly selectedDataBoundaries?: TValueBounds;
+  readonly predictionMode: EPredictionMode;
 };
 export type TARIMAResult = TPredictionResult<TResponseARIMAParams>;
 export type TVARResult = TPredictionResult<TResponseVARParams>;
 
 export type THistoryEntry<T = TResponseARIMAParams | TResponseVARParams> =
   TPredictionResult<T> & {
-    readonly predictionMode: EPredictionMode;
     readonly inputData: any;
   };
 

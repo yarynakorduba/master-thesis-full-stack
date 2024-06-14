@@ -13,16 +13,13 @@ import { theme } from '../../../../styles/theme';
 import { intersectionWith, sortBy, map, filter, isEmpty } from 'lodash';
 import { TThresholdData } from '../types';
 import { Palette } from '@mui/material';
-import { TPredictedPoints } from 'front/js/pages/Configuration/Analysis/types';
+import { TPredictionResult } from 'front/js/pages/Configuration/Analysis/types';
 
 export const getCompleteLineChartData = (
   id: string, // should be unique
   palette: Palette,
   timeseriesData: TTimeseriesData,
-  predictionData?: {
-    readonly testPrediction: TPredictedPoints;
-    readonly realPrediction: TPredictedPoints;
-  } & any,
+  predictionData?: TPredictionResult,
   analyzedProp?: TDataProperty,
   timeProp?: TDataProperty,
 ) => {
