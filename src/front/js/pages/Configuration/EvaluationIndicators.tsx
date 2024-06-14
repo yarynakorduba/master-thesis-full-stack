@@ -8,7 +8,7 @@ import { THistoryEntry } from './Analysis/types';
 import SparkLineChart from '../../sharedComponents/charts/LineChart/SparkLineChart';
 import { getHistoryLineChartData } from './PredictionHistory/utils';
 import { formatNumber } from '../../utils/formatters';
-import { TTimeseriesData, TDataProperty } from 'front/js/types';
+import { TTimeseriesData, TDataProperty } from '../../types';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;

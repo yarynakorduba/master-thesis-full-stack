@@ -2,13 +2,14 @@ import React from 'react';
 import { CardActionArea, CardContent, Chip, Grid, Stack } from '@mui/material';
 import * as d3Scale from 'd3-scale';
 
-import { THistoryEntry } from '../Analysis/types';
+import { EPredictionMode, THistoryEntry } from '../Analysis/types';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime } from '../../../utils/formatters';
 
 import ARIMAPredictionParams from '../Analysis/ARIMAPredictionParams';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { useConfigData } from '../../../store/currentConfiguration/selectors';
+import VARPredictionParams from '../Analysis/VARPredictionParams';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -26,7 +27,7 @@ const HistoryCard = ({
   isSelected,
   errorColorScale,
 }: TProps) => {
-  const { valueProperties, timeProperty, data } = useConfigData();
+  const { timeProperty, data } = useConfigData();
 
   return (
     <Card
@@ -55,7 +56,11 @@ const HistoryCard = ({
             timeseriesData={data}
             timeProperty={timeProperty}
           />
-          <ARIMAPredictionParams arimaResult={historyEntry} />
+          {historyEntry.predictionMode === EPredictionMode.ARIMA ? (
+            <ARIMAPredictionParams arimaResult={historyEntry} />
+          ) : (
+            <VARPredictionParams varResult={historyEntry} />
+          )}
         </CardContent>
       </CardActionArea>
     </Card>

@@ -29,7 +29,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
   displayedPredictionId: undefined as TDisplayedPredictionId,
 
   isPredictionLoading: false,
-  displayedPredictionMode: EPredictionMode.ARIMA,
+  displayedPredictionMode: undefined,
   draft: {
     testPrediction: undefined,
     realPrediction: undefined,

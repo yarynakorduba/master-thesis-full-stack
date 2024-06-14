@@ -95,7 +95,6 @@ const LineChart = ({
   thresholdData = [],
   defaultIsTrainingDataSelectionOn = false,
 }: TProps) => {
-  console.log('selectedAreaBounds --- > ', selectedAreaBounds);
   const { palette } = useTheme();
   const hiddenColor = getHiddenLineColor(palette);
 

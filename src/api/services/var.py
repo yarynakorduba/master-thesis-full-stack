@@ -1,13 +1,8 @@
-import statsmodels.stats.diagnostic as diag
-from statsmodels.tsa.stattools import adfuller
-from statsmodels.tsa.stattools import grangercausalitytests
 from statsmodels.tsa.vector_ar.var_model import VAR
 import pandas as pd
-import numpy as np
 import json
 from sklearn.preprocessing import StandardScaler
 from api.services.statistical_tests import StatisticalTests
-
 from api.utils import APIException, forecast_accuracy
 
 TRAIN_TEST_SPLIT_PROPORTION = 0.9
@@ -28,10 +23,8 @@ class VARPrediction:
     
     def inverse_diff(self, s, last_observation):
         series_undifferenced = s.copy()
-        print(f"LAST OBS")
         print(last_observation.to_frame().transpose())
         series_undifferenced = pd.concat([last_observation.to_frame().transpose(), series_undifferenced], axis=0)
-        print(f"CONCATENATED")
         print(series_undifferenced)
 
         series_undifferenced = series_undifferenced.cumsum()
@@ -68,8 +61,8 @@ class VARPrediction:
             # Fit the model after selecting the lag order
             maxlags = optimal_lags.selected_orders[ic]
         # print(f"Model fit to lag order {optimal_lags}")
-        results = model.fit(maxlags=maxlags)
-        print(f"After fitting {results.k_ar}")
+        fitted_model = model.fit(maxlags=maxlags)
+        print(f"After fitting {fitted_model.k_ar}")
         # print(f"MODEL INFO {results.summary()}")
         total_horizon = steps
         # Do we need to add one more index here?
@@ -77,8 +70,8 @@ class VARPrediction:
         print(f"Inferred frequency: {inferred_freq}")
         idx = pd.date_range(start=pd.to_datetime(df_scaled.iloc[-1:].index.item(), unit='ms'), periods=total_horizon + 1, freq=inferred_freq).delete(0) 
         print(f"predict STEPS {steps}")
-        lag_order = results.k_ar
-        forecast = results.forecast(y=df_scaled.values[-lag_order:], steps=total_horizon)
+        lag_order = fitted_model.k_ar
+        forecast = fitted_model.forecast(y=df_scaled.values[-lag_order:], steps=total_horizon)
         print(forecast)
         # Convert to dataframe
         df_forecast = pd.DataFrame(forecast, 
@@ -89,7 +82,7 @@ class VARPrediction:
         print(f"Applied differencing order: {diff_order}")
         df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements)
 
-        return df_forecast_original, results
+        return df_forecast_original, fitted_model
     
     def test_var(self, data, data_keys, lag_order = 5, horizon=1):
         if len(data) == 0:
@@ -117,7 +110,7 @@ class VARPrediction:
         
             df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, 'aic')
             optimal_order = train_fit_model.k_ar
-            print(f"Optimal order: {optimal_order}")
+            print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
             df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order)
             print("DF FORECAST FUTURE DATA")
             print(df_forecast_future_data)
@@ -142,7 +135,8 @@ class VARPrediction:
             return {
                 "testPrediction": json.loads(test_json_result),\
                 "realPrediction": json.loads(real_json_result),\
-                "evaluation": evaluation
+                "evaluation": evaluation,
+                "testPredictionParameters": { "order": optimal_order }
             }
     
         except APIException as e:

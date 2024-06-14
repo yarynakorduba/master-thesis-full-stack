@@ -111,7 +111,11 @@ export default (set, get) => ({
     set(() => ({ timeProperty }), SHOULD_CLEAR_STORE, SET_TIMESERIES_PROP),
 
   setSelectedProps: (selectedProp: TDataProperty) =>
-    set(() => ({ selectedProp }), SHOULD_CLEAR_STORE, SET_SELECTED_PROPS),
+    set(
+      (state) => ({ ...state, selectedProp }),
+      SHOULD_CLEAR_STORE,
+      SET_SELECTED_PROPS,
+    ),
 
   setHorizon: (horizon: number) =>
     set(
@@ -131,7 +135,6 @@ export default (set, get) => ({
     const predictionHistory = get().predictionHistory;
     return set(
       (state) => {
-        console.log('--->>>predictionHistory ', state);
         const displayedPrediction = getDisplayedPrediction(
           predictionHistory,
           itemId,
@@ -147,8 +150,7 @@ export default (set, get) => ({
           selectedDataBoundaries: isNil(itemId)
             ? undefined
             : displayedPrediction?.selectedDataBoundaries,
-          displayedPredictionMode:
-            displayedPrediction?.predictionMode || EPredictionMode.ARIMA,
+          displayedPredictionMode: displayedPrediction?.predictionMode,
         };
       },
       SHOULD_CLEAR_STORE,
@@ -356,13 +358,10 @@ export default (set, get) => ({
   fetchVARPrediction: async (inputData, dataBoundaries, selectedData) => {
     set(
       (state) => ({
-        displayedPredictionId: 'draft',
         displayedPredictionMode: EPredictionMode.VAR,
         selectedDataBoundaries: dataBoundaries,
-        draft: {
-          ...state.draft,
-          isPredictionLoading: true,
-        },
+        isPredictionLoading: true,
+        draft: { ...state.draft },
       }),
       SHOULD_CLEAR_STORE,
       FETCH_VAR_PREDICTION_START,
@@ -377,9 +376,9 @@ export default (set, get) => ({
       () => ({
         displayedPredictionMode: EPredictionMode.VAR,
         selectedDataBoundaries: dataBoundaries,
+        isPredictionLoading: false,
         draft: {
           prediction: response.data,
-          isPredictionLoading: false,
         },
       }),
       SHOULD_CLEAR_STORE,
@@ -451,6 +450,7 @@ export default (set, get) => ({
           predictionHistory,
           response.data?.[0]?.id,
         );
+        console.log('Displayed prediction mode === > ', displayedPrediction);
         return {
           predictionHistory,
           isPredictionHistoryLoading: false,

@@ -82,12 +82,12 @@ export const usePrediction = (): [
   boolean,
 ] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
 
-export const useGetPredictionMode = (): EPredictionMode =>
+export const useGetPredictionMode = (): EPredictionMode | undefined =>
   useBoundStore((state) => state.displayedPredictionMode);
 export const useSetPredictionMode = () =>
   useBoundStore((state) => state.setPredictionMode);
 export const usePredictionMode = (): [
-  EPredictionMode,
+  EPredictionMode | undefined,
   (predictionMode: EPredictionMode) => void,
 ] => [useGetPredictionMode(), useSetPredictionMode()];
 

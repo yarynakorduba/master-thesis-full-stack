@@ -23,14 +23,14 @@ import EvaluationIndicators from '../EvaluationIndicators';
 type TProps = {
   readonly isVisible: boolean;
   readonly arimaResult;
-  readonly isVARLoading: boolean;
+  readonly isLoading: boolean;
   readonly index?: number;
 };
 
 const ARIMAPrediction = ({
   isVisible,
   arimaResult,
-  isVARLoading,
+  isLoading,
   index,
 }: TProps) => {
   const handlePredict = useFetchPrediction();
@@ -191,12 +191,13 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item sx={{ marginTop: 1, marginBottom: 1 }}>
-            {isVARLoading ? <Loader /> : null}
-            {!isVARLoading ? (
+            {isLoading ? (
+              <Loader />
+            ) : (
               <Button size="small" onClick={handleClick}>
                 Run the prediction model
               </Button>
-            ) : null}
+            )}
           </Grid>
         </Grid>
       </Grid>

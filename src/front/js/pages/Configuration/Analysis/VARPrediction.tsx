@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Skeleton, Typography } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { red } from '@mui/material/colors';
 
@@ -17,19 +17,15 @@ import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { getLinearValueScale } from '../../../utils';
+import VARPredictionParams from './VARPredictionParams';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly varResult;
-  readonly isVARLoading: boolean;
+  readonly isLoading: boolean;
   readonly index?: number;
 };
-const VARPrediction = ({
-  isVisible,
-  varResult,
-  isVARLoading,
-  index,
-}: TProps) => {
+const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   const handlePredict = useFetchPrediction();
 
   const formMethods = useFormContext();
@@ -41,10 +37,7 @@ const VARPrediction = ({
 
   const handleClick = () => {
     const values = getValues();
-    handlePredict({
-      lagOrder: +values.lagOrder,
-      horizon: +values.horizon,
-    });
+    handlePredict({ lagOrder: +values.lagOrder, horizon: +values.horizon });
   };
 
   const predictionHistory = useGetPredictionHistory();
@@ -52,7 +45,7 @@ const VARPrediction = ({
     red[50],
     red[200],
   ]);
-  const { timeProperty, data } = useConfigData();
+  const { timeProperty, valueProperties, data } = useConfigData();
 
   if (!isVisible) return null;
   return (
@@ -98,7 +91,7 @@ const VARPrediction = ({
           </Grid>
         </Grid>
         <ButtonContainer>
-          {isVARLoading ? (
+          {isLoading ? (
             <Loader />
           ) : (
             <Button size="small" onClick={handleClick}>
@@ -111,13 +104,28 @@ const VARPrediction = ({
         {varResult ? (
           <Card variant="outlined">
             <CardContent>
-              {/* <ARIMAPredictionParams arimaResult={arimaResult} /> */}
-              <EvaluationIndicators
-                historyEntry={varResult}
-                errorColorScale={errorColorScale}
-                timeProperty={timeProperty}
-                timeseriesData={data}
-              />
+              {isLoading ? (
+                <>
+                  <Typography
+                    variant="subtitle1"
+                    component="div"
+                    color="text.secondary"
+                  >
+                    Prediction
+                  </Typography>
+                  <Skeleton height={valueProperties.length * 107 + 28} />
+                </>
+              ) : (
+                <>
+                  <VARPredictionParams varResult={varResult} />
+                  <EvaluationIndicators
+                    historyEntry={varResult}
+                    errorColorScale={errorColorScale}
+                    timeProperty={timeProperty}
+                    timeseriesData={data}
+                  />
+                </>
+              )}
             </CardContent>
           </Card>
         ) : null}

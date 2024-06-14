@@ -65,7 +65,7 @@ export type TConfigurationSlice = {
     predictionItemId: TDisplayedPredictionId,
   ) => void;
 
-  readonly displayedPredictionMode: EPredictionMode;
+  readonly displayedPredictionMode?: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
 
   readonly isPredictionLoading: boolean;

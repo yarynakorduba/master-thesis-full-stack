@@ -39,7 +39,6 @@ const WhiteNoiseTest = ({
 
   const handleClick = () => {
     const values = getValues();
-    console.log('VALUES ---- >>> ', values);
     handleFetchIsWhiteNoise({ maxLagOrder: +values.whiteNoiseMaxLagOrder });
   };
 

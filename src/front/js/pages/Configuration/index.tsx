@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
