@@ -3,8 +3,10 @@ import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
+  TARIMAHistoryEntry,
   TCausalityResult,
   THistoryEntry,
+  TVARHistoryEntry,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPredictionId } from '../types';

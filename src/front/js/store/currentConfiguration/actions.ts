@@ -140,11 +140,6 @@ export default (set, get) => ({
           itemId,
         );
 
-        console.log(
-          'DISPLAYED PREDI -> ',
-          state.predictionHistory,
-          displayedPrediction,
-        );
         return {
           displayedPredictionId: itemId,
           selectedDataBoundaries: isNil(itemId)
@@ -450,7 +445,6 @@ export default (set, get) => ({
           predictionHistory,
           response.data?.[0]?.id,
         );
-        console.log('Displayed prediction mode === > ', displayedPrediction);
         return {
           predictionHistory,
           isPredictionHistoryLoading: false,

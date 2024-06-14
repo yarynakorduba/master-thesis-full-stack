@@ -43,6 +43,10 @@ export type TResponseARIMAParams = {
   readonly trend: null;
 };
 
+export type TResponseVARParams = {
+  readonly order: number;
+};
+
 export type TPredictionEvaluation = {
   readonly mae: number;
   readonly mape: number;
@@ -51,23 +55,29 @@ export type TPredictionEvaluation = {
   readonly rmse: number;
 };
 
-export type THistoryEntry = {
+export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
   readonly id: string; // uuid
   readonly createdAt: string; // ISO date string
-  readonly predictionMode: EPredictionMode;
+  readonly lastTrainPoint: TLastTrainPoint;
   readonly testPrediction: TPredictedPoints;
   readonly realPrediction: TPredictedPoints;
-
-  readonly lastTrainPoint: TLastTrainPoint;
-
-  readonly realPredictionParameters: TResponseARIMAParams;
-  readonly testPredictionParameters: TResponseARIMAParams;
-
+  readonly realPredictionParameters: T; //TResponseARIMAParams | TResponseVARParams;
+  readonly testPredictionParameters: T; //TResponseARIMAParams | TResponseVARParams;
   readonly evaluation: { readonly [prop: string]: TPredictionEvaluation };
-
   // the data which was selected for training
   readonly selectedDataBoundaries?: TValueBounds;
 };
+export type TARIMAResult = TPredictionResult<TResponseARIMAParams>;
+export type TVARResult = TPredictionResult<TResponseVARParams>;
+
+export type THistoryEntry<T = TResponseARIMAParams | TResponseVARParams> =
+  TPredictionResult<T> & {
+    readonly predictionMode: EPredictionMode;
+    readonly inputData: any;
+  };
+
+export type TARIMAHistoryEntry = THistoryEntry<TResponseARIMAParams>;
+export type TVARHistoryEntry = THistoryEntry<TResponseVARParams>;
 
 export type TLastTrainPoint = {
   readonly dateTime: string;
@@ -76,15 +86,6 @@ export type TLastTrainPoint = {
 };
 
 export type TPredictedPoints = { [msTimestamp: string]: number };
-
-export type TARIMAResult = {
-  readonly lastTrainPoint: TLastTrainPoint;
-  readonly testPrediction: TPredictedPoints;
-  readonly realPrediction: TPredictedPoints;
-  readonly realPredictionParameters: any;
-};
-
-export type TVARResult = any;
 
 export enum EAnalysisFormFields {
   isSeasonal = 'isSeasonal',

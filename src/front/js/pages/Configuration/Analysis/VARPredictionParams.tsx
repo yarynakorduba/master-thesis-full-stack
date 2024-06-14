@@ -2,9 +2,10 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import { THistoryEntry, TVARResult } from './types';
 
 type TProps = {
-  readonly varResult: any;
+  readonly varResult: TVARResult | THistoryEntry;
 };
 const VARPredictionParams = ({ varResult }: TProps) => {
   const testPredictionParams = varResult?.testPredictionParameters;
@@ -44,9 +45,9 @@ const VARPredictionParams = ({ varResult }: TProps) => {
         </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
-      {!arePredictionParamsSimilar && (
+      {!arePredictionParamsSimilar && realPredictionParams && (
         <>
-          <Typography variant="subtitle2" color="text.secondary">
+          <Typography variant="subtitle1" color="text.secondary">
             <InfoOverlay
               id="prediction-params"
               label="Real data prediction params"

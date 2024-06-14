@@ -1,5 +1,4 @@
 import { Grid, Typography } from '@mui/material';
-import { isNil } from 'lodash';
 import React, { ReactNode } from 'react';
 
 type TAnalysisSectionHeaderProps = {

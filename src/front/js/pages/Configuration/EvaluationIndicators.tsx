@@ -4,14 +4,14 @@ import { map, upperCase, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
-import { THistoryEntry } from './Analysis/types';
+import { TPredictionResult } from './Analysis/types';
 import SparkLineChart from '../../sharedComponents/charts/LineChart/SparkLineChart';
 import { getHistoryLineChartData } from './PredictionHistory/utils';
 import { formatNumber } from '../../utils/formatters';
 import { TTimeseriesData, TDataProperty } from '../../types';
 
 type TProps = {
-  readonly historyEntry: THistoryEntry;
+  readonly historyEntry: TPredictionResult;
   readonly errorColorScale: (
     key: string,
   ) => d3Scale.ScaleLinear<number | string, number | string>;

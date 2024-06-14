@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import { identity, map, noop } from 'lodash';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -9,12 +9,19 @@ import CausalityTest from './CausalityTest';
 import WhiteNoiseTest from './WhiteNoiseTest';
 import VARPrediction from './VARPrediction';
 import ARIMAPrediction from './ARIMAPrediction';
-import { EPredictionMode, TARIMAResult, TVARResult } from './types';
+import {
+  EPredictionMode,
+  TARIMAResult,
+  THistoryEntry,
+  TPredictionResult,
+  TVARResult,
+} from './types';
 import PredictionModelSelection from './PredictionModelSelection';
 import {
   useCausalityTest,
   useConfigData,
   useFetchConfigPredictionHistory,
+  useIsHistoryPredictionSelected,
   usePredictionMode,
   useStationarityTest,
   useWhiteNoiseTest,
@@ -23,11 +30,12 @@ import { FormContainer } from '../../CreateConfiguration/DatasetForm/styles';
 import Seasonality from './Seasonality';
 
 type TProps = {
-  readonly predictionResult?: TARIMAResult | TVARResult; // tvarresult
+  readonly predictionResult?: TPredictionResult | THistoryEntry;
   readonly isPredictionLoading: boolean;
 };
 
 const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const [displayedPredictionMode, setDisplayedPredictionMode] =
     usePredictionMode();
 
@@ -53,14 +61,16 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     isCausalityTestLoading,
   ] = useCausalityTest();
 
+  const defaultInputData = useMemo(
+    () => (predictionResult as THistoryEntry)?.inputData || {},
+    [predictionResult],
+  );
   const formMethods = useForm({
-    defaultValues: predictionResult ? { ...predictionResult.inputData } : {},
+    defaultValues: predictionResult ? { ...defaultInputData } : {},
   });
   useEffect(() => {
-    formMethods.reset(
-      predictionResult ? { ...predictionResult.inputData } : {},
-    );
-  }, [formMethods, predictionResult]);
+    formMethods.reset(predictionResult ? { ...defaultInputData } : {});
+  }, [defaultInputData, formMethods, predictionResult]);
 
   if (isConfigurationLoading) return null;
 
@@ -125,25 +135,21 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
                 />
                 <PredictionModelSelection
                   predictionMode={displayedPredictionMode}
-                  setPredictionMode={
-                    predictionResult?.predictionMode
-                      ? noop
-                      : setDisplayedPredictionMode
-                  }
-                  isDisabled={predictionResult?.predictionMode}
+                  setPredictionMode={setDisplayedPredictionMode}
+                  isDisabled={isHistoryPredictionSelected}
                 />
                 {displayedPredictionMode === EPredictionMode.VAR ? (
                   <VARPrediction
                     // index={key}
                     isVisible
-                    varResult={predictionResult}
+                    varResult={predictionResult as TVARResult}
                     isLoading={isPredictionLoading}
                   />
                 ) : (
                   <ARIMAPrediction
                     // index={key}
                     isVisible
-                    arimaResult={predictionResult}
+                    arimaResult={predictionResult as TARIMAResult}
                     isLoading={isPredictionLoading}
                   />
                 )}

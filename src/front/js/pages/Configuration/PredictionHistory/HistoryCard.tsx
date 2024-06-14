@@ -2,7 +2,13 @@ import React from 'react';
 import { CardActionArea, CardContent, Chip, Grid, Stack } from '@mui/material';
 import * as d3Scale from 'd3-scale';
 
-import { EPredictionMode, THistoryEntry } from '../Analysis/types';
+import {
+  EPredictionMode,
+  TARIMAHistoryEntry,
+  THistoryEntry,
+  TPredictionResult,
+  TVARHistoryEntry,
+} from '../Analysis/types';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime } from '../../../utils/formatters';
 
@@ -57,9 +63,11 @@ const HistoryCard = ({
             timeProperty={timeProperty}
           />
           {historyEntry.predictionMode === EPredictionMode.ARIMA ? (
-            <ARIMAPredictionParams arimaResult={historyEntry} />
+            <ARIMAPredictionParams
+              arimaResult={historyEntry as TARIMAHistoryEntry}
+            />
           ) : (
-            <VARPredictionParams varResult={historyEntry} />
+            <VARPredictionParams varResult={historyEntry as TVARHistoryEntry} />
           )}
         </CardContent>
       </CardActionArea>

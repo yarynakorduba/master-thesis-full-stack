@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { isArray, isNumber, round } from 'lodash';
+import { isArray, isNil, isNumber, round } from 'lodash';
 import { PRECISION } from '../consts';
 
 export const formatUnixToDate = (d) => {
@@ -45,8 +45,7 @@ export const formatNumber = (d: number): string => {
 };
 
 // ARIMA params order
-export const formatOrder = (order?: number[]) => {
-  console.log('ORDER --- > ', order);
+export const formatOrder = (order?: number[] | number): number | string => {
   if (isArray(order)) return `[${order.join(', ')}]`;
-  return order || 'N/A';
+  return isNil(order) ? 'N/A' : order;
 };

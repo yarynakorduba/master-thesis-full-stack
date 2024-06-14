@@ -3,12 +3,12 @@ import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { formatOrder } from '../../../utils/formatters';
+import { TARIMAHistoryEntry, TARIMAResult, THistoryEntry } from './types';
 
 type TProps = {
-  readonly arimaResult: any;
+  readonly arimaResult: TARIMAResult;
 };
 const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
-  console.log('Inside prediction params for arima, ', arimaResult);
   const testPredictionParams = arimaResult?.testPredictionParameters;
   const realPredictionParams = arimaResult?.realPredictionParameters;
   const areARIMAPredictionParamsSimilar =

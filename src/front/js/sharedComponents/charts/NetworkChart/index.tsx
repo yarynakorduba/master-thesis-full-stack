@@ -28,7 +28,6 @@ interface CustomNode {
 interface CustomLink {
   source: CustomNode;
   target: CustomNode;
-  dashed?: boolean;
 }
 
 const RADIUS = 50;
@@ -104,11 +103,10 @@ const NetworkChart = ({
       </defs>
       <rect width={width} height={height} rx={14} fill={'white'} />
       <Graph<CustomLink, CustomNode>
-        graph={graph as any}
+        graph={graph}
         top={0}
         left={0}
         nodeComponent={({ node: { color, x, y, label, ...props } }) => {
-          console.log('PROPS -- > ', props);
           return color ? (
             <text stroke="black" fill="black">
               {trimText(label, 300)}
@@ -125,7 +123,7 @@ const NetworkChart = ({
             </>
           );
         }}
-        linkComponent={({ link: { source, target, dashed } }) => {
+        linkComponent={({ link: { source, target } }) => {
           const sourceX = source.x || 0;
           const sourceY = source.y || 0;
           const targetX = target.x || 0;
@@ -140,7 +138,6 @@ const NetworkChart = ({
               strokeWidth={2}
               stroke="#999"
               strokeOpacity={1}
-              strokeDasharray={dashed ? '8,4' : undefined}
               markerEnd="url(#head)"
             />
           );

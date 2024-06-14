@@ -13,7 +13,6 @@ export const getDisplayedPrediction = (
   predictionHistory: THistoryEntry[],
   predictionId: TDisplayedPredictionId, // uuid
 ) => {
-  console.log('QQQQQQ >>>', { predictionHistory, predictionId });
   return find(predictionHistory, ({ id }) => id === predictionId);
 };
 

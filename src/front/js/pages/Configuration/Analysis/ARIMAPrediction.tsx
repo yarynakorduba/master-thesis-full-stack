@@ -16,13 +16,13 @@ import {
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
-import { EAnalysisFormFields } from './types';
+import { EAnalysisFormFields, TARIMAResult } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 
 type TProps = {
   readonly isVisible: boolean;
-  readonly arimaResult;
+  readonly arimaResult: TARIMAResult;
   readonly isLoading: boolean;
   readonly index?: number;
 };

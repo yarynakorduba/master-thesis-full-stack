@@ -16,7 +16,6 @@ const Seasonality = ({ index }) => {
 
   const isDataSeasonal = watch(EAnalysisFormFields.isSeasonal);
 
-  console.log('WATCHI  !!! > ', watch());
   return (
     <AnalysisSection>
       <AnalysisSection.Header index={index}>

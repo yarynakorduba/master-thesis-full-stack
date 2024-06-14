@@ -157,7 +157,6 @@ const SparkLineChartsBlock = ({
               prop!,
               timeProperty!,
             );
-            console.log('chartData chartData chartData', prop, chartData);
             if (!chartData) return null;
             return (
               <SparkLineChart
