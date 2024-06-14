@@ -7,7 +7,7 @@ import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime } from '../../../utils/formatters';
 
 import ARIMAPredictionParams from '../Analysis/ARIMAPredictionParams';
-import EvaluationIndicators from './EvaluationIndicators';
+import EvaluationIndicators from '../EvaluationIndicators';
 import { useConfigData } from '../../../store/currentConfiguration/selectors';
 
 type TProps = {
@@ -51,9 +51,7 @@ const HistoryCard = ({
           </CardHeader>
           <EvaluationIndicators
             historyEntry={historyEntry}
-            evaluation={historyEntry.evaluation}
             errorColorScale={errorColorScale}
-            predictions={historyEntry}
             timeseriesData={data}
             timeProperty={timeProperty}
           />

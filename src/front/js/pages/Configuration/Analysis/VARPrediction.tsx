@@ -4,12 +4,19 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import { Card, CardContent, Typography } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import { red } from '@mui/material/colors';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
-import { useFetchPrediction } from '../../../store/currentConfiguration/selectors';
+import {
+  useConfigData,
+  useFetchPrediction,
+  useGetPredictionHistory,
+} from '../../../store/currentConfiguration/selectors';
 import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
+import EvaluationIndicators from '../EvaluationIndicators';
+import { getLinearValueScale } from '../../../utils';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -39,6 +46,13 @@ const VARPrediction = ({
       horizon: +values.horizon,
     });
   };
+
+  const predictionHistory = useGetPredictionHistory();
+  const errorColorScale = getLinearValueScale(predictionHistory, [
+    red[50],
+    red[200],
+  ]);
+  const { timeProperty, data } = useConfigData();
 
   if (!isVisible) return null;
   return (
@@ -98,10 +112,12 @@ const VARPrediction = ({
           <Card variant="outlined">
             <CardContent>
               {/* <ARIMAPredictionParams arimaResult={arimaResult} /> */}
-              {/* <EvaluationIndicators
-                evaluation={arimaResult.evaluation}
+              <EvaluationIndicators
+                historyEntry={varResult}
                 errorColorScale={errorColorScale}
-              /> */}
+                timeProperty={timeProperty}
+                timeseriesData={data}
+              />
             </CardContent>
           </Card>
         ) : null}

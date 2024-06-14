@@ -10,6 +10,7 @@ import { isEmpty } from 'lodash';
 import Loader from '../../../sharedComponents/Loader';
 import { getLinearValueScale } from '../../../utils';
 import {
+  useConfigData,
   useFetchPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
@@ -17,6 +18,7 @@ import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
 import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
+import EvaluationIndicators from '../EvaluationIndicators';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -58,6 +60,8 @@ const ARIMAPrediction = ({
     red[50],
     red[200],
   ]);
+
+  const { timeProperty, data } = useConfigData();
 
   if (!isVisible) return null;
   return (
@@ -201,10 +205,12 @@ const ARIMAPrediction = ({
           <Card variant="outlined">
             <CardContent>
               <ARIMAPredictionParams arimaResult={arimaResult} />
-              {/* <EvaluationIndicators
-                evaluation={arimaResult.evaluation}
+              <EvaluationIndicators
+                historyEntry={arimaResult}
                 errorColorScale={errorColorScale}
-              /> */}
+                timeProperty={timeProperty}
+                timeseriesData={data}
+              />
             </CardContent>
           </Card>
         ) : null}

@@ -4,17 +4,20 @@ import { map, upperCase, noop } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
-import { THistoryEntry } from '../Analysis/types';
-import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
-import { getHistoryLineChartData } from './utils';
-import { formatNumber } from '../../../utils/formatters';
+import { THistoryEntry } from './Analysis/types';
+import SparkLineChart from '../../sharedComponents/charts/LineChart/SparkLineChart';
+import { getHistoryLineChartData } from './PredictionHistory/utils';
+import { formatNumber } from '../../utils/formatters';
+import { TTimeseriesData, TDataProperty } from 'front/js/types';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
   readonly errorColorScale: (
     key: string,
   ) => d3Scale.ScaleLinear<number | string, number | string>;
-} & any;
+  readonly timeseriesData: TTimeseriesData;
+  readonly timeProperty: TDataProperty;
+};
 
 const EvaluationIndicators = ({
   historyEntry,
@@ -81,7 +84,6 @@ const EvaluationIndicators = ({
                 data={lineData}
                 thresholdData={thresholdData}
                 height={45}
-                width={300}
                 onClick={noop}
                 padding={{ top: 4, bottom: 8, left: 0, right: 0 }}
                 numTicks={0}
