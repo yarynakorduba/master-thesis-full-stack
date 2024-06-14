@@ -9,6 +9,7 @@ type TProps = {
 };
 const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
   const testPredictionParams = arimaResult?.testPredictionParameters;
+  console.log('AAA!@!!!', testPredictionParams);
   const realPredictionParams = arimaResult?.realPredictionParameters;
   const areARIMAPredictionParamsSimilar =
     isEqual(testPredictionParams?.order, realPredictionParams?.order) &&
@@ -35,6 +36,8 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
   };
 
   if (isEmpty(testPredictionParams)) return null;
+
+  console.log('AAAA');
 
   return (
     <>

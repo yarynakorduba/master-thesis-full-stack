@@ -1,7 +1,7 @@
 import numpy as np
+import pandas as pd
 from pmdarima.arima.utils import ndiffs
 import statsmodels.stats.diagnostic as diag
-from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import grangercausalitytests
 from itertools import combinations
 
@@ -55,28 +55,8 @@ class StatisticalTests():
         return {
             "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
             "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
-            }
+        }
 
-
-    def test_stationarity(self, data):
-        # AIC - autolag parameter which automates
-        # the selection of the lag length based on information criteria and penalises complex models.
-
-        # ct - ct: It stands for "constant and trend."
-        # The regression model includes both a constant (intercept) and a linear trend term.
-        # H0: data is not stationary
-        result = adfuller(data, autolag="AIC", regression='ct')
-        print(result)
-        isStationary = False
-        if (
-            # result[0] < result[4]["1%"] and  and result[0] < result[4]["10%"]\
-            result[0] <= result[4]["5%"] and result[1] < SIGNIFICANT_P):
-            isStationary = True
-        else:
-            isStationary = False
-        
-        return { "stationarity": result, "isStationary": isStationary }
-    
     # The Null hypothesis for grangercausalitytests is that the time series in
     # the second column, x2, does NOT Granger cause the time series in the first
     # column, x1.
@@ -95,13 +75,13 @@ class StatisticalTests():
             ]
     
     def multitest_granger_causality(self, data, data_keys):
+        data_df = pd.DataFrame(data)[data_keys]
+        stationary_data = self.convert_data_to_stationary(data_df)
         data_pairs = list(combinations(data_keys, 2))
         results = []
         for pair in data_pairs:
-            data_for_pair = [[datum[pair[0]], datum[pair[1]]] for datum in data]
-            print(data_for_pair)
+            data_for_pair = stationary_data[0][[pair[0], pair[1]]].values
             result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]])
-            print(f'Result: {result}')
             results.append(result)
         return results
     

@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import { Card, CardContent } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { useFormContext } from 'react-hook-form';
+import { isEmpty } from 'lodash';
 
 import Loader from '../../../sharedComponents/Loader';
 import { getLinearValueScale } from '../../../utils';
@@ -41,7 +42,6 @@ const ARIMAPrediction = ({
 
   const handleClick = () => {
     const values = getValues();
-    console.log('VALUES ---- >>> ', values);
     handlePredict({
       horizon: +values.horizon,
       isSeasonal: values.isSeasonal,
@@ -197,7 +197,7 @@ const ARIMAPrediction = ({
         </Grid>
       </Grid>
       <Grid item md={6}>
-        {arimaResult ? (
+        {!isEmpty(arimaResult?.testPredictionParameters) ? (
           <Card variant="outlined">
             <CardContent>
               <ARIMAPredictionParams arimaResult={arimaResult} />

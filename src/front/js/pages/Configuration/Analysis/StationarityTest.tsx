@@ -68,7 +68,7 @@ const StationarityTest = ({
                     <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
                       KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
                     </InfoOverlay>{' '}
-                    test:{getStationaryTxt(val.kpss?.isStationary)}
+                    test: {getStationaryTxt(val.kpss?.isStationary)}
                   </li>
                   <li>
                     {' '}
