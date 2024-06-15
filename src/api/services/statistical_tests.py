@@ -33,7 +33,7 @@ class StatisticalTests():
     def multitest_white_noise(self, data, data_keys, period=None, max_lag_order=None):
         try:
             if period != None and period < 1:
-                raise APIException(str("Periods in season, if present, should be greater than 0"))
+                raise APIException(str("Periods in season, if present, should be a positive integer"))
             elif period == 1:
                 period = None
             results = []
@@ -82,6 +82,8 @@ class StatisticalTests():
     # column, x1.
     def test_granger_causality(self, data, data_key_pair, max_lag_order):
         try:
+            if max_lag_order == None or max_lag_order < 1:
+                raise APIException("Max lag order should be a positive integer")
             data_opposite_direction = [[x[1], x[0]] for x in data]
             # The data for testing whether the time series in the second column Granger
             # causes the time series in the first column
@@ -101,6 +103,8 @@ class StatisticalTests():
     
     def multitest_granger_causality(self, data, data_keys, max_lag_order):
         try:
+            if max_lag_order == None or max_lag_order < 1:
+                raise APIException("Max lag order should be a positive integer")
             data_df = pd.DataFrame(data)[data_keys]
             stationary_data = self.convert_data_to_stationary(data_df)
             data_pairs = list(combinations(data_keys, 2))
