@@ -3,7 +3,7 @@ import { identity, map } from 'lodash';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import { Box, Grid, TextField, alpha } from '@mui/material';
+import { Box, Grid, alpha } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 
 import Loader from '../../../sharedComponents/Loader';
@@ -39,7 +39,10 @@ const WhiteNoiseTest = ({
 
   const handleClick = () => {
     const values = getValues();
-    handleFetchIsWhiteNoise({ maxLagOrder: +values.whiteNoiseMaxLagOrder });
+    handleFetchIsWhiteNoise({
+      maxLagOrder: +values.whiteNoiseMaxLagOrder,
+      periods: +values[EAnalysisFormFields.periodsInSeason],
+    });
   };
 
   const whiteNoiseDemoDatapoints = {
@@ -83,18 +86,6 @@ const WhiteNoiseTest = ({
         </InfoOverlay>
         ?
       </AnalysisSection.Header>
-      <Grid item md={12}>
-        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-          <label htmlFor="name">Max lag order (optional)</label>
-        </Typography>
-        <TextField
-          size="small"
-          type="number"
-          sx={{ width: '100%', maxWidth: 172 }}
-          {...register(EAnalysisFormFields.whiteNoiseMaxLagOrder)}
-          required
-        />
-      </Grid>
       <Grid item md={12}>
         {isWhiteNoiseLoading && <Loader />}
         <Button size="small" onClick={handleClick}>

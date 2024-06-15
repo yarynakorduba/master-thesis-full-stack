@@ -19,6 +19,7 @@ import ARIMAPredictionParams from './ARIMAPredictionParams';
 import { EAnalysisFormFields, TARIMAResult } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
+import { FIELD_LABEL_PROPS } from '../../../consts';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -73,15 +74,14 @@ const ARIMAPrediction = ({
         <Grid
           container
           columnSpacing={2}
-          rowSpacing={1}
+          rowGap={1}
           sx={{ mb: 1, maxWidth: 400 }}
         >
           <Grid item md={6}>
             <InfoOverlay
               id="periods-in-season"
               label="Horizon"
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
+              {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
                 Horizon indicates the number of points you would like to predict
@@ -96,12 +96,11 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6} />
-          <Grid item md={6} sx={{ mt: 0 }}>
+          <Grid item md={6}>
             <InfoOverlay
               id="min-lag-order"
               label="Min lag order (P)"
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
+              {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
                 Lag order (or P variable), helps you control how much the model
@@ -125,9 +124,8 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="max-lag-order"
-              label="Max lag order (P)"
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
+              label={'Max lag order (P)'}
+              {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
                 Lag order (or P variable), helps you control how much the model
@@ -149,12 +147,7 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6}>
-            <InfoOverlay
-              id="min-q"
-              label="Min Q"
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-            >
+            <InfoOverlay id="min-q" label="Min Q" {...FIELD_LABEL_PROPS}>
               <InfoOverlay.Popover>
                 Q variable indicates how much the current observation is
                 influenced by prediction errors made by the model for previous
@@ -170,12 +163,7 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6}>
-            <InfoOverlay
-              id="max-q"
-              label="Max Q"
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-            >
+            <InfoOverlay id="max-q" label="Max Q" {...FIELD_LABEL_PROPS}>
               <InfoOverlay.Popover>
                 Q variable indicates how much the current observation is
                 influenced by prediction errors made by the model for previous

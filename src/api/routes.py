@@ -4,10 +4,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import api
 from api.services.arima import ARIMAPrediction
 from api.services.configurations import Configurations
-from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from flask import request, Blueprint
 from api.services.prediction_history_list import  PredictionHistoryList
-from api.utils import generate_sitemap, APIException
+from api.utils import  APIException
 from api.services.statistical_tests import StatisticalTests
 from api.services.var import VARPrediction
 from flask_cors import CORS
@@ -26,8 +25,10 @@ def test_white_noise():
     data = request_body["data"]
     data_keys = request_body["data_keys"]
     max_lag_order = request_body["max_lag_order"]
+    periods = request_body.get("periods", None)
+
     print(f"Max Lag Order: {max_lag_order}")
-    result = StatisticalTests().multitest_white_noise(data, data_keys, max_lag_order)
+    result = StatisticalTests().multitest_white_noise(data, data_keys, periods, max_lag_order)
 
     return json.dumps(result), 200
 

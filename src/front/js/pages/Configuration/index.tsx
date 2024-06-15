@@ -12,7 +12,6 @@ import {
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   usePrediction,
-  usePredictionMode,
   useSelectedDataBoundaries,
   useSelectedProps,
 } from '../../store/currentConfiguration/selectors';

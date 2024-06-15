@@ -153,7 +153,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchWhiteNoiseTest: async ({ maxLagOrder }) => {
+  fetchWhiteNoiseTest: async ({ maxLagOrder, periods }) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get().data,
@@ -173,6 +173,7 @@ export default (set, get) => ({
       selectedData,
       properties,
       maxLagOrder,
+      periods,
     );
 
     const isSuccess = response.isSuccess;

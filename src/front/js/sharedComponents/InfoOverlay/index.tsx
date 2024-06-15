@@ -7,8 +7,9 @@ type TInfoOverlayProps = {
   readonly variant?;
   readonly children: ReactNode | ReactNode[];
   readonly id: string;
-  readonly label: string;
+  readonly label: string | ReactNode;
   sx?;
+  component?;
 };
 
 type TInfoOverlayPopoverProps = {

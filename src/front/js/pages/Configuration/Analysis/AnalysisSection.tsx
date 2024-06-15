@@ -33,7 +33,7 @@ const AnalysisSection = ({ md = 12, children }: TProps) => {
         container
         alignItems="flex-start"
         justifyContent="flex-start"
-        rowSpacing={1}
+        rowGap={1}
         columnSpacing={3}
         sx={{ mb: 1 }}
       >

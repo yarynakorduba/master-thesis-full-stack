@@ -26,7 +26,6 @@ import {
   useStationarityTest,
   useWhiteNoiseTest,
 } from '../../../store/currentConfiguration/selectors';
-import { FormContainer } from '../../CreateConfiguration/DatasetForm/styles';
 import Seasonality from './Seasonality';
 
 type TProps = {
@@ -120,42 +119,44 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         <Skeleton height={400} />
       ) : (
         <FormProvider {...formMethods}>
-          <FormContainer onSubmit={noop}>
-            <Card sx={{ p: 4 }} variant="outlined">
-              <Grid container rowGap={2}>
-                <Typography variant="h5">Get to know your data</Typography>
-                {map(steps, (renderStep, index: number) => (
-                  <>{renderStep!(index + 1)}</>
-                ))}
-                <Divider
-                  flexItem
-                  sx={{ width: '100%' }}
-                  component="div"
-                  orientation="horizontal"
-                />
-                <PredictionModelSelection
-                  predictionMode={displayedPredictionMode}
-                  setPredictionMode={setDisplayedPredictionMode}
-                  isDisabled={isHistoryPredictionSelected}
-                />
-                {displayedPredictionMode === EPredictionMode.VAR ? (
-                  <VARPrediction
-                    // index={key}
-                    isVisible
-                    varResult={predictionResult as TVARResult}
-                    isLoading={isPredictionLoading}
+          <form onSubmit={noop}>
+            <Grid container>
+              <Card sx={{ p: 4 }} variant="outlined">
+                <Grid container rowGap={2}>
+                  <Typography variant="h5">Get to know your data</Typography>
+                  {map(steps, (renderStep, index: number) => (
+                    <>{renderStep!(index + 1)}</>
+                  ))}
+                  <Divider
+                    flexItem
+                    sx={{ width: '100%' }}
+                    component="div"
+                    orientation="horizontal"
                   />
-                ) : (
-                  <ARIMAPrediction
-                    // index={key}
-                    isVisible
-                    arimaResult={predictionResult as TARIMAResult}
-                    isLoading={isPredictionLoading}
+                  <PredictionModelSelection
+                    predictionMode={displayedPredictionMode}
+                    setPredictionMode={setDisplayedPredictionMode}
+                    isDisabled={isHistoryPredictionSelected}
                   />
-                )}
-              </Grid>
-            </Card>
-          </FormContainer>
+                  {displayedPredictionMode === EPredictionMode.VAR ? (
+                    <VARPrediction
+                      // index={key}
+                      isVisible
+                      varResult={predictionResult as TVARResult}
+                      isLoading={isPredictionLoading}
+                    />
+                  ) : (
+                    <ARIMAPrediction
+                      // index={key}
+                      isVisible
+                      arimaResult={predictionResult as TARIMAResult}
+                      isLoading={isPredictionLoading}
+                    />
+                  )}
+                </Grid>
+              </Card>
+            </Grid>
+          </form>
         </FormProvider>
       )}
     </Box>

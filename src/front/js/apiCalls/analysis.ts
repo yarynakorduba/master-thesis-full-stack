@@ -5,6 +5,7 @@ export const fetchIsWhiteNoise = async (
   data,
   dataKeys: string[],
   maxLagOrder: number,
+  periods: number,
 ) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/white-noise`, {
@@ -13,6 +14,7 @@ export const fetchIsWhiteNoise = async (
         data,
         data_keys: dataKeys,
         max_lag_order: maxLagOrder,
+        periods,
       }),
       headers: { 'Content-type': 'application/json' },
     }),

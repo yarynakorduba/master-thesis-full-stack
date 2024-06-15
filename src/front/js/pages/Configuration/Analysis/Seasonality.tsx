@@ -4,6 +4,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { EAnalysisFormFields } from './types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
+import { FIELD_LABEL_PROPS } from '../../../consts';
 
 const Seasonality = ({ index }) => {
   const formMethods = useFormContext();
@@ -21,31 +22,34 @@ const Seasonality = ({ index }) => {
       <AnalysisSection.Header index={index}>
         Provide seasonality information
       </AnalysisSection.Header>
-      <Grid item md={2} sx={{ height: 66 }}>
-        <InfoOverlay
-          id="is-seasonal"
-          label="Data is seasonal"
-          variant="subtitle2"
-          sx={{ fontSize: 12, display: 'block' }}
-        >
-          <InfoOverlay.Popover>aaa</InfoOverlay.Popover>
-        </InfoOverlay>
+      <Grid
+        item
+        md={2}
+        justifyContent="center"
+        height={72}
+        display="flex"
+        flexDirection="column"
+      >
         <Controller
           {...register(EAnalysisFormFields.isSeasonal)}
           control={control}
-          render={({ field }) => <Switch {...field} checked={!!field.value} />}
+          render={({ field }) => (
+            <>
+              <InfoOverlay
+                id="is-seasonal"
+                label="Data is seasonal"
+                {...FIELD_LABEL_PROPS}
+              >
+                <InfoOverlay.Popover>aaa</InfoOverlay.Popover>
+              </InfoOverlay>
+              <Switch {...field} checked={!!field.value} />
+            </>
+          )}
         />
       </Grid>
       {isDataSeasonal && (
-        <Grid item md={3} sx={{ height: 66 }}>
-          <Typography
-            variant="subtitle2"
-            sx={{ fontSize: 12 }}
-            component="label"
-            htmlFor="periods"
-          >
-            Periods
-          </Typography>
+        <Grid item md={3}>
+          <Typography {...FIELD_LABEL_PROPS}>Periods</Typography>
           <TextField
             {...register(EAnalysisFormFields.periodsInSeason)}
             size="small"

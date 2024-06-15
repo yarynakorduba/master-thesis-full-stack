@@ -22,9 +22,3 @@ export const Dropzone = styled('div')`
 `;
 
 export const Select = styled(SelectComponent)``;
-
-export const FormContainer = styled('form')`
-  display: grid;
-  flex-direction: column;
-  gap: 0.5rem;
-`;

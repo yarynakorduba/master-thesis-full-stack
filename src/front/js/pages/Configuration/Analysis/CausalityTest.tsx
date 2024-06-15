@@ -16,6 +16,7 @@ import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
 import NetworkChart from '../../../sharedComponents/charts/NetworkChart';
 import { useCausalityDataForNetworkGraph } from './hooks';
+import { FIELD_LABEL_PROPS } from '../../../consts';
 
 type TProps = {
   readonly index: number;
@@ -86,10 +87,17 @@ const CausalityTest = ({
         </InfoOverlay>
         ?
       </AnalysisSection.Header>
-      <Grid item md={12}>
-        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-          <label htmlFor="name">Max lag order</label>
-        </Typography>
+      <Grid item md={6}>
+        <InfoOverlay
+          id="max-lag-order-causality"
+          label="Max lag order"
+          {...FIELD_LABEL_PROPS}
+        >
+          <InfoOverlay.Popover>
+            <Typography>AAA</Typography>
+          </InfoOverlay.Popover>
+        </InfoOverlay>
+
         <TextField
           size="small"
           type="number"

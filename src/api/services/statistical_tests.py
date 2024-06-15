@@ -11,24 +11,24 @@ class StatisticalTests():
     def __init__(self):
         self = self
 
-    def test_white_noise(self, data, key, max_lag_order):
+    def test_white_noise(self, data, key, period=None, max_lag_order=None):
         # If lags is None: The test will include autocorrelation up to a default maximum lag.
         # The default maximum lag is often determined based on the size of the data.
         # H0: The time series data are white noise.
-        result = diag.acorr_ljungbox(data, model_df=0, period=None, return_df=None, auto_lag=True, lags=max_lag_order)
+        result = diag.acorr_ljungbox(data, model_df=0, period=period, return_df=None, auto_lag=True, lags=max_lag_order)
         return {
             "key": key,\
             "isWhiteNoise": bool(result.iloc[-1,1] >= SIGNIFICANT_P)
         }
     
-    def multitest_white_noise(self, data, data_keys, max_lag_order):
+    def multitest_white_noise(self, data, data_keys, period=None, max_lag_order=None):
         results = []
         # If lags is None: The test will include autocorrelation up to a default maximum lag.
         # The default maximum lag is often determined based on the size of the data.
         for key in data_keys:
             data_to_analyze = [datum[key] for datum in data]
             print(f"Key: {key}")
-            result = self.test_white_noise(data_to_analyze, key, max_lag_order)
+            result = self.test_white_noise(data_to_analyze, key, period, max_lag_order)
             print(f'Result: {result}')
             results.append(result)
         return results
