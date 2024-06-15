@@ -10,6 +10,7 @@ import WhiteNoiseTest from './WhiteNoiseTest';
 import VARPrediction from './VARPrediction';
 import ARIMAPrediction from './ARIMAPrediction';
 import {
+  EAnalysisFormFields,
   EPredictionMode,
   TARIMAResult,
   THistoryEntry,
@@ -61,11 +62,14 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
   ] = useCausalityTest();
 
   const defaultInputData = useMemo(
-    () => (predictionResult as THistoryEntry)?.inputData || {},
+    () =>
+      (predictionResult as THistoryEntry)?.inputData || {
+        [EAnalysisFormFields.causalityMaxLagOrder]: 1,
+      },
     [predictionResult],
   );
   const formMethods = useForm({
-    defaultValues: predictionResult ? { ...defaultInputData } : {},
+    defaultValues: { ...defaultInputData },
   });
   useEffect(() => {
     formMethods.reset(predictionResult ? { ...defaultInputData } : {});

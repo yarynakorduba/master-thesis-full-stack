@@ -41,7 +41,9 @@ const WhiteNoiseTest = ({
     const values = getValues();
     handleFetchIsWhiteNoise({
       maxLagOrder: +values.whiteNoiseMaxLagOrder,
-      periods: +values[EAnalysisFormFields.periodsInSeason],
+      periods: values[EAnalysisFormFields.isSeasonal]
+        ? +values[EAnalysisFormFields.periodsInSeason]
+        : undefined,
     });
   };
 

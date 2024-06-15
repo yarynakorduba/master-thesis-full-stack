@@ -177,7 +177,6 @@ export default (set, get) => ({
     );
 
     const isSuccess = response.isSuccess;
-
     set(
       () => ({ whiteNoiseTest: response.data, isWhiteNoiseTestLoading: false }),
       SHOULD_CLEAR_STORE,
@@ -185,6 +184,12 @@ export default (set, get) => ({
         ? FETCH_WHITE_NOISE_TEST_SUCCESS
         : FETCH_WHITE_NOISE_TEST_FAILURE,
     );
+    if (!isSuccess) {
+      get().openErrorNotification(
+        FETCH_WHITE_NOISE_TEST_FAILURE,
+        response?.error?.message || 'Failed to perform white noise test',
+      );
+    }
   },
 
   fetchStationarityTest: async (valueProperties: TDataProperty[]) => {
@@ -263,6 +268,13 @@ export default (set, get) => ({
             ? FETCH_CAUSALITY_TEST_SUCCESS
             : FETCH_CAUSALITY_TEST_FAILURE,
         );
+
+        if (!response.isSuccess) {
+          get().openErrorNotification(
+            FETCH_CAUSALITY_TEST_FAILURE,
+            response?.error?.message || 'Failed to perform causality test',
+          );
+        }
       }
     }
   },

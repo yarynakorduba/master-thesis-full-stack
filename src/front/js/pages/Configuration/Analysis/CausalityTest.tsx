@@ -1,5 +1,5 @@
-import React from 'react';
-import { find, map } from 'lodash';
+import React, { ReactNode } from 'react';
+import { filter, find, flow, identity, isEmpty, map } from 'lodash';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Grid, Typography, TextField } from '@mui/material';
@@ -53,27 +53,31 @@ const CausalityTest = ({
     });
   };
 
-  const causalityTexts = map(causalityTestResult || [], (keyPair) => {
-    const first = keyPair[0];
-    const second = keyPair[1];
+  const causalityTexts: ReactNode[] = flow(
+    (d) =>
+      map(d || [], (keyPair): ReactNode | null => {
+        const first = keyPair[0];
+        const second = keyPair[1];
 
-    const elementWithCausality = find<TCausalityResultItem>(
-      keyPair,
-      'isCausal',
-    ) as TCausalityResultItem | undefined;
-    if (!elementWithCausality) return null;
-    return (
-      <Box sx={{ mt: 1, mb: 1 }}>
-        {elementWithCausality.source}{' '}
-        {first.isCausal && second.isCausal ? (
-          <SyncAltSharp />
-        ) : (
-          <TrendingFlatSharp />
-        )}{' '}
-        {elementWithCausality.target}
-      </Box>
-    );
-  });
+        const elementWithCausality = find<TCausalityResultItem>(
+          keyPair,
+          'isCausal',
+        ) as TCausalityResultItem | undefined;
+        if (!elementWithCausality) return null;
+        return (
+          <Box sx={{ mt: 1, mb: 1 }}>
+            {elementWithCausality.source}{' '}
+            {first.isCausal && second.isCausal ? (
+              <SyncAltSharp />
+            ) : (
+              <TrendingFlatSharp />
+            )}{' '}
+            {elementWithCausality.target}
+          </Box>
+        );
+      }),
+    (d): ReactNode[] => filter<ReactNode>(d, identity),
+  )(causalityTestResult);
 
   if (!isVisible) return null;
   return (
@@ -104,6 +108,7 @@ const CausalityTest = ({
           sx={{ width: '100%', maxWidth: 172 }}
           {...register(EAnalysisFormFields.causalityMaxLagOrder)}
           required
+          inputProps={{ min: 0 }}
         />
       </Grid>
       <Grid item md={12}>
@@ -116,23 +121,27 @@ const CausalityTest = ({
         <>
           <Grid item md={6}>
             <Typography variant="subtitle1">
-              Found causal relationships:
+              List of causal relationships:
             </Typography>
             <Typography variant="body1">
-              {causalityTexts || 'No relationships detected'}
+              {!isEmpty(causalityTexts)
+                ? causalityTexts
+                : 'No relationships detected'}
             </Typography>
           </Grid>
-          <Grid item md={6} flexGrow={1}>
-            <Typography variant="subtitle1">
-              Network of pairwise Granger causalities:
-            </Typography>
-            <NetworkChart
-              width={500}
-              height={500}
-              nodes={graphData.nodes}
-              edges={graphData.edges}
-            />
-          </Grid>
+          {!isEmpty(causalityTexts) && (
+            <Grid item md={6} flexGrow={1}>
+              <Typography variant="subtitle1">
+                Network of pairwise Granger causalities:
+              </Typography>
+              <NetworkChart
+                width={500}
+                height={100 * graphData.nodes.length}
+                nodes={graphData.nodes}
+                edges={graphData.edges}
+              />
+            </Grid>
+          )}
         </>
       )}
     </AnalysisSection>
