@@ -335,7 +335,10 @@ const LineChart = ({
           {heading}
         </Typography>
         {!isTrainingDataSelectionOn && (
-          <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
+          <Button
+            onClick={() => setIsTrainingDataSelectionOn(true)}
+            style={{ width: 'fit-content', whiteSpace: 'nowrap' }}
+          >
             Limit data for analysis
           </Button>
         )}
