@@ -151,6 +151,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             sx={{ width: '100%' }}
             {...register(EConfigurationFormFields.name)}
             required
+            inputProps={{ maxLength: 100 }}
           />
         </Grid>
         <Grid item md={12}>

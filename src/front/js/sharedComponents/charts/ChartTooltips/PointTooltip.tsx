@@ -2,7 +2,7 @@ import { TooltipWithBounds } from '@visx/tooltip';
 import { map, isNil } from 'lodash';
 import React, { useCallback } from 'react';
 import { TooltipContent, TooltipText } from './styles';
-import { TFormatXScale } from '../types';
+import { TFormatXScale, TFormatYScale } from '../types';
 import { TPointTooltip, TPointTooltipDatum } from './types';
 
 type TTooltipDatumIndicatorProps = {
@@ -25,11 +25,13 @@ type TProps = {
   readonly tooltip: TPointTooltip;
   readonly styles: { readonly [cssRule: string]: string | number };
   readonly formatXScale: TFormatXScale;
+  readonly formatYScale: TFormatYScale;
 };
 export default function PointTooltip({
   tooltip,
   styles,
   formatXScale,
+  formatYScale,
 }: TProps) {
   const renderPointTooltipText = useCallback(
     () =>
@@ -37,7 +39,8 @@ export default function PointTooltip({
         <TooltipContent key={`${point?.data?.id}-${point.data.valueX}`}>
           <TooltipDatumIndicator color={point?.color} />
           <TooltipText>
-            {formatXScale(point.data.valueX)} - {point.data.valueY}
+            {formatXScale(point.data.valueX)} -{' '}
+            {formatYScale(point.data.valueY)}
           </TooltipText>
         </TooltipContent>
       )),

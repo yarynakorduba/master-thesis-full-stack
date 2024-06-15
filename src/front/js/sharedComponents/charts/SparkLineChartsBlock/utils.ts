@@ -46,7 +46,7 @@ export const getCompleteLineChartData = (
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.testPrediction,
     palette.charts.chartTestPrediction,
-    `test data prediction (${predictionData?.predictionMode || ''})`,
+    `test prediction (${predictionData?.predictionMode || ''})`,
   );
 
   const realPredictedData = constructLineChartDataFromTs(
@@ -55,7 +55,7 @@ export const getCompleteLineChartData = (
     PREDICTION_TIMESTAMP_PROP,
     mappedARIMAPrediction?.realPrediction,
     palette.charts.chartRealPrediction,
-    `future data prediction (${predictionData?.predictionMode || ''})`,
+    `prediction (${predictionData?.predictionMode || ''})`,
   );
 
   const testPredictedDataCounterpart =

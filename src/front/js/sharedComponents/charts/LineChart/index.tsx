@@ -4,7 +4,6 @@ import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
 import { isEmpty, isNil, map, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
-
 import BaseBrush, {
   BaseBrushState,
   UpdateBrush,
@@ -332,8 +331,8 @@ const LineChart = ({
   return (
     <>
       <Stack direction="row" alignItems={'center'} gap={2} sx={{ height: 38 }}>
-        <Typography variant="h5" marginRight="auto">
-          {heading}{' '}
+        <Typography variant="h5" marginRight="auto" noWrap>
+          {heading}
         </Typography>
         {!isTrainingDataSelectionOn && (
           <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
@@ -469,6 +468,7 @@ const LineChart = ({
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
             formatXScale={formatXScale}
+            formatYScale={formatYScale}
           />
         ) : null}
       </ChartWrapper>

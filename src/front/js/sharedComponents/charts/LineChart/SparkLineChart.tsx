@@ -114,8 +114,10 @@ const LineChart = ({
 
   return (
     <>
-      <SparkLineChartHeading>{heading}</SparkLineChartHeading>
       <ChartWrapper>
+        <SparkLineChartHeading variant="h5" noWrap>
+          {heading}
+        </SparkLineChartHeading>
         <svg width={width} height={height}>
           <Group left={padding.left} top={padding.top}>
             <AxisLeft

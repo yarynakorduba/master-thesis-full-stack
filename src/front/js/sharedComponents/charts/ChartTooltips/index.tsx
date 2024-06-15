@@ -5,7 +5,7 @@ import { map } from 'lodash';
 
 import AxisTooltip from './AxisTooltip';
 import PointTooltip from './PointTooltip';
-import { TFormatXScale } from '../types';
+import { TFormatXScale, TFormatYScale } from '../types';
 import { TAxisTooltip, TPointTooltip } from './types';
 
 const sharedStyles = {
@@ -56,6 +56,7 @@ type TProps = {
   readonly yTooltip?: TAxisTooltip;
   readonly dataLabelTooltips: TAxisTooltip[];
   readonly formatXScale: TFormatXScale;
+  readonly formatYScale: TFormatYScale;
 };
 
 export default function ChartTooltips({
@@ -63,6 +64,7 @@ export default function ChartTooltips({
   xTooltip,
   yTooltip,
   formatXScale,
+  formatYScale,
   dataLabelTooltips,
 }: TProps) {
   const { palette } = useTheme();
@@ -99,6 +101,7 @@ export default function ChartTooltips({
           tooltip={pointTooltip}
           styles={pointTooltipStyles}
           formatXScale={formatXScale}
+          formatYScale={formatYScale}
         />
       )}
     </>
