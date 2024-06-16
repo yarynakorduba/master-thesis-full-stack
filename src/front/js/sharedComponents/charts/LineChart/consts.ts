@@ -2,7 +2,7 @@ import { blue } from '@mui/material/colors';
 
 export const selectedBrushStyle = () => ({
   fill: blue[300],
-  opacity: 0.15,
+  opacity: 0.2,
   stroke: blue[600],
 });
 

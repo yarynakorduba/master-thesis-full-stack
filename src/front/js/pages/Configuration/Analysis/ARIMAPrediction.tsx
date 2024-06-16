@@ -11,7 +11,7 @@ import Loader from '../../../sharedComponents/Loader';
 import { getLinearValueScale } from '../../../utils';
 import {
   useConfigData,
-  useFetchPrediction,
+  useFetchARIMAPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
@@ -34,7 +34,7 @@ const ARIMAPrediction = ({
   isLoading,
   index,
 }: TProps) => {
-  const handlePredict = useFetchPrediction();
+  const handlePredict = useFetchARIMAPrediction();
 
   const formMethods = useFormContext();
   const {

@@ -70,10 +70,8 @@ export const useFetchVARPrediction = (): ((
   selectedFields: string[],
 ) => Promise<void>) => useBoundStore((state) => state.fetchVARPrediction);
 
-export const useFetchARIMArediction = (): ((
+export const useFetchARIMAPrediction = (): ((
   params: TARIMAUserParams,
-  dataBoundaries: TValueBounds,
-  selectedData: TTimeseriesData,
 ) => Promise<void>) => useBoundStore((state) => state.fetchARIMAPrediction);
 
 export const useGetPrediction = (): THistoryEntry | undefined =>
@@ -90,14 +88,10 @@ export const useIsHistoryPredictionSelected = () =>
 export const useIsPredictionLoading = (): boolean =>
   useBoundStore((state) => state.isPredictionLoading);
 
-export const usePrediction = (): [
-  THistoryEntry | undefined,
-  (
-    params: TARIMAUserParams | TVARUserParams,
-    timeProperty: TDataProperty,
-  ) => Promise<void>,
-  boolean,
-] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
+export const usePrediction = (): [THistoryEntry | undefined, boolean] => [
+  useGetPrediction(),
+  useIsPredictionLoading(),
+];
 
 export const useGetPredictionMode = (): EPredictionMode | undefined =>
   useBoundStore((state) => state.displayedPredictionMode);

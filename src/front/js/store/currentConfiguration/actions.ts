@@ -10,6 +10,7 @@ import {
 } from '../../apiCalls/analysis';
 import {
   EPredictionMode,
+  TARIMAUserParams,
   type THistoryEntry,
   type TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
@@ -328,7 +329,7 @@ export default (set, get) => ({
     }
   },
 
-  fetchARIMAPrediction: async (inputData) => {
+  fetchARIMAPrediction: async (inputData: TARIMAUserParams) => {
     const timeProperty = get().timeProperty;
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(

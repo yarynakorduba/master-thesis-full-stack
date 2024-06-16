@@ -36,8 +36,7 @@ type TProps = {
   readonly index?: number;
 };
 const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
-  const handlePredict = useFetchPrediction();
-  const handleVARPredict = useFetchVARPrediction();
+  const handlePredict = useFetchVARPrediction();
 
   const formMethods = useFormContext();
   const {
@@ -48,7 +47,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
 
   const handleClick = () => {
     const values = getValues();
-    handleVARPredict(
+    handlePredict(
       { lagOrder: +values.lagOrder, horizon: +values.horizon },
       values.varSelectedFields,
     );

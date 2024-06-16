@@ -34,11 +34,11 @@ export const theme = createTheme({
       chartFuchsia: '#FF00FF',
       chartPink: '#FF69B4',
       chartRealData: '#3448C2',
-      chartTestPrediction: '#FFB000',
+      chartTestPrediction: '#FF8C00',
       chartRealPrediction: '#D700F5',
 
       chartOverlayThreshold: '#ffb0007d',
-      chartOverlaySelectedArea: '#ffc0cb36',
+      chartOverlaySelectedArea: 'rgba(0, 255, 0, 0.1)',
     },
   },
 });
