@@ -2,15 +2,25 @@ import React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import { Card, CardContent, Skeleton, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { red } from '@mui/material/colors';
+import { map } from 'lodash';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import {
   useConfigData,
   useFetchPrediction,
+  useFetchVARPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
 import { EAnalysisFormFields } from './types';
@@ -27,6 +37,7 @@ type TProps = {
 };
 const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   const handlePredict = useFetchPrediction();
+  const handleVARPredict = useFetchVARPrediction();
 
   const formMethods = useFormContext();
   const {
@@ -37,7 +48,10 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
 
   const handleClick = () => {
     const values = getValues();
-    handlePredict({ lagOrder: +values.lagOrder, horizon: +values.horizon });
+    handleVARPredict(
+      { lagOrder: +values.lagOrder, horizon: +values.horizon },
+      values.varSelectedFields,
+    );
   };
 
   const predictionHistory = useGetPredictionHistory();
@@ -55,6 +69,21 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
       </AnalysisSection.Header>
       <Grid item md={6}>
         <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
+          <Grid item md={12}>
+            <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+              Variables to predict (select at least two)
+            </Typography>
+            <FormGroup sx={{ marginBottom: 1, padding: 0 }}>
+              {map(valueProperties, (prop) => (
+                <FormControlLabel
+                  control={<Checkbox defaultChecked />}
+                  label={prop.label}
+                  value={prop.value}
+                  {...register(`${EAnalysisFormFields.varSelectedFields}`)}
+                />
+              ))}
+            </FormGroup>
+          </Grid>
           <Grid item md={6}>
             <Typography
               variant="subtitle2"

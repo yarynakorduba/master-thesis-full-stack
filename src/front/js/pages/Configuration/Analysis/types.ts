@@ -101,6 +101,8 @@ export enum EAnalysisFormFields {
   horizon = 'horizon',
   whiteNoiseMaxLagOrder = 'whiteNoiseMaxLagOrder',
   causalityMaxLagOrder = 'causalityMaxLagOrder',
+
+  varSelectedFields = 'varSelectedFields',
 }
 
 export type TCausalityResultItem = {

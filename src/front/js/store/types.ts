@@ -92,8 +92,7 @@ export type TConfigurationSlice = {
 
   readonly fetchVARPrediction: (
     params: TVARUserParams,
-    dataBoundaries: TValueBounds,
-    selectedData: TTimeseriesData,
+    selectedProps: string[],
   ) => Promise<void>;
   readonly fetchPrediction: (
     params: TARIMAUserParams | TVARUserParams,

@@ -133,19 +133,29 @@ export default (set, get) => ({
 
   setDisplayedPredictionId: (itemId: TDisplayedPredictionId) => {
     const predictionHistory = get().predictionHistory;
+    const prevPrediction = getDisplayedPrediction(
+      predictionHistory,
+      get().displayedPredictionId,
+    );
+    const displayedPrediction = itemId
+      ? getDisplayedPrediction(predictionHistory, itemId)
+      : undefined;
+
+    const selectedDataBoundaries = isNil(itemId)
+      ? undefined
+      : displayedPrediction?.selectedDataBoundaries;
+    const displayedPredictionMode = isNil(itemId)
+      ? prevPrediction?.predictionMode
+      : displayedPrediction?.predictionMode;
     return set(
       () => {
-        const displayedPrediction = getDisplayedPrediction(
-          predictionHistory,
-          itemId,
-        );
+        console.log('AAA!!! >>> ', displayedPrediction);
 
         return {
           displayedPredictionId: itemId,
-          selectedDataBoundaries: isNil(itemId)
-            ? undefined
-            : displayedPrediction?.selectedDataBoundaries,
-          displayedPredictionMode: displayedPrediction?.predictionMode,
+          selectedDataBoundaries,
+          displayedPredictionMode:
+            displayedPredictionMode || EPredictionMode.ARIMA,
         };
       },
       SHOULD_CLEAR_STORE,
@@ -318,7 +328,14 @@ export default (set, get) => ({
     }
   },
 
-  fetchARIMAPrediction: async (inputData, dataBoundaries, selectedData) => {
+  fetchARIMAPrediction: async (inputData) => {
+    const timeProperty = get().timeProperty;
+    const dataBoundaries = get().selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(
+      get().data,
+      timeProperty,
+      dataBoundaries,
+    );
     set(
       (state) => ({
         isPredictionLoading: true,
@@ -363,7 +380,14 @@ export default (set, get) => ({
     }
   },
 
-  fetchVARPrediction: async (inputData, dataBoundaries, selectedData) => {
+  fetchVARPrediction: async (inputData, selectedValueKeys) => {
+    const timeProperty = get().timeProperty;
+    const dataBoundaries = get().selectedDataBoundaries;
+    const selectedData = getSelectedDataByBoundaries(
+      get().data,
+      timeProperty,
+      dataBoundaries,
+    );
     set(
       (state) => ({
         displayedPredictionMode: EPredictionMode.VAR,
@@ -377,7 +401,7 @@ export default (set, get) => ({
 
     const response = await fetchVAR(selectedData, inputData, {
       date_key: get().timeProperty.value,
-      value_keys: map(get().valueProperties, (prop) => prop.value),
+      value_keys: selectedValueKeys,
     });
 
     set(
@@ -412,23 +436,12 @@ export default (set, get) => ({
   },
 
   fetchPrediction: async (parameters) => {
-    const timeProperty = get().timeProperty;
     const predictionMode = get().displayedPredictionMode;
-    const dataBoundaries = get().selectedDataBoundaries;
-    const selectedData = getSelectedDataByBoundaries(
-      get().data,
-      timeProperty,
-      dataBoundaries,
-    );
 
     if (predictionMode === EPredictionMode.ARIMA) {
-      await get().fetchARIMAPrediction(
-        parameters,
-        dataBoundaries,
-        selectedData,
-      );
+      await get().fetchARIMAPrediction(parameters);
     } else if (predictionMode === EPredictionMode.VAR) {
-      await get().fetchVARPrediction(parameters, dataBoundaries, selectedData);
+      await get().fetchVARPrediction(parameters, []);
     }
   },
 

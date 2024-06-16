@@ -65,6 +65,17 @@ export const useFetchPrediction = (): ((
   params: TARIMAUserParams | TVARUserParams,
 ) => Promise<void>) => useBoundStore((state) => state.fetchPrediction);
 
+export const useFetchVARPrediction = (): ((
+  params: TVARUserParams,
+  selectedFields: string[],
+) => Promise<void>) => useBoundStore((state) => state.fetchVARPrediction);
+
+export const useFetchARIMArediction = (): ((
+  params: TARIMAUserParams,
+  dataBoundaries: TValueBounds,
+  selectedData: TTimeseriesData,
+) => Promise<void>) => useBoundStore((state) => state.fetchARIMAPrediction);
+
 export const useGetPrediction = (): THistoryEntry | undefined =>
   useBoundStore((state) =>
     find(
