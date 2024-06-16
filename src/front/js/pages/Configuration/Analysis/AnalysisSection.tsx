@@ -35,7 +35,6 @@ const AnalysisSection = ({ md = 12, children }: TProps) => {
         justifyContent="flex-start"
         rowGap={1}
         columnSpacing={3}
-        sx={{ mb: 1 }}
       >
         {children}
       </Grid>

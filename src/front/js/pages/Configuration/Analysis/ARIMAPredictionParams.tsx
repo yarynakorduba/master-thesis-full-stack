@@ -62,7 +62,9 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               <InfoOverlay.Popover>A</InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>
-          {renderOrders(realPredictionParams)}
+          {!isEmpty(realPredictionParams)
+            ? renderOrders(realPredictionParams)
+            : null}
         </>
       )}
     </>

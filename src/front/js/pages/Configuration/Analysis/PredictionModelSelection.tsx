@@ -8,7 +8,7 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Grid } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
@@ -34,7 +34,7 @@ const PredictionModelSelection = ({
   return (
     <>
       <Typography variant="h5">
-        Prediction
+        Prediction{' '}
         {!isEmpty(predictionHistory) && (
           <ToggleButton
             sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
@@ -49,33 +49,31 @@ const PredictionModelSelection = ({
         )}
       </Typography>
       <Grid item md={12}>
-        <Typography variant="subtitle2" sx={{ marginBottom: 0.5 }}>
-          Select a model for prediction
-        </Typography>
-        <ToggleButtonGroup
-          value={predictionMode}
-          exclusive
-          onChange={(e, value) => setPredictionMode(value)}
-          aria-label="text alignment"
-          size="small"
-          sx={{ marginBottom: 1 }}
-          disabled={isDisabled}
-        >
-          <ToggleButton
-            value={EPredictionMode.ARIMA}
-            aria-label="left aligned"
-            sx={{ paddingTop: 0.5, paddingBottom: 0.5 }}
+        <Tooltip title="Select a model for prediction">
+          <ToggleButtonGroup
+            value={predictionMode}
+            exclusive
+            onChange={(e, value) => setPredictionMode(value)}
+            aria-label="text alignment"
+            size="small"
+            disabled={isDisabled}
           >
-            ARIMA
-          </ToggleButton>
-          <ToggleButton
-            value={EPredictionMode.VAR}
-            aria-label="right aligned"
-            sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
-          >
-            VAR
-          </ToggleButton>
-        </ToggleButtonGroup>
+            <ToggleButton
+              value={EPredictionMode.ARIMA}
+              aria-label="left aligned"
+              sx={{ paddingTop: 0.5, paddingBottom: 0.5 }}
+            >
+              ARIMA model
+            </ToggleButton>
+            <ToggleButton
+              value={EPredictionMode.VAR}
+              aria-label="right aligned"
+              sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+            >
+              VAR model
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Tooltip>
         <InfoOverlay
           id="More about the model"
           label="More about the model"

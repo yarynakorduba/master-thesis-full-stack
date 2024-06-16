@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   Checkbox,
-  FormControlLabel,
   FormGroup,
   Skeleton,
   Typography,
@@ -28,6 +27,7 @@ import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { getLinearValueScale } from '../../../utils';
 import VARPredictionParams from './VARPredictionParams';
+import { CheckboxLabel } from './styles';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -75,10 +75,11 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
             </Typography>
             <FormGroup sx={{ marginBottom: 1, padding: 0 }}>
               {map(valueProperties, (prop) => (
-                <FormControlLabel
+                <CheckboxLabel
                   control={<Checkbox defaultChecked />}
                   label={prop.label}
                   value={prop.value}
+                  sx={{ margin: 0 }}
                   {...register(`${EAnalysisFormFields.varSelectedFields}`)}
                 />
               ))}

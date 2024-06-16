@@ -10,6 +10,7 @@ type TProps = {
 const VARPredictionParams = ({ varResult }: TProps) => {
   const testPredictionParams = varResult?.testPredictionParameters;
   const realPredictionParams = varResult?.realPredictionParameters;
+  console.log('====>>> ', varResult);
   const arePredictionParamsSimilar = isEqual(
     testPredictionParams?.order,
     realPredictionParams?.order,
@@ -45,7 +46,7 @@ const VARPredictionParams = ({ varResult }: TProps) => {
         </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
-      {!arePredictionParamsSimilar && realPredictionParams && (
+      {!arePredictionParamsSimilar && !isEmpty(realPredictionParams) && (
         <>
           <Typography variant="subtitle1" color="text.secondary">
             <InfoOverlay
