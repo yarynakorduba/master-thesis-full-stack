@@ -22,7 +22,6 @@ import {
   useCausalityTest,
   useConfigData,
   useFetchConfigPredictionHistory,
-  useIsHistoryPredictionSelected,
   usePredictionMode,
   useStationarityTest,
   useWhiteNoiseTest,
@@ -35,7 +34,6 @@ type TProps = {
 };
 
 const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
-  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const [displayedPredictionMode, setDisplayedPredictionMode] =
     usePredictionMode();
 
@@ -140,7 +138,6 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
                   <PredictionModelSelection
                     predictionMode={displayedPredictionMode}
                     setPredictionMode={setDisplayedPredictionMode}
-                    isDisabled={isHistoryPredictionSelected}
                   />
                   {displayedPredictionMode === EPredictionMode.VAR ? (
                     <VARPrediction

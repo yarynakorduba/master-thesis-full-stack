@@ -10,7 +10,11 @@ import SparkLineChart from '../LineChart/SparkLineChart';
 import { TDataLabel, TTimeseriesData } from '../../../types';
 
 import { TDataProperty } from '../../../types';
-import { LineChartContainer, SparkLineChartsContainer } from './styles';
+import {
+  LineChartContainer,
+  SparkLineChartWrapper,
+  SparkLineChartsContainer,
+} from './styles';
 import {
   TPredictionResult,
   TValueBounds,
@@ -124,7 +128,12 @@ const SparkLineChartsBlock = ({
 
   return (
     <LineChartContainer>
-      <Box width="calc(100% - 300px - 16px)" flexGrow={1} minHeight="300px">
+      <Box
+        width="calc(100% - 300px - 16px)"
+        // maxWidth="calc(100% - 300px - 16px)"
+        flexGrow={1}
+        minHeight="300px"
+      >
         <LineChart
           heading={selectedProp?.label}
           data={mainChartData.lineData}
@@ -135,7 +144,7 @@ const SparkLineChartsBlock = ({
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={300}
-          padding={{ top: 16, bottom: 30, left: 48, right: 10 }}
+          padding={{ top: 16, bottom: 30, left: 48, right: 16 }}
           onSelectArea={onSelectedAreaChange}
           isResponsive
           selectedAreaBounds={selectedAreaBounds}
@@ -155,19 +164,25 @@ const SparkLineChartsBlock = ({
               timeProperty!,
             );
             if (!chartData) return null;
+            const isPredicted = chartData.lineData?.length > 1;
             return (
-              <SparkLineChart
-                key={`sparkline-${prop.label}`}
-                heading={prop?.label || ''}
-                data={chartData.lineData}
-                thresholdData={chartData.thresholdData}
-                height={90}
-                width={300}
-                strokeWidth={0.75}
-                onClick={handleSparklineClick(prop)}
-                padding={{ top: 24, bottom: 18, left: 36, right: 0 }}
-                formatYScale={formatNumber}
-              />
+              <SparkLineChartWrapper
+                isSelected={selectedProp?.value === prop?.value}
+              >
+                <SparkLineChart
+                  key={`sparkline-${prop?.label}`}
+                  heading={prop?.label || ''}
+                  data={chartData.lineData}
+                  thresholdData={chartData.thresholdData}
+                  height={90}
+                  width={300}
+                  strokeWidth={0.75}
+                  onClick={handleSparklineClick(prop)}
+                  padding={{ top: 24, bottom: 8, left: 36, right: 0 }}
+                  formatYScale={formatNumber}
+                  headingMark={isPredicted ? 'predicted' : ''}
+                />
+              </SparkLineChartWrapper>
             );
           })}
         </SparkLineChartsContainer>

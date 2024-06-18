@@ -15,19 +15,19 @@ import { EPredictionMode } from './types';
 import {
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
+  useIsHistoryPredictionSelected,
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
-  readonly isDisabled: boolean;
 };
 const PredictionModelSelection = ({
   predictionMode,
   setPredictionMode,
-  isDisabled,
 }: TProps) => {
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
   const predictionHistory = useGetPredictionHistory();
 
@@ -49,14 +49,20 @@ const PredictionModelSelection = ({
         )}
       </Typography>
       <Grid item md={12}>
-        <Tooltip title="Select a model for prediction">
+        <Tooltip
+          title={
+            isHistoryPredictionSelected
+              ? 'Go back to draft state to change the model selection'
+              : 'Select a model for prediction'
+          }
+        >
           <ToggleButtonGroup
             value={predictionMode}
             exclusive
             onChange={(e, value) => setPredictionMode(value)}
             aria-label="text alignment"
             size="small"
-            disabled={isDisabled}
+            disabled={isHistoryPredictionSelected}
           >
             <ToggleButton
               value={EPredictionMode.ARIMA}

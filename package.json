@@ -83,6 +83,7 @@
     "@types/react-dom": "18.2.18",
     "@visx/axis": "3.5.0",
     "@visx/brush": "3.6.1",
+    "@visx/curve": "^3.3.0",
     "@visx/event": "3.3.0",
     "@visx/grid": "3.5.0",
     "@visx/group": "3.3.0",

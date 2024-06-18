@@ -8,7 +8,7 @@ import { Threshold } from '@visx/threshold';
 
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
-import { ChartWrapper, SparkLineChartHeading } from './styles';
+import { ChartWrapper, HeadingMark, SparkLineChartHeading } from './styles';
 import { TLineChartData } from 'front/js/types';
 import { TPadding } from '../../../types/styles';
 import {
@@ -17,6 +17,7 @@ import {
   TFormatYScale,
   TThresholdData,
 } from '../types';
+import { Stack } from '@mui/material';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -42,6 +43,7 @@ type TProps = {
   readonly data: TLineChartData;
   readonly thresholdData?: Array<TThresholdData>;
   readonly heading?: string;
+  readonly headingMark?: string;
   readonly width?: number;
   readonly height?: number;
   readonly formatXScale?: TFormatXScale;
@@ -58,6 +60,7 @@ const LineChart = ({
   height = 200,
   strokeWidth = 1,
   heading = '',
+  headingMark = '',
   data,
   thresholdData = [],
   formatYScale,
@@ -73,9 +76,10 @@ const LineChart = ({
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
+  const heightWithoutHeader = height - 16;
   const cleanHeight = useMemo(
-    () => height - padding.top - padding.bottom,
-    [height, padding.bottom, padding.top],
+    () => heightWithoutHeader - padding.top - padding.bottom,
+    [heightWithoutHeader, padding.bottom, padding.top],
   );
 
   const xValues = useMemo(() => getUniqueFlatValues('valueX', data), [data]);
@@ -115,10 +119,13 @@ const LineChart = ({
   return (
     <>
       <ChartWrapper>
-        <SparkLineChartHeading variant="h5" noWrap>
-          {heading}
-        </SparkLineChartHeading>
-        <svg width={width} height={height}>
+        <Stack direction="row" justifyContent="space-between">
+          <SparkLineChartHeading variant="h5" noWrap>
+            {heading}
+          </SparkLineChartHeading>
+          <HeadingMark>{headingMark}</HeadingMark>
+        </Stack>
+        <svg width={width} height={heightWithoutHeader}>
           <Group left={padding.left} top={padding.top}>
             <AxisLeft
               scale={yScale}
@@ -158,6 +165,7 @@ export default function ResponsiveLineChart({
   height = 200,
   strokeWidth = 1,
   heading = '',
+  headingMark = '',
   variant = ChartVariant.vertical,
   data,
   thresholdData = [],
@@ -177,6 +185,7 @@ export default function ResponsiveLineChart({
         width={chartWidth}
         height={chartHeight}
         heading={heading}
+        headingMark={headingMark}
         variant={variant}
         data={data}
         thresholdData={thresholdData}
@@ -189,6 +198,7 @@ export default function ResponsiveLineChart({
     ),
     [
       heading,
+      headingMark,
       variant,
       data,
       thresholdData,
