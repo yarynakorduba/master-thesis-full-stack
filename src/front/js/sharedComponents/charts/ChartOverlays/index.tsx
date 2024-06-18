@@ -10,7 +10,6 @@ import { Bounds } from '@visx/brush/lib/types';
 import { useClosestPoints } from './hooks';
 import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
 import { TLineChartData, TLineChartDatapoint } from 'front/js/types';
-import zIndex from '@mui/material/styles/zIndex';
 
 type TProps = {
   readonly xScale: TLinScale;

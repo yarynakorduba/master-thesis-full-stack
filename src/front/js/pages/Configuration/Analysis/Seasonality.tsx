@@ -26,7 +26,6 @@ const Seasonality = ({ index }) => {
         item
         md={2}
         justifyContent="center"
-        height={72}
         display="flex"
         flexDirection="column"
       >
@@ -49,7 +48,13 @@ const Seasonality = ({ index }) => {
       </Grid>
       {isDataSeasonal && (
         <Grid item md={3}>
-          <Typography {...FIELD_LABEL_PROPS}>Periods</Typography>
+          <InfoOverlay
+            id="seasonality-periods"
+            label="Periods"
+            {...FIELD_LABEL_PROPS}
+          >
+            <InfoOverlay.Popover>AA</InfoOverlay.Popover>
+          </InfoOverlay>
           <TextField
             {...register(EAnalysisFormFields.periodsInSeason)}
             size="small"

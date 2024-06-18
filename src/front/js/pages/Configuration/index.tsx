@@ -11,6 +11,7 @@ import {
   useDisplayedPredictionId,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
+  useIsPredictionHistoryLoading,
   usePrediction,
   useSelectedDataBoundaries,
   useSelectedProps,
@@ -52,6 +53,8 @@ const Configuration = () => {
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
+  const isHistoryLoading = useIsPredictionHistoryLoading();
+
   const dataLabels =
     (selectedProp?.value &&
       predictionResult?.lastTrainPoint?.dateTime && [

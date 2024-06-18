@@ -128,12 +128,7 @@ const SparkLineChartsBlock = ({
 
   return (
     <LineChartContainer>
-      <Box
-        width="calc(100% - 300px - 16px)"
-        // maxWidth="calc(100% - 300px - 16px)"
-        flexGrow={1}
-        minHeight="300px"
-      >
+      <Box width="calc(100% - 300px - 16px)" flexGrow={1} minHeight="300px">
         <LineChart
           heading={selectedProp?.label}
           data={mainChartData.lineData}

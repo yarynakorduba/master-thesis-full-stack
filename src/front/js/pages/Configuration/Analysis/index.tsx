@@ -101,18 +101,19 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         handleFetchIsWhiteNoise={handleFetchIsWhiteNoise}
       />
     ),
-    (key) => (
-      <CausalityTest
-        isVisible
-        key={key}
-        index={key}
-        causalityTestResult={causalityTestResult}
-        isCausalityTestLoading={isCausalityTestLoading}
-        handleFetchGrangerDataCausalityTest={
-          handleFetchGrangerDataCausalityTest
-        }
-      />
-    ),
+    (key) =>
+      valueProperties.length > 1 && (
+        <CausalityTest
+          isVisible
+          key={key}
+          index={key}
+          causalityTestResult={causalityTestResult}
+          isCausalityTestLoading={isCausalityTestLoading}
+          handleFetchGrangerDataCausalityTest={
+            handleFetchGrangerDataCausalityTest
+          }
+        />
+      ),
   ].filter(identity);
 
   return (

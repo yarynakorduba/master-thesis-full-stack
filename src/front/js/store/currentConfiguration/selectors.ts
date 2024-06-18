@@ -191,3 +191,6 @@ export const useFetchConfigPredictionHistory = (): [
   useBoundStore((state) => state.fetchPredictionHistory),
   useBoundStore((state) => state.isPredictionHistoryLoading),
 ];
+
+export const useIsPredictionHistoryLoading = (): boolean =>
+  useBoundStore((state) => state.isPredictionHistoryLoading);
