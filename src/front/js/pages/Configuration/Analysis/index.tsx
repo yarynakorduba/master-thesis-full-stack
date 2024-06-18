@@ -66,6 +66,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
       },
     [predictionResult],
   );
+  console.log(defaultInputData);
   const formMethods = useForm({
     defaultValues: { ...defaultInputData },
   });

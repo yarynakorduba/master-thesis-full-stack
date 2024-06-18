@@ -1,4 +1,4 @@
-import { Grid, Switch, TextField, Typography } from '@mui/material';
+import { Grid, Switch, TextField } from '@mui/material';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { EAnalysisFormFields } from './types';

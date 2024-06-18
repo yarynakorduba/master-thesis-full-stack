@@ -5,20 +5,13 @@ import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { isNil, maxBy, minBy } from 'lodash';
+import { isNil } from 'lodash';
 import Box from '@mui/material/Box';
-import { TLineChartData, TLineChartDatapoint } from '../../types';
-import { getHiddenLineColor } from './LineChart/utils';
-import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart/consts';
-import { formatNumber } from '../../utils/formatters';
 import { Stack } from '@mui/material';
-
-const StyledContainer = styled('div')`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-`;
+import { TLineChartData, TLineChartDatapoint } from '../../../types';
+import { getHiddenLineColor, getMaxValue, getMinValue } from './utils';
+import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './consts';
+import { formatNumber } from '../../../utils/formatters';
 
 const StyledMarker = styled('svg')`
   margin: 0 5px;
@@ -49,9 +42,6 @@ const LegendMarker = ({
     </StyledMarker>
   );
 };
-
-const getMaxValue = (data) => maxBy<TLineChartDatapoint>(data, 'valueY');
-const getMinValue = (data) => minBy<TLineChartDatapoint>(data, 'valueY');
 
 type TCustomLegendProps = {
   readonly data: TLineChartData;

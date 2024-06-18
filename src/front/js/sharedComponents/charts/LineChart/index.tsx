@@ -28,7 +28,7 @@ import {
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
 import { TDataLabel, TLineChartData, TLineChartSerie } from '../../../types';
-import Legend from '../Legend';
+import Legend from './Legend';
 import {
   TChartThresholdDatapoint,
   TFormatXScale,
