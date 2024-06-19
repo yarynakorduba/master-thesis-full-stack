@@ -10,7 +10,6 @@ import { Bounds } from '@visx/brush/lib/types';
 import { useClosestPoints } from './hooks';
 import { TClosestChartPointGroup, TLinScale } from '../LineChart/types';
 import { TLineChartData, TLineChartDatapoint } from 'front/js/types';
-import { selectedAreaStyle } from '../LineChart/consts';
 
 type TProps = {
   readonly xScale: TLinScale;
@@ -53,6 +52,8 @@ function ChartOverlays(
   selectedAreaRef,
 ) {
   const { palette } = useTheme();
+  const selectedAreaStyle = { fill: palette.charts.chartOverlaySelectedArea };
+
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
     readonly x: number | undefined;
@@ -120,7 +121,7 @@ function ChartOverlays(
     () =>
       map(closestPoints, (pointGroup) => {
         if (!pointGroup) return null;
-        const { points, x: pX, y: pY } = pointGroup as any;
+        const { points, x: pX, y: pY } = pointGroup;
         const lastPointColor = points?.[points?.length - 1]?.color;
         const hover = handleHover(pointGroup);
         const leave = handleMouseLeave(pointGroup);

@@ -1,26 +1,31 @@
 import { flatMap, flow, uniq } from 'lodash';
-import { scaleLinear } from '@visx/scale';
+import { ScaleInput, scaleLinear } from '@visx/scale';
 import { Palette } from '@mui/material/styles';
 import { AxisVariant } from '../ChartOverlays/hooks';
-import { TAxisTickLabelProps } from './types';
 import { TLineChartDatapoint } from 'front/js/types';
+import { TickFormatter, TickLabelProps } from '@visx/axis';
+import { Scale } from '@visx/brush/lib/types';
 
 export const formatAxisTick =
-  (handler) =>
-  (text: string): string =>
-    handler ? handler(text) : text;
+  (scale): TickFormatter<ScaleInput<Scale>> =>
+  (text) =>
+    scale ? scale(text) : text;
 
+type TTextAnchor = 'start' | 'middle' | 'end' | 'inherit';
 export const getAxisTickLabelProps =
-  (variant = AxisVariant.bottom, fontSize = '0.75rem') =>
-  (): TAxisTickLabelProps => {
-    let textAnchor = 'middle';
+  (
+    variant = AxisVariant.bottom,
+    fontSize = '0.75rem',
+  ): TickLabelProps<ScaleInput<Scale>> =>
+  () => {
+    let textAnchor: TTextAnchor = 'middle';
     if (variant === AxisVariant.left) textAnchor = 'end';
     if (variant === AxisVariant.right) textAnchor = 'start';
     return {
       fill: 'black',
       fontSize,
       dy: variant === AxisVariant.bottom ? '0' : '0.33em',
-      textAnchor
+      textAnchor,
     };
   };
 
@@ -28,7 +33,7 @@ export const getLinearScale = (values: number[] = [], range) =>
   scaleLinear<number>({
     domain: [Math.min(...values), Math.max(...values)],
     range,
-    round: true
+    round: true,
   });
 
 export const getX =
@@ -49,8 +54,12 @@ export const getY =
 
 export const getUniqueFlatChartValues = (prop, data): number[] =>
   flow(
-    (d) => flatMap(d, (lineData) => lineData?.datapoints?.map((datum) => datum?.[prop])),
-    uniq
+    (d) =>
+      flatMap(d, (lineData) =>
+        lineData?.datapoints?.map((datum) => datum?.[prop]),
+      ),
+    uniq,
   )(data);
 
-export const getHiddenLineColor = (palette: Palette): string => palette.grey[300];
+export const getHiddenLineColor = (palette: Palette): string =>
+  palette.grey[300];

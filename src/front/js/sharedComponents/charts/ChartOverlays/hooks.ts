@@ -6,17 +6,20 @@ import { TLineChartSerie } from 'front/js/types';
 
 export enum ChartVariant {
   vertical = 'vertical',
-  horizontal = 'horizontal'
+  horizontal = 'horizontal',
 }
 
 export enum AxisVariant {
   left = 'left',
   bottom = 'bottom',
-  right = 'right'
+  right = 'right',
 }
 
 export type TSeries = {
-  readonly datapoints: Array<{ readonly valueY: number; readonly valueX: number }>;
+  readonly datapoints: Array<{
+    readonly valueY: number;
+    readonly valueX: number;
+  }>;
   readonly color: string;
 };
 
@@ -32,12 +35,19 @@ export function useClosestPoints(
   xScale: TLinScale,
   yScale: TLinScale,
   series: TLineChartSerie[] = [],
-  xPadding: number = 15
+  xPadding: number = 15,
 ): TClosestChartPointGroups | undefined {
-  const [closestPoints, setClosestPoints] = useState<TClosestChartPointGroups>();
+  const [closestPoints, setClosestPoints] =
+    useState<TClosestChartPointGroups>();
 
   const addPoint = useCallback(
-    (accum: TClosestChartPointGroups, color, data, x, y): TClosestChartPointGroups => {
+    (
+      accum: TClosestChartPointGroups,
+      color,
+      data,
+      x,
+      y,
+    ): TClosestChartPointGroups => {
       const pointGroupId = `${x}-${y}`;
       const pointGroup = accum[pointGroupId] ?? { x, y };
       const points = pointGroup?.points ?? [];
@@ -46,11 +56,11 @@ export function useClosestPoints(
         ...accum,
         [pointGroupId]: {
           ...pointGroup,
-          points: [...points, point]
-        }
+          points: [...points, point],
+        },
       };
     },
-    []
+    [],
   );
 
   const handleSetPoints = useCallback(() => {
@@ -65,12 +75,17 @@ export function useClosestPoints(
     const [pointerXValue] = getClosestCoordinate(xScale, x - xPadding);
     // Find all the corresponding linear coord based on band coord
     const findClosest = (prev, curr) =>
-      !prev || Math.abs(curr.valueX - pointerXValue) < Math.abs(prev.valueX - pointerXValue)
+      !prev ||
+      Math.abs(curr.valueX - pointerXValue) <
+        Math.abs(prev.valueX - pointerXValue)
         ? curr
         : prev;
 
     const points = series.reduce(
-      (accum: TClosestChartPointGroups, serie: TLineChartSerie): TClosestChartPointGroups => {
+      (
+        accum: TClosestChartPointGroups,
+        serie: TLineChartSerie,
+      ): TClosestChartPointGroups => {
         const { datapoints = [], color } = serie;
         const data = datapoints.reduce(findClosest, undefined);
         if (isNil(data)) return accum;
@@ -81,7 +96,7 @@ export function useClosestPoints(
         if (isNil(yCoordinate)) return accum;
         return addPoint(accum, color, data, xCoordinate, yCoordinate);
       },
-      {}
+      {},
     );
 
     setClosestPoints(points);

@@ -23,7 +23,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { Dropzone, FormContainer } from './styles';
+import { Dropzone } from './styles';
 import { TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './utils';
@@ -38,10 +38,9 @@ type TProps = {
 
 const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   const navigate = useNavigate();
-  const formMethods = useFormContext();
-
   const openErrorNotification = useOpenErrorNotification();
 
+  const formMethods = useFormContext();
   const {
     control,
     register,
@@ -114,12 +113,14 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   });
 
   return (
-    <>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Add new dataset
-      </Typography>
-      <FormContainer onSubmit={handleSubmit(handleSave)}>
-        <Grid item md={6} sx={{ mb: 1 }}>
+    <form onSubmit={handleSubmit(handleSave)}>
+      <Grid container rowGap={1}>
+        <Grid item md={12}>
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            Add new dataset
+          </Typography>
+        </Grid>
+        <Grid item md={12}>
           <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
             <label>Upload the dataset</label>
           </Typography>
@@ -134,9 +135,14 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             </Typography>
           </Dropzone>
         </Grid>
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
-          <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-            <label htmlFor="name">Dataset name</label>
+        <Grid item md={12}>
+          <Typography
+            variant="subtitle2"
+            sx={{ fontSize: 12 }}
+            component="label"
+            htmlFor={EConfigurationFormFields.name}
+          >
+            Dataset name
           </Typography>
           <TextField
             autoFocus
@@ -145,42 +151,50 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             sx={{ width: '100%' }}
             {...register(EConfigurationFormFields.name)}
             required
+            inputProps={{ maxLength: 100 }}
           />
         </Grid>
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
+        <Grid item md={12}>
           <Controller
             control={control}
             {...register(EConfigurationFormFields.timeProperty)}
             render={(valueProperties) => {
               return (
-                <FormControl
-                  sx={{ width: '100%' }}
-                  size="small"
-                  disabled={!acceptedFile}
-                >
-                  <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                    <label htmlFor="name">Timestamp field</label>
+                <>
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontSize: 12 }}
+                    component="label"
+                    htmlFor={EConfigurationFormFields.timeProperty}
+                  >
+                    Timestamp field
                   </Typography>
-                  <Select {...valueProperties.field}>
-                    {map(timeseriesProps, (option: string) => {
-                      return (
-                        <MenuItem
-                          value={option}
-                          disabled={includes<string>(valueProperties, option)}
-                        >
-                          {option}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+                  <FormControl
+                    sx={{ width: '100%' }}
+                    size="small"
+                    disabled={!acceptedFile}
+                  >
+                    <Select {...valueProperties.field}>
+                      {map(timeseriesProps, (option: string) => {
+                        return (
+                          <MenuItem
+                            value={option}
+                            disabled={includes<string>(valueProperties, option)}
+                          >
+                            {option}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </>
               );
             }}
             rules={{ required: true }}
           />
         </Grid>
 
-        <Grid item md={6} sx={{ marginBottom: 1 }}>
+        <Grid item md={12}>
           <Controller
             {...register(
               `${EConfigurationFormFields.valueProperties}[0].value`,
@@ -188,41 +202,46 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             key={`${EConfigurationFormFields.valueProperties}[0]`}
             control={control}
             render={({ field }) => (
-              <FormControl
-                sx={{ width: '100%' }}
-                size="small"
-                disabled={!acceptedFile}
-              >
-                <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                  <label htmlFor="name">Field to analyse (#1)</label>
+              <>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontSize: 12 }}
+                  component="label"
+                  htmlFor={`${EConfigurationFormFields.valueProperties}[0]`}
+                >
+                  Field to analyse (#1)
                 </Typography>
-                <Select {...field}>
-                  {map(timeseriesProps, (option: string) => (
-                    <MenuItem
-                      value={option}
-                      disabled={
-                        includes<string>(selectedPropsToAnalyze, option) ||
-                        option === selectedTimeseriesProp
-                      }
-                    >
-                      {option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                <FormControl
+                  sx={{ width: '100%' }}
+                  size="small"
+                  disabled={!acceptedFile}
+                >
+                  <Select {...field}>
+                    {map(timeseriesProps, (option: string) => (
+                      <MenuItem
+                        value={option}
+                        disabled={
+                          includes<string>(selectedPropsToAnalyze, option) ||
+                          option === selectedTimeseriesProp
+                        }
+                      >
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </>
             )}
             rules={{ required: true }}
           />
         </Grid>
         {!!fields.length &&
           slice(fields, 1).map((f, index) => {
-            console.log(f);
             return (
               <Grid
                 item
-                md={6}
+                md={12}
                 sx={{
-                  marginBottom: 1,
                   display: 'flex',
                   flexWrap: 'nowrap',
                   alignItems: 'flex-end',
@@ -236,30 +255,35 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                   control={control}
                   render={({ field }) => {
                     return (
-                      <FormControl
-                        sx={{ width: '100%' }}
-                        size="small"
-                        disabled={!acceptedFile}
-                      >
-                        <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
-                          <label htmlFor="name">
-                            Field to analyse (#{index + 2})
-                          </label>
+                      <>
+                        <Typography
+                          variant="subtitle2"
+                          sx={{ fontSize: 12 }}
+                          component="label"
+                          htmlFor={`${EConfigurationFormFields.valueProperties}[${index + 1}]`}
+                        >
+                          Field to analyse (#{index + 2})
                         </Typography>
-                        <Select {...field}>
-                          {map(timeseriesProps, (option: string) => (
-                            <MenuItem
-                              value={option}
-                              disabled={
-                                includes(selectedPropsToAnalyze, option) ||
-                                option === selectedTimeseriesProp
-                              }
-                            >
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
+                        <FormControl
+                          sx={{ width: '100%' }}
+                          size="small"
+                          disabled={!acceptedFile}
+                        >
+                          <Select {...field}>
+                            {map(timeseriesProps, (option: string) => (
+                              <MenuItem
+                                value={option}
+                                disabled={
+                                  includes(selectedPropsToAnalyze, option) ||
+                                  option === selectedTimeseriesProp
+                                }
+                              >
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </>
                     );
                   }}
                 />
@@ -273,32 +297,37 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
               </Grid>
             );
           })}
-
-        <Button
-          onClick={addField}
-          disabled={
-            !acceptedFile || valueProps[valueProps.length - 1] === undefined
-          }
-        >
-          + Add a variable
-        </Button>
-        <Typography
-          sx={{ textAlign: 'center', mt: 2 }}
-          fontSize={14}
-          variant="subtitle2"
-          color={grey[500]}
-        >
-          Note: You will not be able to change these settings after saving. If
-          needed, consider creating a new dataset.
-        </Typography>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && (
-            <CircularProgress size="0.875rem" sx={{ mr: 1 }} color="inherit" />
-          )}
-          Save dataset configuration
-        </Button>
-      </FormContainer>
-    </>
+        <Grid item md={12} sx={{ mb: 1, textAlign: 'center' }}>
+          <Button
+            onClick={addField}
+            disabled={
+              !acceptedFile || valueProps[valueProps.length - 1] === undefined
+            }
+          >
+            + Add a variable
+          </Button>
+          <Typography
+            sx={{ mt: 2 }}
+            fontSize={14}
+            variant="subtitle2"
+            color={grey[500]}
+          >
+            Note: You will not be able to change these settings after saving. If
+            needed, consider creating a new dataset.
+          </Typography>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && (
+              <CircularProgress
+                size="0.875rem"
+                sx={{ mr: 1 }}
+                color="inherit"
+              />
+            )}
+            Save dataset configuration
+          </Button>
+        </Grid>
+      </Grid>
+    </form>
   );
 };
 

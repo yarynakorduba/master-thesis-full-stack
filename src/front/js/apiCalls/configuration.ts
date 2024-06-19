@@ -49,7 +49,6 @@ export const createConfig = async (config) => {
 };
 
 export const addEntryToPredictionHistory = async (prediction) => {
-  console.log('--->>> prediction 0- > ', prediction);
   const body = {
     test_prediction_parameters: [],
     real_prediction_parameters: [],

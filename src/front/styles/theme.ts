@@ -6,7 +6,8 @@ declare module '@mui/material/styles' {
       chartBlue: string;
       chartFuchsia: string;
       chartPink: string;
-      chartOverlayPink: string;
+      chartOverlaySelectedArea: string;
+      chartOverlayThreshold: string;
       chartRealData: string;
       chartTestPrediction: string;
       chartRealPrediction: string;
@@ -17,7 +18,8 @@ declare module '@mui/material/styles' {
       chartBlue: string;
       chartFuchsia: string;
       chartPink: string;
-      chartOverlayPink: string;
+      chartOverlaySelectedArea: string;
+      chartOverlayThreshold: string;
       chartRealData: string;
       chartTestPrediction: string;
       chartRealPrediction: string;
@@ -32,10 +34,11 @@ export const theme = createTheme({
       chartFuchsia: '#FF00FF',
       chartPink: '#FF69B4',
       chartRealData: '#3448C2',
-      chartTestPrediction: '#FFB000',
+      chartTestPrediction: '#FF8C00',
       chartRealPrediction: '#D700F5',
 
-      chartOverlayPink: '#ffc0cb36',
+      chartOverlayThreshold: '#ffb0007d',
+      chartOverlaySelectedArea: 'rgba(0, 255, 0, 0.1)',
     },
   },
 });

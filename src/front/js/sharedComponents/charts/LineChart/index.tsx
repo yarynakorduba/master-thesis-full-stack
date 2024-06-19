@@ -4,7 +4,6 @@ import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
 import { isEmpty, isNil, map, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
-
 import BaseBrush, {
   BaseBrushState,
   UpdateBrush,
@@ -43,7 +42,6 @@ import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
 import { TPadding } from '../../../types/styles';
-import { ThresholdProps } from '@visx/threshold/lib/Threshold';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -333,11 +331,14 @@ const LineChart = ({
   return (
     <>
       <Stack direction="row" alignItems={'center'} gap={2} sx={{ height: 38 }}>
-        <Typography variant="h5" marginRight="auto">
-          {heading}{' '}
+        <Typography variant="h5" marginRight="auto" noWrap>
+          {heading}
         </Typography>
         {!isTrainingDataSelectionOn && (
-          <Button onClick={() => setIsTrainingDataSelectionOn(true)}>
+          <Button
+            onClick={() => setIsTrainingDataSelectionOn(true)}
+            style={{ width: 'fit-content', whiteSpace: 'nowrap' }}
+          >
             Limit data for analysis
           </Button>
         )}
@@ -386,16 +387,16 @@ const LineChart = ({
               scale={xScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatXScale) as any}
-              tickLabelProps={getAxisTickLabelProps() as any}
+              tickFormat={formatAxisTick(formatXScale)}
+              tickLabelProps={getAxisTickLabelProps()}
               numTicks={numXAxisTicks}
             />
             <AxisLeft
               scale={yScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatYScale) as any}
-              tickLabelProps={getAxisTickLabelProps(AxisVariant.left) as any}
+              tickFormat={formatAxisTick(formatYScale)}
+              tickLabelProps={getAxisTickLabelProps(AxisVariant.left)}
               numTicks={numYAxisTicks}
             />
             {map(dataLabels, (dataLabel) => (
@@ -470,6 +471,7 @@ const LineChart = ({
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
             formatXScale={formatXScale}
+            formatYScale={formatYScale}
           />
         ) : null}
       </ChartWrapper>

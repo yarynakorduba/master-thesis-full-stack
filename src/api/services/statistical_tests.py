@@ -1,9 +1,11 @@
 import numpy as np
+import pandas as pd
 from pmdarima.arima.utils import ndiffs
 import statsmodels.stats.diagnostic as diag
-from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import grangercausalitytests
 from itertools import combinations
+
+from api.utils import APIException
 
 SIGNIFICANT_P = 0.05
 
@@ -11,12 +13,47 @@ class StatisticalTests():
     def __init__(self):
         self = self
 
-    def test_white_noise(self, data):
-        # If lags is None: The test will include autocorrelation up to a default maximum lag.
-        # The default maximum lag is often determined based on the size of the data.
-        result = diag.acorr_ljungbox(data, model_df=0, period=None, return_df=None)
-        return { "isWhiteNoise": bool(result.iloc[-1, 1] >= SIGNIFICANT_P) }
+    def test_white_noise(self, data, key, period=None, max_lag_order=None):
+        try:
+            # If lags is None: The test will include autocorrelation up to a default maximum lag.
+            # The default maximum lag is often determined based on the size of the data.
+            # H0: The time series data are white noise.
+            result = diag.acorr_ljungbox(data, model_df=0, period=period, return_df=None, auto_lag=True, lags=max_lag_order)
+            return {
+                "key": key,\
+                "isWhiteNoise": bool(result.iloc[-1,1] >= SIGNIFICANT_P)
+            }
+        except APIException as e:
+            print(f"White noise error: {e}")
+            raise e
+        except Exception as e:
+            print(f"White noise error: {str(e)}")
+            raise APIException(str(e))
     
+    def multitest_white_noise(self, data, data_keys, period=None, max_lag_order=None):
+        try:
+            if period != None and period < 1:
+                raise APIException(str("Periods in season, if present, should be a positive integer"))
+            elif period == 1:
+                period = None
+            results = []
+            # If lags is None: The test will include autocorrelation up to a default maximum lag.
+            # The default maximum lag is often determined based on the size of the data.
+            for key in data_keys:
+                data_to_analyze = [datum[key] for datum in data]
+                print(f"Key: {key}")
+                result = self.test_white_noise(data_to_analyze, key, period, max_lag_order)
+                print(f'Result: {result}')
+                results.append(result)
+            return results
+        except APIException as e:
+            print(f"Multitest white noise error: {e}")
+            raise e
+        except Exception as e:
+            print(f"Multitest white noise error: {str(e)}")
+            raise APIException(str(e))
+    
+
     # H0: The time series has a unit root (is non-stationary)
     # p < 0.05 - we reject H0, it means that the data is stationary
     # p >= 0.05 - we prove H0, it means that the data is NOT stationary
@@ -38,55 +75,52 @@ class StatisticalTests():
         return {
             "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
             "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
-            }
+        }
 
-
-    def test_stationarity(self, data):
-        # AIC - autolag parameter which automates
-        # the selection of the lag length based on information criteria and penalises complex models.
-
-        # ct - ct: It stands for "constant and trend."
-        # The regression model includes both a constant (intercept) and a linear trend term.
-        # H0: data is not stationary
-        result = adfuller(data, autolag="AIC", regression='ct')
-        print(result)
-        isStationary = False
-        if (
-            # result[0] < result[4]["1%"] and  and result[0] < result[4]["10%"]\
-            result[0] <= result[4]["5%"] and result[1] < SIGNIFICANT_P):
-            isStationary = True
-        else:
-            isStationary = False
-        
-        return { "stationarity": result, "isStationary": isStationary }
-    
     # The Null hypothesis for grangercausalitytests is that the time series in
     # the second column, x2, does NOT Granger cause the time series in the first
     # column, x1.
-    def test_granger_causality(self, data, data_key_pair):
-        maxlag = 24
+    def test_granger_causality(self, data, data_key_pair, max_lag_order):
+        try:
+            if max_lag_order == None or max_lag_order < 1:
+                raise APIException("Max lag order should be a positive integer")
+            data_opposite_direction = [[x[1], x[0]] for x in data]
+            # The data for testing whether the time series in the second column Granger
+            # causes the time series in the first column
+            result = grangercausalitytests(data, maxlag=[max_lag_order])
+            result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[max_lag_order])
+            # flip
+            return [
+                    { "isCausal": (result[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
+                    { "isCausal": (result_opposite_direction[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
+                ]
+        except APIException as e:
+            print(f"Multitest granger causality error: {e}")
+            raise e
+        except Exception as e:
+            print(f"Multitest granger causality error: {str(e)}")
+            raise APIException(str(e))
     
-        data_opposite_direction = [[x[1], x[0]] for x in data]
-        # The data for testing whether the time series in the second column Granger
-        # causes the time series in the first column
-        result = grangercausalitytests(data, maxlag=[maxlag])
-        result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[maxlag])
-        # flip
-        return [
-                { "isCausal": (result[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
-                { "isCausal": (result_opposite_direction[maxlag][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
-            ]
+    def multitest_granger_causality(self, data, data_keys, max_lag_order):
+        try:
+            if max_lag_order == None or max_lag_order < 1:
+                raise APIException("Max lag order should be a positive integer")
+            data_df = pd.DataFrame(data)[data_keys]
+            stationary_data = self.convert_data_to_stationary(data_df)
+            data_pairs = list(combinations(data_keys, 2))
+            results = []
+            for pair in data_pairs:
+                data_for_pair = stationary_data[0][[pair[0], pair[1]]].values
+                result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]], max_lag_order)
+                results.append(result)
+            return results
+        except APIException as e:
+            print(f"Multitest granger causality error: {e}")
+            raise e
+        except Exception as e:
+            print(f"Multitest granger causality error: {str(e)}")
+            raise APIException(str(e))
     
-    def multitest_granger_causality(self, data, data_keys):
-        data_pairs = list(combinations(data_keys, 2))
-        results = []
-        for pair in data_pairs:
-            data_for_pair = [[datum[pair[0]], datum[pair[1]]] for datum in data]
-            print(data_for_pair)
-            result = self.test_granger_causality(data_for_pair, [pair[0], pair[1]])
-            print(f'Result: {result}')
-            results.append(result)
-        return results
     
     def convert_data_to_stationary(self, df):
         df_diff = df.copy()

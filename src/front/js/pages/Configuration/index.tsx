@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isNil } from 'lodash';
 
@@ -11,8 +11,8 @@ import {
   useDisplayedPredictionId,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
+  useIsPredictionHistoryLoading,
   usePrediction,
-  usePredictionMode,
   useSelectedDataBoundaries,
   useSelectedProps,
 } from '../../store/currentConfiguration/selectors';
@@ -20,7 +20,6 @@ import PredictionHistory from './PredictionHistory';
 import PredictionInfoText from './Analysis/PredictionInfoText';
 import { isConfigurationDataIncomplete } from './utils';
 import { ERoutePaths } from '../../types/router';
-import { EPredictionMode } from './Analysis/types';
 
 const Configuration = () => {
   const { id } = useParams();
@@ -35,7 +34,6 @@ const Configuration = () => {
     valueProperties,
     configurationError,
   } = useConfigData();
-  const [, setDisplayedPredictionMode] = usePredictionMode();
 
   useEffect(() => {
     if (!isNil(id)) fetchConfiguration(id);
@@ -51,11 +49,12 @@ const Configuration = () => {
   const [selectedDataBoundaries, setSelectedDataBoundaries] =
     useSelectedDataBoundaries();
 
-  const [predictionResult, handleFetchPrediction, isPredictionLoading] =
-    usePrediction();
+  const [predictionResult, isPredictionLoading] = usePrediction();
   const [, setDisplayedPredictionId] = useDisplayedPredictionId();
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
+  const isHistoryLoading = useIsPredictionHistoryLoading();
+
   const dataLabels =
     (selectedProp?.value &&
       predictionResult?.lastTrainPoint?.dateTime && [
@@ -122,15 +121,10 @@ const Configuration = () => {
         />
 
         {!isDataIncomplete && !isConfigurationLoading && (
-          <Grid container justifyContent="start" gap={3} wrap="nowrap">
-            <Grid item md={6}>
-              <Analysis
-                predictionResult={predictionResult}
-                isPredictionLoading={isPredictionLoading}
-              />
-            </Grid>
-            <Grid item md={6}></Grid>
-          </Grid>
+          <Analysis
+            predictionResult={predictionResult}
+            isPredictionLoading={isPredictionLoading}
+          />
         )}
       </Content>
       <HistoryDrawer

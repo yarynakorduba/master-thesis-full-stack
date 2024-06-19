@@ -10,7 +10,6 @@ export type TValueBounds = {
 
 // params which are passed to the model from the UI
 export type TARIMAUserParams = {
-  readonly lagOrder: number;
   readonly horizon: number;
   readonly isSeasonal: boolean;
   readonly minP: number;
@@ -43,6 +42,14 @@ export type TResponseARIMAParams = {
   readonly trend: null;
 };
 
+export type TVARUserParams = {
+  readonly lagOrder: number;
+  readonly horizon: number;
+};
+export type TResponseVARParams = {
+  readonly order: number;
+};
+
 export type TPredictionEvaluation = {
   readonly mae: number;
   readonly mape: number;
@@ -51,23 +58,29 @@ export type TPredictionEvaluation = {
   readonly rmse: number;
 };
 
-export type THistoryEntry = {
-  readonly id: number;
+export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
+  readonly id: string; // uuid
   readonly createdAt: string; // ISO date string
-  readonly predictionMode: EPredictionMode;
+  readonly lastTrainPoint: TLastTrainPoint;
   readonly testPrediction: TPredictedPoints;
   readonly realPrediction: TPredictedPoints;
-
-  readonly lastTrainPoint: TLastTrainPoint;
-
-  readonly realPredictionParameters: TResponseARIMAParams;
-  readonly testPredictionParameters: TResponseARIMAParams;
-
+  readonly realPredictionParameters: T; //TResponseARIMAParams | TResponseVARParams;
+  readonly testPredictionParameters: T; //TResponseARIMAParams | TResponseVARParams;
   readonly evaluation: { readonly [prop: string]: TPredictionEvaluation };
-
   // the data which was selected for training
   readonly selectedDataBoundaries?: TValueBounds;
+  readonly predictionMode: EPredictionMode;
 };
+export type TARIMAResult = TPredictionResult<TResponseARIMAParams>;
+export type TVARResult = TPredictionResult<TResponseVARParams>;
+
+export type THistoryEntry<T = TResponseARIMAParams | TResponseVARParams> =
+  TPredictionResult<T> & {
+    readonly inputData: any;
+  };
+
+export type TARIMAHistoryEntry = THistoryEntry<TResponseARIMAParams>;
+export type TVARHistoryEntry = THistoryEntry<TResponseVARParams>;
 
 export type TLastTrainPoint = {
   readonly dateTime: string;
@@ -77,11 +90,24 @@ export type TLastTrainPoint = {
 
 export type TPredictedPoints = { [msTimestamp: string]: number };
 
-export type TARIMAResult = {
-  readonly lastTrainPoint: TLastTrainPoint;
-  readonly testPrediction: TPredictedPoints;
-  readonly realPrediction: TPredictedPoints;
-  readonly realPredictionParameters: any;
-};
+export enum EAnalysisFormFields {
+  isSeasonal = 'isSeasonal',
+  periodsInSeason = 'periodsInSeason',
+  lagOrder = 'lagOrder',
+  minQ = 'minQ',
+  maxQ = 'maxQ',
+  minP = 'minP',
+  maxP = 'maxP',
+  horizon = 'horizon',
+  whiteNoiseMaxLagOrder = 'whiteNoiseMaxLagOrder',
+  causalityMaxLagOrder = 'causalityMaxLagOrder',
 
-export type TVARResult = any;
+  varSelectedFields = 'varSelectedFields',
+}
+
+export type TCausalityResultItem = {
+  readonly source: string;
+  readonly target: string;
+  readonly isCausal: boolean;
+};
+export type TCausalityResult = TCausalityResultItem[];

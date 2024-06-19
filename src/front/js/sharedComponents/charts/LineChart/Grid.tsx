@@ -14,11 +14,30 @@ type TProps = {
 
 const GRAY = '#E1E5EA';
 
-const Grid = ({ chartVariant, xScale, yScale, width, height, numTicks = 4 }: TProps) => {
+const Grid = ({
+  chartVariant,
+  xScale,
+  yScale,
+  width,
+  height,
+  numTicks = 4,
+}: TProps) => {
   return chartVariant === ChartVariant.vertical ? (
-    <GridRows scale={yScale} width={width} height={height} stroke={GRAY} numTicks={numTicks} />
+    <GridRows
+      scale={yScale}
+      width={width}
+      height={height}
+      stroke={GRAY}
+      numTicks={numTicks}
+    />
   ) : (
-    <GridColumns scale={xScale} width={width} height={height} stroke={GRAY} numTicks={numTicks} />
+    <GridColumns
+      scale={xScale}
+      width={width}
+      height={height}
+      stroke={GRAY}
+      numTicks={numTicks}
+    />
   );
 };
 

@@ -3,8 +3,10 @@ import {
   EPredictionMode,
   TARIMAResult,
   TARIMAUserParams,
+  TCausalityResult,
   THistoryEntry,
   TVARResult,
+  TVARUserParams,
   TValueBounds,
 } from '../pages/Configuration/Analysis/types';
 import { TTimeseriesData, TDataProperty } from '../types';
@@ -23,7 +25,7 @@ export type TConfigurationsSlice = {
   readonly isDeleting: boolean;
 };
 
-export type TDisplayedPrediction = number | string | undefined;
+export type TDisplayedPredictionId = string | undefined;
 
 export type TConfigurationSlice = {
   // TODO: remove temporary :?
@@ -53,18 +55,20 @@ export type TConfigurationSlice = {
 
   readonly stationarityTest;
   readonly isStationarityTestLoading: boolean;
-  readonly fetchStationarityTest;
+  readonly fetchStationarityTest: (
+    valueProperties: TDataProperty[],
+  ) => Promise<void>;
 
-  readonly causalityTest;
+  readonly causalityTest?: TCausalityResult;
   readonly isCausalityTestLoading: boolean;
   readonly fetchCausalityTest: (selectedProp: TDataProperty[]) => Promise<void>;
 
-  readonly displayedPredictionId: TDisplayedPrediction; // latest prediction or id of history item
+  readonly displayedPredictionId: TDisplayedPredictionId; // latest prediction or id of history item
   readonly setDisplayedPredictionId: (
-    predictionItemId: TDisplayedPrediction,
+    predictionItemId: TDisplayedPredictionId,
   ) => void;
 
-  readonly displayedPredictionMode: EPredictionMode;
+  readonly displayedPredictionMode?: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
 
   readonly isPredictionLoading: boolean;
@@ -80,18 +84,15 @@ export type TConfigurationSlice = {
   readonly predictionHistory: THistoryEntry[];
   readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
 
-  readonly fetchARIMAPrediction: (
-    params: TARIMAUserParams,
-    dataBoundaries: TValueBounds,
-    selectedData: TTimeseriesData,
-  ) => Promise<void>;
+  readonly fetchARIMAPrediction: (params: TARIMAUserParams) => Promise<void>;
 
   readonly fetchVARPrediction: (
-    params: any,
-    dataBoundaries: TValueBounds,
-    selectedData: TTimeseriesData,
+    params: TVARUserParams,
+    selectedProps: string[],
   ) => Promise<void>;
-  readonly fetchPrediction: (params: TARIMAUserParams | any) => Promise<void>;
+  readonly fetchPrediction: (
+    params: TARIMAUserParams | TVARUserParams,
+  ) => Promise<void>;
 
   readonly isHistoryDrawerOpen: boolean;
   readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;

@@ -5,17 +5,19 @@ import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { isNil, maxBy, minBy, round } from 'lodash';
+import { isNil, maxBy, minBy } from 'lodash';
 import Box from '@mui/material/Box';
 import { TLineChartData, TLineChartDatapoint } from '../../types';
 import { getHiddenLineColor } from './LineChart/utils';
-import { PRECISION } from '../../consts';
 import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart/consts';
+import { formatNumber } from '../../utils/formatters';
+import { Stack } from '@mui/material';
 
 const StyledContainer = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: center;
+  width: 100%;
 `;
 
 const StyledMarker = styled('svg')`
@@ -109,7 +111,7 @@ export const CustomLegend = ({
   const renderItems = useCallback(
     (legendItems) => {
       return (
-        <StyledContainer>
+        <Stack direction="row" justifyContent="flex-start" width="auto">
           {legendItems.map((legendItem) => {
             const datum = legendItem?.datum;
             const shape = legendScale(datum);
@@ -121,15 +123,29 @@ export const CustomLegend = ({
                 style={{
                   margin: '0 16px',
                   fontSize: '0.875rem',
+                  flexShrink: 2,
+                  flexGrow: 0,
+                  flexBasis: 'auto',
+                  maxWidth: 'calc(33%)',
                 }}
                 key={datum?.label}
               >
-                <Box display="flex" alignItems="center" gap={1}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  maxWidth={'100%'}
+                  width="fit-content"
+                >
                   {isValidElement && React.cloneElement(shape as ReactElement)}
                   <Typography
+                    noWrap
+                    variant="body1"
+                    component="span"
                     color={
                       isHidden ? palette.text.disabled : palette.text.primary
                     }
+                    sx={{ fontSize: 14, display: 'inline' }}
                   >
                     {datum?.label}
                   </Typography>
@@ -137,24 +153,26 @@ export const CustomLegend = ({
                 </Box>
                 <Typography
                   variant="body2"
+                  component="span"
                   color={
                     isHidden ? palette.text.disabled : palette.text.primary
                   }
+                  sx={{ fontSize: 12, display: 'inline' }}
                 >
-                  ({datum?.dataLength} entries, min:{' '}
+                  ({formatNumber(datum?.dataLength)} entries, min:{' '}
                   {!isNil(datum?.min?.valueY)
-                    ? round(datum?.min?.valueY, PRECISION)
+                    ? formatNumber(datum?.min?.valueY)
                     : 'N/A'}
                   , max:{' '}
                   {!isNil(datum?.max?.valueY)
-                    ? round(legendItem?.datum?.max?.valueY, PRECISION)
+                    ? formatNumber(legendItem?.datum?.max?.valueY)
                     : 'N/A'}
                   )
                 </Typography>
               </LegendItem>
             );
           })}
-        </StyledContainer>
+        </Stack>
       );
     },
     [

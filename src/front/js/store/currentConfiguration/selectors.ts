@@ -3,12 +3,14 @@ import { TDataProperty, TTimeseriesData } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
+  TARIMAUserParams,
+  TCausalityResult,
   THistoryEntry,
+  TVARUserParams,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
-import { TDisplayedPrediction } from '../types';
+import { TDisplayedPredictionId } from '../types';
 
-// export const useFetchPrediction = () => useBoundStore((state) => state.fetchPrediction);
 export const useGetConfigName = (): string =>
   useBoundStore((state) => state.name || '');
 export const useGetData = (): TTimeseriesData =>
@@ -59,8 +61,18 @@ export const useSelectedDataBoundaries = (): [
   (data: TValueBounds | undefined) => void,
 ] => [useGetSelectedDataBoundaries(), useSetSelectedDataBoundaries()];
 
-export const useFetchPrediction = (): ((params: any) => Promise<void>) =>
-  useBoundStore((state) => state.fetchPrediction);
+export const useFetchPrediction = (): ((
+  params: TARIMAUserParams | TVARUserParams,
+) => Promise<void>) => useBoundStore((state) => state.fetchPrediction);
+
+export const useFetchVARPrediction = (): ((
+  params: TVARUserParams,
+  selectedFields: string[],
+) => Promise<void>) => useBoundStore((state) => state.fetchVARPrediction);
+
+export const useFetchARIMAPrediction = (): ((
+  params: TARIMAUserParams,
+) => Promise<void>) => useBoundStore((state) => state.fetchARIMAPrediction);
 
 export const useGetPrediction = (): THistoryEntry | undefined =>
   useBoundStore((state) =>
@@ -76,18 +88,17 @@ export const useIsHistoryPredictionSelected = () =>
 export const useIsPredictionLoading = (): boolean =>
   useBoundStore((state) => state.isPredictionLoading);
 
-export const usePrediction = (): [
-  THistoryEntry | undefined,
-  (params: any, timeProperty: TDataProperty) => Promise<void>,
-  boolean,
-] => [useGetPrediction(), useFetchPrediction(), useIsPredictionLoading()];
+export const usePrediction = (): [THistoryEntry | undefined, boolean] => [
+  useGetPrediction(),
+  useIsPredictionLoading(),
+];
 
-export const useGetPredictionMode = (): EPredictionMode =>
+export const useGetPredictionMode = (): EPredictionMode | undefined =>
   useBoundStore((state) => state.displayedPredictionMode);
 export const useSetPredictionMode = () =>
   useBoundStore((state) => state.setPredictionMode);
 export const usePredictionMode = (): [
-  EPredictionMode,
+  EPredictionMode | undefined,
   (predictionMode: EPredictionMode) => void,
 ] => [useGetPredictionMode(), useSetPredictionMode()];
 
@@ -117,13 +128,18 @@ export const useStationarityTest = () => [
 ];
 
 export const useGetCausalityTest = () =>
-  useBoundStore((state) => state.causalityTest);
-export const useFetchCausalityTest = () =>
-  useBoundStore((state) => state.fetchCausalityTest);
+  useBoundStore((state): TCausalityResult | undefined => state.causalityTest);
+export const useFetchCausalityTest = (): ((
+  selectedProp: TDataProperty[],
+) => Promise<void>) => useBoundStore((state) => state.fetchCausalityTest);
 export const useIsCausalityTestLoading = () =>
   useBoundStore((state) => state.isCausalityTestLoading);
 
-export const useCausalityTest = () => [
+export const useCausalityTest = (): [
+  TCausalityResult | undefined,
+  (selectedProp: TDataProperty[]) => Promise<void>,
+  boolean,
+] => [
   useGetCausalityTest(),
   useFetchCausalityTest(),
   useIsCausalityTestLoading(),
@@ -133,17 +149,17 @@ export const useGetPredictionHistory = () =>
   useBoundStore((state): THistoryEntry[] => state.predictionHistory);
 
 export const useGetDisplayedPredictionId = () =>
-  useBoundStore((state): TDisplayedPrediction => state.displayedPredictionId);
+  useBoundStore((state): TDisplayedPredictionId => state.displayedPredictionId);
 
 export const useSetDisplayedPredictionId = () =>
   useBoundStore(
-    (state): ((predictionItemId: TDisplayedPrediction) => void) =>
+    (state): ((predictionItemId: TDisplayedPredictionId) => void) =>
       state.setDisplayedPredictionId,
   );
 
 export const useDisplayedPredictionId = (): [
-  TDisplayedPrediction,
-  (predictionItemId: TDisplayedPrediction) => void,
+  TDisplayedPredictionId,
+  (predictionItemId: TDisplayedPredictionId) => void,
 ] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];
 
 export const useGetHorizon = () =>
@@ -175,3 +191,6 @@ export const useFetchConfigPredictionHistory = (): [
   useBoundStore((state) => state.fetchPredictionHistory),
   useBoundStore((state) => state.isPredictionHistoryLoading),
 ];
+
+export const useIsPredictionHistoryLoading = (): boolean =>
+  useBoundStore((state) => state.isPredictionHistoryLoading);

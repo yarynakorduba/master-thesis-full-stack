@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { devtools, persist, subscribeWithSelector } from 'zustand/middleware';
+import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { createConfigurationSlice } from './currentConfiguration/currentConfigurationSlice';
 import { createConfigurationsSlice } from './configurations/configurationsSlice';

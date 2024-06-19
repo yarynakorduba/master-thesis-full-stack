@@ -1,4 +1,5 @@
 import React from 'react';
+import { isEmpty } from 'lodash';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -7,34 +8,33 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Box } from '@mui/material';
+import { Grid, Tooltip } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
 import {
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
+  useIsHistoryPredictionSelected,
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
-import { isEmpty } from 'lodash';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
   readonly setPredictionMode: (predictionMode: EPredictionMode) => void;
-  readonly isDisabled: boolean;
 };
 const PredictionModelSelection = ({
   predictionMode,
   setPredictionMode,
-  isDisabled,
 }: TProps) => {
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
   const predictionHistory = useGetPredictionHistory();
 
   return (
     <>
       <Typography variant="h5">
-        Prediction
+        Prediction{' '}
         {!isEmpty(predictionHistory) && (
           <ToggleButton
             sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
@@ -48,35 +48,43 @@ const PredictionModelSelection = ({
           </ToggleButton>
         )}
       </Typography>
-      <Typography variant="subtitle2" sx={{ marginTop: 1, marginBottom: 1 }}>
-        Select a model for prediction
-      </Typography>
-      <ToggleButtonGroup
-        value={predictionMode}
-        exclusive
-        onChange={(e, value) => setPredictionMode(value)}
-        aria-label="text alignment"
-        size="small"
-        sx={{ marginBottom: 1 }}
-        disabled={isDisabled}
-      >
-        <ToggleButton
-          value={EPredictionMode.ARIMA}
-          aria-label="left aligned"
-          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+      <Grid item md={12}>
+        <Tooltip
+          title={
+            isHistoryPredictionSelected
+              ? 'Go back to draft state to change the model selection'
+              : 'Select a model for prediction'
+          }
         >
-          ARIMA
-        </ToggleButton>
-        <ToggleButton
-          value={EPredictionMode.VAR}
-          aria-label="right aligned"
-          sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+          <ToggleButtonGroup
+            value={predictionMode}
+            exclusive
+            onChange={(e, value) => setPredictionMode(value)}
+            aria-label="text alignment"
+            size="small"
+            disabled={isHistoryPredictionSelected}
+          >
+            <ToggleButton
+              value={EPredictionMode.ARIMA}
+              aria-label="left aligned"
+              sx={{ paddingTop: 0.5, paddingBottom: 0.5 }}
+            >
+              ARIMA model
+            </ToggleButton>
+            <ToggleButton
+              value={EPredictionMode.VAR}
+              aria-label="right aligned"
+              sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+            >
+              VAR model
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Tooltip>
+        <InfoOverlay
+          id="More about the model"
+          label="More about the model"
+          sx={{ ml: 2 }}
         >
-          VAR
-        </ToggleButton>
-      </ToggleButtonGroup>
-      <Box sx={{ display: 'inline', ml: 2 }}>
-        <InfoOverlay id="More about the model" label="More about the model">
           <InfoOverlay.Popover>
             {predictionMode === EPredictionMode.ARIMA ? (
               <div>
@@ -89,13 +97,7 @@ const PredictionModelSelection = ({
                   series data. It is primarily designed to predict linear time
                   series data. It can be broken down into 3 components:
                 </Typography>
-                <List
-                  sx={{
-                    width: '100%',
-                    maxWidth: 'lg',
-                    bgcolor: 'background.paper',
-                  }}
-                >
+                <List sx={{ width: '100%', maxWidth: 'lg' }}>
                   <ListItem disableGutters>
                     <ListItemText>
                       AR: This component represents the relationship between an
@@ -140,11 +142,7 @@ const PredictionModelSelection = ({
             )}
           </InfoOverlay.Popover>
         </InfoOverlay>
-      </Box>
-
-      <Typography variant="body2" sx={{ marginBottom: 1 }}>
-        To make a prediction, we need to know a few characteristics of the data
-      </Typography>
+      </Grid>
     </>
   );
 };

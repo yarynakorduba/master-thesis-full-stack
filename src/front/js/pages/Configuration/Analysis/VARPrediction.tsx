@@ -1,82 +1,165 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import StepButton from '@mui/material/StepButton';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
-import StepContent from '@mui/material/StepContent';
-import Box from '@mui/material/Box';
+import {
+  Card,
+  CardContent,
+  Checkbox,
+  FormGroup,
+  Skeleton,
+  Typography,
+} from '@mui/material';
+import { useFormContext } from 'react-hook-form';
+import { red } from '@mui/material/colors';
+import { map } from 'lodash';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
-import { useInputState } from '../../../hooks';
-import { useFetchPrediction } from '../../../store/currentConfiguration/selectors';
+import {
+  useConfigData,
+  useFetchPrediction,
+  useFetchVARPrediction,
+  useGetPredictionHistory,
+} from '../../../store/currentConfiguration/selectors';
+import { EAnalysisFormFields } from './types';
+import AnalysisSection from './AnalysisSection';
+import EvaluationIndicators from '../EvaluationIndicators';
+import { getLinearValueScale } from '../../../utils';
+import VARPredictionParams from './VARPredictionParams';
+import { CheckboxLabel } from './styles';
 
 type TProps = {
   readonly isVisible: boolean;
   readonly varResult;
-  readonly isVARLoading: boolean;
-  readonly index;
-  readonly handleSelectStep;
+  readonly isLoading: boolean;
+  readonly index?: number;
 };
-const VARPrediction = ({
-  isVisible,
-  varResult,
-  isVARLoading,
-  index,
-  handleSelectStep,
-}: TProps) => {
-  const [lagOrder, setLagOrder] = useInputState<number>(2);
-  const [horizon, setHorizon] = useInputState<number>(2);
+const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
+  const handlePredict = useFetchVARPrediction();
 
-  const handlePredict = useFetchPrediction();
+  const formMethods = useFormContext();
+  const {
+    register,
+    formState: { isSubmitting },
+    getValues,
+  } = formMethods;
 
-  console.log('---AAA>>> -', varResult);
+  const handleClick = () => {
+    const values = getValues();
+    handlePredict(
+      { lagOrder: +values.lagOrder, horizon: +values.horizon },
+      values.varSelectedFields,
+    );
+  };
+
+  const predictionHistory = useGetPredictionHistory();
+  const errorColorScale = getLinearValueScale(predictionHistory, [
+    red[50],
+    red[200],
+  ]);
+  const { timeProperty, valueProperties, data } = useConfigData();
 
   if (!isVisible) return null;
   return (
-    <>
-      <StepButton onClick={handleSelectStep(index)}>
-        <Box sx={{ fontSize: 16 }}>
-          What is the prediction for the future? (VAR)
-        </Box>
-      </StepButton>
-      <StepContent>
-        <Grid container spacing={2} sx={{ mt: 1, mb: 1, maxWidth: 400 }}>
+    <AnalysisSection>
+      <AnalysisSection.Header>
+        What is the prediction for the future? (VAR)
+      </AnalysisSection.Header>
+      <Grid item md={6}>
+        <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
+          <Grid item md={12}>
+            <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
+              Variables to predict (select at least two)
+            </Typography>
+            <FormGroup sx={{ marginBottom: 1, padding: 0 }}>
+              {map(valueProperties, (prop) => (
+                <CheckboxLabel
+                  control={<Checkbox defaultChecked />}
+                  label={prop.label}
+                  value={prop.value}
+                  sx={{ margin: 0 }}
+                  {...register(`${EAnalysisFormFields.varSelectedFields}`)}
+                />
+              ))}
+            </FormGroup>
+          </Grid>
           <Grid item md={6}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+              component="label"
+              htmlFor="name"
+            >
+              Max lag order
+            </Typography>
             <TextField
-              label="Max lag order"
-              id="outlined-size-small"
-              value={lagOrder}
-              onChange={setLagOrder}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.lagOrder)}
+              // required
             />
           </Grid>
           <Grid item md={6}>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontSize: 12 }}
+              component="label"
+              htmlFor="name"
+            >
+              Horizon
+            </Typography>
             <TextField
-              label="Horizon"
-              id="outlined-size-small"
-              value={horizon}
-              onChange={setHorizon}
               size="small"
               type="number"
+              sx={{ width: '100%' }}
+              {...register(EAnalysisFormFields.horizon)}
+              // required
             />
           </Grid>
         </Grid>
-
         <ButtonContainer>
-          {isVARLoading ? <Loader /> : null}
-          {!isVARLoading ? (
-            <Button
-              size="small"
-              onClick={() => handlePredict({ lagOrder, horizon })}
-            >
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Button size="small" onClick={handleClick}>
               Run the prediction model
             </Button>
-          ) : null}
+          )}
         </ButtonContainer>
-      </StepContent>
-    </>
+      </Grid>
+      <Grid item md={6}>
+        {varResult ? (
+          <Card variant="outlined">
+            <CardContent>
+              {isLoading ? (
+                <>
+                  <Typography
+                    variant="subtitle1"
+                    component="div"
+                    color="text.secondary"
+                  >
+                    Prediction
+                  </Typography>
+                  <Skeleton height={valueProperties.length * 107 + 28} />
+                </>
+              ) : (
+                <>
+                  <VARPredictionParams varResult={varResult} />
+                  <EvaluationIndicators
+                    historyEntry={varResult}
+                    errorColorScale={errorColorScale}
+                    timeProperty={timeProperty}
+                    timeseriesData={data}
+                  />
+                </>
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
+      </Grid>
+    </AnalysisSection>
   );
 };
 

@@ -2,7 +2,11 @@ import { LinearScaleConfig, ScaleConfigToD3Scale } from '@visx/scale';
 import { TLineChartDatapoint } from 'front/js/types';
 
 export type TLinDomainValue = number;
-export type TLinScale = ScaleConfigToD3Scale<LinearScaleConfig<number>, number, TLinDomainValue>;
+export type TLinScale = ScaleConfigToD3Scale<
+  LinearScaleConfig<number>,
+  number,
+  TLinDomainValue
+>;
 
 export type TClosestChartPoint = {
   readonly color: string;
@@ -16,11 +20,4 @@ export type TClosestChartPointGroup = {
 
 export type TClosestChartPointGroups = {
   readonly [pointGroupId: string]: TClosestChartPointGroup;
-};
-
-export type TAxisTickLabelProps = {
-  readonly fill: string;
-  readonly fontSize: string;
-  readonly dy: string;
-  readonly textAnchor: string;
 };

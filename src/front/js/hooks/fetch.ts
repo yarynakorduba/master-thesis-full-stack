@@ -24,6 +24,6 @@ export const useFetch = (fetchRequest) => {
     setData,
     isLoading,
     setIsLoading,
-    fetch: handleFetch
+    fetch: handleFetch,
   };
 };

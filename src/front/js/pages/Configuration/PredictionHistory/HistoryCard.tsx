@@ -1,21 +1,20 @@
 import React from 'react';
 import { CardActionArea, CardContent, Chip, Grid, Stack } from '@mui/material';
-import { reduce } from 'lodash';
 import * as d3Scale from 'd3-scale';
 
-import { THistoryEntry } from '../Analysis/types';
+import {
+  EPredictionMode,
+  TARIMAHistoryEntry,
+  THistoryEntry,
+  TVARHistoryEntry,
+} from '../Analysis/types';
 import { CardDate, CardHeader, Card } from './styles';
 import { formatDateToDateTime } from '../../../utils/formatters';
-import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
-import {
-  PREDICTION_TIMESTAMP_PROP,
-  PREDICTION_VALUE_PROP,
-  convertPredictionData,
-} from '../../../utils/prediction';
-import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
+
 import ARIMAPredictionParams from '../Analysis/ARIMAPredictionParams';
-import EvaluationIndicators from '../Analysis/EvaluationIndicators';
+import EvaluationIndicators from '../EvaluationIndicators';
 import { useConfigData } from '../../../store/currentConfiguration/selectors';
+import VARPredictionParams from '../Analysis/VARPredictionParams';
 
 type TProps = {
   readonly historyEntry: THistoryEntry;
@@ -33,16 +32,7 @@ const HistoryCard = ({
   isSelected,
   errorColorScale,
 }: TProps) => {
-  const { valueProperties } = useConfigData();
-
-  const mappedARIMAPredictions = reduce(
-    valueProperties,
-    (accum, prop) => ({
-      ...accum,
-      [prop.value]: convertPredictionData(historyEntry, prop.value),
-    }),
-    {},
-  );
+  const { timeProperty, data } = useConfigData();
 
   return (
     <Card
@@ -66,11 +56,18 @@ const HistoryCard = ({
             </Grid>
           </CardHeader>
           <EvaluationIndicators
-            evaluation={historyEntry.evaluation}
+            historyEntry={historyEntry}
             errorColorScale={errorColorScale}
-            predictions={mappedARIMAPredictions}
+            timeseriesData={data}
+            timeProperty={timeProperty}
           />
-          <ARIMAPredictionParams arimaResult={historyEntry} />
+          {historyEntry.predictionMode === EPredictionMode.ARIMA ? (
+            <ARIMAPredictionParams
+              arimaResult={historyEntry as TARIMAHistoryEntry}
+            />
+          ) : (
+            <VARPredictionParams varResult={historyEntry as TVARHistoryEntry} />
+          )}
         </CardContent>
       </CardActionArea>
     </Card>

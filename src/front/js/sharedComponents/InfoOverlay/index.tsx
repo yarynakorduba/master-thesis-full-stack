@@ -7,8 +7,9 @@ type TInfoOverlayProps = {
   readonly variant?;
   readonly children: ReactNode | ReactNode[];
   readonly id: string;
-  readonly label: string;
+  readonly label: string | ReactNode;
   sx?;
+  component?;
 };
 
 type TInfoOverlayPopoverProps = {
@@ -51,10 +52,7 @@ const InfoOverlay = ({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         sx={{ whiteSpace: 'pre-wrap' }}
       >
         {children}

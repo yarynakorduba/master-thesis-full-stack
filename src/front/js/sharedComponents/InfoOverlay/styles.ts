@@ -7,10 +7,10 @@ export const OverlayTrigger = styled(Typography)`
   font-weight: inherit;
   text-decoration: underline;
   text-decoration-style: dashed;
-  text-decoration-thickness: 0.5px;
+  text-decoration-thickness: 0.35px;
   text-underline-offset: 0.25em;
-  color: ${({ theme }) => theme.palette.info.dark};
-  display: inline;
+
+  display: inline-block;
   &:hover {
     background: ${({ theme }) => theme.palette.grey[100]};
   }
