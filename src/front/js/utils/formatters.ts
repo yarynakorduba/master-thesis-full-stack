@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { isArray, isNil, isNumber, round } from 'lodash';
+import { isArray, isNil, isNumber, mapValues, round } from 'lodash';
 import { PRECISION } from '../consts';
 
 export const formatUnixToDate = (d) => {
@@ -49,3 +49,11 @@ export const formatOrder = (order?: number[] | number): number | string => {
   if (isArray(order)) return `[${order.join(', ')}]`;
   return isNil(order) ? 'N/A' : order;
 };
+
+export const formatFormFields = (formFields, numericFields) =>
+  mapValues(formFields, (value, key) => {
+    if (numericFields[key]) {
+      return +value;
+    }
+    return value;
+  });

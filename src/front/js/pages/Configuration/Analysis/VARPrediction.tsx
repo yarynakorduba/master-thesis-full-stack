@@ -12,13 +12,12 @@ import {
 } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { red } from '@mui/material/colors';
-import { map, mapValues } from 'lodash';
+import { map } from 'lodash';
 
 import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChartsBlock/styles';
 import Loader from '../../../sharedComponents/Loader';
 import {
   useConfigData,
-  useFetchPrediction,
   useFetchVARPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
@@ -29,6 +28,7 @@ import { getLinearValueScale } from '../../../utils';
 import VARPredictionParams from './VARPredictionParams';
 import { CheckboxLabel } from './styles';
 import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
+import { formatFormFields } from '../../../utils/formatters';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -47,13 +47,6 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   } = formMethods;
 
   const handleClick = () => {
-    const formatFormFields = (formFields, numericFields) =>
-      mapValues(formFields, (value, key) => {
-        if (numericFields[key]) {
-          return +value;
-        }
-        return value;
-      });
     const values = getValues();
     handlePredict(
       formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any,

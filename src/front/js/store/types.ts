@@ -5,6 +5,7 @@ import {
   TARIMAUserParams,
   TCausalityResult,
   THistoryEntry,
+  TPredictionResult,
   TVARResult,
   TVARUserParams,
   TValueBounds,
@@ -20,24 +21,24 @@ export type TConfiguration = {
 export type TConfigurationsSlice = {
   readonly configsList: TConfiguration[];
   readonly fetchConfigs: () => Promise<void>;
-  readonly isLoading: boolean;
+  readonly areConfigurationsLoading: boolean;
+  readonly isConfigurationDeleting: boolean;
   readonly deleteConfig: (id: string) => Promise<void>;
-  readonly isDeleting: boolean;
 };
 
 export type TDisplayedPredictionId = string | undefined;
 
 export type TConfigurationSlice = {
-  // TODO: remove temporary :?
-  readonly id?: string;
-  readonly name?: string;
+  readonly configData?: {
+    readonly id: string;
+    readonly name: string;
+    readonly timeProperty: TDataProperty;
+    readonly valueProperties: TDataProperty[];
+    readonly data: TTimeseriesData;
+  };
   readonly configurationError?: Error;
   readonly isConfigurationLoading: boolean;
-  readonly timeProperty?: TDataProperty;
-  readonly valueProperties?: TDataProperty[];
 
-  readonly data: TTimeseriesData;
-  readonly setData: (data: TTimeseriesData) => void;
   readonly fetchConfiguration: (id: string) => Promise<void>;
 
   readonly setTimeseriesProp: (timeProperty: TDataProperty) => void;
@@ -75,11 +76,7 @@ export type TConfigurationSlice = {
 
   readonly selectedDataBoundaries?: TValueBounds;
 
-  readonly draft: {
-    readonly testPrediction?: TARIMAResult | TVARResult;
-    readonly realPrediction?: TARIMAResult | TVARResult;
-    readonly horizon: number;
-  };
+  readonly currentPrediction?: TPredictionResult;
 
   readonly predictionHistory: THistoryEntry[];
   readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
@@ -97,7 +94,7 @@ export type TConfigurationSlice = {
   readonly isHistoryDrawerOpen: boolean;
   readonly setIsHistoryDrawerOpen: (isOpen: boolean) => void;
 
-  readonly fetchPredictionHistory: () => Promise<void>;
+  readonly fetchPredictionHistory: (id: string) => Promise<void>;
   readonly isPredictionHistoryLoading: boolean;
 };
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
@@ -95,17 +95,20 @@ const SparkLineChartsBlock = ({
     setSelectedProp(chartProp);
   };
 
-  const mainChartData = getCompleteLineChartData(
-    'selectedChart',
-    palette,
-    timeseriesData,
-    predictionData,
-    selectedProp!,
-    timeProperty!,
-  );
+  const mainChartData = timeseriesData
+    ? getCompleteLineChartData(
+        'selectedChart',
+        palette,
+        timeseriesData,
+        predictionData,
+        selectedProp!,
+        timeProperty!,
+      )
+    : undefined;
 
   const selectedDataLength =
     (timeProperty &&
+      timeseriesData &&
       getSelectedDataByBoundaries(
         timeseriesData,
         timeProperty,
@@ -114,16 +117,22 @@ const SparkLineChartsBlock = ({
     timeseriesData.length;
 
   if (
+    !timeseriesData ||
+    !mainChartData?.lineData?.length ||
+    !valueProperties?.length ||
     isConfigurationDataIncomplete(
       timeseriesData,
       timeProperty,
       valueProperties,
     ) ||
     !selectedProp ||
-    isConfigurationLoading ||
-    !mainChartData
+    isConfigurationLoading
   ) {
-    return <EmptySparkLineChartsBlock isLoading={!!isConfigurationLoading} />;
+    return (
+      <EmptySparkLineChartsBlock
+        isLoading={isConfigurationLoading || !selectedProp}
+      />
+    );
   }
 
   return (

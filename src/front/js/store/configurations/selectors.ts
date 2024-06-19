@@ -8,10 +8,10 @@ export const useConfigsList = (): [
 ] => [
   useBoundStore((state) => state.configsList),
   useBoundStore((state) => state.fetchConfigs),
-  useBoundStore((state) => state.isLoading),
+  useBoundStore((state) => state.areConfigurationsLoading),
 ];
 
 export const useDeleteConfig = (): [(id: string) => Promise<void>, boolean] => [
   useBoundStore((state) => state.deleteConfig),
-  useBoundStore((state) => state.isDeleting),
+  useBoundStore((state) => state.isConfigurationDeleting),
 ];

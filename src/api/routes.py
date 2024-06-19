@@ -121,9 +121,15 @@ def delete_configuration():
 
 @api.route('/prediction_history', methods=['POST'])
 def add_entry_to_prediction_history():
-    request_body = request.get_json()
-    result = PredictionHistoryList().add_entry_to_prediction_history(request_body)
-    return json.dumps(result), 200
+    try:
+        request_body = request.get_json()
+        result = PredictionHistoryList().add_entry_to_prediction_history(request_body)
+        return json.dumps(result), 200
+    
+    except APIException as e:
+        raise e
+    except Exception as e:
+        raise APIException('Failed to add prediction to history')
 
 @api.route('/prediction_history', methods=['GET'])
 def get_prediction_history_for_config():

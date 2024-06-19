@@ -1,4 +1,4 @@
-import { Grid, Switch, TextField } from '@mui/material';
+import { Grid, Switch, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { EAnalysisFormFields } from './types';
@@ -22,6 +22,11 @@ const Seasonality = ({ index }) => {
       <AnalysisSection.Header index={index}>
         Provide seasonality information
       </AnalysisSection.Header>
+      <Grid item md={12}>
+        <Typography variant="subtitle2">
+          Note: these settings influence some of the tests and prediction.
+        </Typography>
+      </Grid>
       <Grid
         item
         md={2}

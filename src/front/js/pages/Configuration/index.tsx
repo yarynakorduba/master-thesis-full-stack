@@ -36,7 +36,9 @@ const Configuration = () => {
   } = useConfigData();
 
   useEffect(() => {
-    if (!isNil(id)) fetchConfiguration(id);
+    if (!isNil(id)) {
+      fetchConfiguration(id);
+    }
   }, [fetchConfiguration, id]);
 
   useEffect(() => {
@@ -50,7 +52,6 @@ const Configuration = () => {
     useSelectedDataBoundaries();
 
   const [predictionResult, isPredictionLoading] = usePrediction();
-  const [, setDisplayedPredictionId] = useDisplayedPredictionId();
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const isHistoryLoading = useIsPredictionHistoryLoading();
@@ -73,6 +74,7 @@ const Configuration = () => {
     timeProperty,
     valueProperties,
   );
+  console.log('AA!!! >>> ', { isConfigurationLoading, isHistoryLoading });
 
   return (
     <>
@@ -90,20 +92,20 @@ const Configuration = () => {
         >
           {configName}
         </Typography>
+
         <PredictionInfoText
-          prediction={
-            isDataIncomplete || isConfigurationLoading
-              ? undefined
-              : predictionResult
-          }
-          isHistoryPredictionSelected={isHistoryPredictionSelected}
-          handleClearPredictionData={() => {
-            setDisplayedPredictionId(undefined);
-            setSelectedDataBoundaries(undefined);
+          sx={{
+            textAlign: 'left',
+            height: 36.5,
+            marginTop: -3,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
           }}
         />
+
         <SparkLineChartsBlock
-          isConfigurationLoading={isConfigurationLoading}
+          isConfigurationLoading={isConfigurationLoading || isHistoryLoading}
           configName={configName}
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}

@@ -8,7 +8,7 @@ import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Grid, Tooltip } from '@mui/material';
+import { Divider, Grid, Tooltip } from '@mui/material';
 
 import { EPredictionMode } from './types';
 
@@ -18,6 +18,7 @@ import {
   useIsHistoryPredictionSelected,
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import PredictionInfoText from './PredictionInfoText';
 
 type TProps = {
   readonly predictionMode: EPredictionMode;
@@ -33,7 +34,7 @@ const PredictionModelSelection = ({
 
   return (
     <>
-      <Typography variant="h5">
+      <Typography variant="h5" display="flex">
         Prediction{' '}
         {!isEmpty(predictionHistory) && (
           <ToggleButton
@@ -47,12 +48,20 @@ const PredictionModelSelection = ({
             History
           </ToggleButton>
         )}
+        <Divider
+          sx={{ margin: 1 }}
+          orientation="vertical"
+          variant="middle"
+          component="div"
+          flexItem
+        />
+        <PredictionInfoText />
       </Typography>
       <Grid item md={12}>
         <Tooltip
           title={
             isHistoryPredictionSelected
-              ? 'Go back to draft state to change the model selection'
+              ? 'Go back to currentPrediction state to change the model selection'
               : 'Select a model for prediction'
           }
         >

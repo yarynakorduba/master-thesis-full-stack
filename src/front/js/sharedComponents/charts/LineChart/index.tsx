@@ -42,6 +42,7 @@ import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
 import { TPadding } from '../../../types/styles';
+import { Skeleton } from '@mui/material';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -328,6 +329,7 @@ const LineChart = ({
     visibleLinesData,
   ]);
 
+  if (svgHeight <= 0) return <Skeleton height={height} />;
   return (
     <>
       <Stack direction="row" alignItems={'center'} gap={2} sx={{ height: 38 }}>

@@ -9,12 +9,29 @@ import actions from './actions';
 
 export const DEFAULT_HORIZON = 1;
 
+// fetchConfiguration: state.fetchConfiguration,
+// isConfigurationLoading: state.isConfigurationLoading,
+// configurationError: state.configurationError,
+// name: state.name,
+// id: state.id,
+// data: state.data,
+// timeProperty: state.timeProperty,
+// valueProperties: state.valueProperties,
+// {
+//   name,
+//   id,
+//   data: [],
+//   timeProperty,
+//   valueProperties,
+// }
+
 export const DEFAULT_CONFIGURATION_STATE = {
+  data: undefined,
   isConfigurationLoading: false,
-  data: [],
-  timeProperty: undefined,
-  selectedDataBoundaries: undefined,
+  configurationError: undefined,
+
   selectedProp: undefined,
+  selectedDataBoundaries: undefined,
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
@@ -29,11 +46,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
 
   isPredictionLoading: false,
   displayedPredictionMode: undefined,
-  draft: {
-    testPrediction: undefined,
-    realPrediction: undefined,
-    horizon: DEFAULT_HORIZON,
-  },
+  currentPrediction: undefined,
 
   isHistoryDrawerOpen: false,
   isPredictionHistoryLoading: false,

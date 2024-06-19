@@ -61,6 +61,7 @@ export type TPredictionEvaluation = {
 export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
   readonly id: string; // uuid
   readonly createdAt: string; // ISO date string
+  readonly inputData: any;
   readonly lastTrainPoint: TLastTrainPoint;
   readonly testPrediction: TPredictedPoints;
   readonly realPrediction: TPredictedPoints;

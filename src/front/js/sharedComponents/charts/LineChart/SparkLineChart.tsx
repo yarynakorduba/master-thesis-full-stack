@@ -17,7 +17,7 @@ import {
   TFormatYScale,
   TThresholdData,
 } from '../types';
-import { Stack } from '@mui/material';
+import { Skeleton, Stack } from '@mui/material';
 import { curveNatural } from '@visx/curve';
 
 const CHART_LEFT_PADDING = 32;
@@ -117,6 +117,8 @@ const LineChart = ({
     },
     [xScale, yScale, strokeWidth],
   );
+
+  if (heightWithoutHeader <= 0) return <Skeleton height={height} />;
 
   return (
     <>

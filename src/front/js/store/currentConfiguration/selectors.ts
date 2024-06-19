@@ -1,45 +1,29 @@
 import { find, isNil } from 'lodash';
-import { TDataProperty, TTimeseriesData } from '../../types';
+import { TDataProperty } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
   TARIMAUserParams,
   TCausalityResult,
   THistoryEntry,
+  TPredictionResult,
   TVARUserParams,
   TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
 import { TDisplayedPredictionId } from '../types';
-
-export const useGetConfigName = (): string =>
-  useBoundStore((state) => state.name || '');
-export const useGetData = (): TTimeseriesData =>
-  useBoundStore((state) => state.data);
-export const useSetData = () => useBoundStore((state) => state.setData);
 
 export const useConfigData = (): any =>
   useBoundStore((state) => {
     return {
       fetchConfiguration: state.fetchConfiguration,
       isConfigurationLoading: state.isConfigurationLoading,
-      name: state.name,
-      id: state.id,
-      data: state.data,
-      timeProperty: state.timeProperty,
-      valueProperties: state.valueProperties,
-      setData: state.setData,
       configurationError: state.configurationError,
+      ...state.configData,
     } as any;
   });
 
 export const useGetTimeseriesProp = () =>
-  useBoundStore((state) => state.timeProperty);
-export const useSetTimeseriesProp = () =>
-  useBoundStore((state) => state.setTimeseriesProp);
-export const useTimeProperty = (): [
-  TDataProperty | undefined,
-  (data: TDataProperty) => void,
-] => [useGetTimeseriesProp(), useSetTimeseriesProp()];
+  useBoundStore((state) => state.configData?.timeProperty);
 
 export const useGetSelectedProps = (): TDataProperty | undefined =>
   useBoundStore((state) => state.selectedProp);
@@ -74,21 +58,27 @@ export const useFetchARIMAPrediction = (): ((
   params: TARIMAUserParams,
 ) => Promise<void>) => useBoundStore((state) => state.fetchARIMAPrediction);
 
-export const useGetPrediction = (): THistoryEntry | undefined =>
-  useBoundStore((state) =>
-    find(
+export const useGetPrediction = (): TPredictionResult | undefined =>
+  useBoundStore((state) => {
+    if (state.displayedPredictionId === 'currentPrediction')
+      return state?.currentPrediction;
+    return find(
       state.predictionHistory,
       ({ id }) => id === state.displayedPredictionId,
-    ),
-  );
+    );
+  });
 
 export const useIsHistoryPredictionSelected = () =>
-  useBoundStore((state) => !isNil(state.displayedPredictionId));
+  useBoundStore(
+    (state) =>
+      !isNil(state.displayedPredictionId) &&
+      state.displayedPredictionId !== 'currentPrediction',
+  );
 
 export const useIsPredictionLoading = (): boolean =>
   useBoundStore((state) => state.isPredictionLoading);
 
-export const usePrediction = (): [THistoryEntry | undefined, boolean] => [
+export const usePrediction = (): [TPredictionResult | undefined, boolean] => [
   useGetPrediction(),
   useIsPredictionLoading(),
 ];
@@ -161,12 +151,6 @@ export const useDisplayedPredictionId = (): [
   TDisplayedPredictionId,
   (predictionItemId: TDisplayedPredictionId) => void,
 ] => [useGetDisplayedPredictionId(), useSetDisplayedPredictionId()];
-
-export const useGetHorizon = () =>
-  useBoundStore((state): number => state.draft.horizon);
-export const useSetHorizon = () => useBoundStore((state) => state.setHorizon);
-
-export const useHorizon = () => [useGetHorizon(), useSetHorizon()];
 
 export const useIsHistoryDrawerOpen = (): [
   boolean,
