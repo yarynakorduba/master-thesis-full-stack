@@ -1,6 +1,7 @@
 import { Grid, Switch, TextField, Typography } from '@mui/material';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+
 import { EAnalysisFormFields } from './types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
@@ -22,9 +23,16 @@ const Seasonality = ({ index }) => {
       <AnalysisSection.Header index={index}>
         Provide seasonality information
       </AnalysisSection.Header>
-      <Grid item md={12}>
+      <Grid
+        item
+        md={12}
+        justifyContent="center"
+        display="flex"
+        flexDirection="column"
+      >
         <Typography variant="subtitle2">
-          Note: these settings influence some of the tests and prediction.
+          Note that seasonality information influences the results of some tests
+          and prediction.
         </Typography>
       </Grid>
       <Grid
@@ -52,7 +60,7 @@ const Seasonality = ({ index }) => {
         />
       </Grid>
       {isDataSeasonal && (
-        <Grid item md={3}>
+        <Grid item md={2}>
           <InfoOverlay
             id="seasonality-periods"
             label="Periods"

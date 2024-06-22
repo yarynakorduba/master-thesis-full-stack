@@ -1,6 +1,5 @@
 import React from 'react';
 import { isEmpty } from 'lodash';
-
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -61,7 +60,7 @@ const PredictionModelSelection = ({
         <Tooltip
           title={
             isHistoryPredictionSelected
-              ? 'Go back to currentPrediction state to change the model selection'
+              ? 'Go back to draft to change the model selection'
               : 'Select a model for prediction'
           }
         >

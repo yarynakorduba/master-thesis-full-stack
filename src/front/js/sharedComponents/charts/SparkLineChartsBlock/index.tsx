@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { isEmpty, map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
@@ -106,15 +106,17 @@ const SparkLineChartsBlock = ({
       )
     : undefined;
 
-  const selectedDataLength =
-    (timeProperty &&
-      timeseriesData &&
-      getSelectedDataByBoundaries(
-        timeseriesData,
-        timeProperty,
-        selectedAreaBounds,
-      )?.length) ||
-    timeseriesData.length;
+  const selectedDataLength = useMemo(
+    () =>
+      (timeProperty &&
+        getSelectedDataByBoundaries(
+          timeseriesData,
+          timeProperty,
+          selectedAreaBounds,
+        )?.length) ||
+      timeseriesData?.length,
+    [selectedAreaBounds, timeProperty, timeseriesData],
+  );
 
   if (
     !timeseriesData ||

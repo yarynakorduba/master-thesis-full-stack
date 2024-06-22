@@ -45,7 +45,15 @@ const StationarityTest = ({
   return (
     <AnalysisSection md={6}>
       <AnalysisSection.Header index={index}>
-        Is data stationary?
+        Check data consistency over time{' '}
+        <InfoOverlay id="stationarity-test" label="(stationarity)">
+          <InfoOverlay.Popover>
+            <Typography>
+              Note: if the data is not stationary, the prediction models will
+              convert it to stationary under the hood.
+            </Typography>
+          </InfoOverlay.Popover>
+        </InfoOverlay>{' '}
       </AnalysisSection.Header>
       <Grid item md={12}>
         <ButtonContainer>

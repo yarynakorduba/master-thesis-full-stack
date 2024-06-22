@@ -52,7 +52,10 @@ function ChartOverlays(
   selectedAreaRef,
 ) {
   const { palette } = useTheme();
-  const selectedAreaStyle = { fill: palette.charts.chartOverlaySelectedArea };
+  const selectedAreaStyle = useMemo(
+    () => ({ fill: palette.charts.chartOverlaySelectedArea }),
+    [palette.charts.chartOverlaySelectedArea],
+  );
 
   const [mouseEvent, setMouseEvent] = useState();
   const [pointerCoords, setPointerCoords] = useState<{
@@ -107,15 +110,18 @@ function ChartOverlays(
   );
 
   const [isBrushing, setIsBrushing] = useState(false);
-  const handleBrushStart = () => {
+  const handleBrushStart = useCallback(() => {
     if (!isAreaSelectionOn) return;
     setIsBrushing(true);
-  };
-  const handleBrushEnd = (args) => {
-    if (!isAreaSelectionOn) return;
-    setIsBrushing(false);
-    onSelectedAreaChange(args);
-  };
+  }, [isAreaSelectionOn]);
+  const handleBrushEnd = useCallback(
+    (args) => {
+      if (!isAreaSelectionOn) return;
+      setIsBrushing(false);
+      onSelectedAreaChange(args);
+    },
+    [isAreaSelectionOn, onSelectedAreaChange],
+  );
 
   const renderDataPointIndicators = useCallback(
     () =>

@@ -9,22 +9,6 @@ import actions from './actions';
 
 export const DEFAULT_HORIZON = 1;
 
-// fetchConfiguration: state.fetchConfiguration,
-// isConfigurationLoading: state.isConfigurationLoading,
-// configurationError: state.configurationError,
-// name: state.name,
-// id: state.id,
-// data: state.data,
-// timeProperty: state.timeProperty,
-// valueProperties: state.valueProperties,
-// {
-//   name,
-//   id,
-//   data: [],
-//   timeProperty,
-//   valueProperties,
-// }
-
 export const DEFAULT_CONFIGURATION_STATE = {
   data: undefined,
   isConfigurationLoading: false,

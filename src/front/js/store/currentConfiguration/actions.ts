@@ -147,6 +147,7 @@ export default (set, get) => ({
     const displayedPredictionMode = isNil(itemId)
       ? prevPrediction?.predictionMode
       : displayedPrediction?.predictionMode;
+
     return set(
       () => {
         return {
@@ -154,6 +155,12 @@ export default (set, get) => ({
           selectedDataBoundaries,
           displayedPredictionMode:
             displayedPredictionMode || EPredictionMode.ARIMA,
+          whiteNoiseTest:
+            (displayedPrediction as any)?.whiteNoiseTest || undefined,
+          stationarityTest:
+            (displayedPrediction as any)?.stationarityTest || undefined,
+          causalityTest:
+            (displayedPrediction as any)?.causalityTest || undefined,
         };
       },
       SHOULD_CLEAR_STORE,
@@ -161,7 +168,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchWhiteNoiseTest: async ({ maxLagOrder, periods }) => {
+  fetchWhiteNoiseTest: async ({ periods }) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get()?.configData?.data,
@@ -180,12 +187,7 @@ export default (set, get) => ({
       (prop) => prop.value,
     );
 
-    const response = await fetchIsWhiteNoise(
-      selectedData,
-      properties,
-      maxLagOrder,
-      periods,
-    );
+    const response = await fetchIsWhiteNoise(selectedData, properties, periods);
 
     const isSuccess = response.isSuccess;
     set(
@@ -305,7 +307,12 @@ export default (set, get) => ({
       SHOULD_CLEAR_STORE,
       ADD_ENTRY_TO_PREDICTION_HISTORY_START,
     );
-    const response = await addEntryToPredictionHistory(entryWithConfigId);
+    const response = await addEntryToPredictionHistory({
+      ...entryWithConfigId,
+      whiteNoiseTest: get().whiteNoiseTest,
+      stationarityTest: get().stationarityTest,
+      causalityTest: get().causalityTest,
+    });
     const newEntry = mapKeys(response.data || {}, (v, key) => camelCase(key));
 
     if (response.isSuccess) {
@@ -401,7 +408,7 @@ export default (set, get) => ({
     );
 
     set(
-      (state) => ({
+      () => ({
         displayedPredictionMode: EPredictionMode.VAR,
         selectedDataBoundaries: dataBoundaries,
         isPredictionLoading: true,
@@ -410,10 +417,17 @@ export default (set, get) => ({
       FETCH_VAR_PREDICTION_START,
     );
 
-    const response = await fetchVAR(selectedData, inputData, {
-      date_key: timeProperty?.value,
-      value_keys: selectedValueKeys,
-    });
+    const response = await fetchVAR(
+      selectedData,
+      {
+        lagOrder: inputData.lagOrder,
+        horizon: inputData.horizon,
+      },
+      {
+        date_key: timeProperty?.value,
+        value_keys: selectedValueKeys,
+      },
+    );
 
     set(
       () => ({
@@ -478,30 +492,19 @@ export default (set, get) => ({
     const response = await fetchPredictionHistoryByConfigId(id);
 
     set(
-      (state) => {
+      () => {
         const predictionHistory = map(response.data, (datum) =>
           mapKeys(datum, (v, key) => camelCase(key)),
         ) as THistoryEntry[];
 
-        const displayedPrediction = getDisplayedPrediction(
-          predictionHistory,
-          response.data?.[0]?.id,
-        );
-        return {
-          predictionHistory,
-          isPredictionHistoryLoading: false,
-          displayedPredictionId: response.data?.[0]?.id,
-          displayedPredictionMode:
-            displayedPrediction?.predictionMode || EPredictionMode.ARIMA,
-          selectedDataBoundaries:
-            state.selectedDataBoundaries ||
-            displayedPrediction?.selectedDataBoundaries,
-        };
+        return { predictionHistory, isPredictionHistoryLoading: false };
       },
       SHOULD_CLEAR_STORE,
       response.isSuccess
         ? FETCH_PREDICTION_HISTORY_SUCCESS
         : FETCH_PREDICTION_HISTORY_FAILURE,
     );
+
+    get().setDisplayedPredictionId(response.data?.[0]?.id);
   },
 });

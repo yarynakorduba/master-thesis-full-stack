@@ -36,7 +36,7 @@ const PredictionInfoText = ({ sx }: { sx?: any }) => {
           You are viewing the prediction calculated on{' '}
           {formatDateToDateTime(prediction?.createdAt)}
           <Button onClick={handleClearPredictionData} sx={{ ml: 1 }}>
-            Back to draft state
+            Back to draft
           </Button>
         </>
       )}

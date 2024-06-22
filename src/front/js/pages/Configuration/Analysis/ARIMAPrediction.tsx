@@ -20,6 +20,8 @@ import { EAnalysisFormFields, TARIMAResult } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { FIELD_LABEL_PROPS } from '../../../consts';
+import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
+import { formatFormFields } from '../../../utils/formatters';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -46,13 +48,8 @@ const ARIMAPrediction = ({
   const handleClick = () => {
     const values = getValues();
     handlePredict({
-      horizon: +values.horizon,
-      isSeasonal: values.isSeasonal,
+      ...(formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any),
       periodsInSeason: values.isSeasonal ? +values.periodsInSeason : undefined,
-      minP: +values.minP,
-      maxP: +values.maxP,
-      minQ: +values.minQ,
-      maxQ: +values.maxQ,
     });
   };
 

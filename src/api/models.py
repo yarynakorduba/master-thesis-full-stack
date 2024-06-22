@@ -59,7 +59,11 @@ class PredictionHistory(db.Model):
     selected_data_boundaries = db.Column(JSON, nullable=True)
     # Contains the input parameters, such as desired max lag order, horizon etc.
     # Input data depends on the model selection (ARIMA / VAR).
-    input_data =  db.Column(JSON, nullable=False)
+    input_data = db.Column(JSON, nullable=False)
+
+    stationarity_test = db.Column(JSON, nullable=True)
+    white_noise_test = db.Column(JSON, nullable=True)
+    causality_test = db.Column(JSON, nullable=True)
 
     test_prediction_parameters = db.Column(JSON, nullable=False)
     real_prediction_parameters = db.Column(JSON, nullable=False) # limit 255MB
@@ -90,5 +94,9 @@ class PredictionHistory(db.Model):
 
             "last_train_point": self.last_train_point, # limit 255MB
             "evaluation": self.evaluation, # limit 255MB
-            "input_data": self.input_data
+            "input_data": self.input_data,
+
+            "stationarity_test": self.stationarity_test,
+            "white_noise_test": self.white_noise_test,
+            "causality_test": self.causality_test
     }

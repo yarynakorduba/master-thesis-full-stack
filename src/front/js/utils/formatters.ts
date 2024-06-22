@@ -51,9 +51,4 @@ export const formatOrder = (order?: number[] | number): number | string => {
 };
 
 export const formatFormFields = (formFields, numericFields) =>
-  mapValues(formFields, (value, key) => {
-    if (numericFields[key]) {
-      return +value;
-    }
-    return value;
-  });
+  mapValues(formFields, (value, key) => (numericFields[key] ? +value : value));

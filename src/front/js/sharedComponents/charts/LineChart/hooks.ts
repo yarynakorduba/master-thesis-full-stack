@@ -139,8 +139,10 @@ export const useChartSizes = (
     return clean > 0 ? clean : 0;
   }, [padding.left, padding.right, width]);
 
-  const svgHeight =
-    height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT - LEGEND_Y_PADDING;
+  const svgHeight = useMemo(
+    () => height - CHART_HEADING_HEIGHT - LEGEND_HEIGHT - LEGEND_Y_PADDING,
+    [height],
+  );
   const xyAreaHeight = useMemo(
     () =>
       svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT - BRUSH_Y_PADDING,

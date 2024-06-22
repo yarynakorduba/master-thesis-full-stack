@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
-import { isEmpty, isNil, map, noop, orderBy } from 'lodash';
+import { isEmpty, isEqual, isNil, map, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, {
   BaseBrushState,
@@ -109,11 +109,17 @@ const LineChart = ({
   }, [defaultIsTrainingDataSelectionOn]);
 
   useEffect(() => {
-    setVisibleLinesData(data);
+    if (!isEqual(data, visibleLinesData)) {
+      setVisibleLinesData(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
-    setFilteredData(visibleLinesData);
+    if (!isEqual(filteredData, visibleLinesData)) {
+      setFilteredData(visibleLinesData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleLinesData]);
 
   const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(
@@ -141,9 +147,14 @@ const LineChart = ({
   useEffect(() => {
     // set default values if they exist and the width & height of the graph
     // are prepared
-    if (xyAreaWidth && xyAreaHeight) {
+    if (
+      xyAreaWidth &&
+      xyAreaHeight &&
+      !isEqual(selectedAreaBounds, selectedAreaValueBounds)
+    ) {
       setSelectedAreaValueBounds(selectedAreaBounds);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAreaBounds, xyAreaWidth, xyAreaHeight]);
 
   const {
@@ -282,6 +293,7 @@ const LineChart = ({
       selectedAreaValueBounds?.x0,
       selectedAreaValueBounds?.x1,
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredData]);
 
   const handleHideDataSerie = useCallback(

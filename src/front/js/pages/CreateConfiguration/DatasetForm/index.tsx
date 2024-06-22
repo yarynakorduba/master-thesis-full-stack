@@ -20,6 +20,7 @@ import {
   Grid,
   CircularProgress,
   IconButton,
+  Box,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -30,6 +31,7 @@ import { parseFile } from './utils';
 import { ERoutePaths } from '../../../types/router';
 import { useOpenErrorNotification } from '../../../store/notifications/selectors';
 import { EConfigurationFormFields } from '../types';
+import { FIELD_LABEL_PROPS } from '../../../../js/consts';
 
 type TProps = {
   readonly timeseriesData: TTimeseriesData;
@@ -162,10 +164,9 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
               return (
                 <>
                   <Typography
-                    variant="subtitle2"
-                    sx={{ fontSize: 12 }}
                     component="label"
                     htmlFor={EConfigurationFormFields.timeProperty}
+                    {...FIELD_LABEL_PROPS}
                   >
                     Timestamp field
                   </Typography>
@@ -204,10 +205,9 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             render={({ field }) => (
               <>
                 <Typography
-                  variant="subtitle2"
-                  sx={{ fontSize: 12 }}
                   component="label"
                   htmlFor={`${EConfigurationFormFields.valueProperties}[0]`}
+                  {...FIELD_LABEL_PROPS}
                 >
                   Field to analyse (#1)
                 </Typography>
@@ -255,10 +255,9 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                   control={control}
                   render={({ field }) => {
                     return (
-                      <>
+                      <Box sx={{ width: '100%' }}>
                         <Typography
-                          variant="subtitle2"
-                          sx={{ fontSize: 12 }}
+                          {...FIELD_LABEL_PROPS}
                           component="label"
                           htmlFor={`${EConfigurationFormFields.valueProperties}[${index + 1}]`}
                         >
@@ -283,7 +282,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                             ))}
                           </Select>
                         </FormControl>
-                      </>
+                      </Box>
                     );
                   }}
                 />

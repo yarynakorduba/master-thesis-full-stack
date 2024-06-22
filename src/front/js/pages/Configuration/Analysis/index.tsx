@@ -124,9 +124,6 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
             <Card sx={{ p: 4 }} variant="outlined">
               <Grid container rowGap={2}>
                 <Grid item md={12}>
-                  <Typography variant="h4">Analysis</Typography>
-                </Grid>
-                <Grid item md={12}>
                   <Typography variant="h5">Get to know your data</Typography>
                 </Grid>
                 {map(steps, (renderStep, index: number) => (

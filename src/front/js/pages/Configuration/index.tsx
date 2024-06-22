@@ -74,7 +74,6 @@ const Configuration = () => {
     timeProperty,
     valueProperties,
   );
-  console.log('AA!!! >>> ', { isConfigurationLoading, isHistoryLoading });
 
   return (
     <>
@@ -83,7 +82,7 @@ const Configuration = () => {
           variant="h1"
           fontWeight={400}
           sx={{
-            fontSize: '2rem',
+            fontSize: '2.5rem',
             mb: 2.5,
             display: 'flex',
             gap: 1,

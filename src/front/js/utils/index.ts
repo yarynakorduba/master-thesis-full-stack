@@ -20,8 +20,9 @@ export const getSelectedDataByBoundaries = (
   data,
   dataFilterProperty?: TDataProperty,
   valueBounds?: TValueBounds,
-) =>
-  dataFilterProperty && valueBounds && !isEmpty(data)
+) => {
+  console.log('runn');
+  return dataFilterProperty && valueBounds && !isEmpty(data)
     ? data.filter((s) => {
         return (
           +s[dataFilterProperty.value] >= valueBounds.x0 &&
@@ -29,6 +30,7 @@ export const getSelectedDataByBoundaries = (
         );
       })
     : data || [];
+};
 
 export const getExtent = (dataArray, byProp) => {
   return [

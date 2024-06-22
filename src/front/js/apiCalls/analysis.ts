@@ -4,8 +4,8 @@ import { handleFetch } from './utils';
 export const fetchIsWhiteNoise = async (
   data,
   dataKeys: string[],
-  maxLagOrder: number,
   periods: number,
+  maxLagOrder?: number,
 ) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/white-noise`, {

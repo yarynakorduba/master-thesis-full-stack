@@ -1,5 +1,5 @@
 import React from 'react';
-import { identity, map } from 'lodash';
+import { identity, map, some } from 'lodash';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
@@ -54,12 +54,14 @@ const WhiteNoiseTest = ({
     datapoints: whiteNoiseData.map((valueY, valueX) => ({ valueX, valueY })),
   };
 
+  const isAnyFieldWhiteNoise = some(whiteNoiseResult, 'isWhiteNoise');
+
   if (!isVisible) return null;
   return (
     <AnalysisSection md={6}>
       <AnalysisSection.Header index={index}>
-        Is data{' '}
-        <InfoOverlay id="whiteNoise" label="white noise">
+        Check data for randomness{' '}
+        <InfoOverlay id="whiteNoise" label="(white noise)">
           <InfoOverlay.Popover>
             <Typography>
               A time series is white noise if the variables are independent and
@@ -86,7 +88,6 @@ const WhiteNoiseTest = ({
             </Typography>
           </InfoOverlay.Popover>
         </InfoOverlay>
-        ?
       </AnalysisSection.Header>
       <Grid item md={12}>
         {isWhiteNoiseLoading && <Loader />}
@@ -114,6 +115,11 @@ const WhiteNoiseTest = ({
               </Box>
             );
           })}
+        </Typography>
+        <Typography variant="body2">
+          {' '}
+          {isAnyFieldWhiteNoise &&
+            'Note: If a time series is white noise, it is a sequence of random numbers and cannot be predicted.'}
         </Typography>
       </Grid>
     </AnalysisSection>

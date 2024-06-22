@@ -10,7 +10,6 @@ type TProps = {
 const VARPredictionParams = ({ varResult }: TProps) => {
   const testPredictionParams = varResult?.testPredictionParameters;
   const realPredictionParams = varResult?.realPredictionParameters;
-  console.log('====>>> ', varResult);
   const arePredictionParamsSimilar = isEqual(
     testPredictionParams?.order,
     realPredictionParams?.order,

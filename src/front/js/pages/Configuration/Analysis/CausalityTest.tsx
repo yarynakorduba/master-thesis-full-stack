@@ -83,15 +83,15 @@ const CausalityTest = ({
   return (
     <AnalysisSection container md={12} flexDirection="column">
       <AnalysisSection.Header index={index}>
-        Do selected variables have a{' '}
-        <InfoOverlay id="causal-relationship" label="causal relautionship">
+        Check{' '}
+        <InfoOverlay id="causal-relationship" label="causal relautionships">
           <InfoOverlay.Popover>
             <Typography></Typography>
           </InfoOverlay.Popover>
-        </InfoOverlay>
-        ?
+        </InfoOverlay>{' '}
+        between the variables
       </AnalysisSection.Header>
-      <Grid item md={6}>
+      <Grid item md={2}>
         <InfoOverlay
           id="max-lag-order-causality"
           label="Max lag order"
@@ -105,7 +105,7 @@ const CausalityTest = ({
         <TextField
           size="small"
           type="number"
-          sx={{ width: '100%', maxWidth: 172 }}
+          sx={{ width: '100%' }}
           {...register(EAnalysisFormFields.causalityMaxLagOrder)}
           required
           inputProps={{ min: 0 }}
