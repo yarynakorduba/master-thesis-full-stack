@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Typography, Stack, Chip, Box } from '@mui/material';
-import { map, upperCase, noop } from 'lodash';
+import { map, upperCase, noop, isEmpty } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
@@ -26,7 +26,7 @@ const EvaluationIndicators = ({
   timeProperty,
 }: TProps) => {
   const { palette } = useTheme();
-
+  if (!historyEntry || isEmpty(timeseriesData) || !timeProperty) return null;
   return (
     <>
       <Typography variant="subtitle1" component="div" color="text.secondary">

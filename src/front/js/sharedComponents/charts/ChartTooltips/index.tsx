@@ -24,7 +24,9 @@ const pointTooltipStyles = {
 
 export const xAxisTooltipStyles = {
   ...sharedStyles,
-  maxWidth: '7rem',
+  maxWidth: '12rem',
+  width: 'fit-content',
+  whiteSpace: 'nowrap',
   textAlign: 'center',
   color: 'white',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)',
@@ -92,7 +94,6 @@ export default function ChartTooltips({
             background: palette.secondary.main,
             top: 0,
             transform: 'translate(calc(-50% - 0.6rem), -50%)',
-            whiteSpace: 'nowrap',
           }}
         />
       ))}

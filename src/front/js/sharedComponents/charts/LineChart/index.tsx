@@ -1,8 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
 import { ParentSize } from '@visx/responsive';
-import { isEmpty, isEqual, isNil, map, noop, orderBy } from 'lodash';
+import { isEmpty, isEqual, isNil, map, max, min, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, {
   BaseBrushState,
@@ -14,6 +20,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import { Threshold } from '@visx/threshold';
+import { Skeleton } from '@mui/material';
 
 import ChartOverlays from '../ChartOverlays';
 import ChartTooltips from '../ChartTooltips';
@@ -42,7 +49,6 @@ import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
 import { TPadding } from '../../../types/styles';
-import { Skeleton } from '@mui/material';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -59,7 +65,7 @@ type TProps = {
   readonly thresholdData?: Array<TThresholdData>;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
-  readonly formatXScale: TFormatXScale;
+  readonly formatXScale: (extent?: [number, number]) => TFormatXScale;
   readonly formatYScale: TFormatYScale;
   readonly numXAxisTicks?: number;
   readonly numYAxisTicks?: number;
@@ -132,6 +138,12 @@ const LineChart = ({
   const xBrushValues = getUniqueFlatChartValues('valueX', visibleLinesData);
   const yValues = getUniqueFlatChartValues('valueY', visibleLinesData);
 
+  const extent: [number, number] | undefined = useMemo(
+    () =>
+      xBrushValues.length ? [min(xValues) || 0, max(xValues) || 0] : undefined,
+    [xBrushValues.length, xValues],
+  );
+
   const xScale = getLinearScale(xValues, [0, xyAreaWidth]);
   const xBrushScale = getLinearScale(xBrushValues, [0, xyAreaWidth]);
   const yScale = getLinearScale(yValues, [xyAreaHeight, 0]);
@@ -171,7 +183,7 @@ const LineChart = ({
     xyAreaHeight,
     xScale,
     yScale,
-    formatXScale,
+    formatXScale(),
     formatYScale,
     dataLabels,
   );
@@ -401,7 +413,7 @@ const LineChart = ({
               scale={xScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatXScale)}
+              tickFormat={formatAxisTick(formatXScale(extent))}
               tickLabelProps={getAxisTickLabelProps()}
               numTicks={numXAxisTicks}
             />
@@ -484,7 +496,7 @@ const LineChart = ({
             xTooltip={xTooltip}
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
-            formatXScale={formatXScale}
+            formatXScale={formatXScale()}
             formatYScale={formatYScale}
           />
         ) : null}

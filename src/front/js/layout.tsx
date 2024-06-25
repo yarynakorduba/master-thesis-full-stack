@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@emotion/react';
 import Container from '@mui/material/Container';
+import { Box } from '@mui/material';
+
 import ScrollToTop from './sharedComponents/scrollToTop';
 import { Navbar } from './sharedComponents/Navbar/Navbar';
 import Configuration from './pages/Configuration';
@@ -10,7 +12,6 @@ import ConfigurationList from './pages/ConfigurationList';
 import CreateConfiguration from './pages/CreateConfiguration';
 import { ERoutePaths } from './types/router';
 import Notifications from './sharedComponents/Notifications';
-import { Box } from '@mui/material';
 
 export const HORIZONTAL_LAYOUT_GUTTER = 2;
 
@@ -46,7 +47,7 @@ const Layout = () => {
                   path={`${ERoutePaths.CONFIGURATIONS}/:id`}
                 />
                 <Route
-                  path="/"
+                  path="*"
                   element={<Navigate to={ERoutePaths.CONFIGURATIONS} />}
                 />
                 <Route element={<h1>Not found!</h1>} />
