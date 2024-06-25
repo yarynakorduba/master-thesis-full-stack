@@ -12,6 +12,7 @@ import { Divider, Grid, Tooltip } from '@mui/material';
 import { EPredictionMode } from './types';
 
 import {
+  useConfigData,
   useGetPredictionHistory,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
@@ -30,6 +31,8 @@ const PredictionModelSelection = ({
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const [isHistoryOpen, setIsHistoryDrawerOpen] = useIsHistoryDrawerOpen();
   const predictionHistory = useGetPredictionHistory();
+
+  const { valueProperties } = useConfigData();
 
   return (
     <>
@@ -79,13 +82,15 @@ const PredictionModelSelection = ({
             >
               ARIMA model
             </ToggleButton>
-            <ToggleButton
-              value={EPredictionMode.VAR}
-              aria-label="right aligned"
-              sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
-            >
-              VAR model
-            </ToggleButton>
+            {valueProperties?.length > 1 && (
+              <ToggleButton
+                value={EPredictionMode.VAR}
+                aria-label="right aligned"
+                sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+              >
+                VAR model
+              </ToggleButton>
+            )}
           </ToggleButtonGroup>
         </Tooltip>
         <InfoOverlay
