@@ -57,16 +57,16 @@ type TProps = {
   readonly xTooltip?: TAxisTooltip;
   readonly yTooltip?: TAxisTooltip;
   readonly dataLabelTooltips: TAxisTooltip[];
-  readonly formatXScale: TFormatXScale;
-  readonly formatYScale: TFormatYScale;
+  readonly formatPointTooltipXScale: TFormatXScale;
+  readonly formatPointTooltipYScale: TFormatYScale;
 };
 
 export default function ChartTooltips({
   pointTooltip,
   xTooltip,
   yTooltip,
-  formatXScale,
-  formatYScale,
+  formatPointTooltipXScale,
+  formatPointTooltipYScale,
   dataLabelTooltips,
 }: TProps) {
   const { palette } = useTheme();
@@ -101,8 +101,8 @@ export default function ChartTooltips({
         <PointTooltip
           tooltip={pointTooltip}
           styles={pointTooltipStyles}
-          formatXScale={formatXScale}
-          formatYScale={formatYScale}
+          formatXScale={formatPointTooltipXScale}
+          formatYScale={formatPointTooltipYScale}
         />
       )}
     </>

@@ -1,5 +1,5 @@
 import { LinePath } from '@visx/shape';
-import { curveNatural } from '@visx/curve';
+import { curveLinear } from '@visx/curve';
 
 import React, { CSSProperties } from 'react';
 import { getX, getY } from './utils';
@@ -23,7 +23,7 @@ const ChartLine = ({ lineData, xScale, yScale, style = {} }: TProps) => {
       stroke={lineData?.color}
       strokeWidth={2}
       style={style}
-      curve={curveNatural}
+      curve={curveLinear}
     />
   );
 };

@@ -18,7 +18,7 @@ import {
   TThresholdData,
 } from '../types';
 import { Skeleton, Stack } from '@mui/material';
-import { curveNatural } from '@visx/curve';
+import { curveLinear } from '@visx/curve';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -111,7 +111,7 @@ const LineChart = ({
           y={getY}
           stroke={lineData?.color}
           strokeWidth={strokeWidth}
-          curve={curveNatural}
+          curve={curveLinear}
         />
       );
     },

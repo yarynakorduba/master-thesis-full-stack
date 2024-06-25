@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { isEmpty, map } from 'lodash';
+import { map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';

@@ -66,6 +66,7 @@ type TProps = {
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];
   readonly formatXScale: (extent?: [number, number]) => TFormatXScale;
+
   readonly formatYScale: TFormatYScale;
   readonly numXAxisTicks?: number;
   readonly numYAxisTicks?: number;
@@ -138,10 +139,16 @@ const LineChart = ({
   const xBrushValues = getUniqueFlatChartValues('valueX', visibleLinesData);
   const yValues = getUniqueFlatChartValues('valueY', visibleLinesData);
 
-  const extent: [number, number] | undefined = useMemo(
+  const brushExtent: [number, number] | undefined = useMemo(
     () =>
-      xBrushValues.length ? [min(xValues) || 0, max(xValues) || 0] : undefined,
-    [xBrushValues.length, xValues],
+      xBrushValues.length
+        ? [min(xBrushValues) || 0, max(xBrushValues) || 0]
+        : undefined,
+    [xBrushValues],
+  );
+  const filteredValuesExtent: [number, number] | undefined = useMemo(
+    () => (xValues.length ? [min(xValues) || 0, max(xValues) || 0] : undefined),
+    [xValues],
   );
 
   const xScale = getLinearScale(xValues, [0, xyAreaWidth]);
@@ -183,7 +190,7 @@ const LineChart = ({
     xyAreaHeight,
     xScale,
     yScale,
-    formatXScale(),
+    formatXScale(brushExtent),
     formatYScale,
     dataLabels,
   );
@@ -413,7 +420,7 @@ const LineChart = ({
               scale={xScale}
               stroke={grey[300]}
               tickStroke={grey[300]}
-              tickFormat={formatAxisTick(formatXScale(extent))}
+              tickFormat={formatAxisTick(formatXScale(filteredValuesExtent))}
               tickLabelProps={getAxisTickLabelProps()}
               numTicks={numXAxisTicks}
             />
@@ -496,8 +503,8 @@ const LineChart = ({
             xTooltip={xTooltip}
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
-            formatXScale={formatXScale()}
-            formatYScale={formatYScale}
+            formatPointTooltipXScale={formatXScale(brushExtent)}
+            formatPointTooltipYScale={formatYScale}
           />
         ) : null}
       </ChartWrapper>
