@@ -81,7 +81,8 @@ const ARIMAPrediction = ({
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                Horizon indicates the number of points you would like to predict
+                Horizon indicates the number of points you would like to
+                predict.
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField

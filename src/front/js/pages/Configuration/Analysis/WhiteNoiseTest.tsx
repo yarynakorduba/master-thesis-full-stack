@@ -64,15 +64,16 @@ const WhiteNoiseTest = ({
         <InfoOverlay id="whiteNoise" label="(white noise)">
           <InfoOverlay.Popover>
             <Typography>
-              A time series is white noise if the variables are independent and
-              identically distributed with a mean of zero. This means that all
-              variables have the same variance and each value has a zero
-              correlation with all other values in the series.
+              White noise is the most fundamental example of stationary process.
+              It consists of independent and identically distributed random
+              variables, which have zero mean and constant variance.
+              {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
+              In other words, white noise immediately forgets its past.
+              {/* https://web.vu.lt/mif/a.buteikis/wp-content/uploads/2018/02/Lecture_02.pdf */}
             </Typography>
             <br />
             <Typography>
-              If a time series is white noise, it is a sequence of random
-              numbers and cannot be predicted.
+              If a time series is white noise, it cannot be predicted.
             </Typography>
             <br />
             <SparkLineChart

@@ -52,9 +52,14 @@ const Seasonality = ({ index }) => {
                 label="Data is seasonal"
                 {...FIELD_LABEL_PROPS}
               >
-                <InfoOverlay.Popover>aaa</InfoOverlay.Popover>
+                <InfoOverlay.Popover>
+                  Seasonality in time series refers to regular and predictable
+                  patterns that repeat over a specific period, for example
+                  daily, weekly, monthly, quarterly, yearly. Seasonal pattern
+                  always repeats with the fixed and known frequency.
+                </InfoOverlay.Popover>
               </InfoOverlay>
-              <Switch {...field} checked={!!field.value} />
+              <Switch {...field} checked={!!field.value} sx={{ height: 40 }} />
             </>
           )}
         />
@@ -66,7 +71,13 @@ const Seasonality = ({ index }) => {
             label="Periods"
             {...FIELD_LABEL_PROPS}
           >
-            <InfoOverlay.Popover>AA</InfoOverlay.Popover>
+            <InfoOverlay.Popover>
+              Please specify the number of periods in a season. For instance, if
+              your dataset consists of daily data logs that repeat weekly, the
+              number of periods in a season is 7 days. If the dataset contains
+              hourly data with a daily repeating pattern, the number of periods
+              is 24 hours.
+            </InfoOverlay.Popover>
           </InfoOverlay>
           <TextField
             {...register(EAnalysisFormFields.periodsInSeason)}
