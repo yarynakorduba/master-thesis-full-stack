@@ -8,7 +8,6 @@ import SparkLineChartsBlock from '../../sharedComponents/charts/SparkLineChartsB
 import Analysis from './Analysis';
 import {
   useConfigData,
-  useDisplayedPredictionId,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   useIsPredictionHistoryLoading,
@@ -55,16 +54,6 @@ const Configuration = () => {
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const isHistoryLoading = useIsPredictionHistoryLoading();
-
-  const dataLabels =
-    (selectedProp?.value &&
-      predictionResult?.lastTrainPoint?.dateTime && [
-        {
-          valueX: new Date(predictionResult.lastTrainPoint.dateTime).getTime(),
-          label: 'Train data threshold',
-        },
-      ]) ||
-    [];
 
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
     useIsHistoryDrawerOpen();
@@ -114,7 +103,6 @@ const Configuration = () => {
           selectedAreaBounds={selectedDataBoundaries}
           selectedProp={selectedProp}
           setSelectedProp={setSelectedProp}
-          dataLabels={dataLabels}
           defaultIsTrainingDataSelectionOn={
             isHistoryPredictionSelected &&
             !!predictionResult?.selectedDataBoundaries

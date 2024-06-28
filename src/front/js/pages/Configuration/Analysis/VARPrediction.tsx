@@ -24,11 +24,11 @@ import {
 import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
-import { getLinearValueScale } from '../../../utils';
 import VARPredictionParams from './VARPredictionParams';
 import { CheckboxLabel } from './styles';
 import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
 import { formatFormFields } from '../../../utils/formatters';
+import { getLinearValueScale } from '../../../utils/lineChart';
 
 type TProps = {
   readonly isVisible: boolean;

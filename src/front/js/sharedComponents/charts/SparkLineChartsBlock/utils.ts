@@ -3,7 +3,7 @@ import {
   TLineChartSerie,
   TTimeseriesData,
 } from 'front/js/types';
-import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
+import { constructLineChartDataFromTs } from '../../../utils/lineChart';
 import {
   convertPredictionData,
   PREDICTION_VALUE_PROP,
@@ -19,8 +19,9 @@ import {
   keys,
   values,
 } from 'lodash';
-import { TThresholdData } from '../types';
 import { Palette } from '@mui/material';
+
+import { TThresholdData } from '../types';
 import { TPredictionResult } from 'front/js/pages/Configuration/Analysis/types';
 import { getExtent } from '../../../utils';
 
@@ -29,7 +30,7 @@ export const constructLineChartPredictionRegionsData = (
   mainChartData,
   predictionData,
 ) => {
-  if (!predictionData) return [];
+  if (!predictionData || !mainChartData) return [];
   const testPredValues = map(
     keys(values(predictionData?.testPrediction)[0]),
     (k) => +k,
@@ -41,29 +42,37 @@ export const constructLineChartPredictionRegionsData = (
   const testExtent = getExtent(testPredValues);
   const realExtent = getExtent(realPredValues);
 
-  return [
-    {
-      from: mainChartData?.datapoints[0]?.valueX,
-      to: new Date(predictionData?.lastTrainPoint?.dateTime).getTime(),
+  console.log(predictionData);
+
+  const regions: any = [];
+  if (predictionData?.trainExtent?.from && predictionData?.trainExtent?.to) {
+    regions.push({
+      from: new Date(predictionData?.trainExtent?.from).getTime(),
+      to: new Date(predictionData?.trainExtent?.to).getTime(),
       label: 'Train',
       fill: palette.charts.chartRealData,
       color: 'white',
-    },
-    {
+    } as any);
+  }
+  if (!isEmpty(testExtent)) {
+    regions.push({
       from: testExtent[0],
       to: testExtent[1],
       label: 'Test',
       fill: palette.charts.chartTestPrediction,
       color: 'white',
-    },
-    {
+    });
+  }
+  if (!isEmpty(realExtent)) {
+    regions.push({
       from: realExtent[0],
       to: realExtent[1],
       label: 'Prediction',
       fill: palette.charts.chartRealPrediction,
       color: 'white',
-    },
-  ];
+    });
+  }
+  return regions;
 };
 
 export const getCompleteLineChartData = (

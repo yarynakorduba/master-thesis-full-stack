@@ -4,6 +4,10 @@ import {
   TLineChartSerie,
   TLineChartDatapoint,
 } from '../types';
+import { scaleLinear } from '@visx/scale';
+import * as d3Scale from 'd3-scale';
+
+import { getExtent } from '.';
 
 export const constructLineChartDataFromTs = (
   seriesId: string,
@@ -29,3 +33,10 @@ export const constructLineChartDataFromTs = (
     datapoints,
   };
 };
+
+export const getLinearValueScale =
+  (data: object[], range: [number, number] | [string, string]) =>
+  (key: string): d3Scale.ScaleLinear<number | string, number | string> => {
+    const mapeExtent = getExtent(data, key);
+    return scaleLinear<number | string>({ domain: mapeExtent, range });
+  };

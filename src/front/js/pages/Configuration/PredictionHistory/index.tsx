@@ -20,7 +20,7 @@ import {
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
 import HistoryCard from './HistoryCard';
-import { getLinearValueScale } from '../../../utils';
+import { getLinearValueScale } from '../../../utils/lineChart';
 import { THistoryEntry } from '../Analysis/types';
 import SorterPopover from './SorterPopover';
 

@@ -52,7 +52,7 @@ export const addEntryToPredictionHistory = async (prediction) => {
   const body = {
     test_prediction_parameters: [],
     real_prediction_parameters: [],
-    last_train_point: {},
+    train_extent: {},
 
     ...mapKeys(prediction, (v, key) => snakeCase(key)),
   };

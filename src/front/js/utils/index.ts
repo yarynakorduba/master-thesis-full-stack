@@ -21,7 +21,6 @@ export const getSelectedDataByBoundaries = (
   dataFilterProperty?: TDataProperty,
   valueBounds?: TValueBounds,
 ) => {
-  console.log('runn');
   return dataFilterProperty && valueBounds && !isEmpty(data)
     ? data.filter((s) => {
         return (
@@ -40,10 +39,3 @@ export const getExtent = (dataArray, byProp?: string): [number, number] => {
     get(maxBy(dataArray, byProp), byProp, 0),
   ];
 };
-
-export const getLinearValueScale =
-  (data: object[], range: [number, number] | [string, string]) =>
-  (key: string): d3Scale.ScaleLinear<number | string, number | string> => {
-    const mapeExtent = getExtent(data, key);
-    return scaleLinear<number | string>({ domain: mapeExtent, range });
-  };

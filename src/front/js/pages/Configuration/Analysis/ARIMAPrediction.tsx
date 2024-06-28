@@ -8,7 +8,6 @@ import { useFormContext } from 'react-hook-form';
 import { isEmpty } from 'lodash';
 
 import Loader from '../../../sharedComponents/Loader';
-import { getLinearValueScale } from '../../../utils';
 import {
   useConfigData,
   useFetchARIMAPrediction,
@@ -22,6 +21,7 @@ import EvaluationIndicators from '../EvaluationIndicators';
 import { FIELD_LABEL_PROPS } from '../../../consts';
 import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
 import { formatFormFields } from '../../../utils/formatters';
+import { getLinearValueScale } from '../../../utils/lineChart';
 
 type TProps = {
   readonly isVisible: boolean;

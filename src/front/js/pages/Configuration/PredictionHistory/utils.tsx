@@ -2,7 +2,7 @@ import { Palette } from '@mui/material';
 import { filter, intersectionWith, isEmpty, map, sortBy } from 'lodash';
 
 import { TLineChartSerie, TTimeseriesData } from '../../../types';
-import { constructLineChartDataFromTs } from '../../../utils/lineChartData';
+import { constructLineChartDataFromTs } from '../../../utils/lineChart';
 import {
   PREDICTION_VALUE_PROP,
   PREDICTION_TIMESTAMP_PROP,

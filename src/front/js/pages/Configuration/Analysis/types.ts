@@ -62,7 +62,7 @@ export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
   readonly id: string; // uuid
   readonly createdAt: string; // ISO date string
   readonly inputData: any;
-  readonly lastTrainPoint: TLastTrainPoint;
+  readonly trainExtent: TTrainExtent;
   readonly testPrediction: TPredictedPoints;
   readonly realPrediction: TPredictedPoints;
   readonly realPredictionParameters: T; //TResponseARIMAParams | TResponseVARParams;
@@ -83,10 +83,9 @@ export type THistoryEntry<T = TResponseARIMAParams | TResponseVARParams> =
 export type TARIMAHistoryEntry = THistoryEntry<TResponseARIMAParams>;
 export type TVARHistoryEntry = THistoryEntry<TResponseVARParams>;
 
-export type TLastTrainPoint = {
-  readonly dateTime: string;
-  x;
-  readonly value: number;
+export type TTrainExtent = {
+  readonly from: string;
+  readonly to: number;
 };
 
 export type TPredictedPoints = { [msTimestamp: string]: number };

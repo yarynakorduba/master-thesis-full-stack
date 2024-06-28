@@ -71,7 +71,7 @@ class PredictionHistory(db.Model):
     test_prediction = db.Column(JSON, nullable=False) # limit 255MB
     real_prediction = db.Column(JSON, nullable=False) # limit 255MB
 
-    last_train_point = db.Column(JSON, nullable=False) # limit 255MB
+    train_extent = db.Column(JSON, nullable=False) # limit 255MB
     evaluation = db.Column(JSON, nullable=False) # limit 255MB
 
     def __repr__(self):
@@ -92,7 +92,7 @@ class PredictionHistory(db.Model):
             "test_prediction": self.test_prediction, # limit 255MB
             "real_prediction": self.real_prediction, # limit 255MB
 
-            "last_train_point": self.last_train_point, # limit 255MB
+            "train_extent": self.train_extent, # limit 255MB
             "evaluation": self.evaluation, # limit 255MB
             "input_data": self.input_data,
 

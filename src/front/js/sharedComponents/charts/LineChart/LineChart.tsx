@@ -386,7 +386,8 @@ const LineChart = ({
           <LineChartDataRegions
             xScale={xScale}
             dataRegions={dataRegions}
-            paddingLeft={padding?.left}
+            paddingLeft={padding.left}
+            maxX={width - padding.right - padding.left}
           />
           <Group
             left={padding.left}
