@@ -15,6 +15,7 @@ export type TLineChartProps = {
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
+  readonly dataRegions?: any[];
   readonly thresholdData?: Array<TThresholdData>;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];

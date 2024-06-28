@@ -46,8 +46,10 @@ import {
   CHART_LEFT_PADDING,
   CHART_RIGHT_PADDING,
   CHART_Y_PADDING,
+  REGION_HEIGHT,
 } from './consts';
 import { TLineChartProps } from './types';
+import LineChartDataRegions from './LineChartDataRegions';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
@@ -61,6 +63,7 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
+  dataRegions,
   dataLabels,
   formatXScale,
   formatYScale,
@@ -106,11 +109,8 @@ const LineChart = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleLinesData]);
 
-  const { xyAreaWidth, xyAreaHeight, svgHeight } = useChartSizes(
-    width,
-    height,
-    padding,
-  );
+  const { xyAreaWidth, xyAreaHeight, svgHeight, chartLinesOffset } =
+    useChartSizes(width, height, padding);
 
   const xValues = getUniqueFlatChartValues('valueX', filteredData);
   const xBrushValues = getUniqueFlatChartValues('valueX', visibleLinesData);
@@ -163,7 +163,7 @@ const LineChart = ({
     containerRef,
   } = useTooltipConfigs(
     padding.left,
-    padding.top,
+    chartLinesOffset.top,
     xyAreaHeight,
     xScale,
     yScale,
@@ -383,7 +383,17 @@ const LineChart = ({
       </Stack>
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
-          <Group left={padding.left} top={padding.top} width={xyAreaWidth}>
+          <LineChartDataRegions
+            xScale={xScale}
+            dataRegions={dataRegions}
+            paddingLeft={padding?.left}
+          />
+          <Group
+            left={padding.left}
+            top={chartLinesOffset.top}
+            width={xyAreaWidth}
+            height={xyAreaHeight}
+          >
             <Grid
               width={xyAreaWidth}
               height={xyAreaHeight}
@@ -442,7 +452,7 @@ const LineChart = ({
           </Group>
           <ChartOverlays
             offsetLeft={padding.left}
-            offsetTop={padding.top}
+            offsetTop={chartLinesOffset.top}
             width={xyAreaWidth}
             height={xyAreaHeight}
             xScale={xScale}

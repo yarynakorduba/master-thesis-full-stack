@@ -14,3 +14,5 @@ export const BRUSH_HEIGHT = 36;
 export const BRUSH_Y_PADDING = 20;
 export const LEGEND_HEIGHT = 46;
 export const LEGEND_Y_PADDING = 20;
+export const REGION_HEIGHT = 16;
+export const REGION_FONT_SIZE = 12;

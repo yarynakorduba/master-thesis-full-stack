@@ -1,4 +1,4 @@
-import { find, get, isEmpty, maxBy, minBy } from 'lodash';
+import { find, get, isEmpty, max, maxBy, min, minBy } from 'lodash';
 import { scaleLinear } from '@visx/scale';
 import * as d3Scale from 'd3-scale';
 
@@ -32,7 +32,9 @@ export const getSelectedDataByBoundaries = (
     : data || [];
 };
 
-export const getExtent = (dataArray, byProp) => {
+export const getExtent = (dataArray, byProp?: string): [number, number] => {
+  if (!dataArray.length) return [0, 0];
+  if (!byProp) return [min(dataArray)!, max(dataArray)!];
   return [
     get(minBy(dataArray, byProp), byProp, 0),
     get(maxBy(dataArray, byProp), byProp, 0),

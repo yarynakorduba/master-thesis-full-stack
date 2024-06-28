@@ -10,10 +10,61 @@ import {
   PREDICTION_TIMESTAMP_PROP,
 } from '../../../utils/prediction';
 import { theme } from '../../../../styles/theme';
-import { intersectionWith, sortBy, map, filter, isEmpty } from 'lodash';
+import {
+  intersectionWith,
+  sortBy,
+  map,
+  filter,
+  isEmpty,
+  keys,
+  values,
+} from 'lodash';
 import { TThresholdData } from '../types';
 import { Palette } from '@mui/material';
 import { TPredictionResult } from 'front/js/pages/Configuration/Analysis/types';
+import { getExtent } from '../../../utils';
+
+export const constructLineChartPredictionRegionsData = (
+  palette: Palette,
+  mainChartData,
+  predictionData,
+) => {
+  if (!predictionData) return [];
+  const testPredValues = map(
+    keys(values(predictionData?.testPrediction)[0]),
+    (k) => +k,
+  );
+  const realPredValues = map(
+    keys(values(predictionData?.realPrediction)[0]),
+    (k) => +k,
+  );
+  const testExtent = getExtent(testPredValues);
+  const realExtent = getExtent(realPredValues);
+
+  return [
+    {
+      from: mainChartData?.datapoints[0]?.valueX,
+      to: new Date(predictionData?.lastTrainPoint?.dateTime).getTime(),
+      label: 'Train',
+      fill: palette.charts.chartRealData,
+      color: 'white',
+    },
+    {
+      from: testExtent[0],
+      to: testExtent[1],
+      label: 'Test',
+      fill: palette.charts.chartTestPrediction,
+      color: 'white',
+    },
+    {
+      from: realExtent[0],
+      to: realExtent[1],
+      label: 'Prediction',
+      fill: palette.charts.chartRealPrediction,
+      color: 'white',
+    },
+  ];
+};
 
 export const getCompleteLineChartData = (
   id: string, // should be unique
@@ -95,11 +146,18 @@ export const getCompleteLineChartData = (
       ]
     : [];
 
+  const dataRegions = constructLineChartPredictionRegionsData(
+    palette,
+    mainChartData,
+    predictionData,
+  );
+
   return {
     lineData: filter(
       [mainChartData, testPredictedData, realPredictedData],
       (d) => !isEmpty(d?.datapoints),
     ) as TLineChartSerie[],
     thresholdData,
+    dataRegions,
   };
 };

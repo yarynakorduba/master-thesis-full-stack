@@ -64,7 +64,7 @@ const SparkLineChartsBlock = ({
   timeProperty,
   timeseriesData,
   predictionData,
-  dataLabels = [],
+  // dataLabels = [],
   setSelectedDataBoundaries,
   selectedAreaBounds,
   selectedProp,
@@ -118,22 +118,12 @@ const SparkLineChartsBlock = ({
   );
 
   if (
-    !timeseriesData ||
+    isConfigurationLoading ||
     !mainChartData?.lineData?.length ||
     !valueProperties?.length ||
-    isConfigurationDataIncomplete(
-      timeseriesData,
-      timeProperty,
-      valueProperties,
-    ) ||
-    !selectedProp ||
-    isConfigurationLoading
+    isConfigurationDataIncomplete(timeseriesData, timeProperty, valueProperties)
   ) {
-    return (
-      <EmptySparkLineChartsBlock
-        isLoading={isConfigurationLoading || !selectedProp}
-      />
-    );
+    return <EmptySparkLineChartsBlock isLoading={!!isConfigurationLoading} />;
   }
 
   return (
@@ -148,14 +138,15 @@ const SparkLineChartsBlock = ({
           isResponsive
           heading={selectedProp?.label}
           data={mainChartData.lineData}
+          // dataLabels={dataLabels}
+          dataRegions={mainChartData.dataRegions}
           thresholdData={mainChartData.thresholdData}
-          dataLabels={dataLabels}
           numXAxisTicks={6}
           numYAxisTicks={4}
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={300}
-          padding={{ top: 16, bottom: 30, left: 48, right: 36 }}
+          padding={{ top: 8, bottom: 30, left: 48, right: 36 }}
           onSelectArea={onSelectedAreaChange}
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}

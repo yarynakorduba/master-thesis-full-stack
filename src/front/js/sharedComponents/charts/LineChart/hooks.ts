@@ -12,6 +12,7 @@ import {
   LEGEND_Y_PADDING,
   BRUSH_HEIGHT,
   BRUSH_Y_PADDING,
+  REGION_HEIGHT,
 } from './consts';
 import { TPadding } from '../../../types/styles';
 
@@ -145,9 +146,22 @@ export const useChartSizes = (
   );
   const xyAreaHeight = useMemo(
     () =>
-      svgHeight - padding.top - padding.bottom - BRUSH_HEIGHT - BRUSH_Y_PADDING,
+      svgHeight -
+      padding.top -
+      padding.bottom -
+      BRUSH_HEIGHT -
+      BRUSH_Y_PADDING -
+      REGION_HEIGHT,
     [padding.bottom, padding.top, svgHeight],
   );
 
-  return { xyAreaWidth, xyAreaHeight, svgHeight };
+  return {
+    xyAreaWidth,
+    xyAreaHeight,
+    svgHeight,
+    chartLinesOffset: {
+      ...padding,
+      top: padding.top + REGION_HEIGHT,
+    },
+  };
 };
