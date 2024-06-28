@@ -7,7 +7,6 @@ import React, {
 } from 'react';
 import { AxisLeft, AxisBottom } from '@visx/axis';
 import { Group } from '@visx/group';
-import { ParentSize } from '@visx/responsive';
 import { isEmpty, isEqual, isNil, map, max, min, noop, orderBy } from 'lodash';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush, {
@@ -34,49 +33,27 @@ import {
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
-import { TDataLabel, TLineChartData, TLineChartSerie } from '../../../types';
+import { TLineChartSerie } from '../../../types';
 import Legend from './Legend';
-import {
-  TChartThresholdDatapoint,
-  TFormatXScale,
-  TFormatYScale,
-  TThresholdData,
-} from '../types';
+import { TChartThresholdDatapoint } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
 import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
-import { BRUSH_HEIGHT, CHART_X_PADDING, CHART_Y_PADDING } from './consts';
-import { TPadding } from '../../../types/styles';
+import {
+  BRUSH_HEIGHT,
+  CHART_LEFT_PADDING,
+  CHART_RIGHT_PADDING,
+  CHART_Y_PADDING,
+} from './consts';
+import { TLineChartProps } from './types';
 
 /**
  * Line chart has two axes: one of them uses linear scale, and another uses band scale.
  * The vertical (default) variant renders vertical bars with band x-axis and linear y-axis.
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
-
-type TProps = {
-  readonly width?: number;
-  readonly height?: number;
-  readonly heading?: string;
-  readonly variant?: ChartVariant;
-  readonly data: TLineChartData;
-  readonly thresholdData?: Array<TThresholdData>;
-  readonly selectedAreaBounds?: TValueBounds;
-  readonly dataLabels?: TDataLabel[];
-  readonly formatXScale: (extent?: [number, number]) => TFormatXScale;
-
-  readonly formatYScale: TFormatYScale;
-  readonly numXAxisTicks?: number;
-  readonly numYAxisTicks?: number;
-  readonly padding?: TPadding;
-  readonly onClick?: () => void;
-  readonly defaultBrushValueBounds?: TValueBounds;
-  readonly onSelectArea?: (points) => void;
-  readonly selectedDataLength?: string;
-  readonly defaultIsTrainingDataSelectionOn?: boolean;
-};
 
 const LineChart = ({
   width = 2000,
@@ -92,8 +69,8 @@ const LineChart = ({
   padding = {
     top: CHART_Y_PADDING,
     bottom: CHART_Y_PADDING,
-    left: CHART_X_PADDING,
-    right: CHART_X_PADDING,
+    left: CHART_LEFT_PADDING,
+    right: CHART_RIGHT_PADDING,
   },
   defaultBrushValueBounds = undefined,
   selectedAreaBounds = undefined,
@@ -101,7 +78,7 @@ const LineChart = ({
   selectedDataLength,
   thresholdData = [],
   defaultIsTrainingDataSelectionOn = false,
-}: TProps) => {
+}: TLineChartProps) => {
   const { palette } = useTheme();
   const hiddenColor = getHiddenLineColor(palette);
 
@@ -512,92 +489,4 @@ const LineChart = ({
   );
 };
 
-export default function ResponsiveLineChart({
-  width = 2000,
-  height = 460,
-  heading,
-  variant = ChartVariant.vertical,
-  data,
-  formatXScale,
-  formatYScale,
-  numXAxisTicks = 4, // approximate
-  numYAxisTicks = 4, // approximate
-  isResponsive = true,
-  padding = {
-    top: CHART_Y_PADDING,
-    bottom: CHART_Y_PADDING,
-    left: CHART_X_PADDING,
-    right: CHART_X_PADDING,
-  },
-  onClick = noop,
-  onSelectArea = noop,
-  defaultBrushValueBounds,
-  dataLabels,
-  selectedDataLength,
-  selectedAreaBounds,
-  thresholdData,
-  defaultIsTrainingDataSelectionOn,
-}: TProps & { readonly isResponsive?: boolean }) {
-  const renderChart = useCallback(
-    (chartWidth, chartHeight) => (
-      <LineChart
-        width={chartWidth}
-        height={chartHeight}
-        heading={heading}
-        variant={variant}
-        data={data}
-        selectedAreaBounds={selectedAreaBounds}
-        dataLabels={dataLabels}
-        formatXScale={formatXScale}
-        formatYScale={formatYScale}
-        onClick={onClick}
-        onSelectArea={onSelectArea}
-        numXAxisTicks={numXAxisTicks} // approximate
-        numYAxisTicks={numYAxisTicks}
-        padding={padding}
-        defaultBrushValueBounds={defaultBrushValueBounds}
-        selectedDataLength={selectedDataLength}
-        thresholdData={thresholdData}
-        defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
-      />
-    ),
-    [
-      heading,
-      variant,
-      data,
-      selectedAreaBounds,
-      dataLabels,
-      formatXScale,
-      formatYScale,
-      onClick,
-      onSelectArea,
-      numXAxisTicks,
-      numYAxisTicks,
-      padding,
-      defaultBrushValueBounds,
-      selectedDataLength,
-      thresholdData,
-      defaultIsTrainingDataSelectionOn,
-    ],
-  );
-
-  const renderResponsiveChart = useCallback(
-    (parent) => {
-      const responsiveWidth = !isNil(width) && Math.min(width, parent.width);
-      const responsiveHeight =
-        !isNil(height) && Math.min(height, parent.height);
-
-      return renderChart(responsiveWidth, responsiveHeight);
-    },
-    [renderChart, width, height],
-  );
-
-  if (!isResponsive) return renderChart(width, 400);
-  return (
-    <ParentSize
-      parentSizeStyles={{ width: 'auto', maxWidth: '100%', minHeight: 300 }}
-    >
-      {renderResponsiveChart}
-    </ParentSize>
-  );
-}
+export default LineChart;

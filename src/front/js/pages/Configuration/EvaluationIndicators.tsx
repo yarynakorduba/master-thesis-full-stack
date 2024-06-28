@@ -5,7 +5,7 @@ import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
 import { TPredictionResult } from './Analysis/types';
-import SparkLineChart from '../../sharedComponents/charts/LineChart/SparkLineChart';
+import { SparkLineChart } from '../../sharedComponents/charts/LineChart';
 import { getHistoryLineChartData } from './PredictionHistory/utils';
 import { formatNumber } from '../../utils/formatters';
 import { TTimeseriesData, TDataProperty } from '../../types';

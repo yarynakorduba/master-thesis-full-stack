@@ -5,8 +5,7 @@ import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
-import LineChart from '../LineChart';
-import SparkLineChart from '../LineChart/SparkLineChart';
+import { LineChart, SparkLineChart } from '../LineChart';
 import { TDataLabel, TTimeseriesData } from '../../../types';
 
 import { TDataProperty } from '../../../types';
@@ -139,8 +138,14 @@ const SparkLineChartsBlock = ({
 
   return (
     <LineChartContainer>
-      <Box width="calc(100% - 300px - 16px)" flexGrow={1} minHeight="300px">
+      <Box
+        width="calc(100% - 300px - 16px)"
+        flexGrow={1}
+        minHeight="300px"
+        alignItems="flex-start"
+      >
         <LineChart
+          isResponsive
           heading={selectedProp?.label}
           data={mainChartData.lineData}
           thresholdData={mainChartData.thresholdData}
@@ -150,9 +155,8 @@ const SparkLineChartsBlock = ({
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={300}
-          padding={{ top: 16, bottom: 30, left: 48, right: 16 }}
+          padding={{ top: 16, bottom: 30, left: 48, right: 36 }}
           onSelectArea={onSelectedAreaChange}
-          isResponsive
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}
           defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}
