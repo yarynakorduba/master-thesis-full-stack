@@ -138,6 +138,14 @@ const PredictionModelSelection = ({
                     </ListItemText>
                   </ListItem>
                 </List>
+                {/* After providing the model parameters values in the form,
+                different ARIMA (p, d, q) models are fitted to find out the best
+                model for the monthly gold price. Moreover, to choose the best
+                model for the data, the estimated model should be compared with
+                other ARIMA models. The two common criteria, Bayesian
+                Information Criteria (BIC) and Akaike’s Information Criterion
+                (AIC), are defined by AIC = 2n−2ln(Lˆ) */}
+                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
               </div>
             ) : (
               <div>

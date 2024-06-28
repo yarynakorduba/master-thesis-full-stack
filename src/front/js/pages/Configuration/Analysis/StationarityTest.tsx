@@ -58,8 +58,11 @@ const StationarityTest = ({
             </Typography>
             <br />
             <Typography>
-              Note: if the data is not stationary, the prediction models will
-              try to convert it to stationary under the hood.
+              Note: if the data is not stationary, the prediction tasks will try
+              to convert it to stationary under the hood. For this, the program
+              will apply differencing, run the tests and models on the
+              differenced data, and inverse difference the prediction back to
+              get the meaningful result.
             </Typography>
           </InfoOverlay.Popover>
         </InfoOverlay>{' '}
