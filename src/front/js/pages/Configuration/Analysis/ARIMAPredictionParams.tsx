@@ -48,7 +48,11 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               : 'Test data prediction params'
           }
         >
-          <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          <InfoOverlay.Popover>
+            {areARIMAPredictionParamsSimilar
+              ? 'Prediction parameters are the optimal parameters selected by the model to predict the given data.'
+              : 'Test prediction parameters are the optimal parameters selected by  the model to predict the test data.'}
+          </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
@@ -59,7 +63,10 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               id="prediction-params"
               label="Real data prediction params"
             >
-              <InfoOverlay.Popover>A</InfoOverlay.Popover>
+              <InfoOverlay.Popover>
+                Real data prediction parameters are the optimal parameters
+                selected by the model to predict the data.
+              </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>
           {!isEmpty(realPredictionParams)

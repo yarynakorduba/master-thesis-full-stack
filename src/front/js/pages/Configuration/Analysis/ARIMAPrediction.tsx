@@ -64,9 +64,7 @@ const ARIMAPrediction = ({
   if (!isVisible) return null;
   return (
     <AnalysisSection>
-      <AnalysisSection.Header>
-        What is the prediction for the future? (ARIMA)
-      </AnalysisSection.Header>
+      <AnalysisSection.Header>ARIMA prediction</AnalysisSection.Header>
       <Grid item md={6}>
         <Grid
           container
@@ -101,14 +99,16 @@ const ARIMAPrediction = ({
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                Lag order (or P variable), helps you control how much the model
+                p variable denotes the order of an autoregressive component (AR)
+                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
+                {/* Lag order (or P variable), helps you control how much the model
                 relies on past values to predict the current one. It&apos;s like
                 adjusting how far back you want to look to make a good guess
                 about today&apos;s weather.
                 <br />
                 <br />
                 Setting min lag order helps to avoid considering overly simple
-                models that might not predict future values well.
+                models that might not predict future values well. */}
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
@@ -126,14 +126,16 @@ const ARIMAPrediction = ({
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                Lag order (or P variable), helps you control how much the model
+                p variable denotes the order of an autoregressive component (AR)
+                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
+                {/* Lag order (or P variable), helps you control how much the model
                 relies on past values to predict the current one. It&apos;s like
                 adjusting how far back you want to look to make a good guess
                 about today&apos;s weather.
                 <br />
                 <br />
                 Setting max P helps to prevent the algorithm from considering
-                excessively complex models
+                excessively complex models */}
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField

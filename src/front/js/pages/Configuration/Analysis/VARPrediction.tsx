@@ -64,9 +64,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   if (!isVisible) return null;
   return (
     <AnalysisSection>
-      <AnalysisSection.Header>
-        What is the prediction for the future? (VAR)
-      </AnalysisSection.Header>
+      <AnalysisSection.Header>VAR prediction</AnalysisSection.Header>
       <Grid item md={6}>
         <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
           <Grid item md={12}>
