@@ -23,7 +23,12 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           <InfoOverlay id="Order" label="Order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+            <InfoOverlay.Popover>
+              The optimal ARIMA(p, d, q) parameters which the model selected
+              considering the provided min / max form values. To identify the
+              optimal parameters, the model uses Akaike Information Criterion
+              (AIC).
+            </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.order)},{' '}
           <InfoOverlay id="Seasonal Order" label="Seasonal order:">
