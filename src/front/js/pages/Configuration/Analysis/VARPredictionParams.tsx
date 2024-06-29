@@ -3,6 +3,12 @@ import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { THistoryEntry, TVARResult } from './types';
+import {
+  OPTIMAL_PARAMS_TXT,
+  OPTIMAL_REAL_PARAMS_TXT,
+  OPTIMAL_TEST_PARAMS_TXT,
+  VAR_ORDER_PARAM_TXT,
+} from '../InfoOverlayTexts';
 
 type TProps = {
   readonly varResult: TVARResult | THistoryEntry;
@@ -20,9 +26,7 @@ const VARPredictionParams = ({ varResult }: TProps) => {
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           <InfoOverlay id="Order" label="Lag order:">
-            <InfoOverlay.Popover>
-              Optimal lag order selected by the model based on the input data.
-            </InfoOverlay.Popover>
+            <InfoOverlay.Popover>{VAR_ORDER_PARAM_TXT}</InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {params.order}
         </Typography>
@@ -45,8 +49,8 @@ const VARPredictionParams = ({ varResult }: TProps) => {
         >
           <InfoOverlay.Popover>
             {arePredictionParamsSimilar
-              ? 'The optimal parameters selected by the model to predict the given data.'
-              : 'The optimal parameters selected by  the model to predict the test data.'}
+              ? OPTIMAL_PARAMS_TXT
+              : OPTIMAL_TEST_PARAMS_TXT}
           </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
@@ -59,8 +63,7 @@ const VARPredictionParams = ({ varResult }: TProps) => {
               label="Real data prediction params"
             >
               <InfoOverlay.Popover>
-                The optimal parameters selected by the model to predict the
-                data.
+                {OPTIMAL_REAL_PARAMS_TXT}
               </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>

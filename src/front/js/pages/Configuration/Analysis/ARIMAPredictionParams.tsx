@@ -4,6 +4,13 @@ import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { formatOrder } from '../../../utils/formatters';
 import { TARIMAResult } from './types';
+import ARIMAOrderText from '../InfoOverlayTexts/ARIMAOrderText';
+import ARIMASeasonalOrderText from '../InfoOverlayTexts/ARIMASeasonalOrderText';
+import {
+  OPTIMAL_PARAMS_TXT,
+  OPTIMAL_REAL_PARAMS_TXT,
+  OPTIMAL_TEST_PARAMS_TXT,
+} from '../InfoOverlayTexts';
 
 type TProps = {
   readonly arimaResult: TARIMAResult;
@@ -23,25 +30,12 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           <InfoOverlay id="Order" label="Order:">
-            <InfoOverlay.Popover>
-              Order is the optimal ARIMA(p, d, q) parameters which the model
-              selected considering the provided min / max form values. To
-              identify the optimal parameters, the model uses Akaike Information
-              Criterion (AIC).
-            </InfoOverlay.Popover>
+            <InfoOverlay.Popover>{<ARIMAOrderText />}</InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.order)},{' '}
           <InfoOverlay id="Seasonal Order" label="Seasonal order:">
             <InfoOverlay.Popover>
-              Seasonal order is the optimal ARIMA(P, D, Q)s seasonal parameters
-              which the model selected considering the provided min / max form
-              values. Here, P, D, and Q are seasonal components and s is the
-              number of periods per season.
-              {/* http://repository.cinec.edu/bitstream/cinec20/1228/1/2008_Book_TimeSeriesAnalysis.pdf, p.234 */}
-              The seasonal components of the model are similar to the
-              non-seasonal components, but involve backshifts of the seasonal
-              period s.
-              {/* https://otexts.com/fpp2/seasonal-arima.html */}
+              <ARIMASeasonalOrderText />
             </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.seasonal_order)}
@@ -65,8 +59,8 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
         >
           <InfoOverlay.Popover>
             {areARIMAPredictionParamsSimilar
-              ? 'The optimal parameters selected by the model to predict the given data.'
-              : 'The optimal parameters selected by the model to predict the test data.'}
+              ? OPTIMAL_PARAMS_TXT
+              : OPTIMAL_TEST_PARAMS_TXT}
           </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
@@ -79,8 +73,7 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               label="Real data prediction params"
             >
               <InfoOverlay.Popover>
-                The optimal parameters selected by the model to predict the real
-                data.
+                {OPTIMAL_REAL_PARAMS_TXT}
               </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>

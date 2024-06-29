@@ -17,6 +17,8 @@ import AnalysisSection from './AnalysisSection';
 import NetworkChart from '../../../sharedComponents/charts/NetworkChart';
 import { useCausalityDataForNetworkGraph } from './hooks';
 import { FIELD_LABEL_PROPS } from '../../../consts';
+import CausalRelationshipsText from '../InfoOverlayTexts/CausalRelationshipsText';
+import CausalityMaxLagOrderText from '../InfoOverlayTexts/CausalityMaxLagOrderText';
 
 type TProps = {
   readonly index: number;
@@ -84,19 +86,9 @@ const CausalityTest = ({
     <AnalysisSection container md={12} flexDirection="column">
       <AnalysisSection.Header index={index}>
         Check{' '}
-        <InfoOverlay id="causal-relationship" label="causal relautionships">
+        <InfoOverlay id="causal-relationships" label="causal relautionships">
           <InfoOverlay.Popover>
-            <Typography>
-              To find the causal relationships between the data fields of the
-              dataset, we perform pairwise Granger causality tests.
-            </Typography>
-            <Typography>
-              Granger causality. Time series Y is said to Granger cause time
-              series X if the prediction error variance of X at a present time
-              can be reduced by additionally including the past values of Y,
-              compared to only including the past values of X.
-              {/* http://www.econ.uiuc.edu/~econ536/Papers/granger69.pdf */}
-            </Typography>
+            <CausalRelationshipsText />
           </InfoOverlay.Popover>
         </InfoOverlay>{' '}
         between the variables
@@ -108,19 +100,7 @@ const CausalityTest = ({
           {...FIELD_LABEL_PROPS}
         >
           <InfoOverlay.Popover>
-            <Typography>
-              The causality lag order m is defined as the smallest integer k at
-              which past k values of time series Y start to provide significant
-              information in predicting time series X. Before this lag, the
-              inclusion of past values of Y does not contribute to improving the
-              prediction of X.
-              {/* http://www.econ.uiuc.edu/~econ536/Papers/granger69.pdf */}
-            </Typography>
-            <Typography>
-              In Max lag order field, please provide the maximum number of lags
-              which should be tested to find the optimal causality lag. The
-              number should be a positive integer.
-            </Typography>
+            <CausalityMaxLagOrderText />
           </InfoOverlay.Popover>
         </InfoOverlay>
 

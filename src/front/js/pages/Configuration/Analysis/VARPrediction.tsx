@@ -31,6 +31,8 @@ import { formatFormFields } from '../../../utils/formatters';
 import { getLinearValueScale } from '../../../utils/lineChart';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { FIELD_LABEL_PROPS } from '../../../consts';
+import VARModelText from '../InfoOverlayTexts/VARModelText';
+import HorizonText from '../InfoOverlayTexts/HorizonText';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -68,7 +70,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
     <AnalysisSection>
       <AnalysisSection.Header>
         <InfoOverlay id="var-prediction-model" label="VAR prediction">
-          <InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+          <InfoOverlay.Popover>{<VARModelText />}</InfoOverlay.Popover>
         </InfoOverlay>
       </AnalysisSection.Header>
       <Grid item md={6}>
@@ -107,14 +109,9 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
             />
           </Grid>
           <Grid item md={6}>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-              component="label"
-              htmlFor="name"
-            >
-              Horizon
-            </Typography>
+            <InfoOverlay id="horizon" label="Horizon" {...FIELD_LABEL_PROPS}>
+              <InfoOverlay.Popover>{<HorizonText />}</InfoOverlay.Popover>
+            </InfoOverlay>
             <TextField
               size="small"
               type="number"

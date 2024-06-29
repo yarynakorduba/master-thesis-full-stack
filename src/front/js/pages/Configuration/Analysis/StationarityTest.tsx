@@ -9,6 +9,7 @@ import Loader from '../../../sharedComponents/Loader';
 import { TTimeseriesData } from '../../../types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
+import StationarityText from '../InfoOverlayTexts/StationarityText';
 
 type TProps = {
   readonly index: number;
@@ -48,22 +49,7 @@ const StationarityTest = ({
         Check data consistency over time{' '}
         <InfoOverlay id="stationarity-test" label="(stationarity)">
           <InfoOverlay.Popover>
-            <Typography>
-              Stationary time series are the time series described by a model
-              which assumes that the process remains in statistical equilibrium.
-              The probabilistic properties of such a process do not change over
-              time, specifically maintaining a fixed constant mean and a
-              constant variance.
-              {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
-            </Typography>
-            <br />
-            <Typography>
-              Note: if the data is not stationary, the prediction tasks will try
-              to convert it to stationary under the hood. For this, the program
-              will apply differencing, run the tests and models on the
-              differenced data, and inverse difference the prediction back to
-              get the meaningful result.
-            </Typography>
+            <StationarityText />
           </InfoOverlay.Popover>
         </InfoOverlay>{' '}
       </AnalysisSection.Header>

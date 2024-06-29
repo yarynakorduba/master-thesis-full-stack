@@ -10,7 +10,6 @@ import { curveLinear } from '@visx/curve';
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, HeadingMark, SparkLineChartHeading } from './styles';
-
 import { TChartThresholdDatapoint } from '../types';
 import { TSparkLineChartProps } from './types';
 

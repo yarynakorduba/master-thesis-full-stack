@@ -22,6 +22,10 @@ import { FIELD_LABEL_PROPS } from '../../../consts';
 import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
 import { formatFormFields } from '../../../utils/formatters';
 import { getLinearValueScale } from '../../../utils/lineChart';
+import ARIMAModelText from '../InfoOverlayTexts/ArimaModelText';
+import HorizonText from '../InfoOverlayTexts/HorizonText';
+import LagOrderPText from '../InfoOverlayTexts/LagOrderPText';
+import MovingAverageQText from '../InfoOverlayTexts/MovingAverageQText';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -30,12 +34,7 @@ type TProps = {
   readonly index?: number;
 };
 
-const ARIMAPrediction = ({
-  isVisible,
-  arimaResult,
-  isLoading,
-  index,
-}: TProps) => {
+const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
   const handlePredict = useFetchARIMAPrediction();
 
   const formMethods = useFormContext();
@@ -66,7 +65,7 @@ const ARIMAPrediction = ({
     <AnalysisSection>
       <AnalysisSection.Header>
         <InfoOverlay id="arima-prediction-model" label="ARIMA prediction">
-          <InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+          <InfoOverlay.Popover>{<ARIMAModelText />}</InfoOverlay.Popover>
         </InfoOverlay>
       </AnalysisSection.Header>
       <Grid item md={6}>
@@ -77,15 +76,8 @@ const ARIMAPrediction = ({
           sx={{ mb: 1, maxWidth: 400 }}
         >
           <Grid item md={6}>
-            <InfoOverlay
-              id="periods-in-season"
-              label="Horizon"
-              {...FIELD_LABEL_PROPS}
-            >
-              <InfoOverlay.Popover>
-                Horizon indicates the number of points you would like to
-                predict.
-              </InfoOverlay.Popover>
+            <InfoOverlay id="horizon" label="Horizon" {...FIELD_LABEL_PROPS}>
+              <InfoOverlay.Popover>{<HorizonText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -102,26 +94,7 @@ const ARIMAPrediction = ({
               label="Min lag order (min p)"
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>
-                p variable denotes the order of an autoregressive component
-                (AR).
-                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
-                In an autoregression model AR(p), we forecast the variable of
-                interest using a linear combination of past values of the
-                variable. The term autoregression indicates that it is a
-                regression of the variable against itself. In the model,
-                parameter p is the number of past values (lag order) of a time
-                series to consider for predicting the next value.
-                {/* https://otexts.com/fpp2/AR.html */}
-                {/* Lag order (or P variable), helps you control how much the model
-                relies on past values to predict the current one. It&apos;s like
-                adjusting how far back you want to look to make a good guess
-                about today&apos;s weather.
-                <br />
-                <br />
-                Setting min lag order helps to avoid considering overly simple
-                models that might not predict future values well. */}
-              </InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<LagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -137,26 +110,7 @@ const ARIMAPrediction = ({
               label={'Max lag order (max p)'}
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>
-                p variable denotes the order of an autoregressive component
-                (AR).
-                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
-                In an autoregression model AR(p), we forecast the variable of
-                interest using a linear combination of past values of the
-                variable. The term autoregression indicates that it is a
-                regression of the variable against itself. In the model,
-                parameter p is the number of past values (lag order) of a time
-                series to consider for predicting the next value.
-                {/* https://otexts.com/fpp2/AR.html */}
-                {/* Lag order (or P variable), helps you control how much the model
-                relies on past values to predict the current one. It&apos;s like
-                adjusting how far back you want to look to make a good guess
-                about today&apos;s weather.
-                <br />
-                <br />
-                Setting max P helps to prevent the algorithm from considering
-                excessively complex models */}
-              </InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<LagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -173,12 +127,7 @@ const ARIMAPrediction = ({
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                {/* Q variable indicates how much the current observation is
-                influenced by prediction errors made by the model for previous
-                values. */}
-                q variable denotes the order of a moving average component of
-                ARIMA model.
-                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
+                <MovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
@@ -196,9 +145,7 @@ const ARIMAPrediction = ({
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                q variable denotes the order of a moving average component of
-                ARIMA model.
-                {/* https://file.notion.so/f/f/52f58fea-32ae-49e5-b758-e4e8d18d69ab/f680e1f3-6c4e-4844-9791-01f3d1da2476/ARIMA.pdf?id=f23bdd9d-9aab-4555-bfb2-15a9e6a8f253&table=block&spaceId=52f58fea-32ae-49e5-b758-e4e8d18d69ab&expirationTimestamp=1719705600000&signature=y_zY-hQsv1-X_MrVMJ69A1y0-OkPJS8UWDOSsY5l8uw&downloadName=ARIMA.pdf */}
+                <MovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
