@@ -64,7 +64,11 @@ const ARIMAPrediction = ({
   if (!isVisible) return null;
   return (
     <AnalysisSection>
-      <AnalysisSection.Header>ARIMA prediction</AnalysisSection.Header>
+      <AnalysisSection.Header>
+        <InfoOverlay id="arima-prediction-model" label="ARIMA prediction">
+          <InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+        </InfoOverlay>
+      </AnalysisSection.Header>
       <Grid item md={6}>
         <Grid
           container

@@ -137,6 +137,7 @@ class VARPrediction:
                 "realPrediction": json.loads(real_json_result),\
                 "evaluation": evaluation,
                 "testPredictionParameters": { "order": optimal_order },
+                "realPredictionParameters": { "order": optimal_order },
                 "predictionMode": 'VAR',
                 "trainExtent": { "from": df_input.index[0], "to":  df_input.index[train_data_size-1] },
             }

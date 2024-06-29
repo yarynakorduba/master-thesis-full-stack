@@ -35,7 +35,7 @@ const getUniqueFlatValues = (prop, data): number[] =>
  */
 
 const SparkLineChart = ({
-  width = 900,
+  width = 400,
   height = 200,
   strokeWidth = 1,
   heading = '',

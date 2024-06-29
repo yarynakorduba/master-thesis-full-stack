@@ -9,7 +9,7 @@ import { useFormContext } from 'react-hook-form';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
-import SparkLineChart from '../../../sharedComponents/charts/LineChart/SparkLineChart';
+import { SparkLineChart } from '../../../sharedComponents/charts/LineChart';
 import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
 

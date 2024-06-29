@@ -29,6 +29,8 @@ import { CheckboxLabel } from './styles';
 import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
 import { formatFormFields } from '../../../utils/formatters';
 import { getLinearValueScale } from '../../../utils/lineChart';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import { FIELD_LABEL_PROPS } from '../../../consts';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -64,7 +66,11 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   if (!isVisible) return null;
   return (
     <AnalysisSection>
-      <AnalysisSection.Header>VAR prediction</AnalysisSection.Header>
+      <AnalysisSection.Header>
+        <InfoOverlay id="var-prediction-model" label="VAR prediction">
+          <InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+        </InfoOverlay>
+      </AnalysisSection.Header>
       <Grid item md={6}>
         <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
           <Grid item md={12}>

@@ -24,15 +24,25 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           <InfoOverlay id="Order" label="Order:">
             <InfoOverlay.Popover>
-              The optimal ARIMA(p, d, q) parameters which the model selected
-              considering the provided min / max form values. To identify the
-              optimal parameters, the model uses Akaike Information Criterion
-              (AIC).
+              Order is the optimal ARIMA(p, d, q) parameters which the model
+              selected considering the provided min / max form values. To
+              identify the optimal parameters, the model uses Akaike Information
+              Criterion (AIC).
             </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.order)},{' '}
           <InfoOverlay id="Seasonal Order" label="Seasonal order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+            <InfoOverlay.Popover>
+              Seasonal order is the optimal ARIMA(P, D, Q)s seasonal parameters
+              which the model selected considering the provided min / max form
+              values. Here, P, D, and Q are seasonal components and s is the
+              number of periods per season.
+              {/* http://repository.cinec.edu/bitstream/cinec20/1228/1/2008_Book_TimeSeriesAnalysis.pdf, p.234 */}
+              The seasonal components of the model are similar to the
+              non-seasonal components, but involve backshifts of the seasonal
+              period s.
+              {/* https://otexts.com/fpp2/seasonal-arima.html */}
+            </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.seasonal_order)}
         </Typography>
@@ -69,8 +79,8 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               label="Real data prediction params"
             >
               <InfoOverlay.Popover>
-                Real data prediction parameters are the optimal parameters
-                selected by the model to predict the data.
+                Real data prediction params are the optimal parameters selected
+                by the model to predict the data.
               </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>

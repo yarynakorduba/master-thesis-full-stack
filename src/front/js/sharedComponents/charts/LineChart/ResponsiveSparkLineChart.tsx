@@ -1,5 +1,5 @@
 import { ParentSize } from '@visx/responsive';
-import { isNil } from 'lodash';
+import { isNil, noop } from 'lodash';
 import React, { useCallback } from 'react';
 import { TSparkLineChartProps } from './types';
 import SparkLineChart from './SparkLineChart';
@@ -7,9 +7,9 @@ import SparkLineChart from './SparkLineChart';
 export default function ResponsiveLineChart({
   width = 900,
   height = 200,
-  onClick,
+  onClick = noop,
   ...props
-}: TSparkLineChartProps & { readonly onClick: () => void }) {
+}: TSparkLineChartProps & { readonly onClick?: () => void }) {
   const renderResponsiveChart = useCallback(
     (parent) => {
       const responsiveWidth = !isNil(width)
