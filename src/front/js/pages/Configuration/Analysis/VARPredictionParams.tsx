@@ -43,8 +43,8 @@ const VARPredictionParams = ({ varResult }: TProps) => {
         >
           <InfoOverlay.Popover>
             {arePredictionParamsSimilar
-              ? 'Prediction parameters are the optimal parameters selected by the model to predict the given data.'
-              : 'Test prediction parameters are the optimal parameters selected by  the model to predict the test data.'}
+              ? 'The optimal parameters selected by the model to predict the given data.'
+              : 'The optimal parameters selected by  the model to predict the test data.'}
           </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
@@ -57,8 +57,8 @@ const VARPredictionParams = ({ varResult }: TProps) => {
               label="Real data prediction params"
             >
               <InfoOverlay.Popover>
-                Real data prediction params are the optimal parameters selected
-                by the model to predict the data.
+                The optimal parameters selected by the model to predict the
+                data.
               </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>

@@ -11,7 +11,5 @@ export const OverlayTrigger = styled(Typography)`
   text-underline-offset: 0.25em;
 
   display: inline-block;
-  &:hover {
-    background: ${({ theme }) => theme.palette.grey[100]};
-  }
+  ${({ theme }) => `&:hover { background: ${theme.palette.grey[100]}; }`}
 `;
