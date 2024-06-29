@@ -41,11 +41,11 @@ export const constructLineChartPredictionRegionsData = (
     return [];
   }
   const testPredValues = map(
-    keys(values(predictionData?.testPrediction)[0]),
+    keys(values(predictionData?.testPrediction)?.[0]),
     (k) => +k,
   );
   const realPredValues = map(
-    keys(values(predictionData?.realPrediction)[0]),
+    keys(values(predictionData?.realPrediction)?.[0]),
     (k) => +k,
   );
   const testExtent = getExtent(testPredValues);
@@ -79,64 +79,18 @@ export const constructLineChartPredictionRegionsData = (
   return regions;
 };
 
-export const getCompleteLineChartData = (
-  id: string, // should be unique
-  palette: Palette,
-  timeseriesData: TTimeseriesData,
-  predictionData?: TPredictionResult,
-  analyzedProp?: TDataProperty,
-  timeProp?: TDataProperty,
-) => {
-  if (!analyzedProp || !timeProp || !timeseriesData) {
-    return { lineData: [], thresholdData: [] };
-  }
-  const mappedARIMAPrediction = convertPredictionData(
-    predictionData,
-    analyzedProp?.value,
-  );
-
-  const mainChartData = constructLineChartDataFromTs(
-    `sparkline-main-data`,
-    analyzedProp?.value,
-    timeProp?.value,
-    timeseriesData,
-    palette.charts.chartRealData,
-    analyzedProp?.label,
-  );
-
-  const testPredictedData = constructLineChartDataFromTs(
-    `sparkline-pred-test-${PREDICTION_VALUE_PROP}`,
-    PREDICTION_VALUE_PROP,
-    PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPrediction?.testPrediction,
-    palette.charts.chartTestPrediction,
-    `test prediction (${predictionData?.predictionMode || ''})`,
-  );
-
-  const realPredictedData = constructLineChartDataFromTs(
-    `sparkline-pred-real-${PREDICTION_VALUE_PROP}`,
-    PREDICTION_VALUE_PROP,
-    PREDICTION_TIMESTAMP_PROP,
-    mappedARIMAPrediction?.realPrediction,
-    palette.charts.chartRealPrediction,
-    `prediction (${predictionData?.predictionMode || ''})`,
-  );
-
-  const testPredictedDataCounterpart =
-    predictionData &&
-    analyzedProp &&
-    timeProp &&
-    intersectionWith(
-      timeseriesData,
-      mappedARIMAPrediction?.testPrediction || [],
-      (a, b) => a[timeProp?.value] === b?.[PREDICTION_TIMESTAMP_PROP],
-    );
-
+export const constructLineChartThresholdData = (
+  id: string,
+  testPredictedDataCounterpart,
+  predictionData: TPredictionResult | undefined,
+  analyzedProp: TDataProperty,
+  timeProp: TDataProperty,
+): Array<TThresholdData> => {
   const thresholdFillStyle = {
     fill: theme.palette.charts.chartOverlayThreshold,
     fillOpacity: 0.4,
   };
-  const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart
+  return testPredictedDataCounterpart
     ? [
         {
           id: `${id}-${analyzedProp?.value}-${analyzedProp.label}`,
@@ -158,6 +112,55 @@ export const getCompleteLineChartData = (
         },
       ]
     : [];
+};
+
+export const getCompleteLineChartData = (
+  id: string, // should be unique
+  palette: Palette,
+  timeseriesData: TTimeseriesData,
+  predictionData?: TPredictionResult,
+  analyzedProp?: TDataProperty,
+  timeProp?: TDataProperty,
+) => {
+  if (!analyzedProp || !timeProp || !timeseriesData) {
+    return { lineData: [], thresholdData: [] };
+  }
+  const mappedPrediction = convertPredictionData(
+    predictionData,
+    analyzedProp?.value,
+  );
+
+  const mainChartData = constructLineChartDataFromTs(
+    `sparkline-main-data`,
+    analyzedProp?.value,
+    timeProp?.value,
+    timeseriesData,
+    palette.charts.chartRealData,
+    analyzedProp?.label,
+  );
+
+  const testPredictedData = constructLineChartDataFromTs(
+    `sparkline-pred-test-${PREDICTION_VALUE_PROP}`,
+    PREDICTION_VALUE_PROP,
+    PREDICTION_TIMESTAMP_PROP,
+    mappedPrediction?.testPrediction,
+    palette.charts.chartTestPrediction,
+    `test prediction (${predictionData?.predictionMode || ''})`,
+  );
+
+  const realPredictedData = constructLineChartDataFromTs(
+    `sparkline-pred-real-${PREDICTION_VALUE_PROP}`,
+    PREDICTION_VALUE_PROP,
+    PREDICTION_TIMESTAMP_PROP,
+    mappedPrediction?.realPrediction,
+    palette.charts.chartRealPrediction,
+    `prediction (${predictionData?.predictionMode || ''})`,
+  );
+
+  const lineData = filter(
+    [mainChartData, testPredictedData, realPredictedData],
+    (d) => !isEmpty(d?.datapoints),
+  ) as TLineChartSerie[];
 
   const dataRegions = constructLineChartPredictionRegionsData(
     palette,
@@ -166,12 +169,23 @@ export const getCompleteLineChartData = (
     analyzedProp,
   );
 
-  return {
-    lineData: filter(
-      [mainChartData, testPredictedData, realPredictedData],
-      (d) => !isEmpty(d?.datapoints),
-    ) as TLineChartSerie[],
-    thresholdData,
-    dataRegions,
-  };
+  const testPredictedDataCounterpart =
+    mappedPrediction &&
+    analyzedProp &&
+    timeProp &&
+    intersectionWith(
+      timeseriesData,
+      mappedPrediction?.testPrediction || [],
+      (a, b) => a[timeProp?.value] === b?.[PREDICTION_TIMESTAMP_PROP],
+    );
+
+  const thresholdData = constructLineChartThresholdData(
+    id,
+    testPredictedDataCounterpart,
+    predictionData,
+    analyzedProp,
+    timeProp,
+  );
+
+  return { lineData, thresholdData, dataRegions };
 };
