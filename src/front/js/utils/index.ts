@@ -1,6 +1,4 @@
 import { find, get, isEmpty, max, maxBy, min, minBy } from 'lodash';
-import { scaleLinear } from '@visx/scale';
-import * as d3Scale from 'd3-scale';
 
 import {
   THistoryEntry,

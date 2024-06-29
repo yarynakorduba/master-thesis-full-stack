@@ -9,13 +9,20 @@ import { TPadding } from 'front/js/types/styles';
 import { ChartVariant } from '../ChartOverlays/hooks';
 import { TThresholdData, TFormatXScale, TFormatYScale } from '../types';
 
+export type TLineChartDataRegion = {
+  readonly from: number; // unix ms timestamp
+  readonly to: number; // unix ms timestamp
+  readonly label: string;
+  readonly fill: string;
+};
+
 export type TLineChartProps = {
   readonly width?: number;
   readonly height?: number;
   readonly heading?: string;
   readonly variant?: ChartVariant;
   readonly data: TLineChartData;
-  readonly dataRegions?: any[];
+  readonly dataRegions?: TLineChartDataRegion[];
   readonly thresholdData?: Array<TThresholdData>;
   readonly selectedAreaBounds?: TValueBounds;
   readonly dataLabels?: TDataLabel[];

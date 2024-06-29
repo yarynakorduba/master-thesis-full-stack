@@ -46,7 +46,6 @@ import {
   CHART_LEFT_PADDING,
   CHART_RIGHT_PADDING,
   CHART_Y_PADDING,
-  REGION_HEIGHT,
 } from './consts';
 import { TLineChartProps } from './types';
 import LineChartDataRegions from './LineChartDataRegions';
@@ -63,7 +62,7 @@ const LineChart = ({
   heading,
   variant = ChartVariant.vertical,
   data,
-  dataRegions,
+  dataRegions = [],
   dataLabels,
   formatXScale,
   formatYScale,
@@ -383,12 +382,14 @@ const LineChart = ({
       </Stack>
       <ChartWrapper>
         <svg width={width} height={svgHeight} ref={containerRef}>
-          <LineChartDataRegions
-            xScale={xScale}
-            dataRegions={dataRegions}
-            paddingLeft={padding.left}
-            maxX={width - padding.right - padding.left}
-          />
+          {!isEmpty(dataRegions) && (
+            <LineChartDataRegions
+              xScale={xScale}
+              dataRegions={dataRegions}
+              paddingLeft={padding.left}
+              maxX={width - padding.right - padding.left}
+            />
+          )}
           <Group
             left={padding.left}
             top={chartLinesOffset.top}

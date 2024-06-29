@@ -24,13 +24,22 @@ import { Palette } from '@mui/material';
 import { TThresholdData } from '../types';
 import { TPredictionResult } from 'front/js/pages/Configuration/Analysis/types';
 import { getExtent } from '../../../utils';
+import { TLineChartDataRegion } from '../LineChart/types';
 
 export const constructLineChartPredictionRegionsData = (
   palette: Palette,
-  mainChartData,
-  predictionData,
-) => {
-  if (!predictionData || !mainChartData) return [];
+  mainChartData: TLineChartSerie | undefined,
+  predictionData: TPredictionResult | undefined,
+  analyzedProp: TDataProperty,
+): TLineChartDataRegion[] => {
+  if (
+    !predictionData ||
+    !mainChartData ||
+    !analyzedProp ||
+    !predictionData.realPrediction[analyzedProp.value]
+  ) {
+    return [];
+  }
   const testPredValues = map(
     keys(values(predictionData?.testPrediction)[0]),
     (k) => +k,
@@ -42,17 +51,14 @@ export const constructLineChartPredictionRegionsData = (
   const testExtent = getExtent(testPredValues);
   const realExtent = getExtent(realPredValues);
 
-  console.log(predictionData);
-
-  const regions: any = [];
+  const regions: TLineChartDataRegion[] = [];
   if (predictionData?.trainExtent?.from && predictionData?.trainExtent?.to) {
     regions.push({
       from: new Date(predictionData?.trainExtent?.from).getTime(),
       to: new Date(predictionData?.trainExtent?.to).getTime(),
       label: 'Train',
       fill: palette.charts.chartRealData,
-      color: 'white',
-    } as any);
+    });
   }
   if (!isEmpty(testExtent)) {
     regions.push({
@@ -60,7 +66,6 @@ export const constructLineChartPredictionRegionsData = (
       to: testExtent[1],
       label: 'Test',
       fill: palette.charts.chartTestPrediction,
-      color: 'white',
     });
   }
   if (!isEmpty(realExtent)) {
@@ -69,7 +74,6 @@ export const constructLineChartPredictionRegionsData = (
       to: realExtent[1],
       label: 'Prediction',
       fill: palette.charts.chartRealPrediction,
-      color: 'white',
     });
   }
   return regions;
@@ -159,6 +163,7 @@ export const getCompleteLineChartData = (
     palette,
     mainChartData,
     predictionData,
+    analyzedProp,
   );
 
   return {

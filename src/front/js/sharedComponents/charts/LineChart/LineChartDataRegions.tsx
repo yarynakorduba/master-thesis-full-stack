@@ -3,13 +3,21 @@ import React from 'react';
 import { REGION_FONT_SIZE, REGION_HEIGHT } from './consts';
 import { filter, flow, map, max, min } from 'lodash';
 import { alpha } from '@mui/material';
+import { TLinScale, TLineChartDataRegion } from './types';
+
+type TProps = {
+  readonly paddingLeft?: number;
+  readonly dataRegions: TLineChartDataRegion[];
+  readonly xScale: TLinScale;
+  readonly maxX: number;
+};
 
 const LineChartDataRegions = ({
   paddingLeft = 0,
   dataRegions,
   xScale,
   maxX,
-}: any) => {
+}: TProps) => {
   const regionPositions = flow(
     (r) =>
       map(r, (region) => ({
@@ -19,7 +27,7 @@ const LineChartDataRegions = ({
       })),
     (r) => filter(r, ({ from, to }) => from < to),
   )(dataRegions);
-  console.log('--- >>>', regionPositions, maxX);
+
   return (
     <Group left={paddingLeft} top={0}>
       {map(regionPositions, (region) => {
@@ -31,7 +39,7 @@ const LineChartDataRegions = ({
               y={0}
               width={width}
               height={REGION_HEIGHT}
-              fill={alpha((region as any).fill, 0.25)}
+              fill={alpha(region.fill, 0.25)}
             />
             {region.label.length * 6 < width && (
               <text

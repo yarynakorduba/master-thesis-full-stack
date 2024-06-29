@@ -1,12 +1,10 @@
 import { AlertColor } from '@mui/material';
 import {
   EPredictionMode,
-  TARIMAResult,
   TARIMAUserParams,
   TCausalityResult,
   THistoryEntry,
   TPredictionResult,
-  TVARResult,
   TVARUserParams,
   TValueBounds,
 } from '../pages/Configuration/Analysis/types';

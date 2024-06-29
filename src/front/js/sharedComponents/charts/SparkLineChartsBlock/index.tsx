@@ -138,7 +138,6 @@ const SparkLineChartsBlock = ({
           isResponsive
           heading={selectedProp?.label}
           data={mainChartData.lineData}
-          // dataLabels={dataLabels}
           dataRegions={mainChartData.dataRegions}
           thresholdData={mainChartData.thresholdData}
           numXAxisTicks={6}
