@@ -112,8 +112,6 @@ class VARPrediction:
             optimal_order = train_fit_model.k_ar
             print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
             df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order)
-            print("DF FORECAST FUTURE DATA")
-            print(df_forecast_future_data)
             predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
 
             print(f"Evaluate:   {df_forecast_test_data.columns[0]} {df_test[df_forecast_test_data.columns[0]].to_numpy()} {predicted_values}")

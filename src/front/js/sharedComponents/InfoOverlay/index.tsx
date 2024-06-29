@@ -8,15 +8,16 @@ type TInfoOverlayProps = {
   readonly children: ReactNode | ReactNode[];
   readonly id: string;
   readonly label: string | ReactNode;
-  sx?;
-  component?;
+  readonly sx?;
+  readonly component?;
+  readonly overlayStyles?;
 };
 
 type TInfoOverlayPopoverProps = {
   readonly children: ReactNode | ReactNode[];
 };
 const InfoOverlayPopover = ({ children }: TInfoOverlayPopoverProps) => {
-  return <Typography sx={{ p: 2, maxWidth: 500 }}>{children}</Typography>;
+  return <Typography sx={{ p: 2 }}>{children}</Typography>;
 };
 
 const InfoOverlay = ({
@@ -25,6 +26,7 @@ const InfoOverlay = ({
   variant,
   label,
   sx = {},
+  overlayStyles = { maxWidth: '500px' },
 }: TInfoOverlayProps) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
@@ -54,7 +56,8 @@ const InfoOverlay = ({
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ whiteSpace: 'pre-wrap' }}
+        sx={{ whiteSpace: 'pre-wrap', width: 'auto', maxWidth: 'auto' }}
+        slotProps={{ paper: { sx: overlayStyles } }}
       >
         {children}
       </Popover>

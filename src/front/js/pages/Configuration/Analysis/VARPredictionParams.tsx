@@ -19,8 +19,10 @@ const VARPredictionParams = ({ varResult }: TProps) => {
     return (
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-          <InfoOverlay id="Order" label="Order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          <InfoOverlay id="Order" label="Lag order:">
+            <InfoOverlay.Popover>
+              Optimal lag order selected by the model based on the input data.
+            </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {params.order}
         </Typography>
