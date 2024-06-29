@@ -16,8 +16,7 @@ const LagOrderPText = () => {
   relies on past values to predict the current one. It&apos;s like
   adjusting how far back you want to look to make a good guess
   about today&apos;s weather.
-  <br />
-  <br />
+
   Setting min lag order helps to avoid considering overly simple
   models that might not predict future values well. */}
     </>

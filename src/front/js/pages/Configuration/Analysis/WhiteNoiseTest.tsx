@@ -108,7 +108,6 @@ export default WhiteNoiseTest;
           variables have the same variance (sigma^2) and each value has a zero
           correlation with all other values in the series.
         </Typography>
-        <br />
         <SparkLineChart
           heading={'Example white noise time series'}
           data={[whiteNoiseDemoDatapoints]}

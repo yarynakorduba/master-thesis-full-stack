@@ -15,11 +15,14 @@ const ARIMAModelText = () => {
         down into 3 components:
       </Typography>
       <List sx={{ width: '100%', maxWidth: 'lg' }}>
-        <ListItem disableGutters>
+        <ListItem disableGutters disablePadding>
           <ListItemText>
-            AutoRegressive (AR): This component represents the current value of
-            the process as a finite, linear aggregate of a certain number of
-            previous values of the process plus a random shock.
+            <Typography component="strong" fontWeight={600}>
+              AutoRegressive (AR):
+            </Typography>{' '}
+            This component represents the current value of the process as a
+            finite, linear aggregate of a certain number of previous values of
+            the process plus a random shock.
             {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf, p.8 */}
             {/* relationship between an observation and a certain number
           of lagged observations (i.e., its own past values). It
@@ -29,18 +32,24 @@ const ARIMAModelText = () => {
         </ListItem>
         <ListItem disableGutters>
           <ListItemText>
-            Integrated (I): This component enables the model to handle both
-            stationary and nonstationary processes. It applies differencing d
-            times to a time series data to make it stationary. Usually, 𝑑 is 0,
-            1, or at most 2, with 𝑑 = 0 corresponding to stationary behavior.
+            <Typography component="strong" fontWeight={600}>
+              Integrated (I):
+            </Typography>
+            This component enables the model to handle both stationary and
+            nonstationary processes. It applies differencing d times to a time
+            series data to make it stationary. Usually, 𝑑 is 0, 1, or at most 2,
+            with 𝑑 = 0 corresponding to stationary behavior.
             {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
           </ListItemText>
         </ListItem>
         <ListItem disableGutters>
           <ListItemText>
-            Moving Average (MA): This component expresses the current deviation
-            of the process as a finite weighted sum of a certain number of
-            previous deviations of the process plus a random shock.
+            <Typography component="strong" fontWeight={600}>
+              Moving Average (MA):
+            </Typography>
+            This component expresses the current deviation of the process as a
+            finite weighted sum of a certain number of previous deviations of
+            the process plus a random shock.
             {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf, p.9 */}
             {/* This component models the
           relationship between an observation and a residual error

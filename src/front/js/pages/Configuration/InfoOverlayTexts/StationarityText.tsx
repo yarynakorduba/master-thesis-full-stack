@@ -11,7 +11,6 @@ const StationarityText = () => {
         specifically maintaining a fixed constant mean and a constant variance.
         {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
       </Typography>
-      <br />
       <Typography>
         Note: if the data is not stationary, the prediction tasks will try to
         convert it to stationary under the hood. For this, the program will

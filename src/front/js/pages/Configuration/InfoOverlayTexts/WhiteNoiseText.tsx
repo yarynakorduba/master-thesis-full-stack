@@ -26,11 +26,9 @@ const WhiteNoiseText = () => {
         In other words, white noise immediately forgets its past.
         {/* https://web.vu.lt/mif/a.buteikis/wp-content/uploads/2018/02/Lecture_02.pdf */}
       </Typography>
-      <br />
       <Typography>
         If a time series is white noise, it cannot be predicted.
       </Typography>
-      <br />
       <SparkLineChart
         heading={'Example white noise time series'}
         data={[whiteNoiseDemoDatapoints]}

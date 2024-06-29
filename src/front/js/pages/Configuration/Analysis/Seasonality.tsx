@@ -72,11 +72,11 @@ const Seasonality = ({ index }) => {
             {...FIELD_LABEL_PROPS}
           >
             <InfoOverlay.Popover>
-              Please specify the number of periods in a season. For instance, if
-              your dataset consists of daily data logs that repeat weekly, the
-              number of periods in a season is 7 days. If the dataset contains
-              hourly data with a daily repeating pattern, the number of periods
-              is 24 hours.
+              Periods stand for the length of a season. For instance, if a
+              dataset consists of daily data logs that repeat weekly, the number
+              of periods in a season is 7 days. If a dataset contains hourly
+              data with a daily repeating pattern, the number of periods is 24
+              hours.
             </InfoOverlay.Popover>
           </InfoOverlay>
           <TextField
