@@ -1,8 +1,72 @@
 import React from 'react';
 import Link from '@mui/material/Link';
-import { Stack, Typography } from '@mui/material';
+import { List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
+import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 
 const VARModelText = () => {
+  const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
+
+  if (isSimplifiedTextShown) {
+    return (
+      <Stack gap={1}>
+        <Typography>
+          The VAR(p) (Vector AutoRegression) model is a model, designed for
+          predicting multiple time series at once. It considers that each
+          variable in the series affects and is affected by the others. Key
+          points:
+          <List sx={{ width: '100%', maxWidth: 'lg' }}>
+            <ListItem disableGutters disablePadding>
+              <ListItemText>
+                <strong>Multivariate Time Series.</strong> Unlike AR, which
+                predicts a single time series, VAR predicts multiple time series
+                simultaneously.
+                {'\n'}
+                <em>Example:</em> Imagine we would like to predict both
+                temperature and humidity, considering how they influence each
+                other.
+              </ListItemText>
+            </ListItem>
+            <ListItem disableGutters disablePadding>
+              <ListItemText>
+                <strong>Lagged Observations (p).</strong> The parameter 𝑝 p
+                indicates how many past observations of each variable are used
+                to predict the current value.
+                {'\n'}
+                <em>Example:</em> If 𝑝 = 2, we use the values from these last
+                two time points to predict the next one.
+              </ListItemText>
+            </ListItem>
+          </List>
+        </Typography>
+        <Typography>
+          <em>More real world examples where VAR model could be beneficial:</em>
+          <List>
+            <ListItem disableGutters disablePadding>
+              <ListItemText>
+                Economics: To predict inflation and unemployment rates evolve
+                together.
+                {'\n'}
+              </ListItemText>
+            </ListItem>
+            <ListItem disableGutters disablePadding>
+              <ListItemText>
+                Disease Incidence and Vaccination Rates: To predict how the
+                incidence of a disease and the rate of vaccinations change
+                together.
+                {'\n'}
+              </ListItemText>
+            </ListItem>
+          </List>
+        </Typography>
+        <Typography>
+          If the time series is not a changing process with unstable mean and
+          variance (nonstationary data), the app will try to convert it to a
+          stable (stationary) process under the hood, and only then use VAR
+          model to predict the future values.
+        </Typography>
+      </Stack>
+    );
+  }
   return (
     <Stack gap={1}>
       <Typography>
@@ -18,7 +82,7 @@ const VARModelText = () => {
         </Typography>
       </Typography>{' '}
       <Typography>
-        The parameter 𝑝 p indicates the number of lagged observations of each
+        The parameter 𝑝 indicates the number of lagged observations of each
         variable which influence the current observation.
       </Typography>
       <Typography>

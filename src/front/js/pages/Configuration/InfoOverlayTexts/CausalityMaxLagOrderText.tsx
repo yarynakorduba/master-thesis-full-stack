@@ -1,7 +1,14 @@
-import { Typography } from '@mui/material';
 import React from 'react';
+import { Typography } from '@mui/material';
+import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 
 const CausalityMaxLagOrderText = () => {
+  const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
+
+  if (isSimplifiedTextShown) {
+    return null;
+  }
+
   return (
     <>
       <Typography>

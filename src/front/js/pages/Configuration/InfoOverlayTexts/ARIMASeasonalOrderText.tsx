@@ -1,6 +1,13 @@
+import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 import React from 'react';
 
 const ARIMASeasonalOrderText = () => {
+  const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
+
+  if (isSimplifiedTextShown) {
+    return null;
+  }
+
   return (
     <>
       Seasonal order is the optimal ARIMA(P, D, Q)s seasonal parameters which

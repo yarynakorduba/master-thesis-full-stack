@@ -63,6 +63,11 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     () =>
       (predictionResult as THistoryEntry)?.inputData || {
         [EAnalysisFormFields.causalityMaxLagOrder]: 1,
+        [EAnalysisFormFields.horizon]: 20,
+        [EAnalysisFormFields.minP]: 0,
+        [EAnalysisFormFields.maxP]: 1,
+        [EAnalysisFormFields.minQ]: 0,
+        [EAnalysisFormFields.maxQ]: 1,
       },
     [predictionResult],
   );

@@ -6,6 +6,7 @@ import { createConfigurationsSlice } from './configurations/configurationsSlice'
 import { createNotificationsSlice } from './notifications/notificationsSlice';
 
 import { TStoreType } from './types';
+import { createSettingsSlice } from './settings/settingsSlice';
 
 export const useBoundStore = create<TStoreType>()(
   devtools(
@@ -14,6 +15,7 @@ export const useBoundStore = create<TStoreType>()(
         ...createConfigurationSlice(...a),
         ...createConfigurationsSlice(...a),
         ...createNotificationsSlice(...a),
+        ...createSettingsSlice(...a),
       })),
     ),
   ),

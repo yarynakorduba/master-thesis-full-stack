@@ -40,7 +40,7 @@ type TProps = {
   readonly isLoading: boolean;
   readonly index?: number;
 };
-const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
+const VARPrediction = ({ isVisible, varResult, isLoading }: TProps) => {
   const handlePredict = useFetchVARPrediction();
 
   const formMethods = useFormContext();
@@ -92,14 +92,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
             </FormGroup>
           </Grid>
           <Grid item md={6}>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-              component="label"
-              htmlFor="name"
-            >
-              Max lag order
-            </Typography>
+            <Typography {...FIELD_LABEL_PROPS}>Max lag order</Typography>
             <TextField
               size="small"
               type="number"

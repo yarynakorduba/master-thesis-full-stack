@@ -24,8 +24,10 @@ import { formatFormFields } from '../../../utils/formatters';
 import { getLinearValueScale } from '../../../utils/lineChart';
 import ARIMAModelText from '../InfoOverlayTexts/ArimaModelText';
 import HorizonText from '../InfoOverlayTexts/HorizonText';
-import LagOrderPText from '../InfoOverlayTexts/LagOrderPText';
-import MovingAverageQText from '../InfoOverlayTexts/MovingAverageQText';
+import MaxLagOrderPText from '../InfoOverlayTexts/MaxLagOrderPText';
+import MinLagOrderPText from '../InfoOverlayTexts/MinLagOrderPText';
+import MaxMovingAverageQText from '../InfoOverlayTexts/MaxMovingAverageQText';
+import MinMovingAverageQText from '../InfoOverlayTexts/MinMovingAverageQText';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -94,7 +96,7 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
               label="Min lag order (min p)"
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>{<LagOrderPText />}</InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<MinLagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -110,7 +112,7 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
               label={'Max lag order (max p)'}
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>{<LagOrderPText />}</InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<MaxLagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -127,7 +129,7 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                <MovingAverageQText />
+                <MinMovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
@@ -145,7 +147,7 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
               {...FIELD_LABEL_PROPS}
             >
               <InfoOverlay.Popover>
-                <MovingAverageQText />
+                <MaxMovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField

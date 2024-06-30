@@ -138,7 +138,7 @@ const CausalityTest = ({
               </Typography>
               <NetworkChart
                 width={500}
-                height={100 * graphData.nodes.length}
+                height={50 * graphData.nodes.length}
                 nodes={graphData.nodes}
                 edges={graphData.edges}
               />

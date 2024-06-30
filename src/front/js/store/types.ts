@@ -109,6 +109,11 @@ export type TNotificationsSlice = {
   readonly openErrorNotification: (id: string, message: string) => void;
 };
 
+export type TSettingsSlice = {
+  readonly areSimplifiedUIDescriptionsShown: boolean;
+  readonly setAreSimplifiedDescriptionsShown: (areSimplified: boolean) => void;
+};
+
 export type TStoreMiddlewares = [
   ['zustand/devtools', never],
   ['zustand/immer', never],
@@ -117,4 +122,5 @@ export type TStoreMiddlewares = [
 
 export type TStoreType = TConfigurationSlice &
   TConfigurationsSlice &
-  TNotificationsSlice;
+  TNotificationsSlice &
+  TSettingsSlice;
