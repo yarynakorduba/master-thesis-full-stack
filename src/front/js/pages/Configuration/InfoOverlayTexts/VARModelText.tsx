@@ -1,9 +1,18 @@
 import React from 'react';
 import Link from '@mui/material/Link';
-import { List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
+import OpenAIDisclaimer from './OpenAIDisclaimer';
+import Cite from './Cite';
 
-const VARModelText = () => {
+const VARModelText = ({ showDetails = true, startIndexNumber = 1 }) => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
 
   if (isSimplifiedTextShown) {
@@ -28,7 +37,7 @@ const VARModelText = () => {
             </ListItem>
             <ListItem disableGutters disablePadding>
               <ListItemText>
-                <strong>Lagged Observations (p).</strong> The parameter 𝑝 p
+                <strong>Lagged Observations (p).</strong> The parameter 𝑝{' '}
                 indicates how many past observations of each variable are used
                 to predict the current value.
                 {'\n'}
@@ -64,6 +73,7 @@ const VARModelText = () => {
           stable (stationary) process under the hood, and only then use VAR
           model to predict the future values.
         </Typography>
+        {showDetails && <OpenAIDisclaimer />}
       </Stack>
     );
   }
@@ -89,7 +99,7 @@ const VARModelText = () => {
         If the series are stationary, we forecast them by fitting a VAR to the
         data right away. If the time series are non-stationary, we take
         differences of the data in order to make them stationary, and then
-        proceed with fit a VAR model.
+        proceed with fit a VAR model <Cite index={startIndexNumber} />.
         {/* https://otexts.com/fpp2/VAR.html#fn25 */}
         {/* a statistical model used to
   analyze the dynamic relationships among multiple time series
@@ -99,6 +109,15 @@ const VARModelText = () => {
   values of all the other variables in the system. */}
         {/* VAR is bidirectional. */}
       </Typography>
+      {showDetails && (
+        <>
+          <Divider />
+          <Cite.Source index={startIndexNumber}>
+            Hyndman, R. J., & Athanasopoulos, G. (2018). Forecasting: principles
+            and practice (2nd ed). OTexts.
+          </Cite.Source>
+        </>
+      )}
     </Stack>
   );
 };

@@ -95,34 +95,3 @@ const WhiteNoiseTest = ({
 };
 
 export default WhiteNoiseTest;
-
-{
-  /* <StepButton>
-  <Box sx={{ fontSize: 16 }}>
-    Is the data{' '}
-    <InfoOverlay id="whiteNoise" label="white noise">
-      <InfoOverlay.Popover>
-        <Typography>
-          A time series is white noise if the variables are independent and
-          identically distributed with a mean of zero. This means that all
-          variables have the same variance (sigma^2) and each value has a zero
-          correlation with all other values in the series.
-        </Typography>
-        <SparkLineChart
-          heading={'Example white noise time series'}
-          data={[whiteNoiseDemoDatapoints]}
-          formatXScale={identity}
-          height={200}
-          padding={{ top: 8, bottom: 24, left: 20, right: 10 }}
-        />
-        <Typography>
-          To test whether the data is white noise, we run Ljung-Box test of
-          autocorrelation in residuals. If a time series is white noise, it is a
-          sequence of random numbers and cannot be predicted.
-        </Typography>
-      </InfoOverlay.Popover>
-    </InfoOverlay>
-    ?
-  </Box>
-</StepButton>; */
-}

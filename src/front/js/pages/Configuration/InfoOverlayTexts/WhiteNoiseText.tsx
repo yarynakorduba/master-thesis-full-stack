@@ -1,11 +1,13 @@
 import React from 'react';
-import { List, ListItem, ListItemText, useTheme } from '@mui/material';
+import { Divider, List, ListItem, ListItemText, useTheme } from '@mui/material';
 import { Typography } from '@mui/material';
 import { identity } from 'lodash';
 
 import { SparkLineChart } from '../../../sharedComponents/charts/LineChart';
 import whiteNoiseData from '../../../../../api/data/gaussianDataset.json';
 import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
+import OpenAIDisclaimer from './OpenAIDisclaimer';
+import Cite from './Cite';
 
 const WhiteNoiseText = () => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
@@ -81,6 +83,7 @@ const WhiteNoiseText = () => {
           To check if your data is white noise, we use a statistical test called
           the Ljung-Box test.
         </Typography>
+        <OpenAIDisclaimer />
       </>
     );
   }
@@ -90,9 +93,10 @@ const WhiteNoiseText = () => {
       <Typography>
         White noise is the most fundamental example of stationary process. It
         consists of independent and identically distributed random variables,
-        which have zero mean and constant variance.
+        which have zero mean and constant variance <Cite index={1} />.
         {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
-        In other words, white noise immediately forgets its past.
+        In other words, white noise immediately forgets its past{' '}
+        <Cite index={2} />.
         {/* https://web.vu.lt/mif/a.buteikis/wp-content/uploads/2018/02/Lecture_02.pdf */}
       </Typography>
       <Typography fontWeight={600}>
@@ -109,6 +113,14 @@ const WhiteNoiseText = () => {
         To test whether the data is white noise, we run Ljung-Box test of
         autocorrelation in residuals.
       </Typography>
+      <Divider />
+      <Cite.Source index={1}>
+        Box, G. E., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M. (2015). Time
+        series analysis: forecasting and control. John Wiley & Sons.
+      </Cite.Source>
+      <Cite.Source index={2}>
+        Buteikis, A. (2018). 02 Stationary time series.
+      </Cite.Source>
     </>
   );
 };

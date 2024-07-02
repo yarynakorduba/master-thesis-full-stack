@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 import React from 'react';
+import OpenAIDisclaimer from './OpenAIDisclaimer';
 
 const ARIMAOrderText = () => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
@@ -20,6 +21,7 @@ const ARIMAOrderText = () => {
           Information Criterion AIC to help find the best settings. The lower
           the AIC score, the better the model.
         </Typography>
+        <OpenAIDisclaimer />
       </>
     );
   }

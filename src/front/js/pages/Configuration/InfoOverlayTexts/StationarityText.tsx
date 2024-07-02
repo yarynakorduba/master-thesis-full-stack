@@ -1,6 +1,14 @@
 import React from 'react';
-import { List, ListItem, ListItemText, Typography } from '@mui/material';
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
 import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
+import OpenAIDisclaimer from './OpenAIDisclaimer';
+import Cite from './Cite';
 
 const StationarityText = () => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
@@ -36,6 +44,7 @@ const StationarityText = () => {
             </ListItem>
           </List>
         </Typography>
+        <OpenAIDisclaimer />
       </>
     );
   }
@@ -45,7 +54,8 @@ const StationarityText = () => {
         Stationary time series are the time series described by a model which
         assumes that the process remains in statistical equilibrium. The
         probabilistic properties of such a process do not change over time,
-        specifically maintaining a fixed constant mean and a constant variance.
+        specifically maintaining a fixed constant mean and a constant variance{' '}
+        <Cite index={1} />.
         {/* http://repo.darmajaya.ac.id/4781/1/Time%20Series%20Analysis_%20Forecasting%20and%20Control%20%28%20PDFDrive%20%29.pdf */}
       </Typography>
       <Typography>
@@ -54,6 +64,11 @@ const StationarityText = () => {
         apply differencing, run the tests and models on the differenced data,
         and inverse difference the prediction back to get the meaningful result.
       </Typography>
+      <Divider />
+      <Cite.Source index={1}>
+        Box, G. E., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M. (2015). Time
+        series analysis: forecasting and control. John Wiley & Sons.
+      </Cite.Source>
     </>
   );
 };

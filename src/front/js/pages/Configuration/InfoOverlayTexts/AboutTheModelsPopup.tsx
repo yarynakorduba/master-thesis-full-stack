@@ -3,8 +3,13 @@ import React from 'react';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAModelText from './ArimaModelText';
 import VARModelText from './VARModelText';
+import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
+import OpenAIDisclaimer from './OpenAIDisclaimer';
+import Cite from './Cite';
 
 const AboutTheModelsPopup = () => {
+  const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
+
   return (
     <InfoOverlay
       id="more-about-the-models"
@@ -20,7 +25,7 @@ const AboutTheModelsPopup = () => {
           more beneficial since it considers these relationships for prediction.
         </Typography>
         <Stack direction="row" width="auto" columnGap={1}>
-          <ARIMAModelText />
+          <ARIMAModelText showDetails={false} />
           <Divider
             sx={{ margin: 1 }}
             orientation="vertical"
@@ -28,8 +33,23 @@ const AboutTheModelsPopup = () => {
             component="div"
             flexItem
           />
-          <VARModelText />
+          <VARModelText showDetails={false} startIndexNumber={2} />
         </Stack>
+        {isSimplifiedTextShown ? (
+          <OpenAIDisclaimer />
+        ) : (
+          <>
+            <Divider />
+            <Cite.Source index={1}>
+              Box, G. E., Jenkins, G. M., Reinsel, G. C., & Ljung, G. M. (2015).
+              Time series analysis: forecasting and control. John Wiley & Sons.
+            </Cite.Source>
+            <Cite.Source index={2}>
+              Hyndman, R. J., & Athanasopoulos, G. (2018). Forecasting:
+              principles and practice. OTexts.
+            </Cite.Source>
+          </>
+        )}
       </InfoOverlay.Popover>
     </InfoOverlay>
   );
