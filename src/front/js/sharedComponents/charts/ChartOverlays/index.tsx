@@ -98,10 +98,7 @@ function ChartOverlays(
   const handleMouseLeave = useCallback(
     (pointGroup?: TClosestChartPointGroup) => (event) => {
       if (!pointGroup) {
-        setPointerCoords({
-          x: undefined,
-          y: undefined,
-        });
+        setPointerCoords({ x: undefined, y: undefined });
       }
       setMouseEvent(event);
       onMouseLeave(event, pointGroup);
@@ -173,8 +170,6 @@ function ChartOverlays(
 
   return (
     <Group
-      width={width}
-      height={height}
       top={offsetTop}
       left={offsetLeft}
       onMouseMove={handleHover()}
@@ -192,16 +187,12 @@ function ChartOverlays(
             from={{ x: pointerCoords?.x, y: 0 }}
             to={{ x: pointerCoords?.x, y: height }}
             stroke={palette.secondary.dark}
-            strokeWidth={1}
-            pointerEvents="none"
             strokeDasharray="3,6"
           />
           <Line
             from={{ x: 0, y: pointerCoords?.y }}
             to={{ x: width, y: pointerCoords?.y }}
             stroke={palette.secondary.dark}
-            strokeWidth={1}
-            pointerEvents="none"
             strokeDasharray="3,6"
           />
         </Group>
