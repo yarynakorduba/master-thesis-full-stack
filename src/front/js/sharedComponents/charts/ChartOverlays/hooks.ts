@@ -1,5 +1,5 @@
 import { localPoint } from '@visx/event';
-import { isNil } from 'lodash';
+import { filter, isNil, minBy, pickBy, values } from 'lodash';
 import { useState, useCallback, useEffect } from 'react';
 import { TClosestChartPointGroups, TLinScale } from '../LineChart/types';
 import { TLineChartSerie } from 'front/js/types';
@@ -47,6 +47,7 @@ export function useClosestPoints(
       data,
       x,
       y,
+      valueX,
     ): TClosestChartPointGroups => {
       const pointGroupId = `${x}-${y}`;
       const pointGroup = accum[pointGroupId] ?? { x, y };
@@ -56,6 +57,7 @@ export function useClosestPoints(
         ...accum,
         [pointGroupId]: {
           ...pointGroup,
+          valueX,
           points: [...points, point],
         },
       };
@@ -73,13 +75,13 @@ export function useClosestPoints(
 
     const { x } = localPoint(event) || { x: 0, y: 0 };
     const [pointerXValue] = getClosestCoordinate(xScale, x - xPadding);
-    // Find all the corresponding linear coord based on band coord
-    const findClosest = (prev, curr) =>
-      !prev ||
-      Math.abs(curr.valueX - pointerXValue) <
-        Math.abs(prev.valueX - pointerXValue)
+    const findClosest = (prev, curr) => {
+      return !prev ||
+        Math.abs(curr.valueX - pointerXValue) <
+          Math.abs(prev.valueX - pointerXValue)
         ? curr
         : prev;
+    };
 
     const points = series.reduce(
       (
@@ -94,12 +96,25 @@ export function useClosestPoints(
         const yCoordinate = yScale(yVal);
         const xCoordinate = xScale(xVal);
         if (isNil(yCoordinate)) return accum;
-        return addPoint(accum, color, data, xCoordinate, yCoordinate);
+        return addPoint(accum, color, data, xCoordinate, yCoordinate, xVal);
       },
       {},
     );
 
-    setClosestPoints(points);
+    const minPointByDistance = minBy(values(points), (pointGroup) => {
+      return Math.abs(pointerXValue - pointGroup?.valueX);
+    });
+
+    const filteredPoints = minPointByDistance
+      ? pickBy(points, (pointGroup) => {
+          return (
+            Math.abs(pointerXValue - minPointByDistance?.valueX) ===
+            Math.abs(pointerXValue - pointGroup?.valueX)
+          );
+        })
+      : points;
+
+    setClosestPoints(filteredPoints);
   }, [addPoint, event, series, xPadding, xScale, yScale]);
 
   useEffect(() => {

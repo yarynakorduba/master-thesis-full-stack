@@ -28,14 +28,10 @@ class ARIMAPrediction:
         print(f"HORIZON: {horizon}")
         is_seasonal = params.get("isSeasonal", False)
 
-        min_p = params.get("minP", None)
         max_p = params.get("maxP", None)
-        min_q = params.get("minQ", None)
         max_q = params.get("maxQ", None)
         # 1 is default value
         periods_in_season = params.get("periodsInSeason", 1)
-
-        print("I am here")
 
         if len(data) < horizon:
             raise APIException('Prediction horizon cannot be higher than the length of the analyzed data')
@@ -58,7 +54,8 @@ class ARIMAPrediction:
             if (train.size == 0 or test.size == 0):
                 raise APIException('Too little data to predict')
             # Seasonal - fit stepwise auto-ARIMA
-            smodel = pm.auto_arima(train, start_p=min_p, start_q=min_q,
+            smodel = pm.auto_arima(
+                train,
                 test='kpss',
                 # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
                 max_p=max_p, # lag order - the number of lag observations to include

@@ -37,7 +37,7 @@ export const Navbar = () => {
           variant="h6"
           sx={{ marginRight: 2, height: 34, alignSelf: 'center' }}
         >
-          Time Insights
+          PredictPal
         </Typography>
         {isConfigPage && (
           <>

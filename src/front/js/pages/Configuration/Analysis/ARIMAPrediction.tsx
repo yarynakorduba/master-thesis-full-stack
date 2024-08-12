@@ -25,9 +25,10 @@ import { getLinearValueScale } from '../../../utils/lineChart';
 import ARIMAModelText from '../InfoOverlayTexts/ArimaModelText';
 import HorizonText from '../InfoOverlayTexts/HorizonText';
 import MaxLagOrderPText from '../InfoOverlayTexts/MaxLagOrderPText';
-import MinLagOrderPText from '../InfoOverlayTexts/MinLagOrderPText';
 import MaxMovingAverageQText from '../InfoOverlayTexts/MaxMovingAverageQText';
-import MinMovingAverageQText from '../InfoOverlayTexts/MinMovingAverageQText';
+
+// Note: min p and q parameters were removed since they appeared to not be used in pmdarima implementation.
+// Refer to this github issue: https://github.com/alkaline-ml/pmdarima/issues/386
 
 type TProps = {
   readonly isVisible: boolean;
@@ -90,22 +91,6 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
             />
           </Grid>
           <Grid item md={6} />
-          <Grid item md={6}>
-            <InfoOverlay
-              id="min-lag-order"
-              label="Min lag order (min p)"
-              {...FIELD_LABEL_PROPS}
-            >
-              <InfoOverlay.Popover>{<MinLagOrderPText />}</InfoOverlay.Popover>
-            </InfoOverlay>
-            <TextField
-              size="small"
-              type="number"
-              sx={{ width: '100%' }}
-              {...register(EAnalysisFormFields.minP)}
-              // required
-            />
-          </Grid>
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="max-lag-order"
@@ -119,24 +104,6 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
               type="number"
               sx={{ width: '100%' }}
               {...register(EAnalysisFormFields.maxP)}
-              // required
-            />
-          </Grid>
-          <Grid item md={6}>
-            <InfoOverlay
-              id="min-q"
-              label="Min moving avg. order (min q)"
-              {...FIELD_LABEL_PROPS}
-            >
-              <InfoOverlay.Popover>
-                <MinMovingAverageQText />
-              </InfoOverlay.Popover>
-            </InfoOverlay>
-            <TextField
-              size="small"
-              type="number"
-              sx={{ width: '100%' }}
-              {...register(EAnalysisFormFields.minQ)}
               // required
             />
           </Grid>
