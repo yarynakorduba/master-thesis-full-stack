@@ -39,7 +39,11 @@ const HistoryCard = ({
       isSelected={isSelected}
       variant={isSelected ? 'outlined' : 'elevation'}
     >
-      <CardActionArea onClick={() => onClick(historyEntry)}>
+      <CardActionArea
+        onClick={(ev) => {
+          onClick(historyEntry);
+        }}
+      >
         <CardContent>
           <CardHeader>
             <Grid container gap={0.5} direction="column">

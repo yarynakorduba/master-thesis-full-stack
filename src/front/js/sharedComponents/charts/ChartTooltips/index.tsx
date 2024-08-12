@@ -24,7 +24,9 @@ const pointTooltipStyles = {
 
 export const xAxisTooltipStyles = {
   ...sharedStyles,
-  maxWidth: '7rem',
+  maxWidth: '12rem',
+  width: 'fit-content',
+  whiteSpace: 'nowrap',
   textAlign: 'center',
   color: 'white',
   transform: 'translate(calc(-50% - 0.6rem), -0.5rem)',
@@ -55,16 +57,16 @@ type TProps = {
   readonly xTooltip?: TAxisTooltip;
   readonly yTooltip?: TAxisTooltip;
   readonly dataLabelTooltips: TAxisTooltip[];
-  readonly formatXScale: TFormatXScale;
-  readonly formatYScale: TFormatYScale;
+  readonly formatPointTooltipXScale: TFormatXScale;
+  readonly formatPointTooltipYScale: TFormatYScale;
 };
 
 export default function ChartTooltips({
   pointTooltip,
   xTooltip,
   yTooltip,
-  formatXScale,
-  formatYScale,
+  formatPointTooltipXScale,
+  formatPointTooltipYScale,
   dataLabelTooltips,
 }: TProps) {
   const { palette } = useTheme();
@@ -92,7 +94,6 @@ export default function ChartTooltips({
             background: palette.secondary.main,
             top: 0,
             transform: 'translate(calc(-50% - 0.6rem), -50%)',
-            whiteSpace: 'nowrap',
           }}
         />
       ))}
@@ -100,8 +101,8 @@ export default function ChartTooltips({
         <PointTooltip
           tooltip={pointTooltip}
           styles={pointTooltipStyles}
-          formatXScale={formatXScale}
-          formatYScale={formatYScale}
+          formatXScale={formatPointTooltipXScale}
+          formatYScale={formatPointTooltipYScale}
         />
       )}
     </>

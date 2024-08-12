@@ -22,9 +22,9 @@ CORS(api, origins=['http://localhost:3000'], \
 @api.route('/white-noise', methods=['POST'])
 def test_white_noise():
     request_body = request.get_json()
-    data = request_body["data"]
-    data_keys = request_body["data_keys"]
-    max_lag_order = request_body["max_lag_order"]
+    data = request_body.get("data", None)
+    data_keys = request_body.get("data_keys", None)
+    max_lag_order = request_body.get("max_lag_order", None)
     periods = request_body.get("periods", None)
 
     print(f"Max Lag Order: {max_lag_order}")
@@ -36,7 +36,7 @@ def test_white_noise():
 @api.route('/stationarity-test', methods=['POST'])
 def test_stationarity():
     request_body = request.get_json()
-    data_serie = request_body["data"]
+    data_serie = request_body.get("data", None)
     result = StatisticalTests().test_stationarity_kpss_adf(data_serie)
 
     return json.dumps(result), 200
@@ -44,9 +44,9 @@ def test_stationarity():
 @api.route('/granger-causality-test', methods=['POST'])
 def test_granger_causality():
     request_body = request.get_json()
-    data = request_body["data"]
-    data_keys = request_body["data_keys"]
-    max_lag_order = request_body["max_lag_order"]
+    data = request_body.get("data", None)
+    data_keys = request_body.get("data_keys", None)
+    max_lag_order = request_body.get("max_lag_order", None)
     
     result = StatisticalTests().multitest_granger_causality(data, data_keys, max_lag_order)
     return result, 200
@@ -55,10 +55,10 @@ def test_granger_causality():
 @api.route('/var-prediction', methods=['POST'])
 def test_var():
     request_body = request.get_json()
-    data_serie = request_body["data"]
+    data_serie = request_body.get("data", None)
     lag_order = request_body["parameters"]["lagOrder"]
     horizon = request_body["parameters"]["horizon"]
-    data_keys = request_body["data_keys"]
+    data_keys = request_body.get("data_keys", [])
 
     result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon)
     return result, 200
@@ -121,9 +121,15 @@ def delete_configuration():
 
 @api.route('/prediction_history', methods=['POST'])
 def add_entry_to_prediction_history():
-    request_body = request.get_json()
-    result = PredictionHistoryList().add_entry_to_prediction_history(request_body)
-    return json.dumps(result), 200
+    try:
+        request_body = request.get_json()
+        result = PredictionHistoryList().add_entry_to_prediction_history(request_body)
+        return json.dumps(result), 200
+    
+    except APIException as e:
+        raise e
+    except Exception as e:
+        raise APIException('Failed to add prediction to history')
 
 @api.route('/prediction_history', methods=['GET'])
 def get_prediction_history_for_config():

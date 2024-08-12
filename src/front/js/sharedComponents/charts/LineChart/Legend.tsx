@@ -5,20 +5,13 @@ import { useTheme, styled } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import Typography from '@mui/material/Typography';
-import { isNil, maxBy, minBy } from 'lodash';
+import { isNil } from 'lodash';
 import Box from '@mui/material/Box';
-import { TLineChartData, TLineChartDatapoint } from '../../types';
-import { getHiddenLineColor } from './LineChart/utils';
-import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './LineChart/consts';
-import { formatNumber } from '../../utils/formatters';
-import { Stack } from '@mui/material';
-
-const StyledContainer = styled('div')`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 100%;
-`;
+import { Stack, Tooltip } from '@mui/material';
+import { TLineChartData, TLineChartDatapoint } from '../../../types';
+import { getHiddenLineColor, getMaxValue, getMinValue } from './utils';
+import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './consts';
+import { formatNumber } from '../../../utils/formatters';
 
 const StyledMarker = styled('svg')`
   margin: 0 5px;
@@ -50,8 +43,18 @@ const LegendMarker = ({
   );
 };
 
-const getMaxValue = (data) => maxBy<TLineChartDatapoint>(data, 'valueY');
-const getMinValue = (data) => minBy<TLineChartDatapoint>(data, 'valueY');
+const LegendItemName = ({ label, color }: any) => {
+  return (
+    <Typography
+      noWrap
+      variant="body1"
+      color={color}
+      sx={{ fontSize: 14, display: 'block' }}
+    >
+      {label}
+    </Typography>
+  );
+};
 
 type TCustomLegendProps = {
   readonly data: TLineChartData;
@@ -117,6 +120,22 @@ export const CustomLegend = ({
             const shape = legendScale(datum);
             const isValidElement = React.isValidElement(shape);
             const isHidden = datum?.color === hiddenColor;
+
+            const tooltipTitle = (
+              <Box display="block">
+                <LegendItemName label={datum?.label} />
+                <Typography variant="body2" component="span">
+                  {formatNumber(datum?.dataLength)} entries, min:{' '}
+                  {!isNil(datum?.min?.valueY)
+                    ? formatNumber(datum?.min?.valueY)
+                    : 'N/A'}
+                  , max:{' '}
+                  {!isNil(datum?.max?.valueY)
+                    ? formatNumber(legendItem?.datum?.max?.valueY)
+                    : 'N/A'}
+                </Typography>
+              </Box>
+            );
             return (
               <LegendItem
                 onClick={() => handleHide(datum?.id)}
@@ -130,45 +149,25 @@ export const CustomLegend = ({
                 }}
                 key={datum?.label}
               >
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  maxWidth={'100%'}
-                  width="fit-content"
-                >
-                  {isValidElement && React.cloneElement(shape as ReactElement)}
-                  <Typography
-                    noWrap
-                    variant="body1"
-                    component="span"
-                    color={
-                      isHidden ? palette.text.disabled : palette.text.primary
-                    }
-                    sx={{ fontSize: 14, display: 'inline' }}
+                <Tooltip title={tooltipTitle} key={datum?.id}>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1}
+                    maxWidth={'100%'}
+                    width="fit-content"
                   >
-                    {datum?.label}
-                  </Typography>
-                  {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                </Box>
-                <Typography
-                  variant="body2"
-                  component="span"
-                  color={
-                    isHidden ? palette.text.disabled : palette.text.primary
-                  }
-                  sx={{ fontSize: 12, display: 'inline' }}
-                >
-                  ({formatNumber(datum?.dataLength)} entries, min:{' '}
-                  {!isNil(datum?.min?.valueY)
-                    ? formatNumber(datum?.min?.valueY)
-                    : 'N/A'}
-                  , max:{' '}
-                  {!isNil(datum?.max?.valueY)
-                    ? formatNumber(legendItem?.datum?.max?.valueY)
-                    : 'N/A'}
-                  )
-                </Typography>
+                    {isValidElement &&
+                      React.cloneElement(shape as ReactElement)}
+                    <LegendItemName
+                      color={
+                        isHidden ? palette.text.disabled : palette.text.primary
+                      }
+                      label={datum?.label}
+                    />
+                    {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                  </Box>
+                </Tooltip>
               </LegendItem>
             );
           })}

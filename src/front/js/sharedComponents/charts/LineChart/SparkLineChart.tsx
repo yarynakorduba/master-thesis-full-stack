@@ -2,23 +2,16 @@ import React, { useCallback, useMemo } from 'react';
 import { AxisLeft } from '@visx/axis';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
-import { ParentSize } from '@visx/responsive';
-import { flatMap, flow, isNil, uniq } from 'lodash';
+import { flatMap, flow, uniq } from 'lodash';
 import { Threshold } from '@visx/threshold';
+import { Skeleton, Stack } from '@mui/material';
+import { curveLinear } from '@visx/curve';
 
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
-import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
+import { AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, HeadingMark, SparkLineChartHeading } from './styles';
-import { TLineChartData } from 'front/js/types';
-import { TPadding } from '../../../types/styles';
-import {
-  TChartThresholdDatapoint,
-  TFormatXScale,
-  TFormatYScale,
-  TThresholdData,
-} from '../types';
-import { Stack } from '@mui/material';
-import { curveNatural } from '@visx/curve';
+import { TChartThresholdDatapoint } from '../types';
+import { TSparkLineChartProps } from './types';
 
 const CHART_LEFT_PADDING = 32;
 const CHART_BOTTOM_PADDING = 24;
@@ -40,24 +33,8 @@ const getUniqueFlatValues = (prop, data): number[] =>
  * The horizontal variant renders horizontal bars with linear x-axis and band y-axis.
  */
 
-type TProps = {
-  readonly data: TLineChartData;
-  readonly thresholdData?: Array<TThresholdData>;
-  readonly heading?: string;
-  readonly headingMark?: string;
-  readonly width?: number;
-  readonly height?: number;
-  readonly formatXScale?: TFormatXScale;
-  readonly formatYScale?: TFormatYScale;
-  readonly padding?: TPadding;
-  readonly variant?: ChartVariant;
-  readonly onClick?: () => void;
-  readonly numTicks?: number;
-  readonly strokeWidth?: number;
-};
-
-const LineChart = ({
-  width = 900,
+const SparkLineChart = ({
+  width = 400,
   height = 200,
   strokeWidth = 1,
   heading = '',
@@ -72,7 +49,7 @@ const LineChart = ({
     left: CHART_LEFT_PADDING,
     right: CHART_RIGHT_PADDING,
   },
-}: TProps) => {
+}: TSparkLineChartProps) => {
   const cleanWidth = useMemo(() => {
     const clean = width - padding.left - padding.right;
     return clean > 0 ? clean : 0;
@@ -111,12 +88,14 @@ const LineChart = ({
           y={getY}
           stroke={lineData?.color}
           strokeWidth={strokeWidth}
-          curve={curveNatural}
+          curve={curveLinear}
         />
       );
     },
     [xScale, yScale, strokeWidth],
   );
+
+  if (heightWithoutHeader <= 0) return <Skeleton height={height} />;
 
   return (
     <>
@@ -162,81 +141,4 @@ const LineChart = ({
   );
 };
 
-export default function ResponsiveLineChart({
-  width = 900,
-  height = 200,
-  strokeWidth = 1,
-  heading = '',
-  headingMark = '',
-  variant = ChartVariant.vertical,
-  data,
-  thresholdData = [],
-  formatYScale,
-  padding = {
-    top: CHART_TOP_PADDING,
-    bottom: CHART_BOTTOM_PADDING,
-    left: CHART_LEFT_PADDING,
-    right: CHART_RIGHT_PADDING,
-  },
-  numTicks = 2,
-  onClick,
-}: TProps) {
-  const renderChart = useCallback(
-    (chartWidth?: number, chartHeight?: number) => (
-      <LineChart
-        width={chartWidth}
-        height={chartHeight}
-        heading={heading}
-        headingMark={headingMark}
-        variant={variant}
-        data={data}
-        thresholdData={thresholdData}
-        formatYScale={formatYScale}
-        padding={padding}
-        onClick={onClick}
-        numTicks={numTicks}
-        strokeWidth={strokeWidth}
-      />
-    ),
-    [
-      heading,
-      headingMark,
-      variant,
-      data,
-      thresholdData,
-      formatYScale,
-      padding,
-      onClick,
-      numTicks,
-      strokeWidth,
-    ],
-  );
-
-  const renderResponsiveChart = useCallback(
-    (parent) => {
-      const responsiveWidth = !isNil(width)
-        ? Math.min(width, parent.width)
-        : undefined;
-      const responsiveHeight = !isNil(height)
-        ? Math.min(height, parent.height)
-        : undefined;
-
-      return renderChart(responsiveWidth, responsiveHeight);
-    },
-    [renderChart, width, height],
-  );
-
-  return (
-    <ParentSize
-      parentSizeStyles={{
-        maxHeight: height,
-        maxWidth: width,
-        width: 'auto',
-        height,
-      }}
-      onClick={onClick}
-    >
-      {renderResponsiveChart}
-    </ParentSize>
-  );
-}
+export default SparkLineChart;

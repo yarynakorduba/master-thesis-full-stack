@@ -8,7 +8,6 @@ import SparkLineChartsBlock from '../../sharedComponents/charts/SparkLineChartsB
 import Analysis from './Analysis';
 import {
   useConfigData,
-  useDisplayedPredictionId,
   useIsHistoryDrawerOpen,
   useIsHistoryPredictionSelected,
   useIsPredictionHistoryLoading,
@@ -36,7 +35,9 @@ const Configuration = () => {
   } = useConfigData();
 
   useEffect(() => {
-    if (!isNil(id)) fetchConfiguration(id);
+    if (!isNil(id)) {
+      fetchConfiguration(id);
+    }
   }, [fetchConfiguration, id]);
 
   useEffect(() => {
@@ -50,20 +51,9 @@ const Configuration = () => {
     useSelectedDataBoundaries();
 
   const [predictionResult, isPredictionLoading] = usePrediction();
-  const [, setDisplayedPredictionId] = useDisplayedPredictionId();
 
   const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
   const isHistoryLoading = useIsPredictionHistoryLoading();
-
-  const dataLabels =
-    (selectedProp?.value &&
-      predictionResult?.lastTrainPoint?.dateTime && [
-        {
-          valueX: new Date(predictionResult.lastTrainPoint.dateTime).getTime(),
-          label: 'Train data threshold',
-        },
-      ]) ||
-    [];
 
   const [isHistoryDrawerOpen, setIsHistoryDrawerOpen] =
     useIsHistoryDrawerOpen();
@@ -81,7 +71,7 @@ const Configuration = () => {
           variant="h1"
           fontWeight={400}
           sx={{
-            fontSize: '2rem',
+            fontSize: '2.5rem',
             mb: 2.5,
             display: 'flex',
             gap: 1,
@@ -90,20 +80,20 @@ const Configuration = () => {
         >
           {configName}
         </Typography>
+
         <PredictionInfoText
-          prediction={
-            isDataIncomplete || isConfigurationLoading
-              ? undefined
-              : predictionResult
-          }
-          isHistoryPredictionSelected={isHistoryPredictionSelected}
-          handleClearPredictionData={() => {
-            setDisplayedPredictionId(undefined);
-            setSelectedDataBoundaries(undefined);
+          sx={{
+            textAlign: 'left',
+            height: 36.5,
+            marginTop: -3,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
           }}
         />
+
         <SparkLineChartsBlock
-          isConfigurationLoading={isConfigurationLoading}
+          isConfigurationLoading={isConfigurationLoading || isHistoryLoading}
           configName={configName}
           valueProperties={valueProperties || []}
           timeProperty={timeProperty}
@@ -113,7 +103,6 @@ const Configuration = () => {
           selectedAreaBounds={selectedDataBoundaries}
           selectedProp={selectedProp}
           setSelectedProp={setSelectedProp}
-          dataLabels={dataLabels}
           defaultIsTrainingDataSelectionOn={
             isHistoryPredictionSelected &&
             !!predictionResult?.selectedDataBoundaries

@@ -53,6 +53,7 @@ const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
             const isPropSelected = sorter.propPath === value;
             return (
               <SorterOption
+                key={value}
                 container
                 isPropSelected={isPropSelected}
                 onClick={() => {

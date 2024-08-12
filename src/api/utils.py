@@ -50,7 +50,7 @@ def stringify_nan(value):
 def forecast_accuracy(forecast, actual):
     mae = np.mean(np.abs(forecast - actual))    # MAE
     rmse = np.mean((forecast - actual)**2)**.5  # RMSE
-
+    print(f"mae: {mae} rmse: {rmse}")
     return({ 'mae': stringify_nan(mae), 'rmse': stringify_nan(rmse) })
 
     

@@ -1,6 +1,4 @@
-import { find, get, isEmpty, maxBy, minBy } from 'lodash';
-import { scaleLinear } from '@visx/scale';
-import * as d3Scale from 'd3-scale';
+import { find, get, isEmpty, max, maxBy, min, minBy } from 'lodash';
 
 import {
   THistoryEntry,
@@ -20,8 +18,8 @@ export const getSelectedDataByBoundaries = (
   data,
   dataFilterProperty?: TDataProperty,
   valueBounds?: TValueBounds,
-) =>
-  dataFilterProperty && valueBounds && !isEmpty(data)
+) => {
+  return dataFilterProperty && valueBounds && !isEmpty(data)
     ? data.filter((s) => {
         return (
           +s[dataFilterProperty.value] >= valueBounds.x0 &&
@@ -29,17 +27,13 @@ export const getSelectedDataByBoundaries = (
         );
       })
     : data || [];
+};
 
-export const getExtent = (dataArray, byProp) => {
+export const getExtent = (dataArray, byProp?: string): [number, number] => {
+  if (!dataArray.length) return [0, 0];
+  if (!byProp) return [min(dataArray)!, max(dataArray)!];
   return [
     get(minBy(dataArray, byProp), byProp, 0),
     get(maxBy(dataArray, byProp), byProp, 0),
   ];
 };
-
-export const getLinearValueScale =
-  (data: object[], range: [number, number] | [string, string]) =>
-  (key: string): d3Scale.ScaleLinear<number | string, number | string> => {
-    const mapeExtent = getExtent(data, key);
-    return scaleLinear<number | string>({ domain: mapeExtent, range });
-  };

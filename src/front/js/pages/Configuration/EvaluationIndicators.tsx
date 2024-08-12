@@ -1,14 +1,15 @@
 import React, { Fragment } from 'react';
 import { Typography, Stack, Chip, Box } from '@mui/material';
-import { map, upperCase, noop } from 'lodash';
+import { map, upperCase, noop, isEmpty } from 'lodash';
 import * as d3Scale from 'd3-scale';
 import { useTheme } from '@mui/material';
 
 import { TPredictionResult } from './Analysis/types';
-import SparkLineChart from '../../sharedComponents/charts/LineChart/SparkLineChart';
+import { SparkLineChart } from '../../sharedComponents/charts/LineChart';
 import { getHistoryLineChartData } from './PredictionHistory/utils';
 import { formatNumber } from '../../utils/formatters';
 import { TTimeseriesData, TDataProperty } from '../../types';
+import InfoOverlay from '../../sharedComponents/InfoOverlay';
 
 type TProps = {
   readonly historyEntry: TPredictionResult;
@@ -19,6 +20,13 @@ type TProps = {
   readonly timeProperty: TDataProperty;
 };
 
+const INDICATOR_TEXTS_MAP = {
+  // https://www.int-res.com/articles/cr2005/30/c030p079.pdf
+  mae: 'MAE stands for Mean Absolute Error. It helps in assessing prediction models perfomance. The higher the values of MAE, the worse the performance is. To calculate MAE, we sum the absolute values of the errors to obtain the total error, and then divide the total error by n the number of values.',
+  // https://www.int-res.com/articles/cr2005/30/c030p079.pdf
+  rmse: 'RMSE stands for Root Mean Squared Error. It helps in assessing prediction models perfomance. The higher the values of MAE, the worse the performance is. To calculate RMSE, we first sum the individual squared errors. Further, we divide the total square error by n and take the square root out of it.',
+};
+
 const EvaluationIndicators = ({
   historyEntry,
   timeseriesData,
@@ -26,7 +34,7 @@ const EvaluationIndicators = ({
   timeProperty,
 }: TProps) => {
   const { palette } = useTheme();
-
+  if (!historyEntry || isEmpty(timeseriesData) || !timeProperty) return null;
   return (
     <>
       <Typography variant="subtitle1" component="div" color="text.secondary">
@@ -63,18 +71,35 @@ const EvaluationIndicators = ({
                 {map(values, (indicatorValue, indicatorKey) => {
                   const keyPath = `evaluation.${analyzedPropKey}.${indicatorKey}`;
                   const background = errorColorScale(keyPath)(indicatorValue);
+                  if (!INDICATOR_TEXTS_MAP[indicatorKey]) {
+                    return (
+                      <Typography noWrap>
+                        {upperCase(indicatorKey)}:{' '}
+                        {formatNumber(indicatorValue)}
+                      </Typography>
+                    );
+                  }
                   return (
-                    <Chip
-                      key={keyPath}
-                      size="small"
-                      sx={{ background }}
+                    <InfoOverlay
                       label={
-                        <Typography noWrap>
-                          {upperCase(indicatorKey)}:{' '}
-                          {formatNumber(indicatorValue)}
-                        </Typography>
+                        <Chip
+                          key={keyPath}
+                          size="small"
+                          sx={{ background }}
+                          label={
+                            <Typography noWrap>
+                              {upperCase(indicatorKey)}:{' '}
+                              {formatNumber(indicatorValue)}
+                            </Typography>
+                          }
+                        />
                       }
-                    />
+                      id={upperCase(indicatorKey)}
+                    >
+                      <InfoOverlay.Popover>
+                        {INDICATOR_TEXTS_MAP[indicatorKey]}
+                      </InfoOverlay.Popover>
+                    </InfoOverlay>
                   );
                 })}
               </Stack>

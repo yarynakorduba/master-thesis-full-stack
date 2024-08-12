@@ -18,16 +18,21 @@ import { ButtonContainer } from '../../../sharedComponents/charts/SparkLineChart
 import Loader from '../../../sharedComponents/Loader';
 import {
   useConfigData,
-  useFetchPrediction,
   useFetchVARPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
 import { EAnalysisFormFields } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
-import { getLinearValueScale } from '../../../utils';
 import VARPredictionParams from './VARPredictionParams';
 import { CheckboxLabel } from './styles';
+import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
+import { formatFormFields } from '../../../utils/formatters';
+import { getLinearValueScale } from '../../../utils/lineChart';
+import InfoOverlay from '../../../sharedComponents/InfoOverlay';
+import { FIELD_LABEL_PROPS } from '../../../consts';
+import VARModelText from '../InfoOverlayTexts/VARModelText';
+import HorizonText from '../InfoOverlayTexts/HorizonText';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -35,7 +40,7 @@ type TProps = {
   readonly isLoading: boolean;
   readonly index?: number;
 };
-const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
+const VARPrediction = ({ isVisible, varResult, isLoading }: TProps) => {
   const handlePredict = useFetchVARPrediction();
 
   const formMethods = useFormContext();
@@ -48,7 +53,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   const handleClick = () => {
     const values = getValues();
     handlePredict(
-      { lagOrder: +values.lagOrder, horizon: +values.horizon },
+      formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any,
       values.varSelectedFields,
     );
   };
@@ -64,7 +69,9 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
   return (
     <AnalysisSection>
       <AnalysisSection.Header>
-        What is the prediction for the future? (VAR)
+        <InfoOverlay id="var-prediction-model" label="VAR prediction">
+          <InfoOverlay.Popover>{<VARModelText />}</InfoOverlay.Popover>
+        </InfoOverlay>
       </AnalysisSection.Header>
       <Grid item md={6}>
         <Grid container columnSpacing={2} sx={{ mb: 1, maxWidth: 400 }}>
@@ -85,14 +92,7 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
             </FormGroup>
           </Grid>
           <Grid item md={6}>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-              component="label"
-              htmlFor="name"
-            >
-              Max lag order
-            </Typography>
+            <Typography {...FIELD_LABEL_PROPS}>Max lag order</Typography>
             <TextField
               size="small"
               type="number"
@@ -102,14 +102,9 @@ const VARPrediction = ({ isVisible, varResult, isLoading, index }: TProps) => {
             />
           </Grid>
           <Grid item md={6}>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontSize: 12 }}
-              component="label"
-              htmlFor="name"
-            >
-              Horizon
-            </Typography>
+            <InfoOverlay id="horizon" label="Horizon" {...FIELD_LABEL_PROPS}>
+              <InfoOverlay.Popover>{<HorizonText />}</InfoOverlay.Popover>
+            </InfoOverlay>
             <TextField
               size="small"
               type="number"

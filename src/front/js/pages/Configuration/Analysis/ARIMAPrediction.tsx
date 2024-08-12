@@ -8,7 +8,6 @@ import { useFormContext } from 'react-hook-form';
 import { isEmpty } from 'lodash';
 
 import Loader from '../../../sharedComponents/Loader';
-import { getLinearValueScale } from '../../../utils';
 import {
   useConfigData,
   useFetchARIMAPrediction,
@@ -20,6 +19,15 @@ import { EAnalysisFormFields, TARIMAResult } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { FIELD_LABEL_PROPS } from '../../../consts';
+import { ANALYSIS_FORM_NUMERIC_FIELDS } from './consts';
+import { formatFormFields } from '../../../utils/formatters';
+import { getLinearValueScale } from '../../../utils/lineChart';
+import ARIMAModelText from '../InfoOverlayTexts/ArimaModelText';
+import HorizonText from '../InfoOverlayTexts/HorizonText';
+import MaxLagOrderPText from '../InfoOverlayTexts/MaxLagOrderPText';
+import MinLagOrderPText from '../InfoOverlayTexts/MinLagOrderPText';
+import MaxMovingAverageQText from '../InfoOverlayTexts/MaxMovingAverageQText';
+import MinMovingAverageQText from '../InfoOverlayTexts/MinMovingAverageQText';
 
 type TProps = {
   readonly isVisible: boolean;
@@ -28,12 +36,7 @@ type TProps = {
   readonly index?: number;
 };
 
-const ARIMAPrediction = ({
-  isVisible,
-  arimaResult,
-  isLoading,
-  index,
-}: TProps) => {
+const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
   const handlePredict = useFetchARIMAPrediction();
 
   const formMethods = useFormContext();
@@ -46,13 +49,8 @@ const ARIMAPrediction = ({
   const handleClick = () => {
     const values = getValues();
     handlePredict({
-      horizon: +values.horizon,
-      isSeasonal: values.isSeasonal,
+      ...(formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any),
       periodsInSeason: values.isSeasonal ? +values.periodsInSeason : undefined,
-      minP: +values.minP,
-      maxP: +values.maxP,
-      minQ: +values.minQ,
-      maxQ: +values.maxQ,
     });
   };
 
@@ -68,7 +66,9 @@ const ARIMAPrediction = ({
   return (
     <AnalysisSection>
       <AnalysisSection.Header>
-        What is the prediction for the future? (ARIMA)
+        <InfoOverlay id="arima-prediction-model" label="ARIMA prediction">
+          <InfoOverlay.Popover>{<ARIMAModelText />}</InfoOverlay.Popover>
+        </InfoOverlay>
       </AnalysisSection.Header>
       <Grid item md={6}>
         <Grid
@@ -78,14 +78,8 @@ const ARIMAPrediction = ({
           sx={{ mb: 1, maxWidth: 400 }}
         >
           <Grid item md={6}>
-            <InfoOverlay
-              id="periods-in-season"
-              label="Horizon"
-              {...FIELD_LABEL_PROPS}
-            >
-              <InfoOverlay.Popover>
-                Horizon indicates the number of points you would like to predict
-              </InfoOverlay.Popover>
+            <InfoOverlay id="horizon" label="Horizon" {...FIELD_LABEL_PROPS}>
+              <InfoOverlay.Popover>{<HorizonText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -99,19 +93,10 @@ const ARIMAPrediction = ({
           <Grid item md={6}>
             <InfoOverlay
               id="min-lag-order"
-              label="Min lag order (P)"
+              label="Min lag order (min p)"
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>
-                Lag order (or P variable), helps you control how much the model
-                relies on past values to predict the current one. It&apos;s like
-                adjusting how far back you want to look to make a good guess
-                about today&apos;s weather.
-                <br />
-                <br />
-                Setting min lag order helps to avoid considering overly simple
-                models that might not predict future values well.
-              </InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<MinLagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -124,19 +109,10 @@ const ARIMAPrediction = ({
           <Grid item md={6} sx={{ mt: 0 }}>
             <InfoOverlay
               id="max-lag-order"
-              label={'Max lag order (P)'}
+              label={'Max lag order (max p)'}
               {...FIELD_LABEL_PROPS}
             >
-              <InfoOverlay.Popover>
-                Lag order (or P variable), helps you control how much the model
-                relies on past values to predict the current one. It&apos;s like
-                adjusting how far back you want to look to make a good guess
-                about today&apos;s weather.
-                <br />
-                <br />
-                Setting max P helps to prevent the algorithm from considering
-                excessively complex models
-              </InfoOverlay.Popover>
+              <InfoOverlay.Popover>{<MaxLagOrderPText />}</InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
               size="small"
@@ -147,11 +123,13 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6}>
-            <InfoOverlay id="min-q" label="Min Q" {...FIELD_LABEL_PROPS}>
+            <InfoOverlay
+              id="min-q"
+              label="Min moving avg. order (min q)"
+              {...FIELD_LABEL_PROPS}
+            >
               <InfoOverlay.Popover>
-                Q variable indicates how much the current observation is
-                influenced by prediction errors made by the model for previous
-                values.
+                <MinMovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField
@@ -163,11 +141,13 @@ const ARIMAPrediction = ({
             />
           </Grid>
           <Grid item md={6}>
-            <InfoOverlay id="max-q" label="Max Q" {...FIELD_LABEL_PROPS}>
+            <InfoOverlay
+              id="max-q"
+              label="Max moving avg. order (max q)"
+              {...FIELD_LABEL_PROPS}
+            >
               <InfoOverlay.Popover>
-                Q variable indicates how much the current observation is
-                influenced by prediction errors made by the model for previous
-                values.
+                <MaxMovingAverageQText />
               </InfoOverlay.Popover>
             </InfoOverlay>
             <TextField

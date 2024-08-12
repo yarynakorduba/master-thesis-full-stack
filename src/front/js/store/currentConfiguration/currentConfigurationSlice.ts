@@ -10,11 +10,12 @@ import actions from './actions';
 export const DEFAULT_HORIZON = 1;
 
 export const DEFAULT_CONFIGURATION_STATE = {
+  data: undefined,
   isConfigurationLoading: false,
-  data: [],
-  timeProperty: undefined,
-  selectedDataBoundaries: undefined,
+  configurationError: undefined,
+
   selectedProp: undefined,
+  selectedDataBoundaries: undefined,
 
   whiteNoiseTest: undefined,
   isWhiteNoiseTestLoading: false,
@@ -29,11 +30,7 @@ export const DEFAULT_CONFIGURATION_STATE = {
 
   isPredictionLoading: false,
   displayedPredictionMode: undefined,
-  draft: {
-    testPrediction: undefined,
-    realPrediction: undefined,
-    horizon: DEFAULT_HORIZON,
-  },
+  currentPrediction: undefined,
 
   isHistoryDrawerOpen: false,
   isPredictionHistoryLoading: false,

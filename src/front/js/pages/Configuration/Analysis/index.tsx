@@ -63,12 +63,15 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     () =>
       (predictionResult as THistoryEntry)?.inputData || {
         [EAnalysisFormFields.causalityMaxLagOrder]: 1,
+        [EAnalysisFormFields.horizon]: 20,
+        [EAnalysisFormFields.minP]: 0,
+        [EAnalysisFormFields.maxP]: 1,
+        [EAnalysisFormFields.minQ]: 0,
+        [EAnalysisFormFields.maxQ]: 1,
       },
     [predictionResult],
   );
-  const formMethods = useForm({
-    defaultValues: { ...defaultInputData },
-  });
+  const formMethods = useForm({ defaultValues: { ...defaultInputData } });
   useEffect(() => {
     formMethods.reset(predictionResult ? { ...defaultInputData } : {});
   }, [defaultInputData, formMethods, predictionResult]);
@@ -123,41 +126,39 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
       ) : (
         <FormProvider {...formMethods}>
           <form onSubmit={noop}>
-            <Grid container>
-              <Card sx={{ p: 4 }} variant="outlined">
-                <Grid container rowGap={2}>
+            <Card sx={{ p: 4 }} variant="outlined">
+              <Grid container rowGap={2}>
+                <Grid item md={12}>
                   <Typography variant="h5">Get to know your data</Typography>
-                  {map(steps, (renderStep, index: number) => (
-                    <>{renderStep!(index + 1)}</>
-                  ))}
-                  <Divider
-                    flexItem
-                    sx={{ width: '100%' }}
-                    component="div"
-                    orientation="horizontal"
-                  />
-                  <PredictionModelSelection
-                    predictionMode={displayedPredictionMode}
-                    setPredictionMode={setDisplayedPredictionMode}
-                  />
-                  {displayedPredictionMode === EPredictionMode.VAR ? (
-                    <VARPrediction
-                      // index={key}
-                      isVisible
-                      varResult={predictionResult as TVARResult}
-                      isLoading={isPredictionLoading}
-                    />
-                  ) : (
-                    <ARIMAPrediction
-                      // index={key}
-                      isVisible
-                      arimaResult={predictionResult as TARIMAResult}
-                      isLoading={isPredictionLoading}
-                    />
-                  )}
                 </Grid>
-              </Card>
-            </Grid>
+                {map(steps, (renderStep, index: number) => (
+                  <>{renderStep!(index + 1)}</>
+                ))}
+                <Divider
+                  flexItem
+                  sx={{ width: '100%' }}
+                  component="div"
+                  orientation="horizontal"
+                />
+                <PredictionModelSelection
+                  predictionMode={displayedPredictionMode}
+                  setPredictionMode={setDisplayedPredictionMode}
+                />
+                {displayedPredictionMode === EPredictionMode.VAR ? (
+                  <VARPrediction
+                    isVisible
+                    varResult={predictionResult as TVARResult}
+                    isLoading={isPredictionLoading}
+                  />
+                ) : (
+                  <ARIMAPrediction
+                    isVisible
+                    arimaResult={predictionResult as TARIMAResult}
+                    isLoading={isPredictionLoading}
+                  />
+                )}
+              </Grid>
+            </Card>
           </form>
         </FormProvider>
       )}

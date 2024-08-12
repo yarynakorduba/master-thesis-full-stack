@@ -3,6 +3,12 @@ import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { THistoryEntry, TVARResult } from './types';
+import {
+  OPTIMAL_PARAMS_TXT,
+  OPTIMAL_REAL_PARAMS_TXT,
+  OPTIMAL_TEST_PARAMS_TXT,
+  VAR_ORDER_PARAM_TXT,
+} from '../InfoOverlayTexts';
 
 type TProps = {
   readonly varResult: TVARResult | THistoryEntry;
@@ -10,7 +16,6 @@ type TProps = {
 const VARPredictionParams = ({ varResult }: TProps) => {
   const testPredictionParams = varResult?.testPredictionParameters;
   const realPredictionParams = varResult?.realPredictionParameters;
-  console.log('====>>> ', varResult);
   const arePredictionParamsSimilar = isEqual(
     testPredictionParams?.order,
     realPredictionParams?.order,
@@ -20,8 +25,8 @@ const VARPredictionParams = ({ varResult }: TProps) => {
     return (
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
-          <InfoOverlay id="Order" label="Order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          <InfoOverlay id="Order" label="Lag order:">
+            <InfoOverlay.Popover>{VAR_ORDER_PARAM_TXT}</InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {params.order}
         </Typography>
@@ -42,7 +47,11 @@ const VARPredictionParams = ({ varResult }: TProps) => {
               : 'Test data prediction params'
           }
         >
-          <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          <InfoOverlay.Popover>
+            {arePredictionParamsSimilar
+              ? OPTIMAL_PARAMS_TXT
+              : OPTIMAL_TEST_PARAMS_TXT}
+          </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
@@ -53,7 +62,9 @@ const VARPredictionParams = ({ varResult }: TProps) => {
               id="prediction-params"
               label="Real data prediction params"
             >
-              <InfoOverlay.Popover>A</InfoOverlay.Popover>
+              <InfoOverlay.Popover>
+                {OPTIMAL_REAL_PARAMS_TXT}
+              </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>
           {renderOrders(realPredictionParams)}

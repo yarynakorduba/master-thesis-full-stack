@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const LineChartContainer = styled(Stack)`

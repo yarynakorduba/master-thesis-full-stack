@@ -9,7 +9,7 @@ export const createConfigurationsSlice: StateCreator<
   TConfigurationsSlice
 > = (set, get) => ({
   configsList: [],
-  isLoading: false,
-  isDeleting: false,
+  areConfigurationsLoading: false,
+  isConfigurationDeleting: false,
   ...actions(set, get),
 });

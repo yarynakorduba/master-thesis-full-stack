@@ -2,22 +2,26 @@ import React, { ReactNode } from 'react';
 import { OverlayTrigger } from './styles';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
+import { Stack } from '@mui/material';
 
 type TInfoOverlayProps = {
   readonly variant?;
   readonly children: ReactNode | ReactNode[];
   readonly id: string;
   readonly label: string | ReactNode;
-  sx?;
-  component?;
+  readonly sx?;
+  readonly component?;
+  readonly overlayStyles?;
 };
 
 type TInfoOverlayPopoverProps = {
   readonly children: ReactNode | ReactNode[];
 };
-const InfoOverlayPopover = ({ children }: TInfoOverlayPopoverProps) => {
-  return <Typography sx={{ p: 2, maxWidth: 500 }}>{children}</Typography>;
-};
+const InfoOverlayPopover = ({ children }: TInfoOverlayPopoverProps) => (
+  <Stack sx={{ p: 2 }} gap={1}>
+    {children}
+  </Stack>
+);
 
 const InfoOverlay = ({
   id,
@@ -25,12 +29,14 @@ const InfoOverlay = ({
   variant,
   label,
   sx = {},
+  overlayStyles = { maxWidth: '500px' },
 }: TInfoOverlayProps) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
@@ -53,7 +59,12 @@ const InfoOverlay = ({
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        sx={{ whiteSpace: 'pre-wrap' }}
+        sx={{
+          whiteSpace: 'pre-wrap',
+          width: 'auto',
+          maxWidth: 'auto',
+        }}
+        slotProps={{ paper: { sx: overlayStyles } }}
       >
         {children}
       </Popover>

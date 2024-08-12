@@ -14,20 +14,6 @@
     "lint:fix": "npx eslint src/front/ --fix",
     "format": "prettier --write ./**/*.{js,jsx,ts,tsx,css,md,json} --config ./.prettierrc"
   },
-  "author": {
-    "name": "Alejandro Sanchez",
-    "url": "http://alesanchezr.com/"
-  },
-  "contributors": [
-    {
-      "name": "Alejandro Sanchez",
-      "url": "http://alesanchezr.com/"
-    },
-    {
-      "name": "Ignacio Cordoba",
-      "url": "http://github.com/nachovz"
-    }
-  ],
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.23.4",

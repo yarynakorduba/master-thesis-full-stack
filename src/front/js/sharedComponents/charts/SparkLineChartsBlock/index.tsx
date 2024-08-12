@@ -1,12 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { map } from 'lodash';
 import { useTheme } from '@mui/material/styles';
 import { Box } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 
 import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
-import LineChart from '../LineChart';
-import SparkLineChart from '../LineChart/SparkLineChart';
+import { LineChart, SparkLineChart } from '../LineChart';
 import { TDataLabel, TTimeseriesData } from '../../../types';
 
 import { TDataProperty } from '../../../types';
@@ -65,7 +64,7 @@ const SparkLineChartsBlock = ({
   timeProperty,
   timeseriesData,
   predictionData,
-  dataLabels = [],
+  // dataLabels = [],
   setSelectedDataBoundaries,
   selectedAreaBounds,
   selectedProp,
@@ -95,53 +94,59 @@ const SparkLineChartsBlock = ({
     setSelectedProp(chartProp);
   };
 
-  const mainChartData = getCompleteLineChartData(
-    'selectedChart',
-    palette,
-    timeseriesData,
-    predictionData,
-    selectedProp!,
-    timeProperty!,
+  const mainChartData = timeseriesData
+    ? getCompleteLineChartData(
+        'selectedChart',
+        palette,
+        timeseriesData,
+        predictionData,
+        selectedProp!,
+        timeProperty!,
+      )
+    : undefined;
+
+  const selectedDataLength = useMemo(
+    () =>
+      (timeProperty &&
+        getSelectedDataByBoundaries(
+          timeseriesData,
+          timeProperty,
+          selectedAreaBounds,
+        )?.length) ||
+      timeseriesData?.length,
+    [selectedAreaBounds, timeProperty, timeseriesData],
   );
 
-  const selectedDataLength =
-    (timeProperty &&
-      getSelectedDataByBoundaries(
-        timeseriesData,
-        timeProperty,
-        selectedAreaBounds,
-      )?.length) ||
-    timeseriesData.length;
-
   if (
-    isConfigurationDataIncomplete(
-      timeseriesData,
-      timeProperty,
-      valueProperties,
-    ) ||
-    !selectedProp ||
     isConfigurationLoading ||
-    !mainChartData
+    !mainChartData?.lineData?.length ||
+    !valueProperties?.length ||
+    isConfigurationDataIncomplete(timeseriesData, timeProperty, valueProperties)
   ) {
     return <EmptySparkLineChartsBlock isLoading={!!isConfigurationLoading} />;
   }
 
   return (
     <LineChartContainer>
-      <Box width="calc(100% - 300px - 16px)" flexGrow={1} minHeight="300px">
+      <Box
+        width="calc(100% - 300px - 16px)"
+        flexGrow={1}
+        minHeight="300px"
+        alignItems="flex-start"
+      >
         <LineChart
+          isResponsive
           heading={selectedProp?.label}
           data={mainChartData.lineData}
+          dataRegions={mainChartData.dataRegions}
           thresholdData={mainChartData.thresholdData}
-          dataLabels={dataLabels}
           numXAxisTicks={6}
           numYAxisTicks={4}
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
           height={300}
-          padding={{ top: 16, bottom: 30, left: 48, right: 16 }}
+          padding={{ top: 8, bottom: 30, left: 48, right: 36 }}
           onSelectArea={onSelectedAreaChange}
-          isResponsive
           selectedAreaBounds={selectedAreaBounds}
           selectedDataLength={selectedDataLength}
           defaultIsTrainingDataSelectionOn={defaultIsTrainingDataSelectionOn}

@@ -102,9 +102,9 @@ class VARPrediction:
             df_input = df_input.drop(columns=[date_key])
             print(df_input)
             # ----
-            cutoff_index = int(df_input.shape[0] * TRAIN_TEST_SPLIT_PROPORTION)
-            df_train = df_input.iloc[:cutoff_index]
-            df_test = df_input.iloc[cutoff_index:]
+            train_data_size = int(df_input.shape[0] * TRAIN_TEST_SPLIT_PROPORTION)
+            df_train = df_input.iloc[:train_data_size]
+            df_test = df_input.iloc[train_data_size:]
             print(f"Train data length: {df_train.shape}, test data length: {df_test.shape}")
 
         
@@ -112,8 +112,6 @@ class VARPrediction:
             optimal_order = train_fit_model.k_ar
             print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
             df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order)
-            print("DF FORECAST FUTURE DATA")
-            print(df_forecast_future_data)
             predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
 
             print(f"Evaluate:   {df_forecast_test_data.columns[0]} {df_test[df_forecast_test_data.columns[0]].to_numpy()} {predicted_values}")
@@ -137,7 +135,9 @@ class VARPrediction:
                 "realPrediction": json.loads(real_json_result),\
                 "evaluation": evaluation,
                 "testPredictionParameters": { "order": optimal_order },
-                "predictionMode": 'VAR'
+                "realPredictionParameters": { "order": optimal_order },
+                "predictionMode": 'VAR',
+                "trainExtent": { "from": df_input.index[0], "to":  df_input.index[train_data_size-1] },
             }
     
         except APIException as e:

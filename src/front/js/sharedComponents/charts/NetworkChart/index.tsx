@@ -128,12 +128,13 @@ const NetworkChart = ({
   );
 };
 
-const ResponsiveNetworkChart = (props) => (
+const ResponsiveNetworkChart = (props: NetworkProps) => (
   <ParentSize
     parentSizeStyles={{
       width: 'auto',
       maxWidth: '100%',
       minHeight: 100,
+      height: props?.height || 'auto',
       margin: 8,
     }}
   >

@@ -1,4 +1,4 @@
-import { flatMap, flow, uniq } from 'lodash';
+import { flatMap, flow, maxBy, minBy, uniq } from 'lodash';
 import { ScaleInput, scaleLinear } from '@visx/scale';
 import { Palette } from '@mui/material/styles';
 import { AxisVariant } from '../ChartOverlays/hooks';
@@ -63,3 +63,6 @@ export const getUniqueFlatChartValues = (prop, data): number[] =>
 
 export const getHiddenLineColor = (palette: Palette): string =>
   palette.grey[300];
+
+export const getMaxValue = (data) => maxBy<TLineChartDatapoint>(data, 'valueY');
+export const getMinValue = (data) => minBy<TLineChartDatapoint>(data, 'valueY');

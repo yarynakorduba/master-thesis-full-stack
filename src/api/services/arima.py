@@ -116,10 +116,7 @@ class ARIMAPrediction:
                 "realPrediction": { value_key: json.loads(json_real_prediction_result) },\
                 "testPredictionParameters": test_prediction_parameters,\
                 "realPredictionParameters": real_prediction_parameters,\
-                "lastTrainPoint": {\
-                    "dateTime": df_input.index[train_data_size-1],\
-                    "value": float(df_input[value_key][train_data_size-1])\
-                },
+                "trainExtent": { "from": df_input.index[0], "to":  df_input.index[train_data_size-1] },
                 "evaluation": { value_key: evaluation },
                 "predictionMode": 'ARIMA'
                 

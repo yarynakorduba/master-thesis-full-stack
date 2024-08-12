@@ -4,6 +4,13 @@ import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { formatOrder } from '../../../utils/formatters';
 import { TARIMAResult } from './types';
+import ARIMAOrderText from '../InfoOverlayTexts/ARIMAOrderText';
+import ARIMASeasonalOrderText from '../InfoOverlayTexts/ARIMASeasonalOrderText';
+import {
+  OPTIMAL_PARAMS_TXT,
+  OPTIMAL_REAL_PARAMS_TXT,
+  OPTIMAL_TEST_PARAMS_TXT,
+} from '../InfoOverlayTexts';
 
 type TProps = {
   readonly arimaResult: TARIMAResult;
@@ -23,11 +30,13 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
       <>
         <Typography sx={{ fontSize: 14 }} color="text.primary" gutterBottom>
           <InfoOverlay id="Order" label="Order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+            <InfoOverlay.Popover>{<ARIMAOrderText />}</InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.order)},{' '}
           <InfoOverlay id="Seasonal Order" label="Seasonal order:">
-            <InfoOverlay.Popover>A</InfoOverlay.Popover>
+            <InfoOverlay.Popover>
+              <ARIMASeasonalOrderText />
+            </InfoOverlay.Popover>
           </InfoOverlay>{' '}
           {formatOrder(params?.seasonal_order)}
         </Typography>
@@ -48,7 +57,11 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               : 'Test data prediction params'
           }
         >
-          <InfoOverlay.Popover>A</InfoOverlay.Popover>
+          <InfoOverlay.Popover>
+            {areARIMAPredictionParamsSimilar
+              ? OPTIMAL_PARAMS_TXT
+              : OPTIMAL_TEST_PARAMS_TXT}
+          </InfoOverlay.Popover>
         </InfoOverlay>
       </Typography>
       {renderOrders(testPredictionParams)}
@@ -59,7 +72,9 @@ const ARIMAPredictionParams = ({ arimaResult }: TProps) => {
               id="prediction-params"
               label="Real data prediction params"
             >
-              <InfoOverlay.Popover>A</InfoOverlay.Popover>
+              <InfoOverlay.Popover>
+                {OPTIMAL_REAL_PARAMS_TXT}
+              </InfoOverlay.Popover>
             </InfoOverlay>
           </Typography>
           {!isEmpty(realPredictionParams)

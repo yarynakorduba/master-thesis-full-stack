@@ -18,9 +18,12 @@ class PredictionHistoryList:
       real_prediction_parameters=data["real_prediction_parameters"],
       test_prediction=data["test_prediction"],
       real_prediction=data["real_prediction"],
-      last_train_point=data["last_train_point"],
+      train_extent=data["train_extent"],
       evaluation=data["evaluation"],
-      input_data=data["input_data"]
+      input_data=data["input_data"],
+      white_noise_test=data.get("white_noise_test", None),
+      stationarity_test=data.get("stationarity_test", None),
+      causality_test=data.get("causality_test", None)
     )
     print("--------------- AAAA!!!!----")
     print(getattr(data, "selected_data_boundaries", None))

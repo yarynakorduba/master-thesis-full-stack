@@ -2,30 +2,30 @@ import React from 'react';
 import { Button, Typography } from '@mui/material';
 import grey from '@mui/material/colors/grey';
 import { formatDateToDateTime } from '../../../utils/formatters';
-import { THistoryEntry } from './types';
+import {
+  useDisplayedPredictionId,
+  useIsHistoryPredictionSelected,
+  usePrediction,
+  useSelectedDataBoundaries,
+} from '../../../store/currentConfiguration/selectors';
 
-type TProps = {
-  readonly prediction?: THistoryEntry;
-  readonly isHistoryPredictionSelected: boolean;
-  readonly handleClearPredictionData: () => void;
-};
+const PredictionInfoText = ({ sx }: { sx?: any }) => {
+  const isHistoryPredictionSelected = useIsHistoryPredictionSelected();
+  const [, setDisplayedPredictionId] = useDisplayedPredictionId();
+  const [prediction] = usePrediction();
 
-const PredictionInfoText = ({
-  prediction,
-  isHistoryPredictionSelected,
-  handleClearPredictionData,
-}: TProps) => {
+  const [selectedDataBoundaries, setSelectedDataBoundaries] =
+    useSelectedDataBoundaries();
+
+  const handleClearPredictionData = () => {
+    setDisplayedPredictionId(undefined);
+    setSelectedDataBoundaries(undefined);
+  };
+
   if (!isHistoryPredictionSelected || !prediction) return null;
   return (
     <Typography
-      sx={{
-        textAlign: 'left',
-        height: 36.5,
-        marginTop: -3,
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-      }}
+      sx={sx}
       fontSize={14}
       variant="subtitle2"
       color={grey[500]}
@@ -36,7 +36,7 @@ const PredictionInfoText = ({
           You are viewing the prediction calculated on{' '}
           {formatDateToDateTime(prediction?.createdAt)}
           <Button onClick={handleClearPredictionData} sx={{ ml: 1 }}>
-            Back to draft state
+            Back to draft
           </Button>
         </>
       )}

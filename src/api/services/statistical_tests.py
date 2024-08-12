@@ -33,7 +33,7 @@ class StatisticalTests():
     def multitest_white_noise(self, data, data_keys, period=None, max_lag_order=None):
         try:
             if period != None and period < 1:
-                raise APIException(str("Periods in season, if present, should be a positive integer"))
+                raise APIException(str("Period, if present, should be a positive integer"))
             elif period == 1:
                 period = None
             results = []

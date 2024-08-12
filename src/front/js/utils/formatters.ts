@@ -1,13 +1,49 @@
 import { format } from 'date-fns';
-import { isArray, isNil, isNumber, round } from 'lodash';
+import { isArray, isNil, isNumber, mapValues, round } from 'lodash';
 import { PRECISION } from '../consts';
 
-export const formatUnixToDate = (d) => {
+const HOUR_IN_MS = 1000 * 60 * 60;
+const DAY_IN_MS = HOUR_IN_MS * 24;
+export const formatUnixToDate = (extent?: [number, number]) => (d) => {
   try {
-    if (isNumber(d)) {
-      return format(new Date(d), 'dd/MM/yyyy');
+    if (!isNumber(d)) return d;
+    const date = new Date(d);
+
+    if (extent) {
+      const delta = extent[1] - extent[0];
+      if (delta < HOUR_IN_MS) {
+        return format(date, 'HH:mm:ss');
+      } else if (delta < DAY_IN_MS) {
+        return format(date, 'HH:mm');
+      } else if (delta < 7 * DAY_IN_MS) {
+        return format(date, 'dd/MM/yyyy\n HH:mm');
+      }
+      return format(date, 'dd/MM/yyyy');
     }
-    return d;
+    return format(date, 'dd/MM/yyyy\n HH:mm:ss');
+  } catch (e) {
+    console.error('Error converting date: ', e, d);
+    return '';
+  }
+};
+
+export const formatUnixToDateForLabel = (extent?: [number, number]) => (d) => {
+  try {
+    if (!isNumber(d)) return d;
+    const date = new Date(d);
+
+    if (extent) {
+      const delta = extent[1] - extent[0];
+      if (delta < HOUR_IN_MS) {
+        return format(date, 'HH:mm:ss');
+      } else if (delta < DAY_IN_MS) {
+        return format(date, 'HH:mm');
+      } else if (delta < 7 * DAY_IN_MS) {
+        return format(date, 'dd/MM/yyyy\n HH:mm');
+      }
+      return format(date, 'dd/MM/yyyy');
+    }
+    return format(date, 'dd/MM/yyyy\n HH:mm:ss');
   } catch (e) {
     console.error('Error converting date: ', e, d);
     return '';
@@ -49,3 +85,6 @@ export const formatOrder = (order?: number[] | number): number | string => {
   if (isArray(order)) return `[${order.join(', ')}]`;
   return isNil(order) ? 'N/A' : order;
 };
+
+export const formatFormFields = (formFields, numericFields) =>
+  mapValues(formFields, (value, key) => (numericFields[key] ? +value : value));

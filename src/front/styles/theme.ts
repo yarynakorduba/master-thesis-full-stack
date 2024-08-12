@@ -37,7 +37,7 @@ export const theme = createTheme({
       chartTestPrediction: '#FF8C00',
       chartRealPrediction: '#D700F5',
 
-      chartOverlayThreshold: '#ffb0007d',
+      chartOverlayThreshold: '#dc354536',
       chartOverlaySelectedArea: 'rgba(0, 255, 0, 0.1)',
     },
   },

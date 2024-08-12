@@ -6,10 +6,13 @@ export const selectedBrushStyle = () => ({
   stroke: blue[600],
 });
 
-export const CHART_X_PADDING = 40;
+export const CHART_LEFT_PADDING = 40;
+export const CHART_RIGHT_PADDING = 60;
 export const CHART_Y_PADDING = 20;
 export const CHART_HEADING_HEIGHT = 36;
 export const BRUSH_HEIGHT = 36;
 export const BRUSH_Y_PADDING = 20;
 export const LEGEND_HEIGHT = 46;
 export const LEGEND_Y_PADDING = 20;
+export const REGION_HEIGHT = 16;
+export const REGION_FONT_SIZE = 12;

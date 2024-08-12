@@ -9,6 +9,7 @@ import Loader from '../../../sharedComponents/Loader';
 import { TTimeseriesData } from '../../../types';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
+import StationarityText from '../InfoOverlayTexts/StationarityText';
 
 type TProps = {
   readonly index: number;
@@ -45,7 +46,12 @@ const StationarityTest = ({
   return (
     <AnalysisSection md={6}>
       <AnalysisSection.Header index={index}>
-        Is data stationary?
+        Check data consistency over time{' '}
+        <InfoOverlay id="stationarity-test" label="(stationarity)">
+          <InfoOverlay.Popover>
+            <StationarityText />
+          </InfoOverlay.Popover>
+        </InfoOverlay>{' '}
       </AnalysisSection.Header>
       <Grid item md={12}>
         <ButtonContainer>

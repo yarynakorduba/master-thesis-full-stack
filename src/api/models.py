@@ -59,7 +59,11 @@ class PredictionHistory(db.Model):
     selected_data_boundaries = db.Column(JSON, nullable=True)
     # Contains the input parameters, such as desired max lag order, horizon etc.
     # Input data depends on the model selection (ARIMA / VAR).
-    input_data =  db.Column(JSON, nullable=False)
+    input_data = db.Column(JSON, nullable=False)
+
+    stationarity_test = db.Column(JSON, nullable=True)
+    white_noise_test = db.Column(JSON, nullable=True)
+    causality_test = db.Column(JSON, nullable=True)
 
     test_prediction_parameters = db.Column(JSON, nullable=False)
     real_prediction_parameters = db.Column(JSON, nullable=False) # limit 255MB
@@ -67,7 +71,7 @@ class PredictionHistory(db.Model):
     test_prediction = db.Column(JSON, nullable=False) # limit 255MB
     real_prediction = db.Column(JSON, nullable=False) # limit 255MB
 
-    last_train_point = db.Column(JSON, nullable=False) # limit 255MB
+    train_extent = db.Column(JSON, nullable=False) # limit 255MB
     evaluation = db.Column(JSON, nullable=False) # limit 255MB
 
     def __repr__(self):
@@ -88,7 +92,11 @@ class PredictionHistory(db.Model):
             "test_prediction": self.test_prediction, # limit 255MB
             "real_prediction": self.real_prediction, # limit 255MB
 
-            "last_train_point": self.last_train_point, # limit 255MB
+            "train_extent": self.train_extent, # limit 255MB
             "evaluation": self.evaluation, # limit 255MB
-            "input_data": self.input_data
+            "input_data": self.input_data,
+
+            "stationarity_test": self.stationarity_test,
+            "white_noise_test": self.white_noise_test,
+            "causality_test": self.causality_test
     }

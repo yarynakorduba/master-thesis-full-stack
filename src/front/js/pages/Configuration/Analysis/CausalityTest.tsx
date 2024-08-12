@@ -17,6 +17,8 @@ import AnalysisSection from './AnalysisSection';
 import NetworkChart from '../../../sharedComponents/charts/NetworkChart';
 import { useCausalityDataForNetworkGraph } from './hooks';
 import { FIELD_LABEL_PROPS } from '../../../consts';
+import CausalRelationshipsText from '../InfoOverlayTexts/CausalRelationshipsText';
+import CausalityMaxLagOrderText from '../InfoOverlayTexts/CausalityMaxLagOrderText';
 
 type TProps = {
   readonly index: number;
@@ -83,29 +85,29 @@ const CausalityTest = ({
   return (
     <AnalysisSection container md={12} flexDirection="column">
       <AnalysisSection.Header index={index}>
-        Do selected variables have a{' '}
-        <InfoOverlay id="causal-relationship" label="causal relautionship">
+        Check{' '}
+        <InfoOverlay id="causal-relationships" label="causal relautionships">
           <InfoOverlay.Popover>
-            <Typography></Typography>
+            <CausalRelationshipsText />
           </InfoOverlay.Popover>
-        </InfoOverlay>
-        ?
+        </InfoOverlay>{' '}
+        between the variables
       </AnalysisSection.Header>
-      <Grid item md={6}>
+      <Grid item md={2}>
         <InfoOverlay
           id="max-lag-order-causality"
           label="Max lag order"
           {...FIELD_LABEL_PROPS}
         >
           <InfoOverlay.Popover>
-            <Typography>AAA</Typography>
+            <CausalityMaxLagOrderText />
           </InfoOverlay.Popover>
         </InfoOverlay>
 
         <TextField
           size="small"
           type="number"
-          sx={{ width: '100%', maxWidth: 172 }}
+          sx={{ width: '100%' }}
           {...register(EAnalysisFormFields.causalityMaxLagOrder)}
           required
           inputProps={{ min: 0 }}
@@ -136,7 +138,7 @@ const CausalityTest = ({
               </Typography>
               <NetworkChart
                 width={500}
-                height={100 * graphData.nodes.length}
+                height={50 * graphData.nodes.length}
                 nodes={graphData.nodes}
                 edges={graphData.edges}
               />
