@@ -60,7 +60,7 @@ const WhiteNoiseTest = ({
       <Grid item md={12}>
         {isWhiteNoiseLoading && <Loader />}
         <Button size="small" onClick={handleClick}>
-          Run white-noise test
+          Run white noise test
         </Button>
       </Grid>
       <Grid item md={12}>

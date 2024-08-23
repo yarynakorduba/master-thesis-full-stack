@@ -176,7 +176,7 @@ const SparkLineChartsBlock = ({
                   width={300}
                   strokeWidth={0.75}
                   onClick={handleSparklineClick(prop)}
-                  padding={{ top: 24, bottom: 8, left: 36, right: 0 }}
+                  padding={{ top: 24, bottom: 8, left: 40, right: 0 }}
                   formatYScale={formatNumber}
                   headingMark={isPredicted ? 'predicted' : ''}
                 />

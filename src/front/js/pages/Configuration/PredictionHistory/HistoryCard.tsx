@@ -59,12 +59,6 @@ const HistoryCard = ({
               </Stack>
             </Grid>
           </CardHeader>
-          <EvaluationIndicators
-            historyEntry={historyEntry}
-            errorColorScale={errorColorScale}
-            timeseriesData={data}
-            timeProperty={timeProperty}
-          />
           {historyEntry.predictionMode === EPredictionMode.ARIMA ? (
             <ARIMAPredictionParams
               arimaResult={historyEntry as TARIMAHistoryEntry}
@@ -72,6 +66,12 @@ const HistoryCard = ({
           ) : (
             <VARPredictionParams varResult={historyEntry as TVARHistoryEntry} />
           )}
+          <EvaluationIndicators
+            historyEntry={historyEntry}
+            errorColorScale={errorColorScale}
+            timeseriesData={data}
+            timeProperty={timeProperty}
+          />
         </CardContent>
       </CardActionArea>
     </Card>

@@ -18,7 +18,8 @@ import InfoOverlay from '../InfoOverlay';
 
 export const Navbar = () => {
   const configPageMatch = useMatch('configurations/:id');
-  const isConfigPage = !!configPageMatch;
+  const configCreationPageMatch = useMatch('configurations/create');
+  const isConfigPage = !!configPageMatch && !configCreationPageMatch;
 
   const [
     areSimplifiedUIDescriptionsShown,
@@ -53,7 +54,7 @@ export const Navbar = () => {
               Add new dataset
             </Button>
             <Divider
-              sx={{ margin: 1 }}
+              sx={{ marginLeft: 2, marginRight: 2 }}
               orientation="vertical"
               variant="middle"
               component="div"
@@ -71,7 +72,8 @@ export const Navbar = () => {
               onChange={handleSelectDescriptionType}
               aria-label="text alignment"
               size="small"
-              sx={{ marginLeft: 1 }}
+              color="primary"
+              sx={{ marginLeft: 2 }}
             >
               <ToggleButton
                 value={false}
@@ -89,6 +91,11 @@ export const Navbar = () => {
               </ToggleButton>
             </ToggleButtonGroup>
           </>
+        )}
+        {configCreationPageMatch && (
+          <Button component={Link} to={ERoutePaths.CONFIGURATIONS}>
+            Datasets
+          </Button>
         )}
       </Toolbar>
     </AppBar>
