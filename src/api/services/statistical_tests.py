@@ -124,31 +124,33 @@ class StatisticalTests():
     
     def convert_data_to_stationary(self, df):
         df_diff = df.copy()
-        first_elements = []
+        first_elements = {}
 
         def check_all_stationarities(df):
-            selected_ndiffs = 0
-            is_stationary = False
+            selected_ndiffs_dict = {}
             for i in range(len(df.columns)):
                 stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]])
-                is_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
+                #is_var_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
                 selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
-                print(f'{df.columns[i]} is_stationary -> {is_stationary} {selected_ndiffs}')
-            return is_stationary, selected_ndiffs
+                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
+            print(f'{df.columns[i]} is_stationary -> {selected_ndiffs_dict}')
+            return selected_ndiffs_dict
         
-        is_stationary, selected_ndiffs = check_all_stationarities(df_diff)
+        selected_ndiffs = check_all_stationarities(df_diff)
         print(f"Selected ndiffs {selected_ndiffs}")
         # Apply differencing to make data stationary
-        for i in range(selected_ndiffs):
-            first_elements.append(df_diff.iloc[-1-i])
-            df_diff = df_diff.diff().dropna()
+        for key, value in selected_ndiffs.items():
+            print(f"ndiffs {key} - {value}")
+            for i in range(value):
+                existing_array = first_elements.get(key, [])
+                pos = df_diff[key].index[-1]
+                first_elements[key] = existing_array + [df_diff.loc[[pos],key]]
+                df_diff[key] = df_diff[key].diff()
+        max_diff = max(selected_ndiffs.values())
+        df_diff = df_diff[max_diff:]
+        print(f"Sellected ndiffs for max diff {selected_ndiffs}")
 
-        is_stationary = check_all_stationarities(df_diff)
+        return df_diff, selected_ndiffs, first_elements
 
-        if not is_stationary:
-            warning = f"Differenced {selected_ndiffs} times and still non-stationary"
-            print(f"Warn: {warning}")
-
-        return df_diff, selected_ndiffs, is_stationary, first_elements
 
 

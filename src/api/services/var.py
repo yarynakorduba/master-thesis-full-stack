@@ -12,7 +12,7 @@ class VARPrediction:
         self = self
     
     def df_test_transformation(self, df, scaler):  
-        df_transformed, diff_order, is_stationary, first_elements = StatisticalTests().convert_data_to_stationary(df)
+        df_transformed, diff_order, first_elements = StatisticalTests().convert_data_to_stationary(df)
 
         # Scale data using the previously defined scaler
         df_transformed = pd.DataFrame(scaler.transform(df_transformed.copy()), 
@@ -23,10 +23,7 @@ class VARPrediction:
     
     def inverse_diff(self, s, last_observation):
         series_undifferenced = s.copy()
-        print(last_observation.to_frame().transpose())
-        series_undifferenced = pd.concat([last_observation.to_frame().transpose(), series_undifferenced], axis=0)
-        print(series_undifferenced)
-
+        series_undifferenced = pd.concat([last_observation, series_undifferenced], axis=0)
         series_undifferenced = series_undifferenced.cumsum()
 
         return series_undifferenced
@@ -38,8 +35,9 @@ class VARPrediction:
                         index=df_transformed.index)
         print(f"Scaling back diff order {diff_order}")
       
-        for i in range(diff_order):
-            df_transformed = self.inverse_diff(df_transformed, first_elements[-1-i])
+        for key, value in diff_order.items():
+            for i in range(value):
+                df_transformed[key] = self.inverse_diff(df_transformed[key], first_elements[key][-1-i])
 
         return df_transformed
     
