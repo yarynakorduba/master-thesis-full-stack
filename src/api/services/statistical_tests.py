@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from pmdarima.arima.utils import ndiffs
+from pmdarima.arima.utils import ndiffs, nsdiffs
 import statsmodels.stats.diagnostic as diag
 from statsmodels.tsa.stattools import grangercausalitytests
 from itertools import combinations
@@ -64,13 +64,21 @@ class StatisticalTests():
         print(f"Stationarity: ADF Test result: should be differenced {n_diffs}")
         return { "isStationary": n_diffs > 0, "ndiffs": n_diffs }
 
-    def test_stationarity_kpss_adf(self, data):
-        # Estimate the number of differences using an ADF test:
-        kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
-        print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
+    def test_stationarity_kpss_adf(self, data, periods_in_season=None):
+        if periods_in_season:
+            # Estimate the number of differences using an ADF test:
+            kpss_n_diffs = nsdiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
+            print(f"Stationarity: KPSS Test result: should be seasonally differenced {kpss_n_diffs}")
 
-        adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
-        print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
+            adf_n_diffs = nsdiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
+            print(f"Stationarity: ADF Test result: should be seasonally differenced {adf_n_diffs}")
+        else:
+            # Estimate the number of differences using an ADF test:
+            kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
+            print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
+
+            adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
+            print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
 
         return {
             "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
@@ -133,7 +141,6 @@ class StatisticalTests():
                 #is_var_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
                 selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
                 selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
-            print(f'{df.columns[i]} is_stationary -> {selected_ndiffs_dict}')
             return selected_ndiffs_dict
         
         selected_ndiffs = check_all_stationarities(df_diff)
@@ -148,7 +155,6 @@ class StatisticalTests():
                 df_diff[key] = df_diff[key].diff()
         max_diff = max(selected_ndiffs.values())
         df_diff = df_diff[max_diff:]
-        print(f"Sellected ndiffs for max diff {selected_ndiffs}")
 
         return df_diff, selected_ndiffs, first_elements
 
