@@ -10,46 +10,53 @@ TRAIN_TEST_SPLIT_PROPORTION = 0.9
 class VARPrediction:
     def __init__(self):
         self = self
-    
-    def df_test_transformation(self, df, scaler):  
-        df_transformed, diff_order, first_elements = StatisticalTests().convert_data_to_stationary(df)
 
+    def df_test_transformation(self, df, scaler, periods_in_season=None):  
+        df_transformed, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements = StatisticalTests().convert_data_to_stationary(df, periods_in_season)
         # Scale data using the previously defined scaler
         df_transformed = pd.DataFrame(scaler.transform(df_transformed.copy()), 
                             columns=df_transformed.columns, 
                             index=df_transformed.index)
         
-        return df_transformed, diff_order, first_elements
+        return df_transformed, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements
     
     def inverse_diff(self, s, last_observation):
         series_undifferenced = s.copy()
-        series_undifferenced = pd.concat([last_observation, series_undifferenced], axis=0)
-        series_undifferenced = series_undifferenced.cumsum()
+        series_undifferenced1 = pd.concat([last_observation, series_undifferenced], axis=0)
+        for i in range(len(series_undifferenced)):
+            pos = series_undifferenced.index[i]
+            series_undifferenced1[pos] = series_undifferenced.iloc[i]+series_undifferenced1.iloc[i]
+        return series_undifferenced1
 
-        return series_undifferenced
-    
-    def df_inv_transformation(self, pred, scaler, diff_order, first_elements):
-        df_transformed = pred.copy()
-        df_transformed = pd.DataFrame(scaler.inverse_transform(df_transformed), 
-                        columns=df_transformed.columns, 
-                        index=df_transformed.index)
-        print(f"Scaling back diff order {diff_order}")
-      
+    def df_inv_transform_every_ds_variable(self, df_transformed, diff_order, first_elements):
         for key, value in diff_order.items():
             for i in range(value):
+                print(f"VALUE : {i}")
                 df_transformed[key] = self.inverse_diff(df_transformed[key], first_elements[key][-1-i])
+        return df_transformed
 
+    def df_inv_transformation(self, pred, scaler, diff_order, first_elements, seasonal_diff_order=None, seasonal_first_elements=None):
+        df_transformed = pred.copy()
+
+        df_transformed = pd.DataFrame(scaler.inverse_transform(df_transformed), 
+                columns=df_transformed.columns, 
+                index=df_transformed.index)
+
+        df_transformed = self.df_inv_transform_every_ds_variable(df_transformed, diff_order, first_elements)
+
+        if seasonal_diff_order and seasonal_first_elements:
+            df_transformed = self.df_inv_transform_every_ds_variable(df_transformed, seasonal_diff_order, seasonal_first_elements)
+        
         return df_transformed
     
     # Estimate the model (VAR) and show summary
     # Forecast next two weeks
-    def run_forecast(self, df_to_run_forecast_on, steps, maxlags, ic=None):
+    def run_forecast(self, df_to_run_forecast_on, steps, maxlags, periods_in_season=None, ic=None):
         # Is this ts unique? (check with pandas)
         scaler = StandardScaler()
         scaler.fit(df_to_run_forecast_on)
         # Apply function to our data
-        df_scaled, diff_order, first_elements = self.df_test_transformation(df_to_run_forecast_on, scaler)
-
+        df_scaled, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements = self.df_test_transformation(df_to_run_forecast_on, scaler, periods_in_season)
         model = VAR(df_scaled)
 
         if (ic != None):
@@ -77,12 +84,13 @@ class VARPrediction:
                         index=idx)
         # # Invert the transformations to bring it back to the original scale
         ## diff_order
-        print(f"Applied differencing order: {diff_order}")
-        df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements)
+        print(f"Applied differencing order: {diff_order} {seasonal_diff_order}")
+        df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements)
 
         return df_forecast_original, fitted_model
     
-    def test_var(self, data, data_keys, lag_order = 5, horizon=1):
+    def test_var(self, data, data_keys, lag_order = 5, horizon=1, periods_in_season=None):
+
         if len(data) == 0:
             raise APIException('The data for prediction is empty')
         if len(data) < horizon:
@@ -106,10 +114,10 @@ class VARPrediction:
             print(f"Train data length: {df_train.shape}, test data length: {df_test.shape}")
 
         
-            df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, 'aic')
+            df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, periods_in_season, 'aic')
             optimal_order = train_fit_model.k_ar
             print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
-            df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order)
+            df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order, periods_in_season)
             predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
 
             print(f"Evaluate:   {df_forecast_test_data.columns[0]} {df_test[df_forecast_test_data.columns[0]].to_numpy()} {predicted_values}")

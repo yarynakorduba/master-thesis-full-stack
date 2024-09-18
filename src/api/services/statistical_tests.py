@@ -67,10 +67,10 @@ class StatisticalTests():
     def test_stationarity_kpss_adf(self, data, periods_in_season=None):
         if periods_in_season:
             # Estimate the number of differences using an ADF test:
-            kpss_n_diffs = nsdiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
+            kpss_n_diffs = nsdiffs(np.array(data).astype(float), test='ocsb', m=periods_in_season)  # -> 0
             print(f"Stationarity: KPSS Test result: should be seasonally differenced {kpss_n_diffs}")
 
-            adf_n_diffs = nsdiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
+            adf_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
             print(f"Stationarity: ADF Test result: should be seasonally differenced {adf_n_diffs}")
         else:
             # Estimate the number of differences using an ADF test:
@@ -130,33 +130,52 @@ class StatisticalTests():
             raise APIException(str(e))
     
     
-    def convert_data_to_stationary(self, df):
+    def get_all_needed_diffs(self, df, periods_in_season=None):
+        selected_ndiffs_dict = {}
+        for i in range(len(df.columns)):
+            stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]], periods_in_season)
+            selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
+            # TODO: remove later, used for testing
+            if periods_in_season:
+                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
+            else:
+                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs 
+
+        return selected_ndiffs_dict
+
+    def convert_data_to_stationary(self, df, periods_in_season=None):
         df_diff = df.copy()
         first_elements = {}
+        seasonal_first_elements = {}
+        selected_nsdiffs = {}
+        selected_ndiffs = {}
+        if periods_in_season:
+            selected_nsdiffs = self.get_all_needed_diffs(df_diff, periods_in_season)
 
-        def check_all_stationarities(df):
-            selected_ndiffs_dict = {}
-            for i in range(len(df.columns)):
-                stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]])
-                #is_var_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
-                selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
-                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
-            return selected_ndiffs_dict
+            for key, value in selected_nsdiffs.items():
+                for i in range(value):
+                    existing_array = seasonal_first_elements.get(key, [])
+                    pos = df_diff.index[-periods_in_season]
+                    seasonal_first_elements[key] = existing_array + [df_diff[pos:][key]]
+                    df_diff[key] = df_diff[key].diff(periods_in_season)
         
-        selected_ndiffs = check_all_stationarities(df_diff)
-        print(f"Selected ndiffs {selected_ndiffs}")
-        # Apply differencing to make data stationary
+            max_sdiff = max(selected_nsdiffs.values())
+            df_diff = df_diff[(periods_in_season*max_sdiff):]
+
+        selected_ndiffs = self.get_all_needed_diffs(df_diff)
+        # print(f"Selected ndiffs {selected_ndiffs}")
+        # # Apply differencing to make data stationary
         for key, value in selected_ndiffs.items():
             print(f"ndiffs {key} - {value}")
             for i in range(value):
                 existing_array = first_elements.get(key, [])
                 pos = df_diff[key].index[-1]
-                first_elements[key] = existing_array + [df_diff.loc[[pos],key]]
+                first_elements[key] = existing_array + [df_diff[pos:][key]]
                 df_diff[key] = df_diff[key].diff()
+
         max_diff = max(selected_ndiffs.values())
         df_diff = df_diff[max_diff:]
 
-        return df_diff, selected_ndiffs, first_elements
-
+        return df_diff, selected_ndiffs, first_elements, selected_nsdiffs, seasonal_first_elements
 
 

@@ -75,7 +75,8 @@ class ARIMAPrediction:
                 error_action='ignore',
                 suppress_warnings=True, 
                 stepwise=True,
-                maxiter=20,
+                maxiter=1,
+                method='nm'
             )
             # Forecast
             test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)

@@ -52,8 +52,14 @@ const VARPrediction = ({ isVisible, varResult, isLoading }: TProps) => {
 
   const handleClick = () => {
     const values = getValues();
+    console.log('VALUES!! > ', values);
     handlePredict(
-      formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any,
+      {
+        ...(formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any),
+        periodsInSeason: values.isSeasonal
+          ? +values.periodsInSeason
+          : undefined,
+      },
       values.varSelectedFields,
     );
   };

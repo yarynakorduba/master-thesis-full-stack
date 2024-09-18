@@ -59,8 +59,9 @@ def test_var():
     lag_order = request_body["parameters"]["lagOrder"]
     horizon = request_body["parameters"]["horizon"]
     data_keys = request_body.get("data_keys", [])
+    periods_in_season = request_body["parameters"].get("periodsInSeason")
 
-    result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon)
+    result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon, periods_in_season)
     return result, 200
 
 @api.route('/arima-prediction', methods=['POST'])

@@ -130,6 +130,11 @@ const CausalityTest = ({
                 ? causalityTexts
                 : 'No relationships detected'}
             </Typography>
+            <Typography variant="body1">
+              {!isEmpty(causalityTexts)
+                ? 'It might be worth to employ VAR model and predict the variables with the causal relationships together.'
+                : ''}
+            </Typography>
           </Grid>
           {!isEmpty(causalityTexts) && (
             <Grid item md={6} flexGrow={1}>

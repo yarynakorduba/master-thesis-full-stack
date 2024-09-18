@@ -51,7 +51,7 @@ export const fetchGrangerDataCausalityTest = async (
 
 export const fetchVAR = async (
   data,
-  parameters: { lagOrder: number; horizon: number },
+  parameters: { lagOrder: number; horizon: number; periodsInSeason?: number },
   dataKeys: { date_key: string; value_keys: string[] },
 ) => {
   return handleFetch(

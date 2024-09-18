@@ -492,7 +492,7 @@ const LineChart = ({
             xTooltip={xTooltip}
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
-            formatPointTooltipXScale={formatXScale(brushExtent)}
+            formatPointTooltipXScale={formatXScale()}
             formatPointTooltipYScale={formatYScale}
           />
         ) : null}

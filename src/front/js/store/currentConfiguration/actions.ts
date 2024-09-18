@@ -422,6 +422,7 @@ export default (set, get) => ({
       {
         lagOrder: inputData.lagOrder,
         horizon: inputData.horizon,
+        periodsInSeason: inputData.periodsInSeason,
       },
       {
         date_key: timeProperty?.value,
