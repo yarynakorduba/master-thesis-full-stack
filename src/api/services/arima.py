@@ -1,12 +1,11 @@
 import pandas as pd
-import numpy as np
 import json
 from api.services.statistical_tests import StatisticalTests
 import pmdarima as pm
 
 from api.utils import APIException, forecast_accuracy
 
-TRAIN_TEST_SPLIT_PROPORTION = 0.9
+TRAIN_TEST_SPLIT_PROPORTION = 0.8
     
 class ARIMAPrediction:
     def __init__(self):
@@ -57,7 +56,6 @@ class ARIMAPrediction:
             smodel = pm.auto_arima(
                 train,
                 test='kpss',
-                # TODO: why does ARIMA model intercept approx at 3 when we pass higher max_p / max_q
                 max_p=max_p, # lag order - the number of lag observations to include
                 max_q=max_q, # the size of moving average window
                 m=periods_in_season, # the number of periods in each season
@@ -76,7 +74,7 @@ class ARIMAPrediction:
                 suppress_warnings=True, 
                 stepwise=True,
                 maxiter=1,
-                method='nm'
+                seasonal_test="ch"
             )
             # Forecast
             test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)
@@ -85,7 +83,6 @@ class ARIMAPrediction:
             test_indexes = test.index#pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency
             # make series for plotting purpose
             print(smodel.summary())
-            print(f"test_prediction  {test_prediction.index}")
             # In case frequency could not be inferred, the data probably have wrong indexes
             if (inferred_freq == None):
                 test_prediction.index = test_indexes

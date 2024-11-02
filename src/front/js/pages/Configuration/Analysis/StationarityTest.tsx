@@ -70,19 +70,41 @@ const StationarityTest = ({
               <Box>
                 {propName}:
                 <ul>
-                  <li>
-                    <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
-                      KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
-                    </InfoOverlay>{' '}
-                    test: {getStationaryTxt(val.kpss?.isStationary)}
-                  </li>
-                  <li>
-                    {' '}
-                    <InfoOverlay id={`ADF-${propName}`} label="ADF">
-                      ADF<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
-                    </InfoOverlay>{' '}
-                    test: {getStationaryTxt(val.adf?.isStationary)}
-                  </li>
+                  {val.kpss && (
+                    <li>
+                      <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
+                        KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                      </InfoOverlay>{' '}
+                      test: {getStationaryTxt(val.kpss?.isStationary)}
+                    </li>
+                  )}
+                  {val.adf && (
+                    <li>
+                      {' '}
+                      <InfoOverlay id={`ADF-${propName}`} label="ADF">
+                        ADF<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                      </InfoOverlay>{' '}
+                      test: {getStationaryTxt(val.adf?.isStationary)}
+                    </li>
+                  )}
+                  {val.ocsb && (
+                    <li>
+                      {' '}
+                      <InfoOverlay id={`ADF-${propName}`} label="ADF">
+                        OCSB<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                      </InfoOverlay>{' '}
+                      test: {getStationaryTxt(val.ocsb?.isStationary)}
+                    </li>
+                  )}
+                  {val.ch && (
+                    <li>
+                      {' '}
+                      <InfoOverlay id={`CH-${propName}`} label="CH">
+                        CH<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
+                      </InfoOverlay>{' '}
+                      test: {getStationaryTxt(val.ch?.isStationary)}
+                    </li>
+                  )}
                 </ul>
               </Box>
             );

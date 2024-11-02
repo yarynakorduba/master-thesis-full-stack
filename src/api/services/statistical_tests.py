@@ -66,24 +66,27 @@ class StatisticalTests():
 
     def test_stationarity_kpss_adf(self, data, periods_in_season=None):
         if periods_in_season:
-            # Estimate the number of differences using an ADF test:
-            kpss_n_diffs = nsdiffs(np.array(data).astype(float), test='ocsb', m=periods_in_season)  # -> 0
-            print(f"Stationarity: KPSS Test result: should be seasonally differenced {kpss_n_diffs}")
+            # ocsb_n_diffs = nsdiffs(np.array(data).astype(float), test='ocsb', m=periods_in_season)  # -> 0
+            # print(f"Stationarity: OCSB Test result: should be seasonally differenced {ocsb_n_diffs}")
 
-            adf_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
-            print(f"Stationarity: ADF Test result: should be seasonally differenced {adf_n_diffs}")
+            ch_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
+            print(f"Stationarity: CH Test result: should be seasonally differenced {ch_n_diffs}")
+            
+            return {
+             #   "ocsb": { "isStationary": ocsb_n_diffs == 0, "ndiffs": ocsb_n_diffs },\
+                "ch" : { "isStationary": ch_n_diffs == 0, "ndiffs": ch_n_diffs },
+            }
         else:
-            # Estimate the number of differences using an ADF test:
             kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
             print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
 
             adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
             print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
 
-        return {
-            "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
-            "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
-        }
+            return {
+                "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
+                "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs }
+            }
 
     # The Null hypothesis for grangercausalitytests is that the time series in
     # the second column, x2, does NOT Granger cause the time series in the first
@@ -134,12 +137,12 @@ class StatisticalTests():
         selected_ndiffs_dict = {}
         for i in range(len(df.columns)):
             stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]], periods_in_season)
-            selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
-            # TODO: remove later, used for testing
+            print(f"Stationarity test result {stationarity_test_result}")
             if periods_in_season:
-                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
+                selected_ndiffs = np.max([stationarity_test_result["ocsb"]["ndiffs"], stationarity_test_result["ch"]["ndiffs"]])
             else:
-                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs 
+                selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
+            selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
 
         return selected_ndiffs_dict
 

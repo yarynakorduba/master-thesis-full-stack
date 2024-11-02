@@ -133,9 +133,6 @@ class VARPrediction:
             test_json_result = df_forecast_test_data.to_json()
             real_json_result = df_forecast_future_data.to_json()
 
-            print("REAL JSON RESULT: ")
-            print(real_json_result)
-
             return {
                 "testPrediction": json.loads(test_json_result),\
                 "realPrediction": json.loads(real_json_result),\

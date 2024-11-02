@@ -205,7 +205,10 @@ export default (set, get) => ({
     }
   },
 
-  fetchStationarityTest: async (valueProperties: TDataProperty[]) => {
+  fetchStationarityTest: async (
+    valueProperties: TDataProperty[],
+    periodsInSeason?: number,
+  ) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get()?.configData?.data,
@@ -225,7 +228,10 @@ export default (set, get) => ({
           ? map(selectedData, (datum) => datum[selectedProp.value])
           : undefined;
         if (dataForAnalysis) {
-          return await fetchDataStationarityTest(dataForAnalysis);
+          return await fetchDataStationarityTest(
+            dataForAnalysis,
+            periodsInSeason,
+          );
         }
       }),
     );

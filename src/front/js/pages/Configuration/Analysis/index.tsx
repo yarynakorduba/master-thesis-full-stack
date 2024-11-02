@@ -41,6 +41,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     data: timeseriesData,
     isConfigurationLoading,
     valueProperties,
+    ...rest
   } = useConfigData();
   const [, isHistoryLoading] = useFetchConfigPredictionHistory();
 
@@ -76,6 +77,10 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     formMethods.reset(predictionResult ? { ...defaultInputData } : {});
   }, [defaultInputData, formMethods, predictionResult]);
 
+  const periodsInSeason = formMethods.watch(
+    EAnalysisFormFields.periodsInSeason,
+  );
+
   if (isConfigurationLoading) return null;
 
   const steps = [
@@ -89,7 +94,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         propertiesToTest={valueProperties}
         timeseriesData={timeseriesData}
         handleFetchDataStationarityTest={() =>
-          handleFetchDataStationarityTest(valueProperties)
+          handleFetchDataStationarityTest(valueProperties, periodsInSeason)
         }
         isStationarityTestLoading={isStationarityTestLoading}
       />

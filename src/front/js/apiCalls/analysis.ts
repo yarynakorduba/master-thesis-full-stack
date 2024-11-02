@@ -21,11 +21,14 @@ export const fetchIsWhiteNoise = async (
   );
 };
 
-export const fetchDataStationarityTest = async (data) => {
+export const fetchDataStationarityTest = async (
+  data,
+  periodsInSeason?: number,
+) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/stationarity-test`, {
       method: 'POST',
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data, periods_in_season: periodsInSeason }),
       headers: { 'Content-type': 'application/json' },
     }),
   );
