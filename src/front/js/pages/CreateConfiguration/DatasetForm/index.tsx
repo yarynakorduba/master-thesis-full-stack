@@ -117,12 +117,12 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
   return (
     <form onSubmit={handleSubmit(handleSave)}>
       <Grid container rowGap={1}>
-        <Grid item md={12}>
+        <Grid item sm={12}>
           <Typography variant="h4" sx={{ mb: 2 }}>
             Add new dataset
           </Typography>
         </Grid>
-        <Grid item md={12}>
+        <Grid item sm={12}>
           <Typography variant="subtitle2" sx={{ fontSize: 12 }}>
             <label>Upload the dataset</label>
           </Typography>
@@ -137,7 +137,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             </Typography>
           </Dropzone>
         </Grid>
-        <Grid item md={12}>
+        <Grid item sm={12}>
           <Typography
             variant="subtitle2"
             sx={{ fontSize: 12 }}
@@ -156,7 +156,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             inputProps={{ maxLength: 100 }}
           />
         </Grid>
-        <Grid item md={12}>
+        <Grid item sm={12}>
           <Controller
             control={control}
             {...register(EConfigurationFormFields.timeProperty)}
@@ -168,7 +168,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                     htmlFor={EConfigurationFormFields.timeProperty}
                     {...FIELD_LABEL_PROPS}
                   >
-                    Timestamp field
+                    Timestamp variable
                   </Typography>
                   <FormControl
                     sx={{ width: '100%' }}
@@ -195,7 +195,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
           />
         </Grid>
 
-        <Grid item md={12}>
+        <Grid item sm={12}>
           <Controller
             {...register(
               `${EConfigurationFormFields.valueProperties}[0].value`,
@@ -209,7 +209,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                   htmlFor={`${EConfigurationFormFields.valueProperties}[0]`}
                   {...FIELD_LABEL_PROPS}
                 >
-                  Field to analyse (#1)
+                  Variable to analyze (#1)
                 </Typography>
                 <FormControl
                   sx={{ width: '100%' }}
@@ -240,7 +240,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             return (
               <Grid
                 item
-                md={12}
+                sm={12}
                 sx={{
                   display: 'flex',
                   flexWrap: 'nowrap',
@@ -261,7 +261,7 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
                           component="label"
                           htmlFor={`${EConfigurationFormFields.valueProperties}[${index + 1}]`}
                         >
-                          Field to analyse (#{index + 2})
+                          Variable to analyze (#{index + 2})
                         </Typography>
                         <FormControl
                           sx={{ width: '100%' }}
@@ -296,14 +296,14 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
               </Grid>
             );
           })}
-        <Grid item md={12} sx={{ mb: 1, textAlign: 'center' }}>
+        <Grid item sm={12} sx={{ mb: 1, textAlign: 'center' }}>
           <Button
             onClick={addField}
             disabled={
               !acceptedFile || valueProps[valueProps.length - 1] === undefined
             }
           >
-            + Add a variable
+            + Add the next variable to analyze
           </Button>
           <Typography
             sx={{ mt: 2 }}
@@ -311,10 +311,10 @@ const DatasetForm = ({ timeseriesData, setTimeseriesData }: TProps) => {
             variant="subtitle2"
             color={grey[500]}
           >
-            Note: You will not be able to change these settings after saving. If
-            needed, consider creating a new dataset.
+            Note: You will not be able to change this configuration after
+            saving. If needed, consider creating a new dataset.
           </Typography>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" disabled={isSubmitting} sx={{ mt: 1 }}>
             {isSubmitting && (
               <CircularProgress
                 size="0.875rem"

@@ -131,7 +131,6 @@ const SparkLineChartsBlock = ({
       <Box
         width="calc(100% - 300px - 16px)"
         flexGrow={1}
-        minHeight="300px"
         alignItems="flex-start"
       >
         <LineChart
@@ -144,7 +143,6 @@ const SparkLineChartsBlock = ({
           numYAxisTicks={4}
           formatXScale={formatUnixToDate}
           formatYScale={formatNumber}
-          height={300}
           padding={{ top: 8, bottom: 30, left: 48, right: 36 }}
           onSelectArea={onSelectedAreaChange}
           selectedAreaBounds={selectedAreaBounds}
@@ -178,7 +176,7 @@ const SparkLineChartsBlock = ({
                   width={300}
                   strokeWidth={0.75}
                   onClick={handleSparklineClick(prop)}
-                  padding={{ top: 24, bottom: 8, left: 36, right: 0 }}
+                  padding={{ top: 24, bottom: 8, left: 40, right: 0 }}
                   formatYScale={formatNumber}
                   headingMark={isPredicted ? 'predicted' : ''}
                 />

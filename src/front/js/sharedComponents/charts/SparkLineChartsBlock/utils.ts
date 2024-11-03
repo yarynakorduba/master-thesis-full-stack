@@ -36,7 +36,7 @@ export const constructLineChartPredictionRegionsData = (
     !predictionData ||
     !mainChartData ||
     !analyzedProp ||
-    !predictionData.realPrediction[analyzedProp.value]
+    !predictionData?.realPrediction?.[analyzedProp.value]
   ) {
     return [];
   }
@@ -88,7 +88,7 @@ export const constructLineChartThresholdData = (
 ): Array<TThresholdData> => {
   const thresholdFillStyle = {
     fill: theme.palette.charts.chartOverlayThreshold,
-    fillOpacity: 0.4,
+    fillOpacity: 1,
   };
   return testPredictedDataCounterpart
     ? [

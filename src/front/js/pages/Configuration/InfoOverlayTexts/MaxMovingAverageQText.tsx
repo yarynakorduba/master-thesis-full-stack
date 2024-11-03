@@ -1,6 +1,6 @@
 import React from 'react';
-import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 import { Typography } from '@mui/material';
+import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/selectors';
 import OpenAIDisclaimer from './OpenAIDisclaimer';
 
 const MinMovingAverageQText = () => {

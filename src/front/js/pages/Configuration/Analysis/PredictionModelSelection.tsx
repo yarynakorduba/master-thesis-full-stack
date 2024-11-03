@@ -69,6 +69,7 @@ const PredictionModelSelection = ({
             onChange={(e, value) => setPredictionMode(value)}
             aria-label="text alignment"
             size="small"
+            color="primary"
             disabled={isHistoryPredictionSelected}
           >
             <ToggleButton

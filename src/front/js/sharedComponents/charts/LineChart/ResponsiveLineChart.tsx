@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import { TLineChartProps } from './types';
 import LineChart from './LineChart';
 
-const MIN_HEIGHT = 300;
+const MIN_HEIGHT = 350;
 
 export default function ResponsiveLineChart({
   width = 2000,
@@ -21,9 +21,9 @@ export default function ResponsiveLineChart({
       if (!responsiveWidth || !responsiveHeight) return null;
       return (
         <LineChart
+          {...props}
           width={responsiveWidth}
           height={responsiveHeight}
-          {...props}
         />
       );
     },

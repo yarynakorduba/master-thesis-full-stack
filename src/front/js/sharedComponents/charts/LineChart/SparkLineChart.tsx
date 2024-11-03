@@ -13,7 +13,7 @@ import { ChartWrapper, HeadingMark, SparkLineChartHeading } from './styles';
 import { TChartThresholdDatapoint } from '../types';
 import { TSparkLineChartProps } from './types';
 
-const CHART_LEFT_PADDING = 32;
+const CHART_LEFT_PADDING = 38;
 const CHART_BOTTOM_PADDING = 24;
 const CHART_TOP_PADDING = 16;
 const CHART_RIGHT_PADDING = 32;

@@ -68,6 +68,7 @@ export type TClosestChartPoint = {
 export type TClosestChartPointGroup = {
   readonly x: number;
   readonly y: number;
+  readonly valueX: number;
   readonly points: TClosestChartPoint[];
 };
 

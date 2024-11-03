@@ -37,7 +37,7 @@ const ConfigCard = ({ config }: TProps) => {
             gutterBottom
             variant="h6"
             component="div"
-            sx={{ display: 'flex', alignItems: 'baseline' }}
+            sx={{ display: 'flex', alignItems: 'center', marginBottom: 0 }}
           >
             {config.name}
             <IconButton

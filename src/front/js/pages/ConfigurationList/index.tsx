@@ -30,7 +30,7 @@ const ConfigurationList = () => {
         </Button>
       </Typography>
 
-      <Grid spacing={2} container>
+      <Grid spacing={3} container>
         {isLoading
           ? map(Array(3), (v, index) => (
               <Grid item xs={6} lg={4} key={index}>

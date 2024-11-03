@@ -69,7 +69,7 @@ export const getHistoryLineChartData = (
 
   const thresholdFillStyle = {
     fill: theme.palette.charts.chartOverlayThreshold,
-    fillOpacity: 0.4,
+    fillOpacity: 1,
   };
 
   const thresholdData: Array<TThresholdData> = testPredictedDataCounterpart

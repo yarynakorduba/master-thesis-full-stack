@@ -8,7 +8,7 @@ export const LineChartContainer = styled(Stack)`
   padding-bottom: 32px;
   min-height: 300px;
   width: 100%;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 `;
 export const SparkLineChartsContainer = styled(Stack)`

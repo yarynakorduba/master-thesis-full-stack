@@ -18,7 +18,7 @@ class Configurations:
       if (len(data) == 0):
         raise APIException("Data cannot be empty")
       if (not(time_property) or not(value_properties) or len(value_properties) == 0):
-        raise APIException('Time field and at least one field to analyze should be indicated')
+        raise APIException('Time variable and at least one variable to analyze should be indicated')
       
       value_keys = [prop["value"] for prop in (value_properties)]
       def map_item(item):
