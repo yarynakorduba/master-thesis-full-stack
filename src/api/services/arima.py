@@ -24,7 +24,6 @@ class ARIMAPrediction:
             raise APIException('The parameters for prediction were not provided')
         
         horizon = params.get("horizon", 40)
-        print(f"HORIZON: {horizon}")
         is_seasonal = params.get("isSeasonal", False)
 
         max_p = params.get("maxP", None)
@@ -41,7 +40,6 @@ class ARIMAPrediction:
             value_key = data_keys["value_key"]
             df_input = pd.DataFrame.from_records(data)
             # Drop duplicates
-            print(f"Duplicates: {df_input.duplicated().sum()}")
             df_input = df_input.drop_duplicates(subset=[date_key], keep='first')
 
             df_input[date_key] = pd.to_datetime(df_input[date_key], unit='ms')
@@ -77,29 +75,23 @@ class ARIMAPrediction:
             inferred_freq = pd.infer_freq(df_input.index)
             print(f"Inferred frequency: {inferred_freq}")
             test_indexes = test.index#pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency
-            # make series for plotting purpose
-            print(smodel.summary())
             # In case frequency could not be inferred, the data probably have wrong indexes
             if (inferred_freq == None):
                 test_prediction.index = test_indexes
-            print(f" reindex test_prediction  {test_prediction}")
             test_predicted_series = pd.Series(test_prediction).dropna()
             
             json_result = test_predicted_series.to_json()
             test_prediction_parameters = smodel.get_params()
-            print(f"Parameters: {test_prediction_parameters}")
             # --------------------------------------
 
             smodel.update(test)
             real_prediction, new_conf_int = smodel.predict(n_periods=horizon, return_conf_int=True)
             real_prediction_parameters = smodel.get_params()
-            print(f"Real data parameters: {real_prediction_parameters}")
             real_indexes = pd.date_range(test.index[-1], periods = horizon+1, freq=inferred_freq) # month start frequency
 
             real_indexes = real_indexes[1:]
             real_predicted_series = pd.Series(real_prediction, index=real_indexes).dropna()
             json_real_prediction_result = real_predicted_series.to_json()
-            print(f"test {test_predicted_series}")
             evaluation = forecast_accuracy(test_predicted_series, test)
             # --------------------------------------
             return {

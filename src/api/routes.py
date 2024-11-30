@@ -27,7 +27,6 @@ def test_white_noise():
     max_lag_order = request_body.get("max_lag_order", None)
     periods = request_body.get("periods", None)
 
-    print(f"Max Lag Order: {max_lag_order}")
     result = StatisticalTests().multitest_white_noise(data, data_keys, periods, max_lag_order)
 
     return json.dumps(result), 200
@@ -38,9 +37,7 @@ def test_stationarity():
     request_body = request.get_json()
     data_serie = request_body.get("data", None)
     periods_in_season = request_body.get("periods_in_season", None)
-    print(f"F periods in season: {periods_in_season}")
     result = StatisticalTests().test_stationarity_kpss_adf(data_serie, periods_in_season)
-    print(f"result ---- >>>  {result}")
     return json.dumps(result), 200
 
 @api.route('/granger-causality-test', methods=['POST'])

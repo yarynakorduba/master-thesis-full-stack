@@ -78,8 +78,7 @@ class VARPrediction:
         df_forecast = pd.DataFrame(forecast, 
                         columns=df_scaled.columns, 
                         index=idx)
-        # # Invert the transformations to bring it back to the original scale
-        print(f"Applied differencing order: {diff_order} {seasonal_diff_order}")
+        # Invert the transformations to bring it back to the original scale
         df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements)
 
         return df_forecast_original, fitted_model
@@ -108,7 +107,6 @@ class VARPrediction:
 
             df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, periods_in_season, 'aic')
             optimal_order = train_fit_model.k_ar
-            print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
             df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order, periods_in_season)
             predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
             
