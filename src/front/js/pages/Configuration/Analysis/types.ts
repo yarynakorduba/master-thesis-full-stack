@@ -75,13 +75,20 @@ export type TPredictionResult<T = TResponseARIMAParams | TResponseVARParams> = {
 export type TARIMAResult = TPredictionResult<TResponseARIMAParams>;
 export type TVARResult = TPredictionResult<TResponseVARParams>;
 
-export type THistoryEntry<T = TResponseARIMAParams | TResponseVARParams> =
-  TPredictionResult<T> & {
-    readonly inputData: any;
+export type THistoryEntryPayload<T = TARIMAResult | TVARResult> = T & {
+  readonly inputData: any;
+};
+
+export type THistoryEntry<T = TARIMAResult | TVARResult> = T &
+  THistoryEntryPayload & {
+    readonly configurationId: string;
+    readonly whiteNoiseTest: any;
+    readonly stationarityTest: any;
+    readonly causalityTest: any;
   };
 
-export type TARIMAHistoryEntry = THistoryEntry<TResponseARIMAParams>;
-export type TVARHistoryEntry = THistoryEntry<TResponseVARParams>;
+export type TARIMAHistoryEntry = THistoryEntry<TARIMAResult>;
+export type TVARHistoryEntry = THistoryEntry<TVARResult>;
 
 export type TTrainExtent = {
   readonly from: string;

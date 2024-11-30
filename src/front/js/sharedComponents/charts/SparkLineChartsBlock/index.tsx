@@ -8,13 +8,13 @@ import { formatUnixToDate, formatNumber } from '../../../utils/formatters';
 import { LineChart, SparkLineChart } from '../LineChart';
 import { TDataLabel, TTimeseriesData } from '../../../types';
 
-import { TDataProperty } from '../../../types';
+import type { TDataProperty } from '../../../types';
 import {
   LineChartContainer,
   SparkLineChartWrapper,
   SparkLineChartsContainer,
 } from './styles';
-import {
+import type {
   TPredictionResult,
   TValueBounds,
 } from '../../../pages/Configuration/Analysis/types';

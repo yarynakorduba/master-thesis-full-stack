@@ -21,8 +21,9 @@ import {
 } from '../../../store/currentConfiguration/selectors';
 import HistoryCard from './HistoryCard';
 import { getLinearValueScale } from '../../../utils/lineChart';
-import { THistoryEntry } from '../Analysis/types';
+import { type THistoryEntry } from '../Analysis/types';
 import SorterPopover from './SorterPopover';
+import { TSorterProps, type TSortOption } from './types';
 
 const PredictionHistory = () => {
   const predictionHistory = useGetPredictionHistory();
@@ -30,7 +31,7 @@ const PredictionHistory = () => {
     useDisplayedPredictionId();
 
   const { valueProperties } = useConfigData();
-  const sortOptions = [
+  const sortOptions: TSortOption[] = [
     { label: 'Date', value: 'createdAt' },
     ...map(valueProperties, (prop) => ({
       label: `MAE of ${prop.label}`,
@@ -46,7 +47,7 @@ const PredictionHistory = () => {
     red[200],
   ]);
 
-  const [sorter, setSorter] = useState<any>({
+  const [sorter, setSorter] = useState<TSorterProps>({
     label: 'Date',
     propPath: 'createdAt',
     direction: 'desc',

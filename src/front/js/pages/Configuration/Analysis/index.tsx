@@ -12,10 +12,10 @@ import ARIMAPrediction from './ARIMAPrediction';
 import {
   EAnalysisFormFields,
   EPredictionMode,
-  TARIMAResult,
-  THistoryEntry,
-  TPredictionResult,
-  TVARResult,
+  type TARIMAResult,
+  type THistoryEntry,
+  type TPredictionResult,
+  type TVARResult,
 } from './types';
 import PredictionModelSelection from './PredictionModelSelection';
 import {
@@ -41,7 +41,6 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     data: timeseriesData,
     isConfigurationLoading,
     valueProperties,
-    ...rest
   } = useConfigData();
   const [, isHistoryLoading] = useFetchConfigPredictionHistory();
 

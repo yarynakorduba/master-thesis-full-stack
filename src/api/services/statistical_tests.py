@@ -68,7 +68,7 @@ class StatisticalTests():
         if periods_in_season:
             # ocsb_n_diffs = nsdiffs(np.array(data).astype(float), test='ocsb', m=periods_in_season)  # -> 0
             # print(f"Stationarity: OCSB Test result: should be seasonally differenced {ocsb_n_diffs}")
-
+            ifelse = periods_in_season == 144
             ch_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
             print(f"Stationarity: CH Test result: should be seasonally differenced {ch_n_diffs}")
             
@@ -139,7 +139,7 @@ class StatisticalTests():
             stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]], periods_in_season)
             print(f"Stationarity test result {stationarity_test_result}")
             if periods_in_season:
-                selected_ndiffs = np.max([stationarity_test_result["ocsb"]["ndiffs"], stationarity_test_result["ch"]["ndiffs"]])
+                selected_ndiffs = stationarity_test_result["ch"]["ndiffs"]
             else:
                 selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
             selected_ndiffs_dict[df.columns[i]] = selected_ndiffs

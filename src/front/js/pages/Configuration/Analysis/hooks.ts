@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useConfigData } from '../../../store/currentConfiguration/selectors';
 import { filter, flatMap, flow, map } from 'lodash';
-import { TCausalityResult } from './types';
+import type { TCausalityResult } from './types';
 
 // type TWhiteNoiseInfo = {
 //   readonly whiteNoiseResult: TWhiteNoiseResult;

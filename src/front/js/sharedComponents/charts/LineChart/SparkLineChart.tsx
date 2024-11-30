@@ -10,8 +10,8 @@ import { curveLinear } from '@visx/curve';
 import { formatAxisTick, getAxisTickLabelProps, getLinearScale } from './utils';
 import { AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper, HeadingMark, SparkLineChartHeading } from './styles';
-import { TChartThresholdDatapoint } from '../types';
-import { TSparkLineChartProps } from './types';
+import type { TChartThresholdDatapoint } from '../types';
+import type { TSparkLineChartProps } from './types';
 
 const CHART_LEFT_PADDING = 38;
 const CHART_BOTTOM_PADDING = 24;

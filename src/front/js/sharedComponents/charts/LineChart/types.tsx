@@ -1,13 +1,13 @@
 import { LinearScaleConfig, ScaleConfigToD3Scale } from '@visx/scale';
-import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
-import {
+import type { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
+import type {
   TDataLabel,
   TLineChartData,
   TLineChartDatapoint,
 } from 'front/js/types';
-import { TPadding } from 'front/js/types/styles';
+import type { TPadding } from 'front/js/types/styles';
 import { ChartVariant } from '../ChartOverlays/hooks';
-import { TThresholdData, TFormatXScale, TFormatYScale } from '../types';
+import type { TThresholdData, TFormatXScale, TFormatYScale } from '../types';
 
 export type TLineChartDataRegion = {
   readonly from: number; // unix ms timestamp

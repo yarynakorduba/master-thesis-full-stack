@@ -1,6 +1,7 @@
 import { camelCase, flow, map, mapKeys, sortBy } from 'lodash';
+import { TConfiguration } from '../types';
 
-export const processConfiguration = (config) => {
+export const processConfiguration = (config): TConfiguration => {
   const mappedConfig = mapKeys(config || {}, (v, key) => camelCase(key));
   const mappedData = flow(
     (data) =>
@@ -13,5 +14,5 @@ export const processConfiguration = (config) => {
     (data) => sortBy(data, (d) => d[mappedConfig.timeProperty.value]),
   )(mappedConfig.data);
 
-  return { ...mappedConfig, data: mappedData };
+  return { ...mappedConfig, data: mappedData } as TConfiguration;
 };

@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
-import { THistoryEntry, TVARResult } from './types';
+import type { THistoryEntry, TVARResult } from './types';
 import {
   OPTIMAL_PARAMS_TXT,
   OPTIMAL_REAL_PARAMS_TXT,

@@ -1,10 +1,10 @@
-import { TARIMAUserParams } from '../pages/Configuration/Analysis/types';
+import { type TARIMAUserParams } from '../pages/Configuration/Analysis/types';
 import { handleFetch } from './utils';
 
 export const fetchIsWhiteNoise = async (
   data,
   dataKeys: string[],
-  periods: number,
+  periods?: number,
   maxLagOrder?: number,
 ) => {
   return handleFetch(

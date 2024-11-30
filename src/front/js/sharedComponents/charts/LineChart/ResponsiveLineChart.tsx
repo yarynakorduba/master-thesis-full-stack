@@ -1,7 +1,7 @@
 import { ParentSize } from '@visx/responsive';
 import { isNil } from 'lodash';
 import React, { useCallback } from 'react';
-import { TLineChartProps } from './types';
+import type { TLineChartProps } from './types';
 import LineChart from './LineChart';
 
 const MIN_HEIGHT = 350;

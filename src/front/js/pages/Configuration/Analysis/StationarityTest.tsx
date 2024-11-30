@@ -70,7 +70,7 @@ const StationarityTest = ({
               <Box>
                 {propName}:
                 <ul>
-                  {val.kpss && (
+                  {val?.kpss && (
                     <li>
                       <InfoOverlay id={`KPSS-${propName}`} label="KPSS">
                         KPSS<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
@@ -78,7 +78,7 @@ const StationarityTest = ({
                       test: {getStationaryTxt(val.kpss?.isStationary)}
                     </li>
                   )}
-                  {val.adf && (
+                  {val?.adf && (
                     <li>
                       {' '}
                       <InfoOverlay id={`ADF-${propName}`} label="ADF">
@@ -87,16 +87,16 @@ const StationarityTest = ({
                       test: {getStationaryTxt(val.adf?.isStationary)}
                     </li>
                   )}
-                  {val.ocsb && (
+                  {val?.ocsb && (
                     <li>
                       {' '}
                       <InfoOverlay id={`ADF-${propName}`} label="ADF">
                         OCSB<InfoOverlay.Popover>AAA</InfoOverlay.Popover>
                       </InfoOverlay>{' '}
-                      test: {getStationaryTxt(val.ocsb?.isStationary)}
+                      test: {getStationaryTxt(val?.ocsb?.isStationary)}
                     </li>
                   )}
-                  {val.ch && (
+                  {val?.ch && (
                     <li>
                       {' '}
                       <InfoOverlay id={`CH-${propName}`} label="CH">

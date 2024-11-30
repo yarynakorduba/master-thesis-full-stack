@@ -25,7 +25,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Dropzone } from './styles';
-import { TTimeseriesData } from '../../../types';
+import { type TTimeseriesData } from '../../../types';
 import { createConfig } from '../../../apiCalls/configuration';
 import { parseFile } from './utils';
 import { ERoutePaths } from '../../../types/router';

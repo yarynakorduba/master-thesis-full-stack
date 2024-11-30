@@ -15,7 +15,7 @@ import {
 } from '../../../store/currentConfiguration/selectors';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import ARIMAPredictionParams from './ARIMAPredictionParams';
-import { EAnalysisFormFields, TARIMAResult } from './types';
+import { EAnalysisFormFields, type TARIMAResult } from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import { FIELD_LABEL_PROPS } from '../../../consts';
@@ -41,11 +41,7 @@ const ARIMAPrediction = ({ isVisible, arimaResult, isLoading }: TProps) => {
   const handlePredict = useFetchARIMAPrediction();
 
   const formMethods = useFormContext();
-  const {
-    register,
-    formState: { isSubmitting },
-    getValues,
-  } = formMethods;
+  const { register, getValues } = formMethods;
 
   const handleClick = () => {
     const values = getValues();

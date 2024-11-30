@@ -2,10 +2,10 @@ import { useTooltipInPortal } from '@visx/tooltip';
 import { isNil, map } from 'lodash';
 import { useState, useCallback, useMemo } from 'react';
 
-import { TDataLabel } from 'front/js/types';
-import { TLinScale } from './types';
-import { TFormatXScale, TFormatYScale } from '../types';
-import { TAxisTooltip, TPointTooltip } from '../ChartTooltips/types';
+import type { TDataLabel } from 'front/js/types';
+import type { TLinScale } from './types';
+import type { TFormatXScale, TFormatYScale } from '../types';
+import type { TAxisTooltip, TPointTooltip } from '../ChartTooltips/types';
 import {
   CHART_HEADING_HEIGHT,
   LEGEND_HEIGHT,
@@ -14,7 +14,7 @@ import {
   BRUSH_Y_PADDING,
   REGION_HEIGHT,
 } from './consts';
-import { TPadding } from '../../../types/styles';
+import type { TPadding } from '../../../types/styles';
 
 type TTooltipConfigsResult = {
   readonly pointTooltip: TPointTooltip | undefined;

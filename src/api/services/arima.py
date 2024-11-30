@@ -52,22 +52,17 @@ class ARIMAPrediction:
             print(f"Train size: {train.size}, test size: {test.size}")
             if (train.size == 0 or test.size == 0):
                 raise APIException('Too little data to predict')
-            # Seasonal - fit stepwise auto-ARIMA
+            
+
             smodel = pm.auto_arima(
                 train,
                 test='kpss',
-                max_p=max_p, # lag order - the number of lag observations to include
-                max_q=max_q, # the size of moving average window
-                m=periods_in_season, # the number of periods in each season
+                max_p=max_p,
+                max_q=max_q,
+                m=periods_in_season,
                 start_P=0,
                 seasonal=is_seasonal,
-                # The order of first-differencing.
-                # If None (by default), the value will automatically be selected
-                # based on the results of the test
                 d=None,
-                # The order of the seasonal differencing.
-                # If None (by default, the value will automatically be selected based on the results of the seasonal_test.
-                # Must be a positive integer or None.
                 D=None,
                 trace=True,
                 error_action='ignore',
@@ -76,8 +71,9 @@ class ARIMAPrediction:
                 maxiter=1,
                 seasonal_test="ch"
             )
-            # Forecast
+
             test_prediction, test_confint = smodel.predict(n_periods=len(test), return_conf_int=True)
+            
             inferred_freq = pd.infer_freq(df_input.index)
             print(f"Inferred frequency: {inferred_freq}")
             test_indexes = test.index#pd.date_range(test.index[0], periods = len(test), freq=inferred_freq) # month start frequency

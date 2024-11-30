@@ -10,10 +10,10 @@ import { BrushHandleRenderProps } from '@visx/brush/lib/BrushHandle';
 import BrushHandle from './BrushHandle';
 import ChartLine from './ChartLine';
 import { BRUSH_HEIGHT, selectedBrushStyle } from './consts';
-import { TLinScale } from './types';
-import { TLineChartData } from 'front/js/types';
-import { TPadding } from '../../../types/styles';
-import { TChartThresholdDatapoint, TThresholdData } from '../types';
+import type { TLinScale } from './types';
+import type { TLineChartData } from 'front/js/types';
+import type { TPadding } from '../../../types/styles';
+import type { TChartThresholdDatapoint, TThresholdData } from '../types';
 import { useTheme } from '@mui/material';
 
 type TProps = {

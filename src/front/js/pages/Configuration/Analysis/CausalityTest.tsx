@@ -8,8 +8,8 @@ import { useFormContext } from 'react-hook-form';
 
 import {
   EAnalysisFormFields,
-  TCausalityResult,
-  TCausalityResultItem,
+  type TCausalityResult,
+  type TCausalityResultItem,
 } from './types';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';

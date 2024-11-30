@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import grey from '@mui/material/colors/grey';
 import { formatDateToDateTime } from '../../../utils/formatters';
 import {
@@ -24,23 +24,26 @@ const PredictionInfoText = ({ sx }: { sx?: any }) => {
 
   if (!isHistoryPredictionSelected || !prediction) return null;
   return (
-    <Typography
-      sx={sx}
-      fontSize={14}
-      variant="subtitle2"
-      color={grey[500]}
-      component={'em'}
-    >
-      {isHistoryPredictionSelected && !!prediction && (
-        <>
+    isHistoryPredictionSelected &&
+    !!prediction && (
+      <Stack direction="row" sx={sx} alignItems="center">
+        <Typography
+          fontSize={14}
+          variant="subtitle2"
+          color={grey[500]}
+          component={'em'}
+        >
           You are viewing the prediction calculated on{' '}
           {formatDateToDateTime(prediction?.createdAt)}
-          <Button onClick={handleClearPredictionData} sx={{ ml: 1 }}>
-            Back to draft
-          </Button>
-        </>
-      )}
-    </Typography>
+        </Typography>
+        <Button
+          onClick={handleClearPredictionData}
+          sx={{ ml: 1, flexShrink: 0 }}
+        >
+          Back to draft
+        </Button>
+      </Stack>
+    )
   );
 };
 

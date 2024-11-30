@@ -10,7 +10,8 @@ import {
 } from '../../apiCalls/analysis';
 import {
   EPredictionMode,
-  TARIMAUserParams,
+  type TARIMAUserParams,
+  type THistoryEntryPayload,
   type THistoryEntry,
   type TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
@@ -168,7 +169,7 @@ export default (set, get) => ({
     );
   },
 
-  fetchWhiteNoiseTest: async ({ periods }) => {
+  fetchWhiteNoiseTest: async ({ periods }: { readonly periods?: number }) => {
     const dataBoundaries = get().selectedDataBoundaries;
     const selectedData = getSelectedDataByBoundaries(
       get()?.configData?.data,
@@ -230,7 +231,7 @@ export default (set, get) => ({
         if (dataForAnalysis) {
           return await fetchDataStationarityTest(
             dataForAnalysis,
-            periodsInSeason,
+            periodsInSeason ? +periodsInSeason : undefined,
           );
         }
       }),
@@ -301,14 +302,13 @@ export default (set, get) => ({
     }
   },
 
-  addEntryToPredictionHistory: async (entry: THistoryEntry) => {
+  addEntryToPredictionHistory: async (entry: THistoryEntryPayload) => {
     const predictionHistoryWithoutEntry = get().predictionHistory;
     const entryWithConfigId = {
       ...entry,
       configurationId: get().configData.id,
     };
     set(
-      // most recent first
       () => ({ isAddingEntryToPredictionHistory: true }),
       SHOULD_CLEAR_STORE,
       ADD_ENTRY_TO_PREDICTION_HISTORY_START,
