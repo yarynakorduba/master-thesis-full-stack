@@ -12,7 +12,12 @@ import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/
 import OpenAIDisclaimer from './OpenAIDisclaimer';
 import Cite from './Cite';
 
-const VARModelText = ({ showDetails = true, startIndexNumber = 1 }) => {
+type TProps = {
+  readonly showDetails?: boolean;
+  readonly startIndexNumber?: number;
+};
+
+const VARModelText = ({ showDetails = true, startIndexNumber = 1 }: TProps) => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
 
   if (isSimplifiedTextShown) {

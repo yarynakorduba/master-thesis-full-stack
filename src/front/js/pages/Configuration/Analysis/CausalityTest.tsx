@@ -40,11 +40,7 @@ const CausalityTest = ({
   handleFetchGrangerDataCausalityTest,
 }: TProps) => {
   const formMethods = useFormContext();
-  const {
-    register,
-    formState: { isSubmitting },
-    getValues,
-  } = formMethods;
+  const { register, getValues } = formMethods;
 
   const graphData = useCausalityDataForNetworkGraph(causalityTestResult);
 

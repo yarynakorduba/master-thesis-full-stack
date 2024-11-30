@@ -111,7 +111,7 @@ const Configuration = () => {
       </Content>
       <HistoryDrawer
         open={isHistoryDrawerOpen}
-        onClose={(_e, _v) => setIsHistoryDrawerOpen(false)}
+        onClose={() => setIsHistoryDrawerOpen(false)}
         hideBackdrop
         anchor="right"
         variant="persistent"

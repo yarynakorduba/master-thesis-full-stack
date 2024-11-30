@@ -59,20 +59,16 @@ class StatisticalTests():
     def test_stationarity_adf_pmdarima(self, data):
         # Estimate the number of differences using an ADF test:
         n_diffs = ndiffs(np.array(data), test='adf')
-        print(f"Stationarity: ADF Test result: should be differenced {n_diffs}")
         return { "isStationary": n_diffs > 0, "ndiffs": n_diffs }
 
     def test_stationarity_kpss_adf(self, data, periods_in_season=None):
         if periods_in_season:
             ch_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
-            print(f"Stationarity: CH Test result: should be seasonally differenced {ch_n_diffs}")          
             return { "ch" : { "isStationary": ch_n_diffs == 0, "ndiffs": ch_n_diffs } }
         else:
             kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
-            print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
 
             adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
-            print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
 
             return {
                 "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
@@ -128,7 +124,6 @@ class StatisticalTests():
         selected_ndiffs_dict = {}
         for i in range(len(df.columns)):
             stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]], periods_in_season)
-            print(f"Stationarity test result {stationarity_test_result}")
             if periods_in_season:
                 selected_ndiffs = stationarity_test_result["ch"]["ndiffs"]
             else:

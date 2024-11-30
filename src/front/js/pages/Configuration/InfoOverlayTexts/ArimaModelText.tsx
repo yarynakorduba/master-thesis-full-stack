@@ -12,7 +12,11 @@ import { useGetAreSimplifiedUIDescriptionsShown } from '../../../store/settings/
 import OpenAIDisclaimer from './OpenAIDisclaimer';
 import Cite from './Cite';
 
-const ARIMAModelText = ({ showDetails = true }) => {
+type TProps = {
+  readonly showDetails?: boolean;
+};
+
+const ARIMAModelText = ({ showDetails = true }: TProps) => {
   const isSimplifiedTextShown = useGetAreSimplifiedUIDescriptionsShown();
 
   if (isSimplifiedTextShown) {

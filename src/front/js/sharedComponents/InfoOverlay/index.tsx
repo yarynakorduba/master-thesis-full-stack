@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
-import { OverlayTrigger } from './styles';
 import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
 import { Stack } from '@mui/material';
+
+import { OverlayTrigger } from './styles';
 
 type TInfoOverlayProps = {
   readonly variant?;

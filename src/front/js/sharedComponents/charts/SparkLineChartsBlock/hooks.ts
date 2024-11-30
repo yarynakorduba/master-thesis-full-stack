@@ -1,5 +1,5 @@
 import { maxBy, minBy } from 'lodash';
-import type { TDataProperty, TLineChartDatapoint } from 'front/js/types';
+import type { TLineChartDatapoint } from 'front/js/types';
 
 export const useTimeseriesMinMaxValues = (
   chartData: TLineChartDatapoint[],

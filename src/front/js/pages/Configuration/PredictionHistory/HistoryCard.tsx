@@ -40,7 +40,7 @@ const HistoryCard = ({
       variant={isSelected ? 'outlined' : 'elevation'}
     >
       <CardActionArea
-        onClick={(ev) => {
+        onClick={() => {
           onClick(historyEntry);
         }}
       >
