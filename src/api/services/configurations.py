@@ -9,7 +9,6 @@ class Configurations:
   def __init__(self):
     self = self
 
-
   def create_configuration(self, config_data):
     try:
       data = json.loads(config_data["data"])
@@ -52,8 +51,6 @@ class Configurations:
     db.session.query(PredictionHistory).filter(PredictionHistory.configuration_id == configuration_id).delete()
     result = db.session.query(Configuration).filter(Configuration.id == configuration_id).delete()
     db.session.commit()
-    
-    print(f"CONFIGURATION DELETED {result}")
     return result
   
   def get_configurations(self):
@@ -61,7 +58,6 @@ class Configurations:
     response = []
     for configuration in configurations:
       response.append(Configuration.serialize_general_info(configuration))
-    print(response)
     return json.dumps(response)
 
   def get_configuration(self, configuration_id):

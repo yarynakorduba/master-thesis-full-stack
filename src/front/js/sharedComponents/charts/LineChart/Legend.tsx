@@ -62,7 +62,7 @@ type TCustomLegendProps = {
   readonly handleHide: (dataSerieId) => void;
 };
 
-export const CustomLegend = ({
+const CustomLegend = ({
   data = [],
   maxWidth,
   handleHide,

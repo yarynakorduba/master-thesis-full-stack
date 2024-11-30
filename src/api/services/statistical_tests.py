@@ -41,9 +41,7 @@ class StatisticalTests():
             # The default maximum lag is often determined based on the size of the data.
             for key in data_keys:
                 data_to_analyze = [datum[key] for datum in data]
-                print(f"Key: {key}")
                 result = self.test_white_noise(data_to_analyze, key, period, max_lag_order)
-                print(f'Result: {result}')
                 results.append(result)
             return results
         except APIException as e:
@@ -60,22 +58,15 @@ class StatisticalTests():
 
     def test_stationarity_adf_pmdarima(self, data):
         # Estimate the number of differences using an ADF test:
-        n_diffs = ndiffs(np.array(data), test='adf')  # -> 0
+        n_diffs = ndiffs(np.array(data), test='adf')
         print(f"Stationarity: ADF Test result: should be differenced {n_diffs}")
         return { "isStationary": n_diffs > 0, "ndiffs": n_diffs }
 
     def test_stationarity_kpss_adf(self, data, periods_in_season=None):
         if periods_in_season:
-            # ocsb_n_diffs = nsdiffs(np.array(data).astype(float), test='ocsb', m=periods_in_season)  # -> 0
-            # print(f"Stationarity: OCSB Test result: should be seasonally differenced {ocsb_n_diffs}")
-            ifelse = periods_in_season == 144
             ch_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
-            print(f"Stationarity: CH Test result: should be seasonally differenced {ch_n_diffs}")
-            
-            return {
-             #   "ocsb": { "isStationary": ocsb_n_diffs == 0, "ndiffs": ocsb_n_diffs },\
-                "ch" : { "isStationary": ch_n_diffs == 0, "ndiffs": ch_n_diffs },
-            }
+            print(f"Stationarity: CH Test result: should be seasonally differenced {ch_n_diffs}")          
+            return { "ch" : { "isStationary": ch_n_diffs == 0, "ndiffs": ch_n_diffs } }
         else:
             kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
             print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
@@ -100,7 +91,7 @@ class StatisticalTests():
             # causes the time series in the first column
             result = grangercausalitytests(data, maxlag=[max_lag_order])
             result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[max_lag_order])
-            # flip
+
             return [
                     { "isCausal": (result[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
                     { "isCausal": (result_opposite_direction[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
@@ -166,10 +157,8 @@ class StatisticalTests():
             df_diff = df_diff[(periods_in_season*max_sdiff):]
 
         selected_ndiffs = self.get_all_needed_diffs(df_diff)
-        # print(f"Selected ndiffs {selected_ndiffs}")
-        # # Apply differencing to make data stationary
+        # Apply differencing to make data stationary
         for key, value in selected_ndiffs.items():
-            print(f"ndiffs {key} - {value}")
             for i in range(value):
                 existing_array = first_elements.get(key, [])
                 pos = df_diff[key].index[-1]

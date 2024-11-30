@@ -8,17 +8,3 @@ export const useTimeseriesMinMaxValues = (
   const getMinValue = (data) => minBy<TLineChartDatapoint>(data, 'valueY');
   return [getMinValue(chartData), getMaxValue(chartData)];
 };
-
-export const useSmallestTimeUnit = (
-  timeseriesData,
-  timeProperty: TDataProperty,
-) => {
-  const lastTs =
-    timeseriesData &&
-    timeProperty?.value &&
-    timeseriesData[timeseriesData.length - 1][timeProperty.value];
-  const time = lastTs
-    ? lastTs - timeseriesData[timeseriesData.length - 2][timeProperty.value]
-    : undefined;
-  return [time, lastTs];
-};

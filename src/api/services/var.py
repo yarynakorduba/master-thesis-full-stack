@@ -31,7 +31,6 @@ class VARPrediction:
     def df_inv_transform_every_ds_variable(self, df_transformed, diff_order, first_elements):
         for key, value in diff_order.items():
             for i in range(value):
-                print(f"VALUE : {i}")
                 df_transformed[key] = self.inverse_diff(df_transformed[key], first_elements[key][-1-i])
         return df_transformed
 
@@ -65,25 +64,21 @@ class VARPrediction:
             print(f"The optimal lag order selected: {optimal_lags.selected_orders}")
             # Fit the model after selecting the lag order
             maxlags = optimal_lags.selected_orders[ic]
-        # print(f"Model fit to lag order {optimal_lags}")
+
         fitted_model = model.fit(maxlags=maxlags)
-        print(f"After fitting {fitted_model.k_ar}")
-        # print(f"MODEL INFO {results.summary()}")
         total_horizon = steps
         # Do we need to add one more index here?
         inferred_freq = pd.infer_freq(df_scaled.index)
         print(f"Inferred frequency: {inferred_freq}")
         idx = pd.date_range(start=pd.to_datetime(df_scaled.iloc[-1:].index.item(), unit='ms'), periods=total_horizon + 1, freq=inferred_freq).delete(0) 
-        print(f"predict STEPS {steps}")
+
         lag_order = fitted_model.k_ar
         forecast = fitted_model.forecast(y=df_scaled.values[-lag_order:], steps=total_horizon)
-        print(forecast)
         # Convert to dataframe
         df_forecast = pd.DataFrame(forecast, 
                         columns=df_scaled.columns, 
                         index=idx)
         # # Invert the transformations to bring it back to the original scale
-        ## diff_order
         print(f"Applied differencing order: {diff_order} {seasonal_diff_order}")
         df_forecast_original = self.df_inv_transformation(df_forecast, scaler, diff_order, first_elements, seasonal_diff_order, seasonal_first_elements)
 
@@ -102,25 +97,20 @@ class VARPrediction:
             value_keys = data_keys["value_keys"]
             df_input = pd.DataFrame.from_records(data, columns=[date_key] + value_keys)
 
-            print(f"Duplicates: {df_input.duplicated().sum()} {len(df_input[date_key])}")
             df_input = df_input.drop_duplicates(subset=[date_key], keep='first')
             df_input.index = pd.DatetimeIndex(pd.to_datetime(df_input[date_key], unit="ms")) #.sort_index(ascending=True, inplace=False)
             df_input = df_input.drop(columns=[date_key])
-            print(df_input)
-            # ----
+
             train_data_size = int(df_input.shape[0] * TRAIN_TEST_SPLIT_PROPORTION)
             df_train = df_input.iloc[:train_data_size]
             df_test = df_input.iloc[train_data_size:]
             print(f"Train data length: {df_train.shape}, test data length: {df_test.shape}")
 
-        
             df_forecast_test_data, train_fit_model = self.run_forecast(df_train, df_test.shape[0], lag_order, periods_in_season, 'aic')
             optimal_order = train_fit_model.k_ar
             print(f"Optimal order: {train_fit_model.summary()} {optimal_order}")
             df_forecast_future_data, real_fit_model = self.run_forecast(df_input, horizon, optimal_order, periods_in_season)
             predicted_values = df_forecast_test_data[df_forecast_test_data.columns[0]].to_numpy()
-
-            print(f"Evaluate:   {df_forecast_test_data.columns[0]} {df_test[df_forecast_test_data.columns[0]].to_numpy()} {predicted_values}")
             
             evaluation = {}
             for column in df_forecast_test_data.columns:

@@ -20,5 +20,3 @@ export const Dropzone = styled('div')`
     margin: 0;
   }
 `;
-
-export const Select = styled(SelectComponent)``;

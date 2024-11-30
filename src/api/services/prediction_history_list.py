@@ -25,7 +25,6 @@ class PredictionHistoryList:
       stationarity_test=data.get("stationarity_test", None),
       causality_test=data.get("causality_test", None)
     )
-    print("--------------- AAAA!!!!----")
     print(getattr(data, "selected_data_boundaries", None))
 
     db.session.add(entry)
