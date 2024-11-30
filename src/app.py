@@ -5,7 +5,7 @@ import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from api.utils import APIException, generate_sitemap
+from api.utils import APIException
 from api.models import db
 from api.routes import api
 from api.admin import setup_admin
@@ -42,22 +42,9 @@ app.register_blueprint(api, url_prefix='/api')
 
 # Handle/serialize errors like a JSON object
 
-
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
-
-# generate sitemap with all your endpoints
-
-
-@app.route('/')
-def sitemap():
-    if ENV == "development":
-        return generate_sitemap(app)
-    return send_from_directory(static_file_dir, 'index.html')
-
-# any other endpoint will try to serve it like a static file
-
 
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
