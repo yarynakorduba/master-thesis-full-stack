@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-from api.services.statistical_tests import StatisticalTests
 import pmdarima as pm
 
 from api.utils import APIException, forecast_accuracy
