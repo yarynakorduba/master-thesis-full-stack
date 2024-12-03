@@ -33,21 +33,21 @@ import {
 } from './utils';
 import { ChartVariant, AxisVariant } from '../ChartOverlays/hooks';
 import { ChartWrapper } from './styles';
-import { TLineChartSerie } from '../../../types';
+import type { TLineChartSerie } from '../../../types';
 import Legend from './Legend';
-import { TChartThresholdDatapoint } from '../types';
+import type { TChartThresholdDatapoint } from '../types';
 import ChartLine from './ChartLine';
 import CustomBrush from './CustomBrush';
 import Grid from './Grid';
 import DataLabelLine from './DataLabelLine';
-import { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
+import type { TValueBounds } from 'front/js/pages/Configuration/Analysis/types';
 import {
   BRUSH_HEIGHT,
   CHART_LEFT_PADDING,
   CHART_RIGHT_PADDING,
   CHART_Y_PADDING,
 } from './consts';
-import { TLineChartProps } from './types';
+import type { TLineChartProps } from './types';
 import LineChartDataRegions from './LineChartDataRegions';
 
 /**
@@ -492,7 +492,7 @@ const LineChart = ({
             xTooltip={xTooltip}
             yTooltip={yTooltip}
             dataLabelTooltips={dataLabelTooltips}
-            formatPointTooltipXScale={formatXScale(brushExtent)}
+            formatPointTooltipXScale={formatXScale()}
             formatPointTooltipYScale={formatYScale}
           />
         ) : null}

@@ -8,8 +8,8 @@ import { useFormContext } from 'react-hook-form';
 
 import {
   EAnalysisFormFields,
-  TCausalityResult,
-  TCausalityResultItem,
+  type TCausalityResult,
+  type TCausalityResultItem,
 } from './types';
 import Loader from '../../../sharedComponents/Loader';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
@@ -40,11 +40,7 @@ const CausalityTest = ({
   handleFetchGrangerDataCausalityTest,
 }: TProps) => {
   const formMethods = useFormContext();
-  const {
-    register,
-    formState: { isSubmitting },
-    getValues,
-  } = formMethods;
+  const { register, getValues } = formMethods;
 
   const graphData = useCausalityDataForNetworkGraph(causalityTestResult);
 
@@ -129,6 +125,11 @@ const CausalityTest = ({
               {!isEmpty(causalityTexts)
                 ? causalityTexts
                 : 'No relationships detected'}
+            </Typography>
+            <Typography variant="body1">
+              {!isEmpty(causalityTexts)
+                ? 'It might be worth to employ VAR model and predict the variables with the causal relationships together.'
+                : ''}
             </Typography>
           </Grid>
           {!isEmpty(causalityTexts) && (

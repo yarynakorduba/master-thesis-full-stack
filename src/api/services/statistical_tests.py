@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from pmdarima.arima.utils import ndiffs
+from pmdarima.arima.utils import ndiffs, nsdiffs
 import statsmodels.stats.diagnostic as diag
 from statsmodels.tsa.stattools import grangercausalitytests
 from itertools import combinations
@@ -41,9 +41,7 @@ class StatisticalTests():
             # The default maximum lag is often determined based on the size of the data.
             for key in data_keys:
                 data_to_analyze = [datum[key] for datum in data]
-                print(f"Key: {key}")
                 result = self.test_white_noise(data_to_analyze, key, period, max_lag_order)
-                print(f'Result: {result}')
                 results.append(result)
             return results
         except APIException as e:
@@ -60,22 +58,22 @@ class StatisticalTests():
 
     def test_stationarity_adf_pmdarima(self, data):
         # Estimate the number of differences using an ADF test:
-        n_diffs = ndiffs(np.array(data), test='adf')  # -> 0
-        print(f"Stationarity: ADF Test result: should be differenced {n_diffs}")
+        n_diffs = ndiffs(np.array(data), test='adf')
         return { "isStationary": n_diffs > 0, "ndiffs": n_diffs }
 
-    def test_stationarity_kpss_adf(self, data):
-        # Estimate the number of differences using an ADF test:
-        kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
-        print(f"Stationarity: KPSS Test result: should be differenced {kpss_n_diffs}")
+    def test_stationarity_kpss_adf(self, data, periods_in_season=None):
+        if periods_in_season:
+            ch_n_diffs = nsdiffs(np.array(data).astype(float), test='ch', m=periods_in_season)  # -> 0
+            return { "ch" : { "isStationary": ch_n_diffs == 0, "ndiffs": ch_n_diffs } }
+        else:
+            kpss_n_diffs = ndiffs(np.array(data).astype(float), test='kpss', max_d=2)  # -> 0
 
-        adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
-        print(f"Stationarity: ADF Test result: should be differenced {adf_n_diffs}")
+            adf_n_diffs = ndiffs(np.array(data).astype(float), test='adf', max_d=2)  # -> 0
 
-        return {
-            "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
-            "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs },
-        }
+            return {
+                "kpss": { "isStationary": kpss_n_diffs == 0, "ndiffs": kpss_n_diffs },\
+                "adf" : { "isStationary": adf_n_diffs == 0, "ndiffs": adf_n_diffs }
+            }
 
     # The Null hypothesis for grangercausalitytests is that the time series in
     # the second column, x2, does NOT Granger cause the time series in the first
@@ -89,7 +87,7 @@ class StatisticalTests():
             # causes the time series in the first column
             result = grangercausalitytests(data, maxlag=[max_lag_order])
             result_opposite_direction = grangercausalitytests(data_opposite_direction, maxlag=[max_lag_order])
-            # flip
+
             return [
                     { "isCausal": (result[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[1], "target": data_key_pair[0]  }, \
                     { "isCausal": (result_opposite_direction[max_lag_order][0]["ssr_ftest"][1]).item() < SIGNIFICANT_P, "source": data_key_pair[0], "target": data_key_pair[1]  } \
@@ -122,35 +120,49 @@ class StatisticalTests():
             raise APIException(str(e))
     
     
-    def convert_data_to_stationary(self, df):
+    def get_all_needed_diffs(self, df, periods_in_season=None):
+        selected_ndiffs_dict = {}
+        for i in range(len(df.columns)):
+            stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]], periods_in_season)
+            if periods_in_season:
+                selected_ndiffs = stationarity_test_result["ch"]["ndiffs"]
+            else:
+                selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
+            selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
+
+        return selected_ndiffs_dict
+
+    def convert_data_to_stationary(self, df, periods_in_season=None):
         df_diff = df.copy()
         first_elements = {}
+        seasonal_first_elements = {}
+        selected_nsdiffs = {}
+        selected_ndiffs = {}
+        if periods_in_season:
+            selected_nsdiffs = self.get_all_needed_diffs(df_diff, periods_in_season)
 
-        def check_all_stationarities(df):
-            selected_ndiffs_dict = {}
-            for i in range(len(df.columns)):
-                stationarity_test_result = self.test_stationarity_kpss_adf(df[df.columns[i]])
-                #is_var_stationary = stationarity_test_result["kpss"]["isStationary"] and stationarity_test_result["adf"]["isStationary"]
-                selected_ndiffs = np.max([stationarity_test_result["kpss"]["ndiffs"], stationarity_test_result["adf"]["ndiffs"]])
-                selected_ndiffs_dict[df.columns[i]] = selected_ndiffs
-            print(f'{df.columns[i]} is_stationary -> {selected_ndiffs_dict}')
-            return selected_ndiffs_dict
+            for key, value in selected_nsdiffs.items():
+                for i in range(value):
+                    existing_array = seasonal_first_elements.get(key, [])
+                    pos = df_diff.index[-periods_in_season]
+                    seasonal_first_elements[key] = existing_array + [df_diff[pos:][key]]
+                    df_diff[key] = df_diff[key].diff(periods_in_season)
         
-        selected_ndiffs = check_all_stationarities(df_diff)
-        print(f"Selected ndiffs {selected_ndiffs}")
+            max_sdiff = max(selected_nsdiffs.values())
+            df_diff = df_diff[(periods_in_season*max_sdiff):]
+
+        selected_ndiffs = self.get_all_needed_diffs(df_diff)
         # Apply differencing to make data stationary
         for key, value in selected_ndiffs.items():
-            print(f"ndiffs {key} - {value}")
             for i in range(value):
                 existing_array = first_elements.get(key, [])
                 pos = df_diff[key].index[-1]
-                first_elements[key] = existing_array + [df_diff.loc[[pos],key]]
+                first_elements[key] = existing_array + [df_diff[pos:][key]]
                 df_diff[key] = df_diff[key].diff()
+
         max_diff = max(selected_ndiffs.values())
         df_diff = df_diff[max_diff:]
-        print(f"Sellected ndiffs for max diff {selected_ndiffs}")
 
-        return df_diff, selected_ndiffs, first_elements
-
+        return df_diff, selected_ndiffs, first_elements, selected_nsdiffs, seasonal_first_elements
 
 

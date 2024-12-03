@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import { TSettingsSlice, TStoreMiddlewares, TStoreType } from '../types';
+import type { TSettingsSlice, TStoreMiddlewares, TStoreType } from '../types';
 import { SHOULD_CLEAR_STORE } from '../consts';
 
 const SET_ARE_SIMPLIFIED_DESCRIPTIONS_SHOWN = 'SET_NOTIFICATION';

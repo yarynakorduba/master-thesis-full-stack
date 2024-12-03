@@ -1,7 +1,7 @@
 import { GridRows, GridColumns } from '@visx/grid';
 import React from 'react';
 import { ChartVariant } from '../ChartOverlays/hooks';
-import { TLinScale } from './types';
+import type { TLinScale } from './types';
 
 type TProps = {
   readonly xScale: TLinScale;

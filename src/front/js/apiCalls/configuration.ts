@@ -1,3 +1,5 @@
+import { THistoryEntry } from '../pages/Configuration/Analysis/types';
+import { TConfiguration } from '../store/types';
 import { handleFetch } from './utils';
 import { mapKeys, snakeCase } from 'lodash';
 
@@ -28,12 +30,9 @@ export const deleteConfig = async (id: string) => {
   );
 };
 
-export const createConfig = async (config) => {
-  // Creating FormData object
+export const createConfig = async (config: TConfiguration) => {
   const formData = new FormData();
 
-  // Add data to the object
-  // Here myfile is the name of the form field
   formData.append('id', config.id);
   formData.append('name', config.name);
   formData.append('data', JSON.stringify(config.data));
@@ -48,7 +47,9 @@ export const createConfig = async (config) => {
   );
 };
 
-export const addEntryToPredictionHistory = async (prediction) => {
+export const addEntryToPredictionHistory = async (
+  prediction: THistoryEntry,
+) => {
   const body = {
     test_prediction_parameters: [],
     real_prediction_parameters: [],
@@ -71,10 +72,7 @@ export const fetchPredictionHistoryByConfigId = async (
   return handleFetch(
     fetch(
       `${process.env.BACKEND_URL}/api/prediction_history?configuration_id=${configurationId}`,
-      {
-        method: 'GET',
-        headers: { 'Content-type': 'application/json' },
-      },
+      { method: 'GET', headers: { 'Content-type': 'application/json' } },
     ),
   );
 };

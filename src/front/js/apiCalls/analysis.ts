@@ -1,10 +1,10 @@
-import { TARIMAUserParams } from '../pages/Configuration/Analysis/types';
+import { type TARIMAUserParams } from '../pages/Configuration/Analysis/types';
 import { handleFetch } from './utils';
 
 export const fetchIsWhiteNoise = async (
   data,
   dataKeys: string[],
-  periods: number,
+  periods?: number,
   maxLagOrder?: number,
 ) => {
   return handleFetch(
@@ -21,11 +21,14 @@ export const fetchIsWhiteNoise = async (
   );
 };
 
-export const fetchDataStationarityTest = async (data) => {
+export const fetchDataStationarityTest = async (
+  data,
+  periodsInSeason?: number,
+) => {
   return handleFetch(
     fetch(`${process.env.BACKEND_URL}/api/stationarity-test`, {
       method: 'POST',
-      body: JSON.stringify({ data }),
+      body: JSON.stringify({ data, periods_in_season: periodsInSeason }),
       headers: { 'Content-type': 'application/json' },
     }),
   );
@@ -51,7 +54,7 @@ export const fetchGrangerDataCausalityTest = async (
 
 export const fetchVAR = async (
   data,
-  parameters: { lagOrder: number; horizon: number },
+  parameters: { lagOrder: number; horizon: number; periodsInSeason?: number },
   dataKeys: { date_key: string; value_keys: string[] },
 ) => {
   return handleFetch(

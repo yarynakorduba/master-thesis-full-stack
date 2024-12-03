@@ -2,7 +2,7 @@ import { flatMap, flow, maxBy, minBy, uniq } from 'lodash';
 import { ScaleInput, scaleLinear } from '@visx/scale';
 import { Palette } from '@mui/material/styles';
 import { AxisVariant } from '../ChartOverlays/hooks';
-import { TLineChartDatapoint } from 'front/js/types';
+import type { TLineChartDatapoint } from 'front/js/types';
 import { TickFormatter, TickLabelProps } from '@visx/axis';
 import { Scale } from '@visx/brush/lib/types';
 

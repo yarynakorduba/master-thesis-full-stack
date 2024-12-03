@@ -12,10 +12,10 @@ import ARIMAPrediction from './ARIMAPrediction';
 import {
   EAnalysisFormFields,
   EPredictionMode,
-  TARIMAResult,
-  THistoryEntry,
-  TPredictionResult,
-  TVARResult,
+  type TARIMAResult,
+  type THistoryEntry,
+  type TPredictionResult,
+  type TVARResult,
 } from './types';
 import PredictionModelSelection from './PredictionModelSelection';
 import {
@@ -76,6 +76,10 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
     formMethods.reset(predictionResult ? { ...defaultInputData } : {});
   }, [defaultInputData, formMethods, predictionResult]);
 
+  const periodsInSeason = formMethods.watch(
+    EAnalysisFormFields.periodsInSeason,
+  );
+
   if (isConfigurationLoading) return null;
 
   const steps = [
@@ -89,7 +93,7 @@ const Analysis = ({ predictionResult, isPredictionLoading }: TProps) => {
         propertiesToTest={valueProperties}
         timeseriesData={timeseriesData}
         handleFetchDataStationarityTest={() =>
-          handleFetchDataStationarityTest(valueProperties)
+          handleFetchDataStationarityTest(valueProperties, periodsInSeason)
         }
         isStationarityTestLoading={isStationarityTestLoading}
       />

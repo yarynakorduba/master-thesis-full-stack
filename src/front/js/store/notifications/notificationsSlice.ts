@@ -1,5 +1,5 @@
 import { StateCreator } from 'zustand';
-import {
+import type {
   TNotification,
   TNotificationsSlice,
   TStoreMiddlewares,

@@ -1,7 +1,5 @@
 import { styled } from '@mui/material/styles';
 
-import SelectComponent from 'react-select';
-
 export const Dropzone = styled('div')`
   flex: 1;
   display: flex;
@@ -20,5 +18,3 @@ export const Dropzone = styled('div')`
     margin: 0;
   }
 `;
-
-export const Select = styled(SelectComponent)``;

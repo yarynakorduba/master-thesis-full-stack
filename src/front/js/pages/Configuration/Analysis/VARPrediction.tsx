@@ -21,7 +21,11 @@ import {
   useFetchVARPrediction,
   useGetPredictionHistory,
 } from '../../../store/currentConfiguration/selectors';
-import { EAnalysisFormFields } from './types';
+import {
+  EAnalysisFormFields,
+  type THistoryEntry,
+  type TVARResult,
+} from './types';
 import AnalysisSection from './AnalysisSection';
 import EvaluationIndicators from '../EvaluationIndicators';
 import VARPredictionParams from './VARPredictionParams';
@@ -36,7 +40,7 @@ import HorizonText from '../InfoOverlayTexts/HorizonText';
 
 type TProps = {
   readonly isVisible: boolean;
-  readonly varResult;
+  readonly varResult: TVARResult | THistoryEntry;
   readonly isLoading: boolean;
   readonly index?: number;
 };
@@ -44,16 +48,17 @@ const VARPrediction = ({ isVisible, varResult, isLoading }: TProps) => {
   const handlePredict = useFetchVARPrediction();
 
   const formMethods = useFormContext();
-  const {
-    register,
-    formState: { isSubmitting },
-    getValues,
-  } = formMethods;
+  const { register, getValues } = formMethods;
 
   const handleClick = () => {
     const values = getValues();
     handlePredict(
-      formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any,
+      {
+        ...(formatFormFields(values, ANALYSIS_FORM_NUMERIC_FIELDS) as any),
+        periodsInSeason: values.isSeasonal
+          ? +values.periodsInSeason
+          : undefined,
+      },
       values.varSelectedFields,
     );
   };

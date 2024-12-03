@@ -1,16 +1,16 @@
 import { find, isNil } from 'lodash';
-import { TDataProperty } from '../../types';
+import type { TDataProperty } from '../../types';
 import { useBoundStore } from '..';
 import {
   EPredictionMode,
-  TARIMAUserParams,
-  TCausalityResult,
-  THistoryEntry,
-  TPredictionResult,
-  TVARUserParams,
-  TValueBounds,
+  type TARIMAUserParams,
+  type TCausalityResult,
+  type THistoryEntry,
+  type TPredictionResult,
+  type TVARUserParams,
+  type TValueBounds,
 } from '../../pages/Configuration/Analysis/types';
-import { TDisplayedPredictionId } from '../types';
+import type { TDisplayedPredictionId } from '../types';
 
 export const useConfigData = (): any =>
   useBoundStore((state) => {

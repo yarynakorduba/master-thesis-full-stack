@@ -4,12 +4,12 @@ import { Card, CardActionArea, CardContent, Typography } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import { TConfiguration } from '../../../js/store/types';
+import { type TConfigurationMainInfo } from '../../../js/store/types';
 import { ERoutePaths } from '../../types/router';
 import { useDeleteConfig } from '../../store/configurations/selectors';
 
 type TProps = {
-  readonly config: TConfiguration;
+  readonly config: TConfigurationMainInfo;
 };
 
 const ConfigCard = ({ config }: TProps) => {

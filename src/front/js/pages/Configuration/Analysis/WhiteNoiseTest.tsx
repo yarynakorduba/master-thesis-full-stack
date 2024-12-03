@@ -30,11 +30,7 @@ const WhiteNoiseTest = ({
   const { palette } = useTheme();
 
   const formMethods = useFormContext();
-  const {
-    register,
-    formState: { isSubmitting },
-    getValues,
-  } = formMethods;
+  const { getValues } = formMethods;
 
   const handleClick = () => {
     const values = getValues();

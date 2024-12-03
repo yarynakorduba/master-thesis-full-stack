@@ -1,5 +1,5 @@
 import { localPoint } from '@visx/event';
-import { filter, isNil, minBy, pickBy, values } from 'lodash';
+import { isNil, minBy, pickBy, values } from 'lodash';
 import { useState, useCallback, useEffect } from 'react';
 import { TClosestChartPointGroups, TLinScale } from '../LineChart/types';
 import { TLineChartSerie } from 'front/js/types';

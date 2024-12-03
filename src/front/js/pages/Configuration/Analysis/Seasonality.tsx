@@ -7,14 +7,13 @@ import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import AnalysisSection from './AnalysisSection';
 import { FIELD_LABEL_PROPS } from '../../../consts';
 
-const Seasonality = ({ index }) => {
+type TProps = {
+  readonly index: number;
+};
+
+const Seasonality = ({ index }: TProps) => {
   const formMethods = useFormContext();
-  const {
-    control,
-    register,
-    formState: { isSubmitting },
-    watch,
-  } = formMethods;
+  const { control, register, watch } = formMethods;
 
   const isDataSeasonal = watch(EAnalysisFormFields.isSeasonal);
 
@@ -38,6 +37,7 @@ const Seasonality = ({ index }) => {
       <Grid
         item
         md={2}
+        minWidth="180px"
         justifyContent="center"
         display="flex"
         flexDirection="column"
@@ -65,7 +65,7 @@ const Seasonality = ({ index }) => {
         />
       </Grid>
       {isDataSeasonal && (
-        <Grid item md={2}>
+        <Grid item md={2} minWidth="180px">
           <InfoOverlay
             id="seasonality-periods"
             label="Periods"

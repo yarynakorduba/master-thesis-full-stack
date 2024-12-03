@@ -1,8 +1,8 @@
 import { useBoundStore } from '..';
-import { TConfiguration } from '../types';
+import { TConfigurationMainInfo } from '../types';
 
 export const useConfigsList = (): [
-  TConfiguration[],
+  TConfigurationMainInfo[],
   () => Promise<void>,
   boolean,
 ] => [

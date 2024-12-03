@@ -1,12 +1,11 @@
 import React from 'react';
 import { isEmpty } from 'lodash';
-
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
-import { Divider, Grid, Tooltip } from '@mui/material';
-import { EPredictionMode } from './types';
+import { Divider, Grid, Stack, Tooltip } from '@mui/material';
 
+import { EPredictionMode } from './types';
 import {
   useConfigData,
   useGetPredictionHistory,
@@ -32,11 +31,19 @@ const PredictionModelSelection = ({
 
   return (
     <>
-      <Typography variant="h5" display="flex">
-        Prediction{' '}
+      <Stack direction="row" alignItems="center">
+        <Typography variant="h5" display="flex">
+          Prediction
+        </Typography>
         {!isEmpty(predictionHistory) && (
           <ToggleButton
-            sx={{ ml: 2, paddingTop: 0.5, paddingBottom: 0.5 }}
+            sx={{
+              ml: 2,
+              paddingTop: 0.5,
+              paddingBottom: 0.5,
+              height: 'fit-content',
+              flexShrink: 0,
+            }}
             size="small"
             color="primary"
             selected={isHistoryOpen}
@@ -54,7 +61,7 @@ const PredictionModelSelection = ({
           flexItem
         />
         <PredictionInfoText />
-      </Typography>
+      </Stack>
       <Grid item md={12}>
         <Tooltip
           title={

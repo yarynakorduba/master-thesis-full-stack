@@ -82,14 +82,7 @@ const Configuration = () => {
         </Typography>
 
         <PredictionInfoText
-          sx={{
-            textAlign: 'left',
-            height: 36.5,
-            marginTop: -3,
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-          }}
+          sx={{ textAlign: 'left', height: 36.5, marginTop: -3 }}
         />
 
         <SparkLineChartsBlock
@@ -118,7 +111,7 @@ const Configuration = () => {
       </Content>
       <HistoryDrawer
         open={isHistoryDrawerOpen}
-        onClose={(_e, _v) => setIsHistoryDrawerOpen(false)}
+        onClose={() => setIsHistoryDrawerOpen(false)}
         hideBackdrop
         anchor="right"
         variant="persistent"

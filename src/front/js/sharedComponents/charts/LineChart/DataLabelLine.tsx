@@ -1,8 +1,8 @@
 import React from 'react';
 import { Line } from '@visx/shape';
 import { useTheme } from '@mui/material/styles';
-import { TDataLabel } from 'front/js/types';
-import { TLinScale } from './types';
+import type { TDataLabel } from 'front/js/types';
+import type { TLinScale } from './types';
 
 type TProps = {
   readonly lineData: TDataLabel;

@@ -27,7 +27,6 @@ def test_white_noise():
     max_lag_order = request_body.get("max_lag_order", None)
     periods = request_body.get("periods", None)
 
-    print(f"Max Lag Order: {max_lag_order}")
     result = StatisticalTests().multitest_white_noise(data, data_keys, periods, max_lag_order)
 
     return json.dumps(result), 200
@@ -37,8 +36,8 @@ def test_white_noise():
 def test_stationarity():
     request_body = request.get_json()
     data_serie = request_body.get("data", None)
-    result = StatisticalTests().test_stationarity_kpss_adf(data_serie)
-
+    periods_in_season = request_body.get("periods_in_season", None)
+    result = StatisticalTests().test_stationarity_kpss_adf(data_serie, periods_in_season)
     return json.dumps(result), 200
 
 @api.route('/granger-causality-test', methods=['POST'])
@@ -59,8 +58,9 @@ def test_var():
     lag_order = request_body["parameters"]["lagOrder"]
     horizon = request_body["parameters"]["horizon"]
     data_keys = request_body.get("data_keys", [])
+    periods_in_season = request_body["parameters"].get("periodsInSeason")
 
-    result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon)
+    result = VARPrediction().test_var(data_serie, data_keys, lag_order, horizon, periods_in_season)
     return result, 200
 
 @api.route('/arima-prediction', methods=['POST'])

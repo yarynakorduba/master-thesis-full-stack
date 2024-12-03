@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { isNil } from 'lodash';
 import Box from '@mui/material/Box';
 import { Stack, Tooltip } from '@mui/material';
-import { TLineChartData, TLineChartDatapoint } from '../../../types';
+import type { TLineChartData, TLineChartDatapoint } from '../../../types';
 import { getHiddenLineColor, getMaxValue, getMinValue } from './utils';
 import { LEGEND_HEIGHT, LEGEND_Y_PADDING } from './consts';
 import { formatNumber } from '../../../utils/formatters';
@@ -62,7 +62,7 @@ type TCustomLegendProps = {
   readonly handleHide: (dataSerieId) => void;
 };
 
-export const CustomLegend = ({
+const CustomLegend = ({
   data = [],
   maxWidth,
   handleHide,

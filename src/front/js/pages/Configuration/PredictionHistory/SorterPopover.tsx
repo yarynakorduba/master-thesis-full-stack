@@ -11,21 +11,22 @@ import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { map } from 'lodash';
 import React, { useRef, useState } from 'react';
 import { SorterOption, SorterPopoverHeader } from './styles';
+import type { TSortOption, TSorterProps } from './types';
 
 type TProps = {
-  readonly sortOptions;
-  readonly sorter;
-  readonly setSorter;
+  readonly sortOptions: TSortOption[];
+  readonly sorter: TSorterProps;
+  readonly setSorter: (sorterProps: TSorterProps) => void;
 };
 
 const SorterPopover = ({ sortOptions, sorter, setSorter }: TProps) => {
-  const popoverAnchor = useRef<any>();
+  const popoverAnchor = useRef<HTMLButtonElement>();
   const [isSortPopoverOpen, setIsSortPopoverOpen] = useState(false);
 
   return (
     <>
       <Button
-        ref={popoverAnchor}
+        ref={popoverAnchor as React.MutableRefObject<HTMLButtonElement>}
         onClick={() => setIsSortPopoverOpen(true)}
         sx={{ maxWidth: 'calc(100% - 94px)' }}
       >

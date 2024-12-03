@@ -1,5 +1,5 @@
 import { useBoundStore } from '..';
-import { TNotification } from '../types';
+import type { TNotification } from '../types';
 
 export const useGetNotifications = (): TNotification[] =>
   useBoundStore((state) => state.notifications || []);

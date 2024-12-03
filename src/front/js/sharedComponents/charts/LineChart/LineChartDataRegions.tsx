@@ -1,9 +1,9 @@
 import { Group } from '@visx/group';
 import React from 'react';
-import { REGION_FONT_SIZE, REGION_HEIGHT } from './consts';
 import { filter, flow, map, max, min } from 'lodash';
 import { alpha } from '@mui/material';
-import { TLinScale, TLineChartDataRegion } from './types';
+import type { TLinScale, TLineChartDataRegion } from './types';
+import { REGION_FONT_SIZE, REGION_HEIGHT } from './consts';
 
 type TProps = {
   readonly paddingLeft?: number;

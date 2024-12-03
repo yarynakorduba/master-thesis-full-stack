@@ -3,7 +3,7 @@ import React from 'react';
 import { isEmpty, isEqual } from 'lodash';
 import InfoOverlay from '../../../sharedComponents/InfoOverlay';
 import { formatOrder } from '../../../utils/formatters';
-import { TARIMAResult } from './types';
+import type { TARIMAResult } from './types';
 import ARIMAOrderText from '../InfoOverlayTexts/ARIMAOrderText';
 import ARIMASeasonalOrderText from '../InfoOverlayTexts/ARIMASeasonalOrderText';
 import {

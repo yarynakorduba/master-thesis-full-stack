@@ -1,23 +1,29 @@
 import { AlertColor } from '@mui/material';
 import {
   EPredictionMode,
-  TARIMAUserParams,
-  TCausalityResult,
-  THistoryEntry,
-  TPredictionResult,
-  TVARUserParams,
-  TValueBounds,
+  type THistoryEntryPayload,
+  type TARIMAUserParams,
+  type TCausalityResult,
+  type THistoryEntry,
+  type TPredictionResult,
+  type TVARUserParams,
+  type TValueBounds,
 } from '../pages/Configuration/Analysis/types';
-import { TTimeseriesData, TDataProperty } from '../types';
+import type { TTimeseriesData, TDataProperty } from '../types';
 
-export type TConfiguration = {
+export type TConfigurationMainInfo = {
   readonly id: string;
   readonly data: TTimeseriesData;
   readonly name: string;
 };
 
+export type TConfiguration = TConfigurationMainInfo & {
+  readonly timeProperty: TDataProperty;
+  readonly valueProperties: TDataProperty[];
+};
+
 export type TConfigurationsSlice = {
-  readonly configsList: TConfiguration[];
+  readonly configsList: TConfigurationMainInfo[];
   readonly fetchConfigs: () => Promise<void>;
   readonly areConfigurationsLoading: boolean;
   readonly isConfigurationDeleting: boolean;
@@ -27,13 +33,7 @@ export type TConfigurationsSlice = {
 export type TDisplayedPredictionId = string | undefined;
 
 export type TConfigurationSlice = {
-  readonly configData?: {
-    readonly id: string;
-    readonly name: string;
-    readonly timeProperty: TDataProperty;
-    readonly valueProperties: TDataProperty[];
-    readonly data: TTimeseriesData;
-  };
+  readonly configData?: TConfiguration;
   readonly configurationError?: Error;
   readonly isConfigurationLoading: boolean;
 
@@ -50,7 +50,9 @@ export type TConfigurationSlice = {
 
   readonly whiteNoiseTest;
   readonly isWhiteNoiseTestLoading: boolean;
-  readonly fetchWhiteNoiseTest: any;
+  readonly fetchWhiteNoiseTest: (data: {
+    readonly periods?: number;
+  }) => Promise<void>;
 
   readonly stationarityTest;
   readonly isStationarityTestLoading: boolean;
@@ -77,7 +79,7 @@ export type TConfigurationSlice = {
   readonly currentPrediction?: TPredictionResult;
 
   readonly predictionHistory: THistoryEntry[];
-  readonly addEntryToPredictionHistory: (entry: THistoryEntry) => void;
+  readonly addEntryToPredictionHistory: (entry: THistoryEntryPayload) => void;
 
   readonly fetchARIMAPrediction: (params: TARIMAUserParams) => Promise<void>;
 
